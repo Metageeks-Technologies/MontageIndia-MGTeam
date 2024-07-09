@@ -1,24 +1,26 @@
 <!DOCTYPE html>
 <html lang="en" class="dark">
-  <head>
-    <%- include('./partials/header.ejs') %>
-  </head>
 
-  <body class="bg-gray-50 dark:bg-gray-800">
+<head>
+  <%- include('./partials/header.ejs') %>
+</head>
 
-    <% if (locals.navigation && locals.navigation === true) { %>
-      <%- include('./partials/navbar-main.ejs') %>
-    <% } %>
+<body class="bg-gray-50 dark:bg-gray-800">
 
-    <main class="bg-gray-50 dark:bg-gray-900">
-      <%- body %>
-    </main>
+  <% if (locals.navigation && locals.navigation===true) { %>
+    <%- include('./partials/navbar-main.ejs') %>
+      <% } %>
 
-    <% if (locals.footer && locals.footer === true) { %>
-      <%- include('./partials/footer-main.ejs') %>
-    <% } %>
+        <main class="bg-gray-50 dark:bg-gray-900">
+          <%- body %>
+        </main>
 
-    <%- include('./partials/scripts.ejs') %>
+        <% if (locals.footer && locals.footer===true) { %>
+          <%- include('./partials/footer-main.ejs') %>
+            <% } %>
 
-  </body>
+              <%- include('./partials/scripts.ejs') %>
+
+</body>
+
 </html>
