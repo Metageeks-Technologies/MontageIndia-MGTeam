@@ -5,17 +5,19 @@ import Admin from '../../model/user/admin.js';
 
 /* 
 index 
+
 1.signupAdmin
 2.loginAdmin
 3.logoutAdmin
-4.getAllAdmin
-5.updateAdminRole
-6.updateAdminCategory
-7.deleteAdmin
-8.getCurrentAdmin
-9.updateAdminCategory
-*/
+4.getCurrentAdmin
+5.creatAdmin
+8.updateAdmin
+6.deleteAdmin
+7.getAllAdmin
+9.updateAdminDetails
+10.ChangePassword
 
+*/
 
 
 //only for superAdmin
@@ -47,7 +49,7 @@ export const signupAdmin = catchAsyncError(async (req, res, next) => {
         user
     })
 
-})
+});
 
 export const loginAdmin = catchAsyncError(async (req, res, next) => {
 
@@ -68,7 +70,7 @@ export const loginAdmin = catchAsyncError(async (req, res, next) => {
     }
 
     sendToken(user, 200, res);
-})
+});
 
 export const logoutAdmin = catchAsyncError(async (req, res, next) => {
 
@@ -81,17 +83,17 @@ export const logoutAdmin = catchAsyncError(async (req, res, next) => {
     });
 
 
-})
+});
 
 export const getCurrentAdmin = catchAsyncError(async (req, res, next) => {
 
-    const { _id } = req.body
+    const { _id } = req.body;
     const user = await Admin.findOne({ _id });
     res.status(200).json({
         success: true,
         user
     });
-})
+});
 
 export const createAdmin = catchAsyncError(async (req, res, next) => {
     if (!req.body) {
@@ -112,7 +114,7 @@ export const createAdmin = catchAsyncError(async (req, res, next) => {
         message: "Admin Created successfully",
         user
     })
-})
+});
 
 export const deleteAdmin = catchAsyncError(async (req, res, next) => {
 
@@ -130,55 +132,7 @@ export const deleteAdmin = catchAsyncError(async (req, res, next) => {
         users
     })
 
-})
-
-export const updateAdminRole = catchAsyncError(async (req, res, next) => {
-
-    if (!req.body) {
-        return next(new ErrorHandler("body is not defined", 400))
-    }
-    const { id, role } = req.body;
-    console.log(req.body);
-
-    const user = await Admin.findOne({ _id: id })
-    if (user) {
-        user.role = role;
-        await user.save();
-
-    }
-
-    const users = await Admin.find();
-    res.status(200).json({
-        success: true,
-        message: "user role updated successfully",
-        users
-    })
-
-})
-
-export const updateAdminCategory = catchAsyncError(async (req, res, next) => {
-
-    if (!req.body) {
-        return next(new ErrorHandler("body is not defined", 400))
-    }
-    const { id, category } = req.body;
-    console.log(req.body);
-
-    const user = await Admin.findOne({ _id: id })
-    if (user) {
-        user.category = category;
-        await user.save();
-
-    }
-
-    const users = await Admin.find();
-    res.status(200).json({
-        success: true,
-        message: "user category updated successfully",
-        users
-    })
-
-})
+});
 
 export const getAllAdmin = catchAsyncError(async (req, res, next) => {
 
@@ -188,36 +142,58 @@ export const getAllAdmin = catchAsyncError(async (req, res, next) => {
         success: true,
         users
     })
-})
+});
 
-export const updateAdmin = catchAsyncError(async (req, res, next) => {
-    const { id } = req.query;
-    console.log(req.query);
-    const { name, email,mediaType, category, role, senderId } = req.body;
+export const updateAdmin= catchAsyncError(async (req, res, next) => {
 
-    const adminToUpdate = await Admin.findById(id);
+    if (!req.body) {
+        return next(new ErrorHandler("body is not defined", 400))
+    }
+    const { id,role,category ,mediaType} = req.body;
+    console.log(req.body);
+
+    if(!id){return next(new ErrorHandler("please provide id", 400))}
+
+    const adminToUpdate = await Admin.findOne({ _id: id });
+
     if (!adminToUpdate) {
         return next(new ErrorHandler("Admin not found", 404));
     }
-
-    const sender = await Admin.findById(senderId);
-    if (!sender) {
-        return next(new ErrorHandler("Sender not found", 404));
-    }
-
-    if (adminToUpdate.role === "superAdmin" && sender.role !== "superAdmin") {
-        return next(new ErrorHandler("Only superadmin can update superadmin", 401));
-    }
-
     // Prepare updates object
+    const updates: Partial<typeof adminToUpdate> = {};
+    if (role) updates.role = role;
+    if (category) updates.category = category;
+    if (mediaType) updates.mediaType = mediaType;
+
+    // Update the admin    
+    const updatedAdmin = await Admin.findByIdAndUpdate(id, updates, { new: true, runValidators: true });
+    if (!updatedAdmin) {
+        return next(new ErrorHandler("Admin not found after update", 404));
+    }
+
+    res.status(200).json({
+        success: true,
+        message: "Admin updated successfully",
+        admin: updatedAdmin
+    });
+});
+
+export const updateAdminDetails = catchAsyncError(async (req, res, next) => {
+    const { id,name, email} = req.body;
+
+    if(!id){
+        return next(new ErrorHandler("body is not defined", 400))
+    }
+
+    const adminToUpdate = await Admin.findById(id);
+
+    if (!adminToUpdate) {
+        return next(new ErrorHandler("Admin not found", 404));
+    }
     const updates: Partial<typeof adminToUpdate> = {};
     if (name) updates.name = name;
     if (email) updates.email = email;
-    if (category && sender.role !== "superAdmin" ) updates.category = category;
-    if (mediaType && sender.role !== "superAdmin") updates.mediaType = mediaType;
-    if (role && sender.role !== "superAdmin") updates.role = role;
 
-    // Update the admin
     const updatedAdmin = await Admin.findByIdAndUpdate(id, updates, { new: true, runValidators: true });
 
     if (!updatedAdmin) {
@@ -231,30 +207,28 @@ export const updateAdmin = catchAsyncError(async (req, res, next) => {
     });
 });
 
+export const ChangePassword = catchAsyncError(async (req, res, next) => {
 
+    const { username, newPassword, oldPassword } = req.body;
+    if (!username || !newPassword || !oldPassword) {
+        return next(new ErrorHandler("Please enter Username and passwords", 400));
+    }
 
-// change password
-// const ChangePassword = catchAsyncError(async (req, res, next) => {
+    const adminToUpdate = await Admin.findOne({ username }).select("+password");
 
-//     const { email, newPassword, oldPassword } = req.body;
-//     if (!email || !newPassword || !oldPassword) {
-//         return next(new ErrorHandler("Please enter Email and passwords", 400));
-//     }
-//     const Admin = await Admin.findOne({ email }).select("+password");
-//     if (!Admin) {
-//         return next(new ErrorHandler("Admin not found with this email", 401))
-//     }
-//     const verifyOldPassword = await Admin.comparePassword(oldPassword);
-//     if (!verifyOldPassword) {
-//         return next(new ErrorHandler("Old password is wrong", 401))
-//     }
-//     Admin.password = newPassword;
-//     await Admin.save();
+    if (!adminToUpdate) {
+        return next(new ErrorHandler("Admin not found with this username", 401))
+    }
 
+    const verifyOldPassword = await adminToUpdate.comparePassword(oldPassword);
+    if (!verifyOldPassword) {
+        return next(new ErrorHandler("Old password is wrong", 401))
+    }
+    adminToUpdate.password = newPassword;
+    await adminToUpdate.save();
 
-
-//     res.status(200).json({
-//         success: true,
-//         Admin
-//     })
-// })
+    res.status(200).json({
+        success: true,
+        Admin
+    })
+});
