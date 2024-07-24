@@ -11,7 +11,7 @@ import status from 'express-status-monitor'
 dotenv.config();
 // add a router
 
-console.log("hello")
+console.log("hello") //hello
 const app: Express = express();
 app.use(status());
 app.use(cors());
