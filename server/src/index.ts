@@ -4,6 +4,7 @@ import adminRouter from './routes/user/admin.js';
 import imageRouter from './routes/media/img.js';
 import connectDB from './utils/connectDb.js';
 import cors from 'cors'
+import morgan from 'morgan'
 import videoRouter from './routes/media/video.js';
 import audioRouter from './routes/media/audio.js';
 import errorMiddleware from './middleware/error.js';
@@ -15,6 +16,7 @@ const app: Express = express();
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(morgan('dev'));
 
 app.use("/api/v1/auth/admin", adminRouter);
 app.use("/api/v1/media/image", imageRouter);
