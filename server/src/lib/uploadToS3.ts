@@ -7,7 +7,9 @@ import config from "@src/utils/config";
 
 const {awsBucketName:bucketName,}=config;
 
-async function uploadImage(image: { folder: string, filename: string }) {
+type fileType ={ folder: string, filename: string }
+
+async function uploadImage(image: fileType) {
 
     const fileStream = fs.createReadStream(`output/${image.filename}`);
 
@@ -29,7 +31,7 @@ async function uploadImage(image: { folder: string, filename: string }) {
 
 
 }
-async function uploadAudio(image: { folder: string, filename: string }, subFolder: string) {
+async function uploadAudio(image: fileType,s3image:fileType) {
 
 
     const fileStream = fs.createReadStream(`${image.folder}/${image.filename}`);
@@ -39,7 +41,7 @@ async function uploadAudio(image: { folder: string, filename: string }, subFolde
             client: s3Client,
             params: {
                 Bucket: bucketName,
-                Key: `audio/${subFolder}/${image.filename}`,
+                Key: `${s3image.folder}/${s3image.filename}`,
                 Body: fileStream,
                 ContentType: 'audio/mpeg',
             },

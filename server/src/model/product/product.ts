@@ -6,19 +6,21 @@ const productSchema = new mongoose.Schema({
     slug:{type: String, required: true},
     title: { type: String, required: true },
     description: { type: String, required: true },
-    tags: [{ type: String }],
+    tags: [{ type: String ,required:true}],
+    category:{ type: String, required: true },
     publicKey: { type: String },
     thumbnailKey:{type: String },
     variants: [{
         label: { type: String },
+        size:{type:String},
         price: { type: Number},
         key: { type: String}
     }],
-    status: { type: String, enum: ["published", "archived", "unavailable","draft"], required: true },
+    status: { type: String, enum: ["published", "archived", "unavailable","draft"], required: true ,default:"draft"},
     mediaType: { type: String, enum: ["image", "video", "audio"], required: true },
-    createdBy: { type: mongoose.Schema.Types.ObjectId, required: true}
+    createdBy: { type: mongoose.Schema.Types.ObjectId}
 });
 
-const ProductModel = mongoose.model<TProduct & mongoose.Document>('Product', productSchema);
+const Product = mongoose.model<TProduct & mongoose.Document>('Product', productSchema);
 
-export default ProductModel;
+export default Product;
