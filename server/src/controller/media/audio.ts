@@ -41,7 +41,8 @@ export const reduceAudio = catchAsyncError(async (req: Request, res: Response, n
         next(new ErrorHandler(`Can not get file`, 400));
     }
     console.log(req.file);
-    const {uuid,mediaType} = JSON.parse(req.body);
+    const uuid = JSON.parse(req.body.uuid);
+    const mediaType=  JSON.parse(req.body.mediaType);
     if(mediaType!=="audio"){
         return next(new ErrorHandler("Wrong mediaType", 400));
     }

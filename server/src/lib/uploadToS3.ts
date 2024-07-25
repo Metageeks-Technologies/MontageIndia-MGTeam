@@ -9,7 +9,7 @@ const {awsBucketName:bucketName,}=config;
 
 type fileType ={ folder: string, filename: string }
 
-async function uploadImage(image: fileType) {
+async function uploadImage(image: fileType,s3image: fileType) {
 
     const fileStream = fs.createReadStream(`output/${image.filename}`);
 
@@ -19,7 +19,7 @@ async function uploadImage(image: fileType) {
             client: s3Client,
             params: {
                 Bucket: bucketName,
-                Key: `${image.folder}/${image.filename}`,
+                Key: `${s3image.folder}/${s3image.filename}`,
                 Body: fileStream,
                 ContentType: 'image/jpeg',
             },
