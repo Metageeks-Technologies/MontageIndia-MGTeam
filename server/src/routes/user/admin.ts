@@ -8,8 +8,11 @@ import {
     getCurrentAdmin,
     createAdmin,
     updateAdmin,
-    ChangePassword,
-    updateAdminDetails
+    changePassword,
+    forgetPassword,
+    updateAdminDetails,
+    resetPassword,
+    getAdminById
 } from '../../controller/user/admin.js';
 
 const adminRouter = express.Router();
@@ -23,6 +26,9 @@ adminRouter.route("/getCurrAdmin").get(getCurrentAdmin);
 adminRouter.route("/createAdmin").post(createAdmin);
 adminRouter.route("/updateAdmin").patch(updateAdmin);
 adminRouter.route("/updateAdminDetails").patch(updateAdminDetails);
-adminRouter.route("/changePassword").patch(ChangePassword);
+adminRouter.route("/changePassword").patch(changePassword);
+adminRouter.route("/forgetPassword").post(forgetPassword);
+adminRouter.route("/resetPassword").post(resetPassword);
+adminRouter.route("/:id").get(getAdminById);
 
 export default adminRouter;
