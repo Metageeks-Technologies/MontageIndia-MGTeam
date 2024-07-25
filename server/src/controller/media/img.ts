@@ -12,7 +12,8 @@ export const reduceImage = catchAsyncError(async (req, res, next) => {
         return next(new ErrorHandler("Files not found", 404));
     }
 
-    const {uuid,mediaType} = JSON.parse(req.body);
+    const uuid = JSON.parse(req.body.uuid);
+    const mediaType=  JSON.parse(req.body.mediaType);
     if(mediaType!=="image"){
         return next(new ErrorHandler("Wrong mediaType", 400));
     }
@@ -36,16 +37,24 @@ export const reduceImage = catchAsyncError(async (req, res, next) => {
 
     // Upload the processed images
     const images = [
-        { folder: `${uuid}/Images`, filename: `Original-${uuid}` },
-        { folder: `${uuid}/Images`, filename: `Medium-${uuid}` },
-        { folder: `${uuid}/Images`, filename: `Small-${uuid}` },
-        { folder: `${uuid}/Images`, filename: `ProductPage-${uuid}` },
-        { folder: `${uuid}/Images`, filename: `Thumbnail-${uuid}` },
+        { folder: 'Images/Original', filename: `Original-${imgName}` },
+        { folder: 'Images/Medium', filename: `Medium-${imgName}` },
+        { folder: 'Images/Small', filename: `Small-${imgName}` },
+        { folder: 'Images/ProductPage', filename:` ProductPage-${imgName}` },
+        { folder: 'Images/Thumbnail', filename: `Thumbnail-${imgName}`},
     ];
 
-    for (const image of images) {
+    const s3images = [
+        { folder: `${uuid}/images`, filename: `original-${uuid}` },
+        { folder: `${uuid}/images`, filename: `medium-${uuid}` },
+        { folder: `${uuid}/images`, filename: `small-${uuid}` },
+        { folder: `${uuid}/images`, filename: `productPage-${uuid}` },
+        { folder: `${uuid}/images`, filename: `thumbnail-${uuid}` },
+    ];
+
+    for (let i=0;i<s3images.length;i++) {
         try {
-            await uploadImage(image);
+            await uploadImage(images[i],s3images[i]);
         } catch (error) {
             console.log(error);
             next(new ErrorHandler(`Error uploading image`, 400));
@@ -61,21 +70,21 @@ export const reduceImage = catchAsyncError(async (req, res, next) => {
     const variants=[
         {
             size:"Original",
-            key:`${uuid}/Images/Original-${uuid}`
+            key:`${uuid}/images/original-${uuid}`
         },
         {
             size:"Medium",
-            key:`${uuid}/Images/Medium-${uuid}`
+            key:`${uuid}/images/medium-${uuid}`
         },
         {
             size:"Small",
-            key:`${uuid}/Images/Small-${uuid}`
+            key:`${uuid}/images/small-${uuid}`
         }
     ]
 
     product.variants.push(...variants);
-    product.publicKey=`${uuid}/Images/ProductPage-${uuid}`
-    product.thumbnailKey=`${uuid}/Images/Thumbnail-${uuid}`
+    product.publicKey=`${uuid}/images/productPage-${uuid}`
+    product.thumbnailKey=`${uuid}/images/thumbnail-${uuid}`
     const updatedProduct=await product.save();
 
     res.json({

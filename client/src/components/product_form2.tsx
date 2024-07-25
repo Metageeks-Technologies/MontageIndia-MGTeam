@@ -12,18 +12,19 @@ const Form2 = ({ onPrev, onNext }: any) => {
   const onDrop = useCallback((acceptedFiles: File[]) => {
     const selectedFile = acceptedFiles[0];
     if (selectedFile) {
+      console.log(selectedFile)
       const fileType = selectedFile.type;
-      const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'audio/*', 'video/*'];
+      const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'audio/*','audio/mp3', 'video/*'];
       
-      if (validTypes.some(type => fileType.startsWith(type))) {
+      // if (validTypes.some(type => fileType.startsWith(type))) {
         setFile(selectedFile);
         setName(selectedFile.name);
         setError('');
-      } else {
-        setFile(null);
-        setName('');
-        setError('Invalid file type. Please upload an image, audio, or video file.');
-      }
+      // } else {
+      //   setFile(null);
+      //   setName('');
+      //   setError('Invalid file type. Please upload an image, audio, or video file.');
+      // }
     }
   }, []);
 
@@ -38,9 +39,17 @@ const Form2 = ({ onPrev, onNext }: any) => {
   });
 
   const handleSubmit =async () => {
+    const formData = new FormData();
+
     if (file) {
+
+
+    formData.append("audio", file);
+    formData.append('uuid', JSON.stringify("1234"))
+    formData.append("mediaType", JSON.stringify("audio"));
       console.log(process.env.NEXT_PUBLIC_SERVER_URL)
-      const response = await axios.post(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/v1/media/image/reduce`, file, {
+
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/v1/media/audio/reduce`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -49,8 +58,11 @@ const Form2 = ({ onPrev, onNext }: any) => {
       // Handle file upload
       // const data=await axios.post(``)
       console.log('File ready for upload:', file);
+      // if(response.status)
       onNext();
     } else {
+      onNext();
+
       setError('Please select a valid file before submitting.');
     }
   };
