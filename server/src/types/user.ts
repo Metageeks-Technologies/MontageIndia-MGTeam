@@ -7,6 +7,8 @@ export type TAdmin = Document & {
     role: 'superAdmin' | 'admin';
     category: string;
     mediaType: String;
+    resetPasswordToken: string | undefined;
+    resetPasswordExpires: Number | undefined;
     createJWT(): string;
     comparePassword(givenPassword: string): Promise<boolean>;
 }

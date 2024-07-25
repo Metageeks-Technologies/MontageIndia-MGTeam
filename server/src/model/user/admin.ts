@@ -25,7 +25,8 @@ const adminsSchema = new mongoose.Schema<TAdmin>({
     },
     email: {
         type: String,
-        required: false,
+        required: [true, "please enter your email"],
+        unique: true,
         validate: [validator.isEmail, "please enter a valid email"],
     },
     password: {
@@ -46,7 +47,16 @@ const adminsSchema = new mongoose.Schema<TAdmin>({
     category: {
         type: String,
         default: "all"
-    }
+    },
+    resetPasswordToken:{
+        type: String,
+        default:undefined,
+    },
+    resetPasswordExpires:{
+        type: Number,
+        default: undefined,
+    },
+
 },
     { timestamps: true }
 );
