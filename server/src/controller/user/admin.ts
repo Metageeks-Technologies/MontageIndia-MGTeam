@@ -373,7 +373,7 @@ export const forgetPassword = catchAsyncError(async (req, res, next) => {
             subject: 'Password Reset' as string,
             text: `You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n
             Please click on the following link, or paste this into your browser to complete the process:\n\n
-            ${process.env.CLIENT_URL}/reset-password/${token}\n\n
+            ${process.env.CLIENT_URL}/admin/reset-password/${token}\n\n
             If you did not request this, please ignore this email and your password will remain unchanged.\n` as string
         };
 
@@ -418,7 +418,7 @@ export const resetPassword = catchAsyncError(async (req, res, next) => {
 
     await adminToUpdate.save();
 
-    res.status(200).json({ message: 'Password has been reset' });
+    res.status(200).json({ message: 'Password has been reset suscessfully.now you can close this tab or window'});
   } catch (err) {
     res.status(500).json({ message: 'Server error', err });
   }
