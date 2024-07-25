@@ -9,7 +9,7 @@ import { IoBagHandleSharp } from "react-icons/io5";
 const Page = () =>
 {
   const router = useRouter();
-  const [ username, setUsername ] = useState( "" );
+  const [ usernameOrEmail, setUsernameOrEmail ] = useState( "" );
   const [ password, setPassword ] = useState( "" );
   const [ error, setError ] = useState( "" );
   const [ showPassword, setShowPassword ] = useState( false );
@@ -25,9 +25,9 @@ const Page = () =>
   {
     setError( "" );
 
-    if ( !username || !password )
+    if ( !usernameOrEmail || !password )
     {
-      setError( "Please enter both username and password." );
+      setError( "Please enter both usernameOrEmail and password." );
       return;
     }
 
@@ -35,7 +35,7 @@ const Page = () =>
     {
       const response = await axios.post(
         `${ process.env.NEXT_PUBLIC_SERVER_URL }/api/v1/auth/admin/login`,
-        { username, password },
+        { usernameOrEmail, password },
         {
           headers: {
             "Content-Type": "application/json"
@@ -46,7 +46,7 @@ const Page = () =>
       console.log( "Login successful:", response.data );
       alert( "Login Successful" )
       router.push("/")
-      setUsername( "" );
+      setUsernameOrEmail( "" );
       setPassword( "" );
     } catch ( error )
     {
@@ -80,7 +80,7 @@ const Page = () =>
     try
     {
       const response = await axios.post(
-        `${ process.env.NEXT_PUBLIC_SERVER_URL }/api/v1/auth/admin/forgot-password`,
+        `${ process.env.NEXT_PUBLIC_SERVER_URL }/api/v1/auth/admin/forgetPassword`,
         { email },
         {
           headers: {
@@ -138,18 +138,18 @@ const Page = () =>
           <div className="mt-6">
             <div>
               <label
-                htmlFor="username"
+                htmlFor="usernameOrEmail"
                 className="block text-sm font-medium text-gray-700 required-label"
               >
-                UserName or Email
+                Username or Email
               </label>
 
               <input
                 type={ 'email' || "text"}
-                id="username"
+                id="usernameOrEmail"
                 className="block bg-[#F4F4F5] w-full px-4 py-2 mt-1 border rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                 placeholder="Ex: Example412@gmail.com / Example412"
-                onChange={ ( e ) => { setError( "" ); setUsername( e.target.value ); } }
+                onChange={ ( e ) => { setError( "" ); setUsernameOrEmail( e.target.value ); } }
                 required
               />
             </div>
