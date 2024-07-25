@@ -18,7 +18,7 @@ import { IoBagHandleSharp } from "react-icons/io5";
 
 const Sidebar = () => {
   return (
-    <div className=" w-64 bg-gray-100 flex flex-col shadow-lg">
+    <div className=" w-full bg-gray-100 flex flex-col shadow-lg">
       <div className="mx-2">
         <div className="flex justify-between items-center">
           <div className="flex items-center gap-2 h-20  border-gray-300">
