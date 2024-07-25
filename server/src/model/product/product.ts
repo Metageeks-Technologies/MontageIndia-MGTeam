@@ -12,6 +12,7 @@ const productSchema = new mongoose.Schema({
     thumbnailKey:{type: String },
     variants: [{
         label: { type: String },
+        size:{type:String},
         price: { type: Number},
         key: { type: String}
     }],
