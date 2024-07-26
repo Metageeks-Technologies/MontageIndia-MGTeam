@@ -1,7 +1,7 @@
 // components/Sidebar.js
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import
 {
   FaHome,
@@ -13,7 +13,7 @@ import
   FaCog,
   FaUserCircle,
 } from "react-icons/fa";
-import { BiCategoryAlt, BiPlus, BiLogOutCircle } from "react-icons/bi";
+import { BiCategoryAlt, BiPlus, BiLogOutCircle, BiLogInCircle } from "react-icons/bi";
 import { IoIosSearch } from "react-icons/io";
 import
 {
@@ -29,6 +29,9 @@ const Sidebar = () =>
 {
   const [ isProductOpen, setIsProductOpen ] = useState( false );
   const [ isUserOpen, setIsUserOpen ] = useState( false );
+  const [ isLogin, setIslogin ] = useState( false );
+
+ 
 
   const toggleProductMenu = () =>
   {
@@ -58,6 +61,19 @@ const Sidebar = () =>
   {
     router.push( `/admin/product/archive` );
   };
+
+  const handleLogout = () =>
+  {
+    // Remove the token from storage or cookies
+    localStorage.removeItem( 'token' );
+    setIslogin( false );
+  };
+
+  useEffect( () =>
+  {
+    if(localStorage.getItem('token')) setIslogin(true)
+  }, [isLogin] )
+
 
   return (
     <div className="flex">
@@ -231,14 +247,25 @@ const Sidebar = () =>
                 </a>
                 <MdOutlineKeyboardArrowDown className="w-6 h-6 mr-3 cursor-pointer" />
               </li>
-              <li className="mb-1">
-                <a
-                  href="#"
-                  className="flex items-center text-gray-800 hover:bg-gray-200 px-3 py-2"
-                >
-                  <BiLogOutCircle className="w-6 h-6 mr-3" />
-                  Log out
-                </a>
+              <li className="mb-1 cursor-pointer">
+                { localStorage.getItem('token') ? (
+                  <a
+                    
+                    onClick={ handleLogout }
+                    className="flex items-center text-gray-800 hover:bg-gray-200 px-3 py-2"
+                  >
+                    <BiLogOutCircle className="w-6 h-6 mr-3" />
+                    Log out
+                  </a>
+                ) : (
+                  <a
+                    href="/admin/login"
+                    className="flex items-center text-gray-800 hover:bg-gray-200 px-3 py-2"
+                  >
+                    <BiLogInCircle className="w-6 h-6 mr-3" />
+                    Log in
+                  </a>
+                ) }
               </li>
             </ul>
           </div>
