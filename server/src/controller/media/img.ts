@@ -7,6 +7,7 @@ import Product from "@src/model/product/product";
 export const reduceImage = catchAsyncError(async (req, res, next) => {
 
     const file = req.file as Express.Multer.File;
+    console.log(file);
 
     if (!file) {
         return next(new ErrorHandler("Files not found", 404));
@@ -27,7 +28,7 @@ export const reduceImage = catchAsyncError(async (req, res, next) => {
         await resizeToOriginal(input, imgName);
         await resizeToMedium(original, imgName);
         await resizeToSmall(original, imgName);
-        await resizeForProductPage(original, imgName,next);
+        await resizeForProductPage(original, imgName);
        
         await resizeForThumbnail(original, imgName);
     } catch (error:any) {

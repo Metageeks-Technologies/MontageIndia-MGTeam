@@ -74,9 +74,9 @@ const Form2 = ({ onPrev, onNext, formData }: any) => {
 
   const handleImageSubmit = async (file:any, data:any) => {
     const formData = new FormData();
-    formData.append('file', file);
-    formData.append('uuid', data.uuid);
-    formData.append('mediaType', data.mediaType);
+    formData.append('image', file);
+    formData.append('uuid', JSON.stringify(data.uuid));
+    formData.append('mediaType', JSON.stringify(data.mediaType));
   
     const url = `${process.env.NEXT_PUBLIC_SERVER_URL}/api/v1/media/image/reduce`;
   
@@ -98,20 +98,18 @@ const Form2 = ({ onPrev, onNext, formData }: any) => {
   };
   
   const handleAudioSubmit = async (file:any, data:any) => {
-    const formDatas = new FormData();
-    formDatas.append('file', file);
-    formDatas.append('uuid', data.uuid);
-    formDatas.append('mediaType', data.mediaType);
-  
+    console.log(file,data);
+    const formData = new FormData();
+    formData.append('audio', file);
+    formData.append('uuid', JSON.stringify(data.uuid));
+    formData.append('mediaType', JSON.stringify(data.mediaType));
+
     const url = `${process.env.NEXT_PUBLIC_SERVER_URL}/api/v1/media/audio/reduce`;
   
-    try {
-      console.log("sdsd",formDatas)
-      console.log("first",data.uuid)
-      
-      const response = await axios.post(url, formDatas, {
+    try {    
+      const response = await axios.post(url, formData,{
         headers: {
-          "Content-Type": "multipart/form-data",        },
+          "Content-Type": "multipart/form-data"},
       });
       if (response.status === 201) {
         const responseData = response.data;

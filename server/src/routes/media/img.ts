@@ -14,7 +14,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 const imageRouter = express.Router();
 
-imageRouter.route("/reduce").post(upload.array('image'), reduceImage);
+imageRouter.route("/reduce").post(upload.single('image'), reduceImage);
 imageRouter.route("/temp").get(async(req,res,next)=>{
     try {
         if(true){
