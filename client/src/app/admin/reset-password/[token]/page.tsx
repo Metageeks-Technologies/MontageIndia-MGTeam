@@ -2,8 +2,8 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import axios from 'axios';
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import instance from '@/utils/axios';
 
 const ResetPassword = ( { params }: { params: { token: string; }; } ) =>
 {
@@ -49,8 +49,8 @@ const ResetPassword = ( { params }: { params: { token: string; }; } ) =>
 
         try
         {
-            const response = await axios.post(
-                `${ process.env.NEXT_PUBLIC_SERVER_URL }/api/v1/auth/admin/resetPassword`,
+            const response = await instance.post(
+                '/auth/admin/resetPassword',
                 { password: newPassword, token },
                 {
                     headers: {
@@ -64,16 +64,11 @@ const ResetPassword = ( { params }: { params: { token: string; }; } ) =>
             {
                 router.push( '/admin/login' );
             }, 3000 );
-        } catch ( error )
+        } catch ( error: any )
         {
             console.error( 'Password reset error:', error );
-            if ( axios.isAxiosError( error ) )
-            {
-                setError( error.response?.data?.message || 'An error occurred while resetting the password. Please try again.' );
-            } else
-            {
-                setError( 'An unexpected error occurred. Please try again.' );
-            }
+            setError( error.response?.data?.message || 'An error occurred while resetting the password. Please try again.' );
+
         }
     };
 

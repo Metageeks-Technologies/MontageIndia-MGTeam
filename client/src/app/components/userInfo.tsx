@@ -2,7 +2,7 @@
 // components/UserList.tsx
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import axios from 'axios';
+import instance from '@/utils/axios';
 
 interface User
 {
@@ -25,7 +25,7 @@ export default function UserList ()
         {
             try
             {
-                const response = await axios( `${ process.env.NEXT_PUBLIC_SERVER_URL }/api/v1/auth/admin/getAllAdmin` );
+                const response = await instance( `auth/admin/getAllAdmin` )
                 console.log( "all users:", response.data );
                 setUsers( response.data.users );
             } catch ( error )
