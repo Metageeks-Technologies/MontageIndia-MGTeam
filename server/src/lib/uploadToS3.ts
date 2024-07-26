@@ -5,7 +5,7 @@ import fs from 'fs'
 import { s3Client } from "@src/lib/awsClients";
 import config from "@src/utils/config";
 
-const {awsBucketName:bucketName,}=config;
+const {awsBucketName:bucketName,awsTempBucketName}=config;
 
 type fileType ={ folder: string, filename: string }
 
@@ -51,11 +51,11 @@ async function uploadAudio(image: fileType,s3image:fileType) {
         console.error(err);
     }
 }
-const getUrl = async (fileName: string) => {
+const getUrl = async (name: string) => {
 
     const command = new PutObjectCommand({
-        Bucket: bucketName,
-        Key: `temp/${fileName}`, // The key (file path) for the object in the bucket
+        Bucket: awsTempBucketName,
+        Key: name,// The key (file path) for the object in the bucket
         ContentType: 'video/mp4',
     });
 

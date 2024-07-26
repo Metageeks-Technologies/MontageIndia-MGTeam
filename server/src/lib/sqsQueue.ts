@@ -3,6 +3,8 @@ import type {S3Event} from 'aws-lambda'
 import { handleReduceVideos,handleVideoWithWaterMark } from "@src/lib/resizeVideo";
 import { sqsClient } from "@src/lib/awsClients";
 import config from "@src/utils/config";
+import EmcMedia from "@src/model/product/emcJob";
+import Product from "@src/model/product/product";
 
 const {awsSqsQueueUrl}=config;
 
@@ -45,9 +47,15 @@ export const processSQSMessages = async () => {
                 for(const record of event.Records){
                     const {bucket, object:{key}}=record.s3;
                     console.log(bucket);
-                    const inputFile = `s3://${bucket.name}/${key}`;
-                    await handleReduceVideos(inputFile);
-                    await handleVideoWithWaterMark(inputFile);
+                    const inputFile = `s3://${bucket.name}/${key}`;                  
+                    const keyArr=key.split('.');
+                    keyArr.pop();
+                    const uuid = keyArr.join('.');
+                    const product = await Product.findOne({uuid});
+                    if(!product) continue;
+                    const  watermarkJobId =   await handleVideoWithWaterMark(inputFile,uuid);
+                    const mainJobId =  await handleReduceVideos(inputFile,uuid);          
+                    await EmcMedia.create({mainJobId,watermarkJobId,uuid,product:product._id});
                     await deleteMessage(awsSqsQueueUrl,ReceiptHandle);
                 }
 
