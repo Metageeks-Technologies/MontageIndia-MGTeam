@@ -5,27 +5,23 @@ import Form2 from '@/components/product_form2';
 import Form3 from '@/components/product_form3';
 
 const Page = () => {
-  const [formData, setFormData] = useState<any>(null);
-  const [disablePrev, setDisablePrev] = useState(false);
+  const [formData, setFormData] = useState<any>({});
   const [currentForm, setCurrentForm] = useState(1);
 
   const handleNext = (data: any) => {
-    setFormData(data);
-    setCurrentForm(2);
+    setFormData((prevData: any) => ({ ...prevData, ...data }));
+    setCurrentForm(currentForm + 1);
   };
 
-  const handleDisablePrev = () => {
-    setDisablePrev(true);
+  const handlePrev = () => {
+    setCurrentForm(currentForm - 1);
   };
 
   return (
-    <div>
-      {/* {currentPage === 1 && <Form1 onNext={nextPage} />}
-      {currentPage === 2 && <Form2 onPrev={prevPage} onNext={nextPage} />}
-      {currentPage === 3 && <Form3 onPrev={prevPage}   />} */}
-     {currentForm === 1 && <Form1 onNext={handleNext} />}
-      {currentForm === 2 && <Form2 onPrev={() => setCurrentForm(1)} onNext={() => console.log('Next form')} disablePrev={disablePrev} handleDisablePrev={handleDisablePrev} formData={formData} />}
-  
+    <div className='bg-emerald-200'>
+      {currentForm === 1 && <Form1 onNext={handleNext} />}
+      {currentForm === 2 && <Form2 onNext={handleNext} onPrev={handlePrev} formData={formData} />}
+      {currentForm === 3 && <Form3 formData={formData} onPrev={handlePrev} />}
     </div>
   );
 };

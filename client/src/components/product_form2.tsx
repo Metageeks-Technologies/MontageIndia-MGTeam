@@ -86,10 +86,10 @@ const Form2 = ({ onPrev, onNext, formData }: any) => {
           'Content-Type': 'multipart/form-data',
         },
       });
-      if (response.status === 201) {
-        const responseData = response.data;
-        console.log('Upload success:', responseData);
-        onNext(responseData);
+      if (response.status === 200) {
+        const data = response.data;
+        console.log('Upload success:', data);
+        onNext(data);
       }
     } catch (error) {
       console.error('Error uploading image:', error);
@@ -111,10 +111,10 @@ const Form2 = ({ onPrev, onNext, formData }: any) => {
         headers: {
           "Content-Type": "multipart/form-data"},
       });
-      if (response.status === 201) {
-        const responseData = response.data;
-        console.log('Upload success:', responseData);
-        onNext(responseData);
+      if (response.status === 200) {
+        const data = response.data;
+        console.log('Upload success:', data);
+        onNext(data);
       }
     } catch (error) {
       console.error('Error uploading audio:', error);
@@ -136,10 +136,10 @@ const Form2 = ({ onPrev, onNext, formData }: any) => {
           'Content-Type': 'multipart/form-data',
         },
       });
-      if (response.status === 201) {
-        const responseData = response.data;
-        console.log('Upload success:', responseData);
-        onNext(responseData);
+     if (response.status === 200) {
+        const data = response.data;
+        console.log('Upload success:', data);
+        onNext(data);
       }
     } catch (error) {
       console.error('Error uploading video:', error);

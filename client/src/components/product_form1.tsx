@@ -6,7 +6,7 @@ import axios from 'axios';
 const Form1 = ({ onNext }: any) => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const [category, setcategory] = useState('');
+  const [category, setCategory] = useState(''); 
   const [mediaType, setMediaType] = useState('image'); // Default to 'image'
   const [tags, setTags] = useState<string[]>([]);
   const [tagInput, setTagInput] = useState('');
@@ -50,42 +50,50 @@ const Form1 = ({ onNext }: any) => {
       <div>
         <input
           placeholder="Title"
-          className='text-black p-1'
+          className='text-black p-2 bg-gray-500 rounded-lg '
           value={title}
           onChange={(e) => setTitle(e.target.value)}
         />
       </div>
-      <div>
-        <input
+      <div className=''>
+        <textarea 
           placeholder="Description"
-          className='text-black p-1'
+          className='text-black p-2 w-full '
           value={description}
           onChange={(e) => setDescription(e.target.value)}
         />
       </div>
       <div>
-        <input
-          placeholder="Category"
-          className='text-black p-1'
+        <select
+          className='text-gray-400 font-semibold p-2 bg-gray-500 rounded-lg '
           value={category}
-          onChange={(e) => setcategory(e.target.value)}
-        />
+          onChange={(e) => setCategory(e.target.value)}
+        >
+          <option className='font-semibold text-cyan-800' value="" disabled>Select Category</option>
+          <option className='font-semibold text-cyan-800' value="electronics">Electronics</option>
+          <option className='font-semibold text-cyan-800' value="fashion">Fashion</option>
+          <option className='font-semibold text-cyan-800' value="books">Books</option>
+          <option className='font-semibold text-cyan-800' value="home">Home</option>
+          <option className='font-semibold text-cyan-800' value="sports">Sports</option>
+          <option className='font-semibold text-cyan-800' value="toys">Toys</option>
+          <option className='font-semibold text-cyan-800' value="beauty">Beauty</option>
+        </select>
       </div>
       <div>
         <select
-          className='text-black p-1'
+          className='text-gray-400 font-semibold p-2 bg-gray-500 rounded-lg '
           value={mediaType}
           onChange={(e) => setMediaType(e.target.value)}
         >
-          <option value="image">Image</option>
-          <option value="video">Video</option>
-          <option value="audio">Audio</option>
+          <option className='font-semibold text-cyan-800'  value="image">Image</option>
+          <option className='font-semibold text-cyan-800' value="video">Video</option>
+          <option className='font-semibold text-cyan-800' value="audio">Audio</option>
         </select>
       </div>
       <div>
         <input
           placeholder="Tags"
-          className='text-black p-1'
+          className='text-black p-2 bg-gray-500 rounded-lg '
           value={tagInput}
           onChange={(e) => setTagInput(e.target.value)}
           onKeyDown={handleTagKeyDown}
