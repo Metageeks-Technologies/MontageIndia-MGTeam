@@ -4,17 +4,6 @@ import { getTranscodeProgress, handleReduceVideos, handleVideoWithWaterMark } fr
 import { getUrl } from "../../lib/uploadToS3";
 dotenv.config();
 
-export const reduceVideo = catchAsyncError(async (req, res, next) => {
-    const { name } = req.body;
-    console.log(name);
-    const data = await handleReduceVideos(name);
-    handleVideoWithWaterMark(name);
-    res.json({ msg: "uploaded successfully", 
-        // jobId: data.Job?.Id 
-
-    })
-})
-
 export const uploadVideo = catchAsyncError(async (req, res, next) => {
     const { name } = req?.body;
 
@@ -29,6 +18,16 @@ export const getJobProgress = catchAsyncError(async (req, res, next) => {
 
     res.json({ success: true, data })
 })
+
+export const getJobStatus = catchAsyncError(async (req, res, next) => {
+    const { jobId } = req.params;
+
+    const data = await getTranscodeProgress()
+
+    res.json({ success: true, data })
+})
+
+
 
 
 

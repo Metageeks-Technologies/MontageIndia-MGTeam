@@ -27,8 +27,7 @@ export const reduceImage = catchAsyncError(async (req, res, next) => {
         await resizeToOriginal(input, imgName);
         await resizeToMedium(original, imgName);
         await resizeToSmall(original, imgName);
-        await resizeForProductPage(original, imgName,next);
-       
+        await resizeForProductPage(original, imgName);
         await resizeForThumbnail(original, imgName);
     } catch (error:any) {
         console.log(error);

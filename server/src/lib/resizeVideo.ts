@@ -1,4 +1,4 @@
-import { CreateJobCommand, ListJobsCommand } from "@aws-sdk/client-mediaconvert";
+import { CreateJobCommand, ListJobsCommand ,GetJobCommand} from "@aws-sdk/client-mediaconvert";
 import { emcClient } from "@src/lib/awsClients";
 import config from "@src/utils/config";
 
@@ -188,6 +188,19 @@ export const getTranscodeProgress =async ()=>{
         Order: "ASCENDING",
         Queue: awsMediaConvertQueue,
         Status: "PROGRESSING",
+      };
+
+      try {
+        const data = await emcClient.send(new ListJobsCommand(params));
+        console.log("Success. Jobs: ", data.Jobs);
+        return data;
+      } catch (err) {
+        console.log("Error", err);
+      }
+}
+export const getTranscodeStatus =async (jobId:string)=>{
+    const params:any = {
+        Id:jobId
       };
 
       try {
