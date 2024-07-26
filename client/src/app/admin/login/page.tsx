@@ -4,7 +4,7 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import { images } from "../../../../public/images/image"
+import { images } from "../../../../public/images/image";
 import Cookies from 'js-cookie';
 import { notifySuccess } from "@/utils/toast";
 import instance from "@/utils/axios";
@@ -48,9 +48,10 @@ const Page = () =>
       console.log( "Login successful:", response.data );
       // Set a cookie from the frontend
       Cookies.set( 'token', response.data.token, { expires: 7, secure: true, sameSite: 'strict' } );
+      localStorage.setItem('token',response.data.token)
 
-      notifySuccess( "Login Successful" )
-      router.push("/")
+      notifySuccess( "Login Successful" );
+      router.push( "/" );
       setUsernameOrEmail( "" );
       setPassword( "" );
     } catch ( error )
@@ -75,10 +76,10 @@ const Page = () =>
       <div className="flex flex-col items-center justify-center min-h-screen relative px-4 sm:px-6 lg:px-8">
         <div className="flex items-center mb-6 absolute top-12 gap-3">
 
-          <div className="w-48 h-14 bg-white border border-gray-300 flex justify-center items-center rounded-xl shadow-xl">          
-              <img src={ images.logo.src } alt="logo" /> 
+          <div className="w-48 h-14 bg-white border border-gray-300 flex justify-center items-center rounded-xl shadow-xl">
+            <img src={ images.logo.src } alt="logo" />
           </div>
-         
+
         </div>
 
         <div className="w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-md p-8 bg-white border rounded-lg shadow-md">
@@ -101,7 +102,7 @@ const Page = () =>
               </label>
 
               <input
-                type={ 'email' || "text"}
+                type={ 'email' || "text" }
                 id="usernameOrEmail"
                 className="block bg-[#F4F4F5] w-full px-4 py-2 mt-1 border rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                 placeholder="Ex: Example412@gmail.com / Example412"
@@ -138,7 +139,7 @@ const Page = () =>
             </div>
             <div className="flex justify-end mt-2">
               <button
-                onClick={ ()=>router.push('/admin/reset-password') }
+                onClick={ () => router.push( '/admin/reset-password' ) }
                 className="text-sm text-[#65A30D] hover:underline focus:outline-none"
               >
                 Forgot Password?
@@ -154,13 +155,13 @@ const Page = () =>
           <p className="mt-6 text-sm text-gray-600">
             By clicking Register, you agree to accept Durara{ " " }
           </p>
-          <p className="underline text-black hover:text-blue-800 mt-2" onClick={()=>router.push('/terms-and-conditions')}>
+          <p className="underline text-black hover:text-blue-800 mt-2" onClick={ () => router.push( '/terms-and-conditions' ) }>
             Terms and Conditions
           </p>
-         
+
         </div>
       </div>
-    
+
     </>
   );
 };

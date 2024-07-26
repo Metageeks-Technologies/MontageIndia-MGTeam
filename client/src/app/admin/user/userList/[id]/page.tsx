@@ -100,16 +100,17 @@ export default function UserDetails ( { params }: { params: { id: string; }; } )
   if ( !user ) return <div className="flex justify-center items-center h-screen">Loading...</div>;
 
   return (
+    // text-white bg-[#BEF264] hover:bg-[#cbff70] rounded-md transition duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#BEF264]
     <div className="bg-gray-100 min-h-screen py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-3xl mx-auto bg-white shadow-lg rounded-lg overflow-hidden">
-        <div className="px-6 py-4 bg-gradient-to-r from-purple-600 to-indigo-600 text-white">
-          <h1 className="text-3xl font-bold">User Profile</h1>
+        <div className="px-6 py-4 bg-gray-200 text-black">
+          <h1 className="text-3xl font-bold text-center">User Profile</h1>
         </div>
         <div className="p-6">
           <div className="mb-8 text-center">
-            <div className="w-32 h-32 mx-auto bg-gray-300 rounded-full flex items-center justify-center text-4xl font-bold text-white">
+            {/* <div className="w-32 h-32 mx-auto bg-gray-300 rounded-full flex items-center justify-center text-4xl font-bold text-white">
               { user.name.charAt( 0 ) }
-            </div>
+            </div> */}
             <h2 className="mt-4 text-2xl font-semibold">{ user.name }</h2>
             <p className="text-gray-600">{ user.email }</p>
           </div>
