@@ -46,9 +46,10 @@ export const reduceAudio = catchAsyncError(async (req: Request, res: Response, n
     if(mediaType!=="audio"){
         return next(new ErrorHandler("Wrong mediaType", 400));
     }
-
-    const filename = req.file?.originalname.split('.')[0] as string
-    const fileExtension = req.file?.originalname.split('.')[1] as string
+    const filenameArr= req.file?.originalname.split('.') as string[];
+    const fileExtension = filenameArr[filenameArr?.length-1];
+    filenameArr.pop();
+    const filename = filenameArr.join('.');
 
     const originalAudioPath = `audio/${filename}.${fileExtension}`
     const watermarkAudioPath = 'audio/watermark.wav';

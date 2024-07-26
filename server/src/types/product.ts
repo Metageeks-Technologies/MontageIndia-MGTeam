@@ -9,6 +9,7 @@ export type TProduct = Document & {
     publicKey: string;
     thumbnailKey:String;
     variants: {
+        _id?: mongoose.Types.ObjectId
         label?: string;
         price?: number;
         size:string;
@@ -18,4 +19,11 @@ export type TProduct = Document & {
     mediaType: "image" | "video" | "audio";
     createdBy: mongoose.Types.ObjectId;
 
+}
+
+export type TEmcMedia = {
+    uuid:string,
+    product:mongoose.Types.ObjectId,
+    mainJobId:string,
+    watermarkJobId:string,
 }

@@ -24,6 +24,7 @@ const config: TConfig = {
   awsMediaConvertRole: getEnvVariable('AWS_MEDIA_CONVERT_ROLE'),
   awsMediaConvertQueue: getEnvVariable('AWS_MEDIA_CONVERT_QUEUE'),
   awsSqsQueueUrl: getEnvVariable('AWS_SQS_QUEUE_URL'),
+  awsTempBucketName:getEnvVariable('AWS_TEMP_BUCKET_NAME')
 };
 
 export default config;

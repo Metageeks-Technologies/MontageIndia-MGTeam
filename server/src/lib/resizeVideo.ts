@@ -1,10 +1,11 @@
-import { CreateJobCommand, ListJobsCommand } from "@aws-sdk/client-mediaconvert";
+import { CreateJobCommand, ListJobsCommand ,GetJobCommand} from "@aws-sdk/client-mediaconvert";
 import { emcClient } from "@src/lib/awsClients";
 import config from "@src/utils/config";
 
 const {awsBucketName,awsMediaConvertQueue,awsMediaConvertRole,watermarkImgName}=config;
 
-export const handleReduceVideos =async (inputFile: string) => {
+export const handleReduceVideos =async (inputFile: string,uuid:string) => {
+    const destination = `s3://${awsBucketName}/${uuid}/video/`;
     const params:any = {
         Queue: awsMediaConvertQueue,
         UserMetadata: {},
@@ -20,14 +21,14 @@ export const handleReduceVideos =async (inputFile: string) => {
                         {
                             "Preset": "System-Generic_Uhd_Mp4_Hevc_Aac_16x9_3840x2160p_24Hz_8Mbps",
                             "Extension": ".mp4",
-                            "NameModifier": "-Original"
+                            "NameModifier": "-original"
                         },
                     ],
 
                     OutputGroupSettings: {
                         Type: "FILE_GROUP_SETTINGS",
                         FileGroupSettings: {
-                            Destination: `s3://${awsBucketName}/Video/Original/`
+                            Destination: destination
                         }
                     }
                 },
@@ -37,14 +38,14 @@ export const handleReduceVideos =async (inputFile: string) => {
                         {
                             "Preset": "System-Generic_Hd_Mp4_Av1_Aac_16x9_1920x1080p_30Hz_5Mbps_Qvbr_Vq7",
                             "Extension": ".mp4",
-                            "NameModifier": "-Medium"
+                            "NameModifier": "-medium"
                         },
                     ],
 
                     OutputGroupSettings: {
                         Type: "FILE_GROUP_SETTINGS",
                         FileGroupSettings: {
-                            Destination: `s3://${awsBucketName}/Video/Medium/`
+                            Destination: destination
                         }
                     }
                 },
@@ -54,14 +55,14 @@ export const handleReduceVideos =async (inputFile: string) => {
                         {
                             "Preset": "System-Generic_Hd_Mp4_Av1_Aac_16x9_1280x720p_25Hz_2Mbps_Qvbr_Vq7",
                             "Extension": ".mp4",
-                            "NameModifier": "-Small"
+                            "NameModifier": "-small"
                         },
                     ],
 
                     OutputGroupSettings: {
                         Type: "FILE_GROUP_SETTINGS",
                         FileGroupSettings: {
-                            Destination: `s3://${awsBucketName}/Video/Small/`
+                            Destination: destination
                         }
                     }
                 },
@@ -71,14 +72,14 @@ export const handleReduceVideos =async (inputFile: string) => {
                         {
                             "Preset": "System-Generic_Sd_Mp4_Avc_Aac_4x3_640x480p_24Hz_1.5Mbps",
                             "Extension": ".webm",
-                            "NameModifier": "-Thumbnail"
+                            "NameModifier": "-thumbnail"
                         },
                     ],
 
                     OutputGroupSettings: {
                         Type: "FILE_GROUP_SETTINGS",
                         FileGroupSettings: {
-                            Destination:`s3://${awsBucketName}/Video/Thumbnail/`
+                            Destination:destination
                         }
                     }
                 }
@@ -105,16 +106,16 @@ export const handleReduceVideos =async (inputFile: string) => {
 
     try {
         const data = await emcClient.send(new CreateJobCommand(params));
-        console.log("Job created!", data);
-        return data;
+        
+        return data.Job?.Id;
       } catch (err) {
         console.log("Error", err);
     }
     
 };
 
-export const handleVideoWithWaterMark = async (inputFile: string) => {
-
+export const handleVideoWithWaterMark = async (inputFile: string,uuid:string) => {
+    const destination = `s3://${awsBucketName}/${uuid}/video/`;
     const params:any = {
         Queue: awsMediaConvertQueue,
         UserMetadata: {},
@@ -130,14 +131,14 @@ export const handleVideoWithWaterMark = async (inputFile: string) => {
                         {
                             "Preset": "System-Generic_Hd_Mp4_Av1_Aac_16x9_1280x720p_25Hz_2Mbps_Qvbr_Vq7",
                             "Extension": ".webm",
-                            "NameModifier": "-ProductPage",
+                            "NameModifier": "-product_page",
                         },
                     ],
 
                     OutputGroupSettings: {
                         Type: "FILE_GROUP_SETTINGS",
                         FileGroupSettings: {
-                            Destination:`s3://${awsBucketName}/Video/ProductPage/`
+                            Destination: destination
                         }
                     }
                 }
@@ -174,56 +175,31 @@ export const handleVideoWithWaterMark = async (inputFile: string) => {
     }
     try {
         const data = await emcClient.send(new CreateJobCommand(params));
-        console.log("Job created!", data);
-        return data;
+        
+        return data.Job?.Id;
       } catch (err) {
         console.log("Error", err);
     }
 
 }
 
-export const getTranscodeProgress =async ()=>{
-    const params:any = {
-        MaxResults: 10,
-        Order: "ASCENDING",
-        Queue: awsMediaConvertQueue,
-        Status: "PROGRESSING",
+export const getTranscodeStatus =async (jobId:string)=>{
+    const input:any = {
+        Id:jobId
       };
 
+      console.log(input)
+     
+
       try {
-        const data = await emcClient.send(new ListJobsCommand(params));
-        console.log("Success. Jobs: ", data.Jobs);
-        return data;
+        const data = await emcClient.send(new GetJobCommand(input));
+        console.log(data);
+        
+        return {status:data.Job?.Status,completePercentage:data.Job?.JobPercentComplete};
       } catch (err) {
         console.log("Error", err);
       }
 }
-
-
-
-// export const getTranscodeProgress = (JobId: string): Promise<{ jobStatus: string; jobProgress: number }> => {
-//     return new Promise((resolve, reject) => {
-//         mediaconvert.getJob({ Id: JobId }, (err, data) => {
-//             if (err) {
-//                 console.error("Error while getting the job", err);
-//                 reject(err); // Reject the Promise in case of an error
-//             } else {
-
-//                 const jobStatus = data?.Job?.Status;
-//                 const jobProgress = data?.Job?.JobPercentComplete || -1;
-//                 console.log({ jobStatus, jobProgress });
-//                 if (jobStatus) {
-//                     resolve({ jobStatus, jobProgress }); // Resolve the Promise with the result
-//                 } else {
-//                     reject(new Error("Job status or progress not available."));
-//                 }
-//             }
-//         });
-//     });
-// };
-
-
-
 
 
 
