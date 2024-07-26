@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { IoBagHandleSharp } from "react-icons/io5";
+import {images} from "../../../../public/images/image"
+// const logo = require( '../../../../public/images/logo.png' );
 
 const Page = () =>
 {
@@ -116,13 +118,7 @@ const Page = () =>
       <style jsx>{ `.required-label::after { content: "*"; color: red; margin-left: 0.25rem; }` }</style>;
       <div className="flex flex-col items-center justify-center min-h-screen relative px-4 sm:px-6 lg:px-8">
         <div className="flex items-center mb-6 absolute top-12 gap-3">
-          <div className="w-14 h-14 bg-white border border-gray-300 flex justify-center items-center rounded-xl shadow-xl">
-            <IoBagHandleSharp className="text-[#65A30D] h-10 w-10 rounded-md" />
-          </div>
-
-          <div>
-            <h1 className="mt-2 text-2xl font-semibold">Durara</h1>
-          </div>
+        <img src={images.logo} alt="logo" /> 
         </div>
 
         <div className="w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-md p-8 bg-white border rounded-lg shadow-md">
@@ -201,15 +197,7 @@ const Page = () =>
           <p className="underline text-black hover:text-blue-800 mt-2">
             Terms and Conditions
           </p>
-          <p className="mt-4 text-sm text-gray-600">
-            Have an account?{ " " }
-            <a
-              href="/admin/login"
-              className="underline text-blue-600 hover:text-blue-800"
-            >
-              Sign up
-            </a>
-          </p>
+         
         </div>
       </div>
       { showForgotPasswordModal && (
