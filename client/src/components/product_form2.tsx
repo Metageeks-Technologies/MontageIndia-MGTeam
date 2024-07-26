@@ -1,71 +1,174 @@
 import axios from 'axios';
-import { headers } from 'next/headers';
 import React, { useState, useCallback } from 'react';
-import { useDropzone } from 'react-dropzone';
- 
+import { Accept, useDropzone } from 'react-dropzone';
 
-const Form2 = ({ onPrev, onNext }: any) => {
+
+interface FormData {
+  uuid: string;
+  mediaType: string;
+}
+
+const Form2 = ({ onPrev, onNext, formData }: any) => {
   const [file, setFile] = useState<File | null>(null);
   const [error, setError] = useState('');
   const [name, setName] = useState('');
 
+  const datas = formData || {}; // Default to an empty object if formData is undefined
+  const data = datas.product;
+  
+
+  const validateFileType = (fileType: string): boolean => {
+    if (!data.mediaType) {
+      return true; // No mediaType specified, allow any file type
+    }
+
+    switch (data.mediaType) {
+      case 'image':
+        return fileType.startsWith('image/');
+      case 'audio':
+        return fileType.startsWith('audio/');
+      case 'video':
+        return fileType.startsWith('video/');
+      default:
+        return false;
+    }
+  };
+
   const onDrop = useCallback((acceptedFiles: File[]) => {
     const selectedFile = acceptedFiles[0];
     if (selectedFile) {
-      console.log(selectedFile)
-      const fileType = selectedFile.type;
-      const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'audio/*','audio/mp3', 'video/*'];
-      
-      // if (validTypes.some(type => fileType.startsWith(type))) {
+      console.log("Selected media type:", data.mediaType);
+      console.log("Selected file type:", selectedFile.type);
+      if (validateFileType(selectedFile.type)) {
         setFile(selectedFile);
         setName(selectedFile.name);
         setError('');
-      // } else {
-      //   setFile(null);
-      //   setName('');
-      //   setError('Invalid file type. Please upload an image, audio, or video file.');
-      // }
+      } else {
+        setError(`Selected file type does not match the expected media type (${data.mediaType}).`);
+      }
     }
-  }, []);
+  }, [data.mediaType]);
+
+  const getAcceptableFileTypes = (): Accept => {
+    if (!data.mediaType) {
+      return {}; // Default to no specific types if mediaType is not defined
+    }
+
+    switch (data.mediaType) {
+      case 'image':
+        return { 'image/*': ['.jpeg', '.jpg', '.png'] };
+      case 'audio':
+        return { 'audio/*': ['.mp3', '.wav'] };
+      case 'video':
+        return { 'video/*': ['.mp4', '.avi'] };
+      default:
+        return {}; // No specific file types if mediaType is unknown
+    }
+  };
 
   const { getRootProps, getInputProps } = useDropzone({
     onDrop,
-    accept: {
-      'image/*': ['.jpeg', '.jpg', '.png'],
-      'audio/*': ['.mp3', '.wav'],
-      'video/*': ['.mp4', '.avi'],
-    },
-        maxFiles: 1,
+    accept: getAcceptableFileTypes(),
+    maxFiles: 1,
   });
 
-  const handleSubmit =async () => {
+  const handleImageSubmit = async (file:any, data:any) => {
     const formData = new FormData();
-
-    if (file) {
-
-
-    formData.append("audio", file);
-    formData.append('uuid', JSON.stringify("1234"))
-    formData.append("mediaType", JSON.stringify("audio"));
-      console.log(process.env.NEXT_PUBLIC_SERVER_URL)
-
-      const response = await axios.post(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/v1/media/audio/reduce`, formData, {
+    formData.append('file', file);
+    formData.append('uuid', data.uuid);
+    formData.append('mediaType', data.mediaType);
+  
+    const url = `${process.env.NEXT_PUBLIC_SERVER_URL}/api/v1/media/image/reduce`;
+  
+    try {
+      const response = await axios.post(url, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
       });
-      console.log(response)
-      // Handle file upload
-      // const data=await axios.post(``)
-      console.log('File ready for upload:', file);
-      // if(response.status)
-      onNext();
+      if (response.status === 201) {
+        const responseData = response.data;
+        console.log('Upload success:', responseData);
+        onNext(responseData);
+      }
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      setError('An error occurred while uploading the image.');
+    }
+  };
+  
+  const handleAudioSubmit = async (file:any, data:any) => {
+    const formDatas = new FormData();
+    formDatas.append('file', file);
+    formDatas.append('uuid', data.uuid);
+    formDatas.append('mediaType', data.mediaType);
+  
+    const url = `${process.env.NEXT_PUBLIC_SERVER_URL}/api/v1/media/audio/reduce`;
+  
+    try {
+      console.log("sdsd",formDatas)
+      console.log("first",data.uuid)
+      
+      const response = await axios.post(url, formDatas, {
+        headers: {
+          "Content-Type": "multipart/form-data",        },
+      });
+      if (response.status === 201) {
+        const responseData = response.data;
+        console.log('Upload success:', responseData);
+        onNext(responseData);
+      }
+    } catch (error) {
+      console.error('Error uploading audio:', error);
+      setError('An error occurred while uploading the audio.');
+    }
+  };
+  
+  const handleVideoSubmit = async (file:any, data:any) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('uuid', JSON.stringify(data.uuid));
+    formData.append('mediaType', JSON.stringify(data.mediaType));
+  
+    const url = `${process.env.NEXT_PUBLIC_SERVER_URL}/api/v1/media/video/reduce`;
+  
+    try {
+      const response = await axios.post(url, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      if (response.status === 201) {
+        const responseData = response.data;
+        console.log('Upload success:', responseData);
+        onNext(responseData);
+      }
+    } catch (error) {
+      console.error('Error uploading video:', error);
+      setError('An error occurred while uploading the video.');
+    }
+  };
+  
+  const handleSubmit = async () => {
+    if (file) {
+      switch (data.mediaType) {
+        case 'image':
+          await handleImageSubmit(file, data);
+          break;
+        case 'audio':
+          await handleAudioSubmit(file, data);
+          break;
+        case 'video':
+          await handleVideoSubmit(file, data);
+          break;
+        default:
+          setError('Invalid media type.');
+      }
     } else {
-      onNext();
-
       setError('Please select a valid file before submitting.');
     }
   };
+  
 
   return (
     <div className='flex flex-col items-center w-full m-auto gap-5 mt-16 h-full justify-center'>
