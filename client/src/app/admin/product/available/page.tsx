@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { product } from "../../../db";
 
 import Link from "next/link";
-import Sidebar from "../../componets/sidebar";
+
 
 // Define the interfaces for the product and variant types
 interface Variant {
@@ -49,9 +49,9 @@ const Home: React.FC = () => {
   };
 
   return (
-    <div className="flex">
-      <Sidebar />
-      <div className="container mx-auto mb-5 px-4">
+   
+      
+      <div className="container mx-auto  p-4 sm:pl-64">
         <div className="flex justify-between items-center my-6">
           <input
             type="text"
@@ -190,7 +190,7 @@ const Home: React.FC = () => {
           </button>
         </div>
       </div>
-    </div>
+    
   );
 };
 

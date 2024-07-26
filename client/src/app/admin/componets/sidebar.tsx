@@ -61,7 +61,7 @@ const Sidebar = () =>
 
   return (
     <div className="flex">
-      <button data-drawer-target="sidebar-multi-level-sidebar" data-drawer-toggle="sidebar-multi-level-sidebar" aria-controls="sidebar-multi-level-sidebar" type="button" className="inline-flex items-center p-2 mt-2 ms-3 text-sm text-gray-500 rounded-lg sm:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600">
+      <button data-drawer-target="sidebar-multi-level-sidebar" data-drawer-toggle="sidebar-multi-level-sidebar" aria-controls="sidebar-multi-level-sidebar" type="button" className="inline-flex items-center p-2 mt-2 ms-3 text-sm text-gray-500 rounded-lg sm:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200    dark:focus:ring-gray-600">
         <span className="sr-only">Open sidebar</span>
         <svg className="w-6 h-6" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
           <path clipRule="evenodd" fillRule="evenodd" d="M2 4.75A.75.75 0 012.75 4h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 4.75zm0 10.5a.75.75 0 01.75-.75h7.5a.75.75 0 010 1.5h-7.5a.75.75 0 01-.75-.75zM2 10a.75.75 0 01.75-.75h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 10z"></path>
@@ -69,7 +69,7 @@ const Sidebar = () =>
       </button>
 
       <aside id="sidebar-multi-level-sidebar" className="fixed top-0 left-0 z-40 w-64 h-screen transition-transform -translate-x-full sm:translate-x-0 bg-gray-7  00" aria-label="Sidebar">
-        <div className="h-full px-3 py-4 overflow-y-auto bg-gray-50 dark:bg-gray-800">
+        <div className="h-full px-3 py-4 overflow-y-auto bg-[#ececed] ">
           <div className="flex items-center mb-4">
             <img src={ images.logo.src } alt="logo" className="h-8 mr-3" />
           </div>
@@ -85,14 +85,14 @@ const Sidebar = () =>
 
           <ul className="space-y-2 font-medium">
             <li onClick={()=>router.push('/admin/dashboard')} className="cursor-pointer">
-              <a  className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
-                <FaHome className="w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" />
+              <a  className="flex items-center p-2 text-gray-900 rounded-lg  hover:bg-gray-100   group">
+                <FaHome className="w-5 h-5 text-gray-500 transition duration-75  group-hover:text-gray-900 " />
                 <span className="ms-3">Home</span>
               </a>
             </li>
             <li>
-              <button onClick={ toggleProductMenu } className="flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700">
-                <BiCategoryAlt className="w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" />
+              <button onClick={ toggleProductMenu } className="flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-100   ">
+                <BiCategoryAlt className="w-5 h-5 text-gray-500 transition duration-75  group-hover:text-gray-900  " />
                 <span className="flex-1 ms-3 text-left rtl:text-right whitespace-nowrap">Product</span>
                 { isProductOpen ? (
                   <MdOutlineKeyboardArrowUp className="w-5 h-5" />
@@ -102,17 +102,17 @@ const Sidebar = () =>
               </button>
               { isProductOpen && (
                 <ul className="py-2 space-y-2">
-                  <li onClick={ handleAvailable } className="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700 cursor-pointer">Available</li>
-                  <li className="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700 cursor-pointer">Draft</li>
-                  <li onClick={ handleunarchive } className="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700 cursor-pointer">Archived</li>
-                  <li onClick={ handleunavailable } className="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700 cursor-pointer">Unavailable</li>
-                  <li className="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700">Create</li>
+                  <li onClick={ handleAvailable } className="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100    cursor-pointer">Available</li>
+                  <li className="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100    cursor-pointer">Draft</li>
+                  <li onClick={ handleunarchive } className="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100    cursor-pointer">Archived</li>
+                  <li onClick={ handleunavailable } className="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100    cursor-pointer">Unavailable</li>
+                  <li className="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100   ">Create</li>
                 </ul>
               ) }
             </li>
             <li>
-              <button onClick={ toggleUserMenu } className="flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700">
-                <FaUserFriends className="w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" />
+              <button onClick={ toggleUserMenu } className="flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-100   ">
+                <FaUserFriends className="w-5 h-5 text-gray-500 transition duration-75  group-hover:text-gray-900  " />
                 <span className="flex-1 ms-3 text-left rtl:text-right whitespace-nowrap">User</span>
                 { isUserOpen ? (
                   <MdOutlineKeyboardArrowUp className="w-5 h-5" />
@@ -122,35 +122,30 @@ const Sidebar = () =>
               </button>
               { isUserOpen && (
                 <ul className="py-2 space-y-2">
-                  <li className="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700 cursor-pointer" onClick={ () => router.push( "/admin/user/userList" ) }>User List</li>
-                  <li className="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700 cursor-pointer" onClick={ () => router.push( "/admin/user/user-create" ) }>User Create</li>
+                  <li className="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100    cursor-pointer" onClick={ () => router.push( "/admin/user/userList" ) }>User List</li>
+                  <li className="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100    cursor-pointer" onClick={ () => router.push( "/admin/user/user-create" ) }>User Create</li>
                 </ul>
               ) }
             </li>
             <li>
-              <a href="#" className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
-                <FaUsers className="w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" />
+              <a href="#" className="flex items-center p-2 text-gray-900 rounded-lg  hover:bg-gray-100   group">
+                <FaUsers className="w-5 h-5 text-gray-500 transition duration-75  group-hover:text-gray-900  " />
                 <span className="flex-1 ms-3 whitespace-nowrap">Customers</span>
               </a>
             </li>
             <li>
-              <a href="#" className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
-                <FaBullhorn className="w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" />
+              <a href="#" className="flex items-center p-2 text-gray-900 rounded-lg  hover:bg-gray-100   group">
+                <FaBullhorn className="w-5 h-5 text-gray-500 transition duration-75  group-hover:text-gray-900  " />
                 <span className="flex-1 ms-3 whitespace-nowrap">Marketing</span>
               </a>
             </li>
             <li>
-              <a href="#" className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
-                <FaChartBar className="w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" />
+              <a href="#" className="flex items-center p-2 text-gray-900 rounded-lg  hover:bg-gray-100   group">
+                <FaChartBar className="w-5 h-5 text-gray-500 transition duration-75  group-hover:text-gray-900  " />
                 <span className="flex-1 ms-3 whitespace-nowrap">Analytics</span>
               </a>
             </li>
-            <li>
-              <a href="#" className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
-                <FaShoppingCart className="w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" />
-                <span className="flex-1 ms-3 whitespace-nowrap">Online Store</span>
-              </a>
-            </li>
+          
             <li className="mb-1 px-4 py-2 hover:bg-gray-200 flex justify-between">
               <a href="#" className="flex items-center text-gray-800">
                 <MdOutlineKeyboardArrowDown className="w-6 h-6 mr-3" />
