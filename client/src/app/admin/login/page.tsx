@@ -76,7 +76,7 @@ const Page = () =>
         <div className="flex items-center mb-6 absolute top-12 gap-3">
 
           <div className="w-48 h-14 bg-white border border-gray-300 flex justify-center items-center rounded-xl shadow-xl">          
-            <img src={ images.logo.src } alt="logo" /> 
+              <img src={ images.logo.src } alt="logo" /> 
           </div>
          
         </div>

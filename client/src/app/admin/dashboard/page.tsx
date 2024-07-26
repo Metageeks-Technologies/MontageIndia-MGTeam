@@ -7,11 +7,8 @@ import { RiGlobalLine,RiVipCrown2Line } from "react-icons/ri";
 const page = () => {
   return (
     <div className="main">
-      <div className="flex">
-        <div>
-          <Sidebar />
-        </div>
-
+      {/* <Sidebar /> */}
+      <div className="flex ml-64  ">
         <div className="flex-1 bg-white p-6">
           {/* Welcome Section */}
           <div className="flex justify-between items-center mb-6">

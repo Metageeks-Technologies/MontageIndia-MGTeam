@@ -20,7 +20,8 @@ const notifyError = (message: string) =>
     pauseOnHover: true,
     draggable: true,
     progress: undefined,
-  });
+  } );
+  
 const notifyWarn = (message: string) =>
   toast.warn(message, {
     position: 'top-center',
@@ -30,7 +31,8 @@ const notifyWarn = (message: string) =>
     pauseOnHover: true,
     draggable: true,
     progress: undefined,
-  });
+  } );
+  
 const notifyInfo = (message: string) =>
   toast.info(message, {
     position: 'top-center',
@@ -40,6 +42,7 @@ const notifyInfo = (message: string) =>
     pauseOnHover: true,
     draggable: true,
     progress: undefined,
-  });
+  } );
+    
 
 export { notifySuccess, notifyError, notifyWarn, notifyInfo };
