@@ -1,12 +1,14 @@
 import { Document } from "mongoose";
 export type TAdmin = Document & {
     name: string;
+    username:string;
     email: string;
-    uid: string;
     password: string;
-    role: 'superAdmin' | 'admin' | 'vendor';
+    role: 'superAdmin' | 'admin';
     category: string;
     mediaType: String;
+    resetPasswordToken: string | undefined;
+    resetPasswordExpires: Number | undefined;
     createJWT(): string;
     comparePassword(givenPassword: string): Promise<boolean>;
 }
