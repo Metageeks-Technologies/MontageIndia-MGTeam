@@ -168,30 +168,8 @@ export const product = [
     "publicKey": "https://robohash.org/sunteaprovident.png?size=50x50&set=set1",
     "thumbnaiKey": "https://robohash.org/nonexvoluptatum.png?size=50x50&set=set1"
   },
-  {
-    "id": "8",
-    "slug": "Muffin - Bran Ind Wrpd",
-    "title": "Juice - Tomato, 48 Oz",
-    "description": "Fusce posuere felis sed lacus. Morbi sem mauris, laoreet ut, rhoncus aliquet, pulvinar sed, nisl. Nunc rhoncus dui vel sem.\n\nSed sagittis. Nam congue, risus semper porta volutpat, quam pede lobortis ligula, sit amet eleifend pede libero quis orci. Nullam molestie nibh in lectus.\n\nPellentesque at nulla. Suspendisse potenti. Cras in purus eu magna vulputate luctus.",
-    "tags": ["awesome", "health"],
-    "variants": [],
-    "status": "unavailable",
-    "mediaType": "audio",
-    "publicKey": "https://robohash.org/sitaliassunt.png?size=50x50&set=set1",
-    "thumbnaiKey": "https://robohash.org/voluptatibusettenetur.png?size=50x50&set=set1"
-  },
-  {
-    "id": "9",
-    "slug": "Juice - Orange, Concentrate",
-    "title": "Stock - Fish",
-    "description": "Donec diam neque, vestibulum eget, vulputate ut, ultrices vel, augue. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Donec pharetra, magna vestibulum aliquet ultrices, erat tortor sollicitudin mi, sit amet lobortis sapien sapien non mi. Integer ac neque.\n\nDuis bibendum. Morbi non quam nec dui luctus rutrum. Nulla tellus.",
-    "tags": ["celebration", "peace", "awesome", "calm", "motivation"],
-    "variants": [],
-    "status": "archived",
-    "mediaType": "audio",
-    "publicKey": "https://robohash.org/minusinquam.png?size=50x50&set=set1",
-    "thumbnaiKey": "https://robohash.org/rerumiuread.png?size=50x50&set=set1"
-  },
+  
+ 
   {
     "id": "10",
     "slug": "Stock - Veal, Brown",
@@ -365,17 +343,6 @@ export const product = [
     "thumbnaiKey": "https://robohash.org/excepturirationeaut.png?size=50x50&set=set1"
   },
   {
-    "slug": "Quail - Whole, Boneless",
-    "title": "Soup - Campbells, Classic Chix",
-    "description": "Maecenas leo odio, condimentum id, luctus nec, molestie sed, justo. Pellentesque viverra pede ac diam. Cras pellentesque volutpat dui.\n\nMaecenas tristique, est et tempus semper, est quam pharetra magna, ac consequat metus sapien ut nunc. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Mauris viverra diam vitae quam. Suspendisse potenti.",
-    "tags": ["health", "celebration", "motivation"],
-    "variants": [],
-    "status": "archived",
-    "mediaType": "image",
-    "publicKey": "https://robohash.org/eiusiuremolestiae.png?size=50x50&set=set1",
-    "thumbnaiKey": "https://robohash.org/voluptatemquidoloremque.png?size=50x50&set=set1"
-  },
-  {
     "slug": "Ice Cream Bar - Rolo Cone",
     "title": "Waffle Stix",
     "description": "Duis consequat dui nec nisi volutpat eleifend. Donec ut dolor. Morbi vel lectus in quam fringilla rhoncus.\n\nMauris enim leo, rhoncus sed, vestibulum sit amet, cursus id, turpis. Integer aliquet, massa id lobortis convallis, tortor risus dapibus augue, vel accumsan tellus nisi eu orci. Mauris lacinia sapien quis libero.",
@@ -445,17 +412,7 @@ export const product = [
     "publicKey": "https://robohash.org/quidemsednesciunt.png?size=50x50&set=set1",
     "thumbnaiKey": "https://robohash.org/officiavoluptateet.png?size=50x50&set=set1"
   },
-  {
-    "slug": "Dried Apple",
-    "title": "Cup Translucent 9 Oz",
-    "description": "Maecenas ut massa quis augue luctus tincidunt. Nulla mollis molestie lorem. Quisque ut erat.",
-    "tags": ["health", "peace", "celebration", "awesome"],
-    "variants": [],
-    "status": "archived",
-    "mediaType": "audio",
-    "publicKey": "https://robohash.org/abdoloreos.png?size=50x50&set=set1",
-    "thumbnaiKey": "https://robohash.org/officiaautest.png?size=50x50&set=set1"
-  },
+ 
   {
     "slug": "Wine - Lou Black Shiraz",
     "title": "Corn Syrup",
@@ -1022,17 +979,7 @@ export const product = [
     "publicKey": "https://robohash.org/ducimusvoluptatumet.png?size=50x50&set=set1",
     "thumbnaiKey": "https://robohash.org/voluptatemeosut.png?size=50x50&set=set1"
   },
-  {
-    "slug": "Muffin - Bran Ind Wrpd",
-    "title": "Potatoes - Mini Red",
-    "description": "Vestibulum quam sapien, varius ut, blandit non, interdum in, ante. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Duis faucibus accumsan odio. Curabitur convallis.\n\nDuis consequat dui nec nisi volutpat eleifend. Donec ut dolor. Morbi vel lectus in quam fringilla rhoncus.",
-    "tags": ["celebration", "motivation", "awesome"],
-    "variants": [],
-    "status": "archived",
-    "mediaType": "image",
-    "publicKey": "https://robohash.org/nihilsedest.png?size=50x50&set=set1",
-    "thumbnaiKey": "https://robohash.org/ametdoloresaut.png?size=50x50&set=set1"
-  },
+  
   {
     "slug": "Broom - Corn",
     "title": "Tea - Mint",
@@ -1124,15 +1071,5 @@ export const product = [
     "publicKey": "https://robohash.org/debitistotamvoluptate.png?size=50x50&set=set1",
     "thumbnaiKey": "https://robohash.org/utquiaatque.png?size=50x50&set=set1"
   },
-  {
-    "slug": "Wine - Toasted Head",
-    "title": "Sea Urchin",
-    "description": "Duis aliquam convallis nunc. Proin at turpis a pede posuere nonummy. Integer non velit.",
-    "tags": ["peace", "health"],
-    "variants": [],
-    "status": "draft",
-    "mediaType": "image",
-    "publicKey": "https://robohash.org/suntnihilsunt.png?size=50x50&set=set1",
-    "thumbnaiKey": "https://robohash.org/utautporro.png?size=50x50&set=set1"
-  }
+  
 ]

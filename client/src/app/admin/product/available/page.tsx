@@ -1,8 +1,9 @@
 "use client";
 import React, { useState } from "react";
 import { product } from "../../../db";
-import Sidebar from "../../componets/sidebar";
+
 import Link from "next/link";
+import Sidebar from "../../componets/sidebar";
 
 // Define the interfaces for the product and variant types
 interface Variant {
@@ -21,13 +22,14 @@ interface Product {
   mediaType: string;
   publicKey: string;
   thumbnailKey: string;
+  id: string;
 }
 
 const Home: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const productsPerPage = 6;
 
-  // Filter products by status
+  // Filter products by status "available"
   const availableProducts = product.filter(
     (prod) => prod.status === "available"
   );
@@ -48,86 +50,115 @@ const Home: React.FC = () => {
 
   return (
     <div className="flex">
-      <div>
-        <Sidebar />
-      </div>
-      <div className="container mb-5">
-        <div className="mt-10">
-          <h1 className="text-center text-2xl">Available page</h1>
+      <Sidebar />
+      <div className="container mx-auto mb-5 px-4">
+        <div className="flex justify-between items-center my-6">
+          <input
+            type="text"
+            placeholder="Search products"
+            className="border rounded px-4 py-2 w-full max-w-md"
+          />
+          <h1 className="bg-green-500 text-white px-4 py-2 rounded ml-2">
+            Available Product
+          </h1>
         </div>
-        <div className="grid grid-cols-3 gap-5 rounded-md">
-          {currentProducts.map((prod) => (
-            <div
-              key={prod.id}
-              className="w-full shadow-lg m-4 bg-white rounded-md"
-            >
-              <img
-                className="w-full h-48 object-cover"
-                src={prod.thumbnailKey}
-                alt={prod.title}
-              />
-              <div className="px-6 py-4">
-                <div className="flex justify-between">
-                  <p className="font-bold text-xl mb-2">{prod.title}</p>
-                  <Link
+        <div className="flex justify-between items-center mb-4">
+          <div>
+            <button className="bg-gray-200 px-4 py-2 rounded">
+              Show All Products
+            </button>
+          </div>
+          <div>
+            <select className="border rounded px-4 py-2">
+              <option>6 Data per page</option>
+              <option>12 Data per page</option>
+              <option>24 Data per page</option>
+            </select>
+          </div>
+        </div>
+        <div className="bg-white shadow-md rounded-lg overflow-hidden">
+          <table className="min-w-full leading-normal">
+            <thead>
+              <tr>
+                <th className="px-5 py-3 bg-gray-100 border-b border-gray-200 text-gray-800 text-left text-sm uppercase font-normal">
+                  <input type="checkbox" />
+                </th>
+                <th className="px-5 py-3 bg-gray-100 border-b border-gray-200 text-gray-800 text-left text-sm uppercase font-normal">
+                  Product
+                </th>
+                <th className="px-5 py-3 bg-gray-100 border-b border-gray-200 text-gray-800 text-left text-sm uppercase font-normal">
+                  Status
+                </th>
+                <th className="px-5 py-3 bg-gray-100 border-b border-gray-200 text-gray-800 text-left text-sm uppercase font-normal">
+                  Price
+                </th>
+                <th className="px-5 py-3 bg-gray-100 border-b border-gray-200 text-gray-800 text-left text-sm uppercase font-normal">
+                  Inventory
+                </th>
+                <th className="px-5 py-3 bg-gray-100 border-b border-gray-200 text-gray-800 text-left text-sm uppercase font-normal">
+                  Action
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {currentProducts.map((prod) => (
+                <tr key={prod.id}>
+                  <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                    <input type="checkbox" />
+                  </td>
+                  <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                    <div className="flex items-center">
+                      <div className="flex-shrink-0">
+                        <img
+                          className="w-10 h-10 rounded"
+                          src={prod.thumbnailKey}
+                          alt={prod.title}
+                        />
+                      </div>
+                      <div className="ml-3">
+                        <p className="text-gray-900 whitespace-no-wrap">
+                          {prod.title}
+                        </p>
+                      </div>
+                    </div>
+                  </td>
+                  <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                    <span className="relative inline-block px-3 py-1 font-semibold leading-tight text-green-900">
+                      <span
+                        aria-hidden
+                        className="absolute inset-0 opacity-50 bg-green-200 rounded-full"
+                      ></span>
+                      <span className="relative">{prod.status}</span>
+                    </span>
+                  </td>
+                  <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                    <p className="text-gray-900 whitespace-no-wrap">
+                      ${prod.variants[0].price.toLocaleString()}
+                    </p>
+                  </td>
+                  <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                    <p className="text-gray-900 whitespace-no-wrap">
+                      100 stock for 1 variants
+                    </p>
+                  </td>
+                  <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm ">
+                    <button className="text-gray-600 hover:text-gray-900">
+                    <Link
                     href={`productEdit/${prod.id}`}
                     className="bg-slate-200 px-6 py-0.5 flex items-center rounded-lg"
                   >
                     Edit
                   </Link>
-                </div>
-                <p className="text-gray-700 text-base mb-4">
-                  {prod.description}
-                </p>
-                <p
-                  className={`text-sm font-semibold mb-2 ${
-                    prod.status === "available"
-                      ? "text-green-500"
-                      : "text-red-500"
-                  }`}
-                >
-                  {prod.status}
-                </p>
-
-                <div className="flex flex-wrap">
-                  {prod.tags.map((tag, index) => (
-                    <span
-                      key={index}
-                      className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2"
-                    >
-                      #{tag}
-                    </span>
-                  ))}
-                </div>
-              </div>
-              <div className="px-6 py-4 border-t border-gray-200 grid grid-cols-4">
-                {prod.variants.slice(0, 4).map((variant, index) => (
-                  <div
-                    key={index}
-                    className="flex flex-col justify-center items-center mb-2 gap-2"
-                  >
-                    <img
-                      className="w-8 h-8 rounded-full"
-                      src={variant.key}
-                      alt={variant.label}
-                    />
-                    <div className="text-sm">
-                      <p className="text-gray-900 leading-none text-center">
-                        {variant.label}
-                      </p>
-                      <p className="text-gray-600">
-                        ${variant.price.toFixed(2)}
-                      </p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          ))}
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
 
         {/* Pagination Controls */}
-        <div className="flex justify-center mt-6">
+        <div className="flex  items-center mt-6">
           <button
             onClick={() => handlePageChange(currentPage - 1)}
             disabled={currentPage === 1}
@@ -135,19 +166,21 @@ const Home: React.FC = () => {
           >
             Previous
           </button>
-          {[...Array(totalPages)].map((_, index) => (
-            <button
-              key={index}
-              onClick={() => handlePageChange(index + 1)}
-              className={`px-4 py-2 mx-1 ${
-                currentPage === index + 1
-                  ? "bg-blue-500 text-white"
-                  : "bg-gray-200 text-gray-700"
-              } rounded`}
-            >
-              {index + 1}
-            </button>
-          ))}
+          <div className="flex">
+            {[...Array(totalPages)].map((_, index) => (
+              <button
+                key={index}
+                onClick={() => handlePageChange(index + 1)}
+                className={`px-4 py-2 mx-1 ${
+                  currentPage === index + 1
+                    ? "bg-green-500 text-white"
+                    : "bg-gray-200 text-gray-700"
+                } rounded`}
+              >
+                {index + 1}
+              </button>
+            ))}
+          </div>
           <button
             onClick={() => handlePageChange(currentPage + 1)}
             disabled={currentPage === totalPages}
