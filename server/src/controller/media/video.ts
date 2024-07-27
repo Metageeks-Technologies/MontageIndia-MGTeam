@@ -1,8 +1,7 @@
-import dotenv from 'dotenv';
 import catchAsyncError from "@src/middleware/catchAsyncError";
 import { getTranscodeStatus} from "@src/lib/resizeVideo";
 import { getUrl } from "@src/lib/uploadToS3";
-dotenv.config();
+
 
 export const uploadVideo = catchAsyncError(async (req, res, next) => {
     const { uuid,filename } = req.query;
@@ -10,9 +9,8 @@ export const uploadVideo = catchAsyncError(async (req, res, next) => {
     const name = filename as string;
     const nameArr= name.split('.');
     const fileExtension = nameArr[nameArr.length-1];
-   const uuidStr = uuid as string;
-   const key  = uuidStr+'.'+fileExtension;
-   console.log(key);
+    const uuidStr = uuid as string;
+    const key  = uuidStr+'.'+fileExtension;
     const url = await getUrl(key)
     res.json({ success: true, url });
 });
@@ -37,7 +35,8 @@ export const getJobStatus = catchAsyncError(async (req, res, next) => {
             status,
             percentage:mainStatus?.completePercentage
     } });
-})
+});
+
 
 
 
