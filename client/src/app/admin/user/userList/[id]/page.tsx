@@ -34,7 +34,7 @@ export default function UserDetails ( { params }: { params: { id: string; }; } )
   {
     try
     {
-      const response = await instance.get( `/auth/admin/${ id }` );
+      const response = await instance.get( `/auth/admin/${ id }`,{withCredentials: true} );
       if ( response.data && response.data.user )
       {
         // console.log( response.data.user );
@@ -59,12 +59,16 @@ export default function UserDetails ( { params }: { params: { id: string; }; } )
 
     try
     {
-      const response = await instance.put( `/auth/admin/${ id }`, user );
-      if ( response.data && response.data.user )
+      const response = await instance.patch( `/auth/admin/updateAdmin/${ id }`, user,{withCredentials: true} );
+      console.log("response:", response );
+      if ( response.data.success
+ && response.data.admin )
       {
         console.log( response.data.user );
         setUser( response.data.user );
         setIsEditing( false );
+        fetchUser();
+        notifySuccess(response.data.message );
       }
 
     } catch ( error )
@@ -111,12 +115,16 @@ export default function UserDetails ( { params }: { params: { id: string; }; } )
             {/* <div className="w-32 h-32 mx-auto bg-gray-300 rounded-full flex items-center justify-center text-4xl font-bold text-white">
               { user.name.charAt( 0 ) }
             </div> */}
+            {/* <div className='flex flex-row justify-center items-center gap-4'> */}
             <h2 className="mt-4 text-2xl font-semibold">{ user.name }</h2>
-            <p className="text-gray-600">{ user.email }</p>
+            <p className="text-gray-600 text-md italic ">{ user.username }</p>
+            {/* </div> */}
+            
+            <p className="text-gray-600 text-md"> Email: { user.email }</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             { Object.entries( user ).map( ( [ key, value ] ) => (
-              key !== '_id' && key !== 'createdAt' && key !== 'updatedAt' && key !== '__v' && key !== 'resetPasswordExpires' && key !== 'resetPasswordToken' && (
+              key !== '_id'&& key!=='username' && key!=="uid" && key!=="avatar" && key !== 'createdAt' && key !== 'updatedAt' && key !== '__v' && key !== 'resetPasswordExpires' && key !== 'resetPasswordToken' && (
                 <div key={ key } className="flex flex-col">
                   <label className="text-sm font-medium text-gray-700 mb-1 capitalize">
                     { key.replace( /([A-Z])/g, ' $1' ).trim() }

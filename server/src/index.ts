@@ -11,11 +11,16 @@ import errorMiddleware from './middleware/error.js';
 import {processSQSMessages} from "@src/lib/sqsQueue.js"
 import config from "@src/utils/config.js"
 import productRouter from "@src/routes/product/product"
+import cookieParser from 'cookie-parser';
 const {mongoUrl}=config;
 
 const app: Express = express();
-app.use(cors());
+app.use(cors({
+  origin: process.env.CLIENT_URL,
+  credentials: true 
+}));
 app.use(express.json());
+app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 app.use(morgan('dev'));
 

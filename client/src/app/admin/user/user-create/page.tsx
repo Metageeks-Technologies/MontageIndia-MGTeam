@@ -41,7 +41,7 @@ const UserCreate: React.FC = () =>
         console.log( user );
         try
         {
-            const response = await instance.post( '/auth/admin/createAdmin', user );
+            const response = await instance.post( '/auth/admin/createAdmin', user,{withCredentials: true} );
             console.log( response );
             setUser( {
                 name: '',

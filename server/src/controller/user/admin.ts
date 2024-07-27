@@ -241,7 +241,8 @@ export const updateAdmin= catchAsyncError(async (req, res, next) => {
         if (!req.body) {
             return next(new ErrorHandler("body is not defined", 400))
         }
-        const { id,role,category ,mediaType} = req.body;
+        const { id } = req.params;
+        const {name, email,role,category ,mediaType} = req.body;
         console.log(req.body);
 
         const adminToUpdate = await Admin.findOne({ _id: id });
@@ -251,6 +252,9 @@ export const updateAdmin= catchAsyncError(async (req, res, next) => {
         }
         // Prepare updates object
         const updates: Partial<typeof adminToUpdate> = {};
+        if (name) updates.name = name;
+        // if (username) updates.username = username;
+        if (email) updates.email = email;
         if (role) updates.role = role;
         if (category) updates.category = category;
         if (mediaType) updates.mediaType = mediaType;

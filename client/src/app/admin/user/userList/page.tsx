@@ -31,7 +31,7 @@ export default function UserList ()
         setLoading( true );
         try
         {
-            const response = await instance.get( `auth/admin/getAllAdmin` );
+            const response = await instance.get( `auth/admin/getAllAdmin`,{withCredentials: true } );
             setAllUsers( response.data.users );
         } catch ( error )
         {
