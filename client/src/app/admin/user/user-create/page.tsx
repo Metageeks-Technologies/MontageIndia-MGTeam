@@ -4,6 +4,7 @@ import instance from '@/utils/axios';
 import { notifySuccess } from '@/utils/toast';
 import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
+import { adminRolesOptions, categoriesOptions, mediaTypesOptions } from '../../../../utils/tempData';
 
 interface User {
     name: string;
@@ -113,8 +114,11 @@ const UserCreate: React.FC = () => {
                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#BEF264]"
                     >
                         <option value="">Select Role</option>
-                        <option value="admin">Admin</option>
-                        <option value="superadmin">Super Admin</option>
+                        {
+                            adminRolesOptions.map((adminRole,index)=>(
+                                <option value={adminRole} key={index}>{adminRole}</option>
+                            ))
+                        }
                     </select>
                 </div>
                 <div>
@@ -127,9 +131,9 @@ const UserCreate: React.FC = () => {
                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#BEF264]"
                     >
                         <option value="">Select Media Type</option>
-                        <option value="image">Image</option>
-                        <option value="video">Video</option>
-                        <option value="audio">Audio</option>
+                        {mediaTypesOptions.map((mediaType,index)=>(
+                            <option key={index} value={mediaType}>{mediaType}</option>
+                        ))}
                     </select>
                 </div>
                 <div className="col-span-1 md:col-span-2">
@@ -142,9 +146,12 @@ const UserCreate: React.FC = () => {
                         className="lg:w-full  px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#BEF264]"
                     >
                         <option value="">Select Category</option>
-                        <option value="shoes">Shoes</option>
-                        <option value="slippers">Slippers</option>
-                        <option value="dress">Dress</option>
+                       <>
+                        {categoriesOptions.map((category,index)=>(
+                            <option key={index} value={category}>{category}</option>
+                        ))
+                        }
+                       </>
                     </select>
                 </div>
             </div>
