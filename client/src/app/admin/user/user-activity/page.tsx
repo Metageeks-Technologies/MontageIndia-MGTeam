@@ -1,5 +1,6 @@
 "use client";
 import instance from "@/utils/axios";
+import { Spinner } from "@nextui-org/react";
 import React, { useEffect, useMemo, useState } from "react";
 
 interface UserActivity {
@@ -96,7 +97,12 @@ const Page = () => {
               </tr>
             </thead>
             <tbody>
-              {paginatedUsers.map((user) => (
+            {loading?(
+                <tr>
+                  <td colSpan={ 6 } className="text-center py-4"><Spinner label="Loading..." color="success" /></td>
+                </tr>
+            ):(
+               paginatedUsers.map((user) => (
                 <tr key={user._id} className="border-b hover:bg-gray-100 text-black">
                   <td className="px-4 py-4 sm:px-6">{user.username}</td>
                   <th scope="row" className="px-4 py-4 sm:px-6 font-medium whitespace-nowrap">{user.name}</th>
@@ -112,7 +118,9 @@ const Page = () => {
                     
                   </td>
                 </tr>
-              ))}
+              ))
+            )}
+             
             </tbody>
           </table>
         </div>

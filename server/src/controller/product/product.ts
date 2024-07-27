@@ -15,7 +15,7 @@ export const createProduct = catchAsyncError(async (req: any, res, next) => {
         name: req.user.name,
         email: req.user.email,
         username: req.user.username,
-        action: 'created',
+        action: 'Created',
         category: category,
         productId: product._id,
         timestamp: Date.now()
