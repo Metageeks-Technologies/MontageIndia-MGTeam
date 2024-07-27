@@ -2,6 +2,7 @@ import instance from '@/utils/axios';
 import { notifySuccess } from '@/utils/toast';
 import React, { useState, useCallback } from 'react';
 import { Accept, useDropzone } from 'react-dropzone';
+import axios from 'axios';
 
 
 
@@ -134,45 +135,63 @@ const Form2 = ({ onPrev, onNext, formData }: any) => {
     }
   };
   
-  const handleVideoSubmit = async (file:any, data:any) => {
-    const formData = new FormData();
-    formData.append('video', file);
-    formData.append('uuid', JSON.stringify(data.uuid));
-    formData.append('mediaType', JSON.stringify(data.mediaType));
-  
-    const url = `/media/video/upload`;
-  
+  const handleVideoSubmit = async (file: File, data: any) => {
     try {
-      const name=file.name;
-      console.log("first",name)
-      const response= await instance.get(url,{
-        params: {
-          uuid: JSON.stringify(data.uuid),
-          filename: name
-        }})
-        console.log("first",response)
-      // const response = await instance.post(url,formData,{
-      //   headers: {
-      //     'Content-Type': 'multipart/form-data',
-      //   },
-      //    onUploadProgress: (data) => {
-      //     if (data.total) {
-      //       console.log(Math.round((data.loaded / data.total) * 100));
-     
-      //     }
-      //   },
-      // });
-    //  if (response.status === 200) {
-    //     const data = response.data;
-    //     console.log('Upload success:', data);
-    //     setloader(false)
-    //     onNext(data);
-    //   }
+      // Initiate the upload process
+      const response = await instance(
+        `/media/video/upload?uuid=${data.uuid}&filename=${file.name}`
+      );
+      
+      if (response.status === 200) {
+        // Upload the video file
+        const uploadRes = await axios.put(response.data.url, file, {
+          headers: {
+            "Content-Type": file.type,
+          },
+        });
+        console.log("upload")
+        if (uploadRes.status === 200) {
+          // Get the job IDs
+          const getJobIdRes = await instance(`media/video/job-id?uuid=${data.uuid}`);
+          const { mainJobId, watermarkJobId } = getJobIdRes.data;
+  
+          // Poll for transcoding progress
+          const id = setInterval(async () => {
+            try {
+              const res = await instance(
+                `/media/video/transcode/progress/?watermarkJobId=${watermarkJobId}&mainJobId=${mainJobId}`
+              );
+  
+              if (res.data.status === 'complete') {
+                // Update product with video info once transcoding is complete
+                await instance.patch(`/product/video/`, {
+                  uuid: data.uuid,
+                  mediaType: "video",
+                });
+                clearInterval(id);
+                console.log('Transcoding complete, polling stopped.');
+              }
+            } catch (error) {
+              console.error('Error fetching transcoding progress:', error);
+            }
+          }, 10000);
+
+          console.log("setInterval")
+  
+        } else {
+          console.error('Failed to upload the video file.');
+        }
+      } else {
+        console.error('Failed to initiate the upload process.');
+      }
+  
+      console.log("Upload successful:", data);
     } catch (error) {
-      console.error('Error uploading video:', error);
-      setError('An error occurred while uploading the video.');
+      setloader(false);
+      console.error("Error uploading video:", error);
     }
   };
+  
   
   const handleSubmit = async () => {
     if (file) {
@@ -192,6 +211,7 @@ const Form2 = ({ onPrev, onNext, formData }: any) => {
           setError('Invalid media type.');
       }
     } else {
+      setloader(false);
       setError('Please select a valid file before submitting.');
     }
   };
