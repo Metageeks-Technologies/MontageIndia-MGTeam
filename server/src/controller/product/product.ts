@@ -12,6 +12,39 @@ export const createProduct = catchAsyncError(async (req, res, next) => {
     })
 })
 
+export const getProduct = catchAsyncError(async (req, res, next) => {
+    
+    const {id:uuid}=req.params;
+    const product= await Product.findOne({uuid});
+    
+    res.status(201).json({
+        success: true,
+        product    
+    })
+})
+
+export const getProducts = catchAsyncError(async (req, res, next) => {
+    
+    
+    const products= await Product.find();
+    
+    res.status(201).json({
+        success: true,
+        products    
+    })
+})
+
+export const updateProduct = catchAsyncError(async (req, res, next) => {
+    
+    const {id:uuid}= req.params;
+    
+    const products= await Product.findByIdAndUpdate({uuid},req.body); 
+    res.status(201).json({
+        success: true,
+        products    
+    })
+});
+
 export const addPriceToVariant = catchAsyncError(async (req, res, next) => {
     
     const {id:vid} = req.params;
