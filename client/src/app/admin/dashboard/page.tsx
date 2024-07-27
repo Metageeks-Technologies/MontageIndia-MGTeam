@@ -1,9 +1,9 @@
-
 import React from "react";
 import Sidebar from "../componets/sidebar";
 import { FaBoxOpen, FaShippingFast } from "react-icons/fa";
-import { RiGlobalLine,RiVipCrown2Line } from "react-icons/ri";
-import { MdArrowOutward } from "react-icons/md";
+import { RiGlobalLine, RiVipCrown2Line } from "react-icons/ri";
+import { MdArrowOutward, MdOutlineKeyboardArrowDown } from "react-icons/md";
+import { IoArrowForward } from "react-icons/io5";
 
 const page = () => {
   return (
@@ -22,12 +22,14 @@ const page = () => {
           </div>
           <div className="bg-[#f2fee0] border border-[#84CC16] text-green-700 px-4 py-3 rounded-lg flex items-center justify-between mb-6">
             <div className=" flex items-center gap-1">
-            <div className=" flex items-center">
-            <RiVipCrown2Line className="h-6 w-6 text-[#8B5CF6]"/>
+              <div className=" flex items-center">
+                <RiVipCrown2Line className="h-6 w-6 text-[#8B5CF6]" />
+              </div>
+              <div className="text-md">
+                Upgrade your plan to unlock advanced features
+              </div>
             </div>
-            <div className="text-md">Upgrade your plan to unlock advanced features</div>
-            </div>
-            <button className="bg-white text-black px-2 py-2 rounded-md flex items-center gap-2">
+            <button className="bg-white text-black px-3 py-2 border shadow rounded-md flex items-center gap-2">
               Select Plan
               <MdArrowOutward className="text-black h-5 w-5" />
             </button>
@@ -49,8 +51,9 @@ const page = () => {
                     <p>Let’s get started. Tell about you and your shop</p>
                   </div>
                 </div>
-                <button className="bg-white text-purple-700 px-4 py-2 rounded-md">
+                <button className="bg-white text-black border shadow  px-2 py-2 rounded-md flex items-center gap-2">
                   Set Up
+                  <MdArrowOutward className="text-black h-5 w-5" />
                 </button>
               </div>
               <div className=" p-4 rounded-lg flex justify-between items-center">
@@ -61,8 +64,9 @@ const page = () => {
                     <p>Let’s get started. Tell about you and your shop</p>
                   </div>
                 </div>
-                <button className="bg-white text-purple-700 px-4 py-2 rounded-md">
+                <button className="bg-white text-black px-2 border shadow py-2 rounded-md flex items-center gap-2">
                   Set Up
+                  <MdArrowOutward className="text-black h-5 w-5" />
                 </button>
               </div>
             </div>
@@ -118,9 +122,12 @@ const page = () => {
                 <div className="mt-6">
                   <h2 className="text-xl  font-semibold mb-2 flex justify-between items-center">
                     Revenue{" "}
-                    <a href="#" className="text-green-700 ">
-                      Last Year
-                    </a>
+                    <button className="px-6 py-2 border flex items-center gap-2 shadow rounded-md">
+                      <a href="#" className="text-medium font-semibold ">
+                        Last Year
+                      </a>
+                      <MdOutlineKeyboardArrowDown />
+                    </button>
                   </h2>
                   <div className="p-5  rounded-lg flex items-center mt-6 border">
                     <div>
@@ -134,12 +141,15 @@ const page = () => {
 
             <div className="mb-6 basis-[35%]">
               <div className="flex flex-col">
-                <h2 className="text-xl font-semibold mb-2 flex justify-between items-center">
-                  Products{" "}
-                  <a href="#" className="text-green-700">
-                    See All
-                  </a>
-                </h2>
+                <div className="mb-2 flex justify-between items-center">
+                  <h2 className="text-xl font-semibold ">Products </h2>
+                  <div className="flex gap-2 items-center">
+                    <a href="#" className="text-lg">
+                      See All
+                    </a>
+                    <IoArrowForward className="h-5 w-5" />
+                  </div>
+                </div>
                 <div className="grid grid-cols-1 border rounded-md">
                   <div className="p-4 flex justify-between">
                     <h3 className="font-semibold">Active listings</h3>
@@ -159,7 +169,12 @@ const page = () => {
               <div className=" mt-6">
                 <div className="flex justify-between">
                   <h1 className="text-lg font-semibold">Recent Activities</h1>
-                  <p>See All</p>
+                  <div className="flex gap-2 items-center">
+                    <a href="#" className="text-lg">
+                      See All
+                    </a>
+                    <IoArrowForward className="h-5 w-5" />
+                  </div>
                 </div>
                 <div className="w-full h-[14rem] border mt-6 rounded-lg flex flex-col items-center justify-center">
                   <div className="flex items-center justify-center bg-white rounded-full p-2 shadow-md border border-gray-300">

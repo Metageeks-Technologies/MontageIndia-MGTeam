@@ -21,7 +21,6 @@ import
   MdOutlineKeyboardArrowUp,
 } from "react-icons/md";
 import { RiLinksFill } from "react-icons/ri";
-import { IoBagHandleSharp } from "react-icons/io5";
 import { useRouter } from "next/navigation";
 import { images } from "../../../../public/images/image";
 
@@ -69,10 +68,13 @@ const Sidebar = () =>
     setIslogin( false );
   };
 
-  useEffect( () =>
-  {
-    if(localStorage.getItem('token')) setIslogin(true)
-  }, [isLogin] )
+  useEffect(() => {
+    if (localStorage.getItem('token')) {
+      setIslogin(true);
+    } else {
+      setIslogin(false);
+    }
+  }, []);
 
 
   return (
@@ -140,6 +142,7 @@ const Sidebar = () =>
                 <ul className="py-2 space-y-2">
                   <li className="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100    cursor-pointer" onClick={ () => router.push( "/admin/user/userList" ) }>User List</li>
                   <li className="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100    cursor-pointer" onClick={ () => router.push( "/admin/user/user-create" ) }>User Create</li>
+                  <li className="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100    cursor-pointer" onClick={ () => router.push( "/admin/user/user-activity" ) }>User Activity</li>
                 </ul>
               ) }
             </li>
