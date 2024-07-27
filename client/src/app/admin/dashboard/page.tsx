@@ -3,15 +3,16 @@ import React from "react";
 import Sidebar from "../componets/sidebar";
 import { FaBoxOpen, FaShippingFast } from "react-icons/fa";
 import { RiGlobalLine,RiVipCrown2Line } from "react-icons/ri";
+import { MdArrowOutward } from "react-icons/md";
 
 const page = () => {
   return (
     <div className="main">
       {/* <Sidebar /> */}
-      <div className="flex ml-64  ">
+      <div className="flex lg:ml-64 sm:ml-64 ">
         <div className="flex-1 bg-white p-6">
           {/* Welcome Section */}
-          <div className="flex justify-between items-center mb-6">
+          <div className="flex justify-between items-center mb-6 sm:w-full">
             <h1 className="text-2xl font-semibold">Hello, Marc!</h1>
 
             <button className="bg-[#84CC16] text-white border border-gray-400 px-4 py-3 rounded-lg shadow flex items-center space-x-2">
@@ -26,8 +27,9 @@ const page = () => {
             </div>
             <div className="text-md">Upgrade your plan to unlock advanced features</div>
             </div>
-            <button className="bg-white text-green-700 px-4 py-2 rounded-md">
+            <button className="bg-white text-black px-2 py-2 rounded-md flex items-center gap-2">
               Select Plan
+              <MdArrowOutward className="text-black h-5 w-5" />
             </button>
           </div>
 

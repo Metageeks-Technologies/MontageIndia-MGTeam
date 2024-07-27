@@ -79,7 +79,7 @@ export default function UserDetails ( { params }: { params: { id: string; }; } )
     {
       try
       {
-        const response = await instance.delete( `/auth/adminn/${ id }` );
+        const response = await instance.delete( `/auth/admin/${ id }` );
         console.log( response );
         if ( response.data )
         {
