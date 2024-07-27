@@ -4,11 +4,13 @@ import slugify from 'slugify';
 import axios from 'axios';
 import instance from '@/utils/axios';
 import { notifyError } from '@/utils/toast';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
 
 const Form1 = ({ onNext }: any) => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const [category, setCategory] = useState(''); 
+  const [categories, setCategories] = useState<string[]>([]);
   const [mediaType, setMediaType] = useState(''); // Default to 'image'
   const [tags, setTags] = useState<string[]>([]);
   const [tagInput, setTagInput] = useState('');
@@ -17,7 +19,7 @@ const Form1 = ({ onNext }: any) => {
     const uuid = uuidv4();
     const slug = slugify(title, { lower: true });
     // console.log({ uuid, slug, title, description,category, mediaType, tags });
-    const data = { uuid, slug, title, description, mediaType,category, tags };
+    const data = { uuid, slug, title, description, mediaType,categories, tags };
     
     try {
      
@@ -41,6 +43,10 @@ const Form1 = ({ onNext }: any) => {
     }
   };
 
+  const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedOptions = Array.from(e.target.selectedOptions, option => option.value);
+    setCategories(selectedOptions);
+  };
   const handleTagKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
       e.preventDefault();
@@ -51,7 +57,7 @@ const Form1 = ({ onNext }: any) => {
     }
   };
   const isFormValid = () => {
-    return title && description && category && mediaType && category && tags[0];
+    return title && description && categories[0] && mediaType && tags[0];
   };
   return (
     <div className='flex flex-col gap-5'>
@@ -64,23 +70,18 @@ const Form1 = ({ onNext }: any) => {
           onChange={(e) => setTitle(e.target.value)}
         />
       </div>
-      <div className= 'flex flex-col '>
-      <span className='text-xl mb-3 font-semibold'>Description</span>
+      <div className='  '>
+      <span className='text-xl font-semibold '>Decription</span>
 
-        <textarea 
-          placeholder="Description"
-          className='text-black p-2 w-full outline-none'
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-        />
+      <ReactQuill theme="snow" className='h-52 mt-4 mb-8' value={description}  onChange={setDescription}/>
       </div>
       <div>
       <span className='text-xl mb-3 font-semibold mr-4'>Category</span>
 
         <select
           className='text-gray-700 outline-none font-semibold py-3 select-none p-2 bg-gray-100 rounded-lg '
-          value={category}
-          onChange={(e) => setCategory(e.target.value)}
+          value={categories}
+          onChange={handleChange}
         >
           <option className='font-semibold hover:text-gray-800  ' value="" disabled>Select Category</option>
           <option className='font-semibold  ' value="electronics">Electronics</option>
@@ -108,7 +109,7 @@ const Form1 = ({ onNext }: any) => {
       </div>
       <div>
         <input
-          placeholder="Tags"
+          placeholder="Tags-labels"
           className='text-gray-700 outline-none py-3 p-2 bg-gray-100 rounded-lg '
           value={tagInput}
           onChange={(e) => setTagInput(e.target.value)}
@@ -123,11 +124,11 @@ const Form1 = ({ onNext }: any) => {
         ))}
       </div>
       <button onClick={handleNext} 
- className={`p-2 px-3 w-fit font-semibold text-white rounded-lg ${
-  isFormValid() ? 'bg-lime-400 cursor-pointer' : 'bg-gray-400 cursor-not-allowed'
-}`}
-disabled={!isFormValid()}   
-   >
+          className={`p-2 px-3 w-fit font-semibold flex  text-white rounded-lg ${
+            isFormValid() ? 'bg-lime-400 cursor-pointer' : 'bg-gray-400 cursor-not-allowed'
+          }`}
+          disabled={!isFormValid()}   
+        >
         Next
       </button>
     </div>

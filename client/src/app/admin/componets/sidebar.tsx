@@ -43,7 +43,11 @@ const Sidebar = () =>
   };
 
   const router = useRouter();
+  
+  const handleProductcreate=()=>{
+    router.push( `/admin/product/form` );
 
+  }
   const handleAvailable = () =>
   {
     router.push( `/admin/product/available` );
@@ -106,7 +110,7 @@ const Sidebar = () =>
                   <li className="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100    cursor-pointer">Draft</li>
                   <li onClick={ handleunarchive } className="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100    cursor-pointer">Archived</li>
                   <li onClick={ handleunavailable } className="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100    cursor-pointer">Unavailable</li>
-                  <li className="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100   ">Create</li>
+                  <li onClick={ handleProductcreate } className="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100   ">Create</li>
                 </ul>
               ) }
             </li>
