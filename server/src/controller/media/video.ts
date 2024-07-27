@@ -1,6 +1,7 @@
 import catchAsyncError from "@src/middleware/catchAsyncError";
 import { getTranscodeStatus} from "@src/lib/resizeVideo";
 import { getUrl } from "@src/lib/uploadToS3";
+import EmcMedia from "@src/model/product/emcJob";
 
 
 export const uploadVideo = catchAsyncError(async (req, res, next) => {
@@ -13,6 +14,17 @@ export const uploadVideo = catchAsyncError(async (req, res, next) => {
     const key  = uuidStr+'.'+fileExtension;
     const url = await getUrl(key)
     res.json({ success: true, url });
+});
+
+export const getJobIds = catchAsyncError(async (req, res, next) => {
+    const { uuid } = req.query;
+
+    const emcMediaJob = await EmcMedia.findOne({uuid});
+
+    res.json({ success: true, 
+        mainJobId:emcMediaJob?.mainJobId,
+        watermarkJobId:emcMediaJob?.watermarkJobId,
+      });
 });
 
 export const getJobStatus = catchAsyncError(async (req, res, next) => {
