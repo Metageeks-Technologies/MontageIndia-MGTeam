@@ -40,9 +40,9 @@ const ProductDetail: React.FC = () => {
   }
 
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-3xl text-center">Edit Product</h1>
-      <div className="mt-2 max-w-4xl mx-auto bg-white shadow-lg rounded-lg overflow-hidden">
+    <div className="container mx-auto  p-4 sm:pl-64">
+      <h1 className="text-2xl font-semibold text-start">Edit Product</h1>
+      <div className="mt-2  mx-auto bg-white shadow-lg rounded-lg overflow-hidden">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="col-span-2 p-6">
             <div className="mb-4">
@@ -162,7 +162,7 @@ const ProductDetail: React.FC = () => {
         </div>
         <div className="flex justify-end p-6 bg-gray-50">
           <button className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-700">
-            Add
+            Edit
           </button>
           <button className="ml-2 px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-700">
             Discard

@@ -102,8 +102,8 @@ const Home: React.FC = () => {
             </thead>
             <tbody>
               {currentProducts.map((prod) => (
-                <tr key={prod.id}>
-                  <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                <tr key={prod.id} className="hover:bg-gray-300">
+                  <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm ">
                     <input type="checkbox" />
                   </td>
                   <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
@@ -164,7 +164,7 @@ const Home: React.FC = () => {
             disabled={currentPage === 1}
             className="px-4 py-2 mx-1 bg-gray-300 text-gray-700 rounded disabled:opacity-50"
           >
-            Previous
+            Pre
           </button>
           <div className="flex">
             {[...Array(totalPages)].map((_, index) => (

@@ -5,8 +5,7 @@ import { notifySuccess } from '@/utils/toast';
 import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 
-interface User
-{
+interface User {
     name: string;
     email: string;
     password: string;
@@ -16,10 +15,9 @@ interface User
     category: string;
 }
 
-const UserCreate: React.FC = () =>
-{
+const UserCreate: React.FC = () => {
     const router = useRouter();
-    const [ user, setUser ] = useState<User>( {
+    const [user, setUser] = useState<User>({
         name: '',
         email: '',
         role: '',
@@ -27,15 +25,13 @@ const UserCreate: React.FC = () =>
         username: '',
         mediaType: '',
         category: '',
-    } );
+    });
 
-    const handleChange = ( e: React.ChangeEvent<HTMLInputElement> ) =>
-    {
-        setUser( { ...user, [ e.target.name ]: e.target.value } );
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+        setUser({ ...user, [e.target.name]: e.target.value });
     };
 
-    const handleSubmit = async ( e: React.FormEvent<HTMLFormElement> ) =>
-    {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         console.log( user );
@@ -51,19 +47,16 @@ const UserCreate: React.FC = () =>
                 username: '',
                 mediaType: '',
                 category: '',
-            } );
-            notifySuccess( "New user created succesfull" );
-            router.push( "/admin/dashboard" );
-        } catch ( error )
-        {
-            console.log( "error in creating the user :-", error );
+            });
+            notifySuccess("New user created successfully");
+            router.push("/admin/dashboard");
+        } catch (error) {
+            console.log("error in creating the user :-", error);
         }
-
-        // You can add further logic to submit the data to an API
     };
 
     return (
-        <form onSubmit={ handleSubmit } className="max-w-md w-full mx-auto p-6 mt-12 min-h-full shadow-md rounded-lg ">
+        <form onSubmit={handleSubmit} className="max-w-md w-full mx-auto p-6 mt-12 min-h-full shadow-md rounded-lg ">
             <h2 className="text-2xl font-bold mb-6 text-center">Create User</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 my-12">
                 <div className="col-span-1 md:col-span-2">
@@ -72,8 +65,8 @@ const UserCreate: React.FC = () =>
                         type="text"
                         id="name"
                         name="name"
-                        value={ user.name }
-                        onChange={ handleChange }
+                        value={user.name}
+                        onChange={handleChange}
                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#BEF264]"
                     />
                 </div>
@@ -83,8 +76,8 @@ const UserCreate: React.FC = () =>
                         type="email"
                         id="email"
                         name="email"
-                        value={ user.email }
-                        onChange={ handleChange }
+                        value={user.email}
+                        onChange={handleChange}
                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#BEF264]"
                     />
                 </div>
@@ -94,8 +87,8 @@ const UserCreate: React.FC = () =>
                         type="text"
                         id="username"
                         name="username"
-                        value={ user.username }
-                        onChange={ handleChange }
+                        value={user.username}
+                        onChange={handleChange}
                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#BEF264]"
                     />
                 </div>
@@ -105,43 +98,54 @@ const UserCreate: React.FC = () =>
                         type="password"
                         id="password"
                         name="password"
-                        value={ user.password }
-                        onChange={ handleChange }
+                        value={user.password}
+                        onChange={handleChange}
                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#BEF264]"
                     />
                 </div>
                 <div>
                     <label htmlFor="role" className="block text-sm font-medium text-gray-700 mb-1">Role</label>
-                    <input
-                        type="text"
+                    <select
                         id="role"
                         name="role"
-                        value={ user.role }
-                        onChange={ handleChange }
+                        value={user.role}
+                        onChange={handleChange}
                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#BEF264]"
-                    />
+                    >
+                        <option value="">Select Role</option>
+                        <option value="admin">Admin</option>
+                        <option value="superadmin">Super Admin</option>
+                    </select>
                 </div>
                 <div>
                     <label htmlFor="mediaType" className="block text-sm font-medium text-gray-700 mb-1">Media Type</label>
-                    <input
-                        type="text"
+                    <select
                         id="mediaType"
                         name="mediaType"
-                        value={ user.mediaType }
-                        onChange={ handleChange }
+                        value={user.mediaType}
+                        onChange={handleChange}
                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#BEF264]"
-                    />
+                    >
+                        <option value="">Select Media Type</option>
+                        <option value="image">Image</option>
+                        <option value="video">Video</option>
+                        <option value="audio">Audio</option>
+                    </select>
                 </div>
                 <div className="col-span-1 md:col-span-2">
                     <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-1">Category</label>
-                    <input
-                        type="text"
+                    <select
                         id="category"
                         name="category"
-                        value={ user.category }
-                        onChange={ handleChange }
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#BEF264]"
-                    />
+                        value={user.category}
+                        onChange={handleChange}
+                        className="lg:w-full  px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#BEF264]"
+                    >
+                        <option value="">Select Category</option>
+                        <option value="shoes">Shoes</option>
+                        <option value="slippers">Slippers</option>
+                        <option value="dress">Dress</option>
+                    </select>
                 </div>
             </div>
             <button
