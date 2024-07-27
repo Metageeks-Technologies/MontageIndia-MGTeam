@@ -153,7 +153,8 @@ const Form2 = ({ onPrev, onNext, formData }: any) => {
         if (uploadRes.status === 200) {
           // Get the job IDs
           const getJobIdRes = await instance(`media/video/job-id?uuid=${data.uuid}`);
-          const { mainJobId, watermarkJobId } = getJobIdRes.data;
+          console.log(getJobIdRes.data);
+          const { mainJobId, watermarkJobId } = getJobIdRes.data.emcMediaJob;
   
           // Poll for transcoding progress
           const id = setInterval(async () => {
@@ -161,15 +162,17 @@ const Form2 = ({ onPrev, onNext, formData }: any) => {
               const res = await instance(
                 `/media/video/transcode/progress/?watermarkJobId=${watermarkJobId}&mainJobId=${mainJobId}`
               );
-  
-              if (res.data.status === 'complete') {
+              console.log(res.data.process,"status");
+              if (res.data.process.status === 'complete') {
                 // Update product with video info once transcoding is complete
-                await instance.patch(`/product/video/`, {
+               const productRes =  await instance.patch(`/product/video/`, {
                   uuid: data.uuid,
                   mediaType: "video",
                 });
                 clearInterval(id);
                 console.log('Transcoding complete, polling stopped.');
+                setloader(false);
+                onNext(productRes.data.product);
               }
             } catch (error) {
               console.error('Error fetching transcoding progress:', error);
