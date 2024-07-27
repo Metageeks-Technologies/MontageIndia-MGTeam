@@ -25,12 +25,40 @@ export const getProduct = catchAsyncError(async (req, res, next) => {
 
 export const getProducts = catchAsyncError(async (req, res, next) => {
     
+    const {page,status,mediaType,tags,category}= req.query;
+    const queryObject:any = {};
+
+    if(status){
+        queryObject.status=status;
+    }
+    if(mediaType){
+        queryObject.mediaType = mediaType;
+    }
+    if (tags) {
+        const nTag = tags as string;
+        const tagsArray = Array.isArray(nTag) ? nTag : nTag.split(','); // Ensure tags are in array format
+        queryObject.tags = { $all: tagsArray };
+    }
+    if (category) {
+        const nCategory = category as string;
+        const tagsArray = Array.isArray(nCategory) ? nCategory : nCategory.split(','); // Ensure tags are in array format
+        queryObject.tags = { $all: tagsArray };
+    }
     
-    const products= await Product.find();
+
+    const p = Number(page) || 1;
+    const limit = 8;
+    const skip = (p - 1) * limit;
+
+  let products = await Product.find(queryObject).skip(skip).limit(limit);
+  const totalData = await Product.countDocuments(queryObject);
+  const numOfPages = Math.ceil(totalData / limit);
     
-    res.status(201).json({
+    res.status(200).json({
         success: true,
-        products    
+        products,
+        totalData,
+        numOfPages
     })
 })
 
