@@ -66,7 +66,7 @@ export const updateProduct = catchAsyncError(async (req, res, next) => {
     
     const {id:uuid}= req.params;
     
-    const products= await Product.findByIdAndUpdate({uuid},req.body); 
+    const products= await Product.findOneAndUpdate({uuid},req.body); 
     res.status(201).json({
         success: true,
         products    

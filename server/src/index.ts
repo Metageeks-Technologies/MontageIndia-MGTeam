@@ -27,7 +27,7 @@ app.use("/api/v1/product", productRouter);
 
 
 app.use(errorMiddleware);
-// processSQSMessages();
+processSQSMessages();
 
 const port = process.env.PORT || 5000;
 const start = async () => {
