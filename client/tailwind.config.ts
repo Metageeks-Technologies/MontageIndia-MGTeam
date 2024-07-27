@@ -15,6 +15,18 @@ const config: Config = {
         "gradient-conic":
           "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
       },
+      colors: {
+        webgreen: {
+          light: '#BEF264',
+          DEFAULT: 'rgb(134 203 14)',
+          dark: '#BEF264',
+        },
+        webgreenHover:{
+          light:'#a8f521',
+          DEFAULT:'#a8f521',
+          dark:'#a8f521'
+        }
+      },
     },
   },
   plugins: [nextui()],
