@@ -136,30 +136,38 @@ const Form2 = ({ onPrev, onNext, formData }: any) => {
   
   const handleVideoSubmit = async (file:any, data:any) => {
     const formData = new FormData();
-    formData.append('file', file);
+    formData.append('video', file);
     formData.append('uuid', JSON.stringify(data.uuid));
     formData.append('mediaType', JSON.stringify(data.mediaType));
   
-    const url = `/media/video/reduce`;
+    const url = `/media/video/upload`;
   
     try {
-      const response = await instance.post(url,formData,{
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-         onUploadProgress: (data) => {
-          if (data.total) {
-            console.log(Math.round((data.loaded / data.total) * 100));
+      const name=file.name;
+      console.log("first",name)
+      const response= await instance.get(url,{
+        params: {
+          uuid: JSON.stringify(data.uuid),
+          filename: name
+        }})
+        console.log("first",response)
+      // const response = await instance.post(url,formData,{
+      //   headers: {
+      //     'Content-Type': 'multipart/form-data',
+      //   },
+      //    onUploadProgress: (data) => {
+      //     if (data.total) {
+      //       console.log(Math.round((data.loaded / data.total) * 100));
      
-          }
-        },
-      });
-     if (response.status === 200) {
-        const data = response.data;
-        console.log('Upload success:', data);
-        setloader(false)
-        onNext(data);
-      }
+      //     }
+      //   },
+      // });
+    //  if (response.status === 200) {
+    //     const data = response.data;
+    //     console.log('Upload success:', data);
+    //     setloader(false)
+    //     onNext(data);
+    //   }
     } catch (error) {
       console.error('Error uploading video:', error);
       setError('An error occurred while uploading the video.');

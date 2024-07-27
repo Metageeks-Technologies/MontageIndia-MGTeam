@@ -8,7 +8,7 @@ const Form3 = ({onNext, formData }: any) => {
   const [label, setLabel] = useState('');
   const [price, setPrice] = useState('');
   const [updatedVariants, setUpdatedVariants] = useState<any[]>([]);
-
+  const[nextdata,setnext]=useState<any>(null);
   console.log("first",data)
   const handleButtonClick = (variant: any) => {
     setActiveVariant(variant);
@@ -31,6 +31,7 @@ const Form3 = ({onNext, formData }: any) => {
 
         setLabel('');
         setPrice('');
+        setnext(response.data.product)
         setUpdatedVariants([...updatedVariants, _id]);
         setActiveVariant(null);
       }
@@ -40,7 +41,7 @@ const Form3 = ({onNext, formData }: any) => {
   };
 
   const handleSubmit=()=>{
-    onNext(product)
+    onNext(nextdata)
   }
   return (
     <div className=''>
@@ -62,16 +63,14 @@ const Form3 = ({onNext, formData }: any) => {
         ))}
       </div>
       <div className='justify-between flex w-auto gap-5'>
-      <button onClick={handleSubmit}  className={`p-2 px-3 w-fit font-semibold text-white rounded-lg  
-            // file ? 'bg-lime-400 cursor-pointer' : 'bg-gray-400 cursor-not-allowed'
-          `} 
+      <button onClick={handleSubmit}  className="p-2 px-3 w-fit font-semibold text-white rounded-lg bg-lime-400"
         >
           Next</button>
     </div>
       {activeVariant && (
-        <div className='p-3 h-screen w-full justify-center z-30 bg_glass top-0 left-0 bg-black bg-opacity-15 items-center flex m-auto absolute'>
+        <div className='p-3 h-screen w-full justify-center z-50 bg_glass top-0 left-0 bg-black bg-opacity-15 items-center flex m-auto absolute'>
           <div className='flex flex-col rounded-xl justify-center items-center'>
-            <h3>Editing Variant: {activeVariant._id}</h3>
+            <h3>Variant {activeVariant.size}</h3>
             <div>
               <label>
                 <span className='font-semibold'>Label:</span>
@@ -96,18 +95,18 @@ const Form3 = ({onNext, formData }: any) => {
                 />
               </label>
             </div>
-            <div className='flex flex-row justify-between'>
-            <button
-              className='bg-lime-500 font-medium px-3 py-1 rounded-lg text-teal-50'
-              onClick={handleSave}
-            >
-              Save
-            </button>
+            <div className='flex flex-row w-full justify-between'>
             <button
               className='bg-red-500 font-medium px-3 py-1 rounded-lg text-teal-50 mt-2'
               onClick={() => setActiveVariant(null)}
             >
               Cancel
+            </button>
+            <button
+              className='bg-lime-500 font-medium px-3 py-1 rounded-lg mt-2 text-teal-50'
+              onClick={handleSave}
+            >
+              Save
             </button>
             </div>
           </div>
