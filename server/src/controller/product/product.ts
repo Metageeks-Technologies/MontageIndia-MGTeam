@@ -45,6 +45,35 @@ export const updateProduct = catchAsyncError(async (req, res, next) => {
     })
 });
 
+export const addSizeAndKeysToVideo =  catchAsyncError(async (req, res, next) => {
+    
+    const { uuid,mediaType } = req.body;
+
+    if(mediaType!=='video'){
+        return next(new ErrorHandler("media type should be video", 400));
+    };
+
+    const variants = [
+        { size: 'original', key: `${uuid}/video/${uuid}-original.mp4`},
+        { size: 'medium', key: `${uuid}/video/${uuid}-medium.mp4`},
+        { size: 'small', key: `${uuid}/video/${uuid}-small.mp4`},
+    ];
+
+    const publicKey =`${uuid}/video/${uuid}-product_page.webm`;
+    const thumbnailKey = `${uuid}/video/${uuid}-thumbnail.webm`;
+
+    const updatedProduct = await Product.findOneAndUpdate(
+        { uuid }, // find the product by uuid
+        { $set: { variants, publicKey, thumbnailKey } }, // set the fields to update
+        { new: true } // return the updated document
+      );
+  
+
+    res.json({ success: true,
+        product:updatedProduct
+    });
+});
+
 export const addPriceToVariant = catchAsyncError(async (req, res, next) => {
     
     const {id:vid} = req.params;
@@ -75,16 +104,5 @@ export const addPriceToVariant = catchAsyncError(async (req, res, next) => {
     res.status(201).json({
         success: true,
         product :updatedProduct   
-    });
-})
-
-export const addKeysForVideoVariant = catchAsyncError(async (req, res, next) => {
-    
-//    
-    
-    
-    res.status(201).json({
-        success: true,
-        product :""   
     });
 })
