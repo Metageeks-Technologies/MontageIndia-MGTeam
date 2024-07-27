@@ -28,12 +28,13 @@ export default function UserDetails({ params }: { params: { id: string; }; }) {
 
   const fetchUser = async () =>
   {
+
     try
     {
       const response = await instance.get( `/auth/admin/${ id }`,{withCredentials: true} );
       if ( response.data && response.data.user )
       {
-        // console.log( response.data.user );
+        console.log( response.data.user );
         setUser( response.data.user );
       }
     } catch (error) {
@@ -47,6 +48,7 @@ export default function UserDetails({ params }: { params: { id: string; }; }) {
     }
   };
 
+  const handleUpdate = async () => {
     try
     {
       const response = await instance.patch( `/auth/admin/updateAdmin/${ id }`, user,{withCredentials: true} );
