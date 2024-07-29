@@ -14,6 +14,15 @@ export const isAuthenticatedAdmin = catchAsyncError(async (req: any, res, next) 
     if (!requestedUser) {
         return next(new ErrorHandler("User not found", 404));
     }
+    if(requestedUser.isDeleted){
+       return res.cookie("token", null, {
+            expires: new Date(Date.now()),
+            httpOnly: true,
+        }).status(400).json({
+            success: false,
+            message: "User not found"
+        });
+    }
     req.user = requestedUser;
     // console.log("user",req.user);
     next();

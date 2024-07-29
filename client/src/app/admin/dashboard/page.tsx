@@ -20,12 +20,12 @@ const page = () =>
 
 
   return (
-    <div className="main ">
-      {/* <Sidebar /> */ }
+    <div className="">
+      {/* <Sidebar /> */}
 
-      <div className="flex-1 bg-white p-4">
-        {/* Welcome Section */ }
-        <div className="flex justify-between items-center mb-6 sm:w-full">
+      <div className=" bg-white p-4">
+        {/* Welcome Section */}
+        <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-semibold">Hello, Marc!</h1>
 
           <button className="bg-[#84CC16] text-white border border-gray-400 px-4 py-3 rounded-lg shadow flex items-center space-x-2">
@@ -133,8 +133,8 @@ const page = () =>
               </div>
 
               <div className="mt-6">
-                <h2 className="text-xl  font-semibold mb-2 flex justify-between items-center">
-                  Revenue{ " " }
+                <h2 className="text-xl font-semibold mb-2 flex justify-between items-center">
+                  Revenue{" "}
                   <button className="px-6 py-2 border flex items-center gap-2 shadow rounded-md">
                     <a href="#" className="text-medium font-semibold ">
                       Last Year
@@ -152,7 +152,7 @@ const page = () =>
             </div>
           </div>
 
-          <div className="mb-6 basis-[35%]">
+          <div className="mb-6 ">
             <div className="flex flex-col">
               <div className="mb-2 flex justify-between items-center">
                 <h2 className="text-xl font-semibold ">Products </h2>
