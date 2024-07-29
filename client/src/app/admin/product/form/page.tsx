@@ -29,7 +29,7 @@ const Page = () => {
         {currentForm === 2 && <Form2 onNext={handleNext} onPrev={handlePrev} formData={formData} />}
         {currentForm === 3 && <Form3 onNext={handleNext} formData={formData}   />}
         {currentForm === 4 && <Form4  formData={formData}   />}
-        </div>
+        </div>  
 
       </div>
     </div>

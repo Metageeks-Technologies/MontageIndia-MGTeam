@@ -30,7 +30,7 @@ const Form1 = ({ onNext }: any) => {
     const uuid = uuidv4();
     const slug = slugify(title, { lower: true });
     const data = { uuid, slug, title, description, mediaType, category: selectedCategories.map(c => c.value), tags };
-    
+    console.log(data)
     try {
       const response = await instance.post(`/product/`, data, {
         headers: { 'Content-Type': 'application/json' }
@@ -41,8 +41,8 @@ const Form1 = ({ onNext }: any) => {
         console.log(data);
         onNext(data);
       }
-    } catch (error) {
-      notifyError("Please Fill all fields properly");
+    } catch (error:any) {
+      notifyError(error.response.data.message);
       console.error('Error sending data:', error);
     }
   };
