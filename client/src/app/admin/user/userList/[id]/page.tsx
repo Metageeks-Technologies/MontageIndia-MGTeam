@@ -105,13 +105,14 @@ export default function UserDetails({ params }: { params: { id: string; }; }) {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             { Object.entries( user ).map( ( [ key, value ] ) => (
-              key !== '_id'&& key!=='username' && key!=="uid" && key!=="avatar" && key !== 'createdAt' && key !== 'updatedAt' && key !== '__v' && key !== 'resetPasswordExpires' && key !== 'resetPasswordToken' && (
+
+              key !== '_id'&& key!=='username' && key!=='isDeleted' && key!=="uid" && key!=="avatar" && key !== 'createdAt' && key !== 'updatedAt' && key !== '__v' && key !== 'resetPasswordExpires' && key !== 'resetPasswordToken' && (
                 <div key={ key } className="flex flex-col">
                   <label className="text-sm font-medium text-gray-700 mb-1 capitalize">
                     {key.replace(/([A-Z])/g, ' $1').trim()}
                   </label>
                   {isEditing && (key==='name' || key === 'email') &&
-                    <input name={key} value={value} onChange={handleInputChange} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"/>
+                    <input name={key} value={value} onChange={handleInputChange} className="mt-1 block w-full p-2 rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"/>
                 }
                   {isEditing && (key === 'role' || key === 'mediaType' || key === 'category') && (
                     <select

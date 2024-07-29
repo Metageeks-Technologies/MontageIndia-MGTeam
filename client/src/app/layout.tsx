@@ -22,14 +22,11 @@ export default function RootLayout ( {
       <body className={ inter.className }>
         <ToastContainer />
 
-        <div className="flex justify-center items-center gap-6">
-          <div className="w-1/6">
+        <div className="flex items-center">
+        
           <Sidebar/>
-          </div>
-         
-          
        
-        <div className=" w-5/6 ">
+        <div className="md:ml-[20%] sm:ml-[25%] w-full">
         { children }
         </div>
 

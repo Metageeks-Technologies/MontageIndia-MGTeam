@@ -174,7 +174,7 @@ export const createAdmin = catchAsyncError(async (req, res, next) => {
         });
 
         if (userAlreadyExists) {
-            return next(new ErrorHandler("Username already exists", 400))
+            return next(new ErrorHandler("User already exists", 400))
         }
         const user = await Admin.create(req.body);
 
@@ -201,12 +201,16 @@ export const deleteAdmin = catchAsyncError(async (req, res, next) => {
         if (!user) {
             next(new ErrorHandler("user does not exit", 404));
         }
-        await user?.deleteOne({ _id: id });
-        const users = await Admin.find();
+
+        if (user && user.isDeleted) {
+            next(new ErrorHandler("user already deleted", 400));
+        }
+
+        await Admin.findByIdAndUpdate(id, { isDeleted: true }, { new: true });
+
         res.status(200).json({
             success: true,
             message: "Account deleted successfully",
-            users
         });
     } catch (error) {
         res.status(500).json({

@@ -56,6 +56,10 @@ const adminsSchema = new mongoose.Schema<TAdmin>({
         type: Number,
         default: undefined,
     },
+    isDeleted:{
+        type: Boolean,
+        default: false
+    }
 
 },
     { timestamps: true }
