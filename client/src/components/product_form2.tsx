@@ -172,7 +172,7 @@ const Form2 = ({ onPrev, onNext, formData }: any) => {
                 clearInterval(id);
                 console.log('Transcoding complete, polling stopped.');
                 setloader(false);
-                onNext(productRes.data.product);
+                onNext(productRes.data);
               }
             } catch (error) {
               console.error('Error fetching transcoding progress:', error);

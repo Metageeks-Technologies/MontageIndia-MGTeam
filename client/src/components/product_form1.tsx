@@ -106,6 +106,8 @@ const Form1 = ({ onNext }: any) => {
         </select>
       </div>
       <div>
+      <span className='text-lg mb-3 font-semibold mr-4'>Tags</span>
+
         <input
           placeholder="Tags-labels"
           className='text-gray-700 outline-none py-3 p-2 bg-gray-100 rounded-lg'
@@ -123,7 +125,7 @@ const Form1 = ({ onNext }: any) => {
       </div>
       <button
         onClick={handleNext}
-        className={`p-2 px-3 w-fit font-semibold flex text-white rounded-lg ${
+        className={`p-2 px-3 w-28 text-center items-center m-auto justify-center font-semibold flex text-white rounded-lg ${
           isFormValid() ? 'bg-lime-400 cursor-pointer' : 'bg-gray-400 cursor-not-allowed'
         }`}
         disabled={!isFormValid()}

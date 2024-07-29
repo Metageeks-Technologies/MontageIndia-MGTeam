@@ -15,7 +15,7 @@ const Form3 = ({onNext, formData }: any) => {
     setLabel(variant.label || '');
     setPrice(variant.price || '');
   };
-
+    console.log(product.variants)
   const handleSave = async () => {
     if (!activeVariant) return;
     console.log("variant",activeVariant);
@@ -62,8 +62,8 @@ const Form3 = ({onNext, formData }: any) => {
           </div>
         ))}
       </div>
-      <div className='justify-between flex w-auto gap-5'>
-      <button onClick={handleSubmit}  className="p-2 px-3 w-fit font-semibold text-white rounded-lg bg-lime-400"
+      <div className='justify-center items-center flex w-auto gap-5'>
+      <button onClick={handleSubmit}  className="p-2 px-3 text-center items-center m-auto justify-center flex font-semibold text-white rounded-lg bg-lime-400"
         >
           Next</button>
     </div>
