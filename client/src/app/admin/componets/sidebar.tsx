@@ -1,84 +1,72 @@
-// components/Sidebar.js
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import
-{
-  FaHome,
-  FaUserFriends,
-  FaUsers,
-  FaBullhorn,
-  FaChartBar,
-  FaShoppingCart,
-  FaCog,
-  FaUserCircle,
-} from "react-icons/fa";
+  {
+    FaHome,
+    FaUserFriends,
+    FaUsers,
+    FaBullhorn,
+    FaChartBar,
+    FaShoppingCart,
+    FaCog,
+    FaUserCircle,
+  } from "react-icons/fa";
 import { BiCategoryAlt, BiPlus, BiLogOutCircle, BiLogInCircle } from "react-icons/bi";
 import { IoIosSearch } from "react-icons/io";
-import
-{
-  MdOutlineKeyboardArrowDown,
-  MdOutlineKeyboardArrowUp,
-} from "react-icons/md";
+import { MdOutlineKeyboardArrowDown, MdOutlineKeyboardArrowUp } from "react-icons/md";
 import { RiLinksFill } from "react-icons/ri";
 import { useRouter } from "next/navigation";
 import { images } from "../../../../public/images/image";
+import instance from "@/utils/axios";
+import { notifySuccess } from "@/utils/toast";
 
 const Sidebar = () =>
 {
   const [ isProductOpen, setIsProductOpen ] = useState( false );
   const [ isUserOpen, setIsUserOpen ] = useState( false );
-  const [ isLogin, setIslogin ] = useState( false );
-
-  const toggleProductMenu = () =>
-  {
-    setIsProductOpen( !isProductOpen );
-    setIsUserOpen( false );
-  };
-
-  const toggleUserMenu = () =>
-  {
-    setIsUserOpen( !isUserOpen );
-    setIsProductOpen( false );
-  };
-
+  const [ isLogin, setIsLogin ] = useState( false );
   const router = useRouter();
-  
-  const handleProductcreate=()=>{
-    router.push( `/admin/product/form` );
 
-  }
-  const handleAvailable = () =>
+  const toggleMenu = useCallback( ( menuSetter:any ) =>
   {
-    router.push( `/admin/product/available` );
-  };
+    menuSetter( (prev:any) => !prev );
+  }, [] );
 
-  const handleunavailable = () =>
+  const handleNavigation = useCallback( ( path:any ) =>
   {
-    router.push( `/admin/product/unavailable` );
-  };
+    router.push( path );
+  }, [ router ] );
 
-  const handleunarchive = () =>
+  const handleLogout = useCallback( async () =>
   {
-    router.push( `/admin/product/archive` );
-  };
-
-  const handleLogout = () =>
-  {
-    if (typeof window !== "undefined") {
-    // Remove the token from storage or cookies
-    localStorage.removeItem('token');
-  }
-    setIslogin(false);
-  };
-
-  useEffect(() => {
-    if (localStorage.getItem('token')) {
-      setIslogin(true);
-    } else {
-      setIslogin(false);
+    try
+    {
+      localStorage.removeItem( 'token' );
+      const response = await instance.get( '/auth/admin/logout' );
+      notifySuccess( response.data.message );
+      setIsLogin( false );
+      router.push( '/admin/login' );
+    } catch ( error )
+    {
+      console.error( "Error in logout:", error );
     }
-  }, []);
+  }, [ router ] );
+
+  useEffect( () =>
+  {
+    const token = localStorage.getItem( 'token' );
+    if ( token )
+    {
+      setIsLogin( true );
+    } else
+    {
+      setIsLogin( false );
+      router.push( '/admin/login' );
+    }
+  }, [ router ] );
+
+  if ( !isLogin ) return null;
 
 
   return (
@@ -92,8 +80,25 @@ const Sidebar = () =>
 
       <aside id="sidebar-multi-level-sidebar" className="fixed top-0 left-0 z-40  h-screen transition-transform -translate-x-full sm:translate-x-0 bg-gray-7  00" aria-label="Sidebar">
         <div className="h-full px-3 py-4 overflow-y-auto bg-[#ececed] ">
-          <div className="flex items-center mb-4">
-            <img src={ images.logo.src } alt="logo" className="h-8 mr-3" />
+          <div className="flex items-center mb-4 justify-between">
+            <div>
+
+              <img src={ images.logo.src } alt="logo" className="h-8 mr-3" />
+            </div>
+            <div className="h-8 w-8 cursor-pointer flex justify-center items-center rounded-full bg-white shadow-lg border border-gray-300"            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="18"
+                height="18"
+                viewBox="0 0 16 16"
+                fill="none"
+              >
+                <path
+                  d="M3.33333 3.33333H8.66667V12.6667H3.33333V3.33333ZM12.6667 12.6667H10V3.33333H12.6667V12.6667ZM2.66667 2C2.29848 2 2 2.29848 2 2.66667V13.3333C2 13.7015 2.29848 14 2.66667 14H13.3333C13.7015 14 14 13.7015 14 13.3333V2.66667C14 2.29848 13.7015 2 13.3333 2H2.66667ZM4.66667 8L7.33333 5.66667V10.3333L4.66667 8Z"
+                  fill="#71717A"
+                />
+              </svg>
+            </div>
           </div>
 
           <div className="relative mb-4">
@@ -106,54 +111,54 @@ const Sidebar = () =>
           </div>
 
           <ul className="space-y-2 font-medium">
-            <li onClick={()=>router.push('/admin/dashboard')} className="cursor-pointer">
-              <a  className="flex items-center p-2 text-gray-900 rounded-lg  hover:bg-gray-100   group">
+            <li onClick={ () => router.push( '/admin/dashboard' ) } className="cursor-pointer">
+              <a className="flex items-center p-2 text-gray-900 rounded-lg  hover:bg-gray-100   group">
                 <FaHome className="w-5 h-5 text-gray-500 transition duration-75  group-hover:text-gray-900 " />
                 <span className="ms-3">Home</span>
               </a>
             </li>
-            {isLogin &&
-            <li>
-              <button onClick={ toggleProductMenu } className="flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-100   ">
-                <BiCategoryAlt className="w-5 h-5 text-gray-500 transition duration-75  group-hover:text-gray-900  " />
-                <span className="flex-1 ms-3 text-left rtl:text-right whitespace-nowrap">Product</span>
-                { isProductOpen ? (
-                  <MdOutlineKeyboardArrowUp className="w-5 h-5" />
-                ) : (
-                  <MdOutlineKeyboardArrowDown className="w-5 h-5" />
+            { isLogin &&
+              <li>
+                <button onClick={ () => toggleMenu( setIsProductOpen ) } className="flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-100   ">
+                  <BiCategoryAlt className="w-5 h-5 text-gray-500 transition duration-75  group-hover:text-gray-900  " />
+                  <span className="flex-1 ms-3 text-left rtl:text-right whitespace-nowrap">Product</span>
+                  { isProductOpen ? (
+                    <MdOutlineKeyboardArrowUp className="w-5 h-5" />
+                  ) : (
+                    <MdOutlineKeyboardArrowDown className="w-5 h-5" />
+                  ) }
+                </button>
+                { isProductOpen && (
+                  <ul className="py-2 space-y-2">
+                    <li onClick={ () => handleNavigation( '/admin/product/available' ) } className="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100    cursor-pointer">Available</li>
+                    <li className="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100    cursor-pointer">Draft</li>
+                    <li onClick={ () => handleNavigation('/admin/product/archive') } className="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100    cursor-pointer">Archived</li>
+                    <li onClick={ () => handleNavigation( '/admin/product/unavailable' ) } className="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100    cursor-pointer">Unavailable</li>
+                    <li onClick={ () => handleNavigation( '/admin/product/form' ) } className="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100   ">Create</li>
+                  </ul>
                 ) }
-              </button>
-              { isProductOpen && (
-                <ul className="py-2 space-y-2">
-                  <li onClick={ handleAvailable } className="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100    cursor-pointer">Available</li>
-                  <li className="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100    cursor-pointer">Draft</li>
-                  <li onClick={ handleunarchive } className="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100    cursor-pointer">Archived</li>
-                  <li onClick={ handleunavailable } className="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100    cursor-pointer">Unavailable</li>
-                  <li onClick={ handleProductcreate } className="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100   ">Create</li>
-                </ul>
-              ) }
-            </li>
-          }
-          {isLogin &&
-            <li>
-              <button onClick={ toggleUserMenu } className="flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-100   ">
-                <FaUserFriends className="w-5 h-5 text-gray-500 transition duration-75  group-hover:text-gray-900  " />
-                <span className="flex-1 ms-3 text-left rtl:text-right whitespace-nowrap">User</span>
-                { isUserOpen ? (
-                  <MdOutlineKeyboardArrowUp className="w-5 h-5" />
-                ) : (
-                  <MdOutlineKeyboardArrowDown className="w-5 h-5" />
+              </li>
+            }
+            { isLogin &&
+              <li>
+                <button onClick={ () => toggleMenu( setIsUserOpen ) } className="flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-100   ">
+                  <FaUserFriends className="w-5 h-5 text-gray-500 transition duration-75  group-hover:text-gray-900  " />
+                  <span className="flex-1 ms-3 text-left rtl:text-right whitespace-nowrap">User</span>
+                  { isUserOpen ? (
+                    <MdOutlineKeyboardArrowUp className="w-5 h-5" />
+                  ) : (
+                    <MdOutlineKeyboardArrowDown className="w-5 h-5" />
+                  ) }
+                </button>
+                { isUserOpen && (
+                  <ul className="py-2 space-y-2">
+                    <li className="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100    cursor-pointer" onClick={ () => router.push( "/admin/user/userList" ) }>User List</li>
+                    <li className="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100    cursor-pointer" onClick={ () => router.push( "/admin/user/user-create" ) }>User Create</li>
+                    <li className="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100    cursor-pointer" onClick={ () => router.push( "/admin/user/user-activity" ) }>User Activity</li>
+                  </ul>
                 ) }
-              </button>
-              { isUserOpen && (
-                <ul className="py-2 space-y-2">
-                  <li className="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100    cursor-pointer" onClick={ () => router.push( "/admin/user/userList" ) }>User List</li>
-                  <li className="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100    cursor-pointer" onClick={ () => router.push( "/admin/user/user-create" ) }>User Create</li>
-                  <li className="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100    cursor-pointer" onClick={ () => router.push( "/admin/user/user-activity" ) }>User Activity</li>
-                </ul>
-              ) }
-            </li>
-}
+              </li>
+            }
             <li>
               <a href="#" className="flex items-center p-2 text-gray-900 rounded-lg  hover:bg-gray-100   group">
                 <FaUsers className="w-5 h-5 text-gray-500 transition duration-75  group-hover:text-gray-900  " />
@@ -172,7 +177,7 @@ const Sidebar = () =>
                 <span className="flex-1 ms-3 whitespace-nowrap">Analytics</span>
               </a>
             </li>
-          
+
             <li className="mb-1 px-4 py-2 hover:bg-gray-200 flex justify-between">
               <a href="#" className="flex items-center text-gray-800">
                 <MdOutlineKeyboardArrowDown className="w-6 h-6 mr-3" />
@@ -261,7 +266,7 @@ const Sidebar = () =>
               <li className="mb-1 cursor-pointer">
                 { isLogin ? (
                   <a
-                    
+
                     onClick={ handleLogout }
                     className="flex items-center text-gray-800 hover:bg-gray-200 px-3 py-2"
                   >

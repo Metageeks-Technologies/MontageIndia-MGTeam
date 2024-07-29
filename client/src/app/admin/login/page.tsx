@@ -45,13 +45,16 @@ const Page = () =>
         }
       );
 
-      console.log( "Login successful:", response.data );
+      console.log( "Login successful:", response.data.token );
       // Set a cookie from the frontend
-      Cookies.set( 'token', response.data.token, { expires: 7, secure: true, sameSite: 'strict' } );
-      localStorage.setItem('token',response.data.token)
+      // Cookies.set( 'token', response.data.token, { expires: 7, secure: true, sameSite: 'strict' } );
+      
+      localStorage.setItem( 'token', response.data.token );
+      // const tokenn = Cookies.get( 'token' )
 
-      notifySuccess( "Login Successful" );
-      router.push( "/" );
+      // console.log("token-",tokenn)
+      notifySuccess( "Login Successful" );  
+      router.push( "/admin/dashboard" );
       setUsernameOrEmail( "" );
       setPassword( "" );
     } catch ( error )
@@ -71,12 +74,11 @@ const Page = () =>
 
   return (
     <>
-      {/* // this style is for red astrix */ }
-      <style jsx>{ `.required-label::after { content: "*"; color: red; margin-left: 0.25rem; }` }</style>;
+
       <div className="flex flex-col items-center justify-center min-h-screen relative px-4 sm:px-6 lg:px-8">
         <div className="flex items-center mb-6 absolute top-12 gap-3">
 
-          <div className="w-48 h-14 bg-white border border-gray-300 flex justify-center items-center rounded-xl shadow-xl">
+          <div className="w-48 h-14 flex justify-center items-center rounded-xl ">
             <img src={ images.logo.src } alt="logo" />
           </div>
 
@@ -98,7 +100,7 @@ const Page = () =>
                 htmlFor="usernameOrEmail"
                 className="block text-sm font-medium text-gray-700 required-label"
               >
-                Username or Email
+                Username or Email <span className="text-red-500">*</span> 
               </label>
 
               <input
@@ -115,7 +117,7 @@ const Page = () =>
                 htmlFor="password"
                 className="block text-sm font-medium text-gray-700 required-label"
               >
-                Password
+                Password <span className="text-red-500">*</span> 
               </label>
               <input
                 type={ showPassword ? "text" : "password" }

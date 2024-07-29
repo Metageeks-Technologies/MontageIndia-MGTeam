@@ -1,17 +1,30 @@
-import React from "react";
+'use client'
+
+import React, { useEffect } from "react";
 import Sidebar from "../componets/sidebar";
 import { FaBoxOpen, FaShippingFast } from "react-icons/fa";
 import { RiGlobalLine, RiVipCrown2Line } from "react-icons/ri";
 import { MdArrowOutward, MdOutlineKeyboardArrowDown } from "react-icons/md";
 import { IoArrowForward } from "react-icons/io5";
 
-const page = () => {
+const page = () =>
+{
+
+  useEffect( () =>
+  {
+
+    // if previous page was login than realod
+   
+
+  }, [] );
+
+
   return (
     <div className="main ">
-      {/* <Sidebar /> */}
+      {/* <Sidebar /> */ }
 
       <div className="flex-1 bg-white p-4">
-        {/* Welcome Section */}
+        {/* Welcome Section */ }
         <div className="flex justify-between items-center mb-6 sm:w-full">
           <h1 className="text-2xl font-semibold">Hello, Marc!</h1>
 
@@ -35,7 +48,7 @@ const page = () => {
           </button>
         </div>
 
-        {/* Welcome to Durara Section */}
+        {/* Welcome to Durara Section */ }
         <div className="mb-6">
           <h2 className="text-xl font-semibold mb-2">Welcome to Durara 👋</h2>
           <p className="text-gray-600 mb-4">
@@ -72,7 +85,7 @@ const page = () => {
           </div>
         </div>
 
-        {/* Overview Performance */}
+        {/* Overview Performance */ }
         <div className="flex justify-between gap-6">
           <div className="mb-6 basis-[65%]">
             <div className="flex flex-col">
@@ -121,7 +134,7 @@ const page = () => {
 
               <div className="mt-6">
                 <h2 className="text-xl  font-semibold mb-2 flex justify-between items-center">
-                  Revenue{" "}
+                  Revenue{ " " }
                   <button className="px-6 py-2 border flex items-center gap-2 shadow rounded-md">
                     <a href="#" className="text-medium font-semibold ">
                       Last Year
