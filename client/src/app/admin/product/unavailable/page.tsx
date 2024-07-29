@@ -50,7 +50,7 @@ const Home: React.FC = () => {
 
   return (
     
-      <div className="container mx-auto p-4 sm:pl-64">
+      <div className="container p-4">
         <div className="flex justify-between items-center my-6">
           <input
             type="text"

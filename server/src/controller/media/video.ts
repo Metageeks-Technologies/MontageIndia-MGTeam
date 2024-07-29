@@ -20,10 +20,10 @@ export const getJobIds = catchAsyncError(async (req, res, next) => {
     const { uuid } = req.query;
 
     const emcMediaJob = await EmcMedia.findOne({uuid});
+    console.log(emcMediaJob);
 
     res.json({ success: true, 
-        mainJobId:emcMediaJob?.mainJobId,
-        watermarkJobId:emcMediaJob?.watermarkJobId,
+        emcMediaJob
       });
 });
 

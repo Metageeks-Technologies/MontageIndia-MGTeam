@@ -6,7 +6,7 @@ import Activity from '@src/model/activity/activity';
 export const createProduct = catchAsyncError(async (req: any, res, next) => {
     
     
-    // console.log("create product",req);
+    // console.log("create product",req.body);
     const {category} = req.body;
     const product= await Product.create(req.body);
     
@@ -15,8 +15,8 @@ export const createProduct = catchAsyncError(async (req: any, res, next) => {
         name: req.user.name,
         email: req.user.email,
         username: req.user.username,
-        action: 'Created',
-        category: category,
+        action: 'create',
+        category: category[0],
         productId: product._id,
         timestamp: Date.now()
     }

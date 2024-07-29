@@ -22,6 +22,7 @@ export const isAuthenticatedAdmin = catchAsyncError(async (req: any, res, next) 
 
 export const checkProductAccess = catchAsyncError(async (req: any, res: any, next: any) => {
 
+    
     if (req.user.role !== "admin" && req.user.role !== "superadmin") {
         return next(new ErrorHandler("Only Admins can access this resource", 403));
     }
@@ -30,7 +31,7 @@ export const checkProductAccess = catchAsyncError(async (req: any, res: any, nex
         return next(new ErrorHandler("you don't have permission to access this media resource.", 403));
     }
 
-    if(req.user.category !== "all" && req.user.category !== req.body.category){
+    if(req.user.category !== "all" ){
         return next(new ErrorHandler("you don't have permission to access this category resource.", 403));
     }
 

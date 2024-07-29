@@ -95,7 +95,7 @@ export default function UserList ()
 
 
     return (
-        <div className="container mx-auto p-4 sm:pl-64 h-full">
+        <div className="container mx-auto p-4  h-full">
             <h1 className="text-2xl font-bold mb-4">User List</h1>
             <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
                 <div className="overflow-x-scroll lg:overflow-x-auto">

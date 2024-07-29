@@ -43,7 +43,11 @@ const Sidebar = () =>
   };
 
   const router = useRouter();
+  
+  const handleProductcreate=()=>{
+    router.push( `/admin/product/form` );
 
+  }
   const handleAvailable = () =>
   {
     router.push( `/admin/product/available` );
@@ -86,7 +90,7 @@ const Sidebar = () =>
         </svg>
       </button>
 
-      <aside id="sidebar-multi-level-sidebar" className="fixed top-0 left-0 z-40 w-64 h-screen transition-transform -translate-x-full sm:translate-x-0 bg-gray-7  00" aria-label="Sidebar">
+      <aside id="sidebar-multi-level-sidebar" className="fixed top-0 left-0 z-40  h-screen transition-transform -translate-x-full sm:translate-x-0 bg-gray-7  00" aria-label="Sidebar">
         <div className="h-full px-3 py-4 overflow-y-auto bg-[#ececed] ">
           <div className="flex items-center mb-4">
             <img src={ images.logo.src } alt="logo" className="h-8 mr-3" />
@@ -125,7 +129,7 @@ const Sidebar = () =>
                   <li className="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100    cursor-pointer">Draft</li>
                   <li onClick={ handleunarchive } className="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100    cursor-pointer">Archived</li>
                   <li onClick={ handleunavailable } className="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100    cursor-pointer">Unavailable</li>
-                  <li className="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100   ">Create</li>
+                  <li onClick={ handleProductcreate } className="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100   ">Create</li>
                 </ul>
               ) }
             </li>

@@ -24,14 +24,14 @@ export interface Product {
 const ProductDetail: React.FC = () => {
   const params = useParams();
   const [productDetail, setProductDetail] = useState<Product | null>(null);
+  const [isEditing, setIsEditing] = useState(false);
 
   const id = params.id as string | undefined;
-  
 
   useEffect(() => {
     if (id) {
       const foundProduct = product.find((prod: any) => prod.id === id);
-      setProductDetail(foundProduct );
+      setProductDetail(foundProduct);
     }
   }, [id]);
 
@@ -39,10 +39,22 @@ const ProductDetail: React.FC = () => {
     return <div>Loading...</div>;
   }
 
+  const handleEditClick = () => {
+    setIsEditing(!isEditing);
+  };
+
+  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files[0]) {
+      const file = event.target.files[0];
+      // Handle file upload logic here
+      console.log(file);
+    }
+  };
+
   return (
-    <div className="container mx-auto  p-4 sm:pl-64">
+    <div className="container mx-auto p-4 ">
       <h1 className="text-2xl font-semibold text-start">Edit Product</h1>
-      <div className="mt-2  mx-auto bg-white shadow-lg rounded-lg overflow-hidden">
+      <div className="mt-2 mx-auto bg-white shadow-lg rounded-lg overflow-hidden">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="col-span-2 p-6">
             <div className="mb-4">
@@ -53,8 +65,9 @@ const ProductDetail: React.FC = () => {
                 id="title"
                 type="text"
                 value={productDetail.title}
+                onChange={(e) => setProductDetail({ ...productDetail, title: e.target.value })}
                 className="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none"
-                readOnly
+                readOnly={!isEditing}
               />
             </div>
             <div className="mb-4">
@@ -64,9 +77,10 @@ const ProductDetail: React.FC = () => {
               <textarea
                 id="description"
                 value={productDetail.description}
+                onChange={(e) => setProductDetail({ ...productDetail, description: e.target.value })}
                 className="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none"
                 rows={5}
-                readOnly
+                readOnly={!isEditing}
               ></textarea>
             </div>
             <div className="mb-4">
@@ -80,6 +94,13 @@ const ProductDetail: React.FC = () => {
                   alt={productDetail.title}
                 />
               </div>
+              {isEditing && (
+                <input
+                  type="file"
+                  onChange={handleFileUpload}
+                  className="mt-2"
+                />
+              )}
             </div>
             <div className="flex justify-between items-center mb-4">
               <label className="block text-gray-700 text-sm font-bold mb-2">
@@ -88,8 +109,12 @@ const ProductDetail: React.FC = () => {
               <input
                 type="number"
                 value={productDetail.variants[0]?.price}
+                onChange={(e) => setProductDetail({ 
+                  ...productDetail, 
+                  variants: [{ ...productDetail.variants[0], price: parseFloat(e.target.value) }]
+                })}
                 className="px-3 py-2 text-gray-700 border rounded-lg focus:outline-none"
-                readOnly
+                readOnly={!isEditing}
               />
             </div>
             <div className="flex items-center mb-4">
@@ -113,10 +138,13 @@ const ProductDetail: React.FC = () => {
               <select
                 id="status"
                 value={productDetail.status}
+                onChange={(e) => setProductDetail({ ...productDetail, status: e.target.value })}
                 className="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none"
-                
+                disabled={!isEditing}
               >
-                <option>{productDetail.status}</option>
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
+                <option value="draft">Draft</option>
               </select>
             </div>
             <div className="mb-4">
@@ -128,7 +156,7 @@ const ProductDetail: React.FC = () => {
                 type="text"
                 className="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none"
                 placeholder="Search for collections"
-                readOnly
+                readOnly={!isEditing}
               />
             </div>
             <div className="mb-4">
@@ -161,10 +189,15 @@ const ProductDetail: React.FC = () => {
           </div>
         </div>
         <div className="flex justify-end p-6 bg-gray-50">
-          <button className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-700">
-            Edit
+          <button
+            onClick={handleEditClick}
+            className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-700"
+          >
+            {isEditing ? "Save" : "Edit"}
           </button>
-          <button className="ml-2 px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-700">
+          <button
+            className="ml-2 px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-700"
+          >
             Discard
           </button>
         </div>
