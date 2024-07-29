@@ -2,6 +2,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import instance from '@/utils/axios';
+import { Spinner } from '@nextui-org/react';
 
 interface User
 {
@@ -112,9 +113,9 @@ export default function UserList ()
                             </tr>
                         </thead>
                         <tbody>
-                            { loading ? (
+                            { loading ? (  
                                 <tr>
-                                    <td colSpan={ 6 } className="text-center py-4">Loading...</td>
+                                    <td colSpan={ 6 } className="text-center py-4"><Spinner label="Loading..." color="success" /></td>
                                 </tr>
                             ) : (
                                 paginatedUsers.map( ( user ) => (

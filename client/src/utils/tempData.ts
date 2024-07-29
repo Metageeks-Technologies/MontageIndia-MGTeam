@@ -1,13 +1,13 @@
 // dataOptions.ts
 
 // Admin Roles
-export const adminRoles: string[] = [
+export const adminRolesOptions: string[] = [
   'superadmin',
   'admin',
 ];
 
 // Categories
-export const categories: string[] = [
+export const categoriesOptions: string[] = [
   'technology',
   'health',
   'education',
@@ -18,7 +18,7 @@ export const categories: string[] = [
 ];
 
 // Media Types
-export const mediaTypes: string[] = [
+export const mediaTypesOptions: string[] = [
   'image',
   'video',
   'audio',

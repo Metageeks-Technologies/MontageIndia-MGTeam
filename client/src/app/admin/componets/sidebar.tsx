@@ -30,8 +30,6 @@ const Sidebar = () =>
   const [ isUserOpen, setIsUserOpen ] = useState( false );
   const [ isLogin, setIslogin ] = useState( false );
 
- 
-
   const toggleProductMenu = () =>
   {
     setIsProductOpen( !isProductOpen );
@@ -63,9 +61,11 @@ const Sidebar = () =>
 
   const handleLogout = () =>
   {
+    if (typeof window !== "undefined") {
     // Remove the token from storage or cookies
-    localStorage.removeItem( 'token' );
-    setIslogin( false );
+    localStorage.removeItem('token');
+  }
+    setIslogin(false);
   };
 
   useEffect(() => {
@@ -108,6 +108,7 @@ const Sidebar = () =>
                 <span className="ms-3">Home</span>
               </a>
             </li>
+            {isLogin &&
             <li>
               <button onClick={ toggleProductMenu } className="flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-100   ">
                 <BiCategoryAlt className="w-5 h-5 text-gray-500 transition duration-75  group-hover:text-gray-900  " />
@@ -128,6 +129,8 @@ const Sidebar = () =>
                 </ul>
               ) }
             </li>
+          }
+          {isLogin &&
             <li>
               <button onClick={ toggleUserMenu } className="flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-100   ">
                 <FaUserFriends className="w-5 h-5 text-gray-500 transition duration-75  group-hover:text-gray-900  " />
@@ -146,6 +149,7 @@ const Sidebar = () =>
                 </ul>
               ) }
             </li>
+}
             <li>
               <a href="#" className="flex items-center p-2 text-gray-900 rounded-lg  hover:bg-gray-100   group">
                 <FaUsers className="w-5 h-5 text-gray-500 transition duration-75  group-hover:text-gray-900  " />
@@ -251,7 +255,7 @@ const Sidebar = () =>
                 <MdOutlineKeyboardArrowDown className="w-6 h-6 mr-3 cursor-pointer" />
               </li>
               <li className="mb-1 cursor-pointer">
-                { localStorage.getItem('token') ? (
+                { isLogin ? (
                   <a
                     
                     onClick={ handleLogout }

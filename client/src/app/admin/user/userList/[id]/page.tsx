@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import instance from '@/utils/axios';
 import { notifyError, notifySuccess } from '@/utils/toast';
+import { adminRolesOptions, categoriesOptions, mediaTypesOptions } from '../../../../../utils/tempData';
 
 interface User {
   id: string;
@@ -109,7 +110,10 @@ export default function UserDetails({ params }: { params: { id: string; }; }) {
                   <label className="text-sm font-medium text-gray-700 mb-1 capitalize">
                     {key.replace(/([A-Z])/g, ' $1').trim()}
                   </label>
-                  {isEditing && (key === 'role' || key === 'mediaType' || key === 'category') ? (
+                  {isEditing && (key==='name' || key === 'email') &&
+                    <input name={key} value={value} onChange={handleInputChange} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"/>
+                }
+                  {isEditing && (key === 'role' || key === 'mediaType' || key === 'category') && (
                     <select
                       name={key}
                       value={value}
@@ -119,11 +123,19 @@ export default function UserDetails({ params }: { params: { id: string; }; }) {
                       {key === 'role' && (
                         <>
                           <option value="admin">Admin</option>
-                          <option value="super admin">Super Admin</option>
+                          <option value="superadmin">Super Admin</option>
+                          {adminRolesOptions.map((role,index)=>(
+                            <option value={role} key={index}>{role}</option>
+                          ))}
                         </>
                       )}
                       {key === 'mediaType' && (
                         <>
+                        {
+                          mediaTypesOptions.map((mediaType,index)=>(
+                            <option value={mediaType} key={index}>{mediaType}</option>
+                          ))
+                        }
                           <option value="image">Image</option>
                           <option value="video">Video</option>
                           <option value="audio">Audio</option>
@@ -131,13 +143,14 @@ export default function UserDetails({ params }: { params: { id: string; }; }) {
                       )}
                       {key === 'category' && (
                         <>
-                          <option value="shoes">Shoes</option>
-                          <option value="slippers">Slippers</option>
-                          <option value="dress">Dress</option>
+                        {categoriesOptions.map((category,index)=>(
+                          <option value={category} key={index}>{category}</option>
+                        ))}
                         </>
                       )}
                     </select>
-                  ) : (
+                  )}
+                  {!isEditing && (
                     <p className="mt-1 block w-full py-2 px-3 bg-gray-100 rounded-md">{value}</p>
                   )}
                 </div>
