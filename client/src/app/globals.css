@@ -16,7 +16,7 @@
   }
 }
 
-body {
+/* body {
   color: rgb(var(--foreground-rgb));
   background: linear-gradient(
       to bottom,
@@ -24,10 +24,22 @@ body {
       rgb(var(--background-end-rgb))
     )
     rgb(var(--background-start-rgb));
+} */
+
+body {
+  @apply bg-[#FAFAFA] text-black;
 }
 
 @layer utilities {
   .text-balance {
     text-wrap: balance;
   }
+}
+
+
+.neu{
+  border-radius: 52px;
+background: #e0e0e0;
+box-shadow: inset 24px 24px 78px #bebebe,
+            inset -24px -24px 78px #ffffff;
 }
