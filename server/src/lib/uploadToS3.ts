@@ -5,9 +5,11 @@ import fs from 'fs'
 import { s3Client } from "@src/lib/awsClients";
 import config from "@src/utils/config";
 
-const {awsBucketName:bucketName,}=config;
+const {awsBucketName:bucketName,awsTempBucketName}=config;
 
-async function uploadImage(image: { folder: string, filename: string }) {
+type fileType ={ folder: string, filename: string }
+
+async function uploadImage(image: fileType,s3image: fileType) {
 
     const fileStream = fs.createReadStream(`output/${image.filename}`);
 
@@ -17,7 +19,7 @@ async function uploadImage(image: { folder: string, filename: string }) {
             client: s3Client,
             params: {
                 Bucket: bucketName,
-                Key: `${image.folder}/${image.filename}`,
+                Key: `${s3image.folder}/${s3image.filename}`,
                 Body: fileStream,
                 ContentType: 'image/jpeg',
             },
@@ -29,7 +31,7 @@ async function uploadImage(image: { folder: string, filename: string }) {
 
 
 }
-async function uploadAudio(image: { folder: string, filename: string }, subFolder: string) {
+async function uploadAudio(image: fileType,s3image:fileType) {
 
 
     const fileStream = fs.createReadStream(`${image.folder}/${image.filename}`);
@@ -39,7 +41,7 @@ async function uploadAudio(image: { folder: string, filename: string }, subFolde
             client: s3Client,
             params: {
                 Bucket: bucketName,
-                Key: `audio/${subFolder}/${image.filename}`,
+                Key: `${s3image.folder}/${s3image.filename}`,
                 Body: fileStream,
                 ContentType: 'audio/mpeg',
             },
@@ -49,11 +51,11 @@ async function uploadAudio(image: { folder: string, filename: string }, subFolde
         console.error(err);
     }
 }
-const getUrl = async (fileName: string) => {
+const getUrl = async (name: string) => {
 
     const command = new PutObjectCommand({
-        Bucket: bucketName,
-        Key: `temp/${fileName}`, // The key (file path) for the object in the bucket
+        Bucket: awsTempBucketName,
+        Key: name,// The key (file path) for the object in the bucket
         ContentType: 'video/mp4',
     });
 
