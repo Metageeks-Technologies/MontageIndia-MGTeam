@@ -19,7 +19,7 @@ const Page = () => {
   };
 
   return (
-    <div className="container mx-auto p-4 sm:pl-64">
+    <div className="container mx-auto p-4">
       <div>
         <div className='flex w-full justify-start text-3xl font-semibold text-black p-3 border-b-[1px] border-gray-400'>
           Add product
