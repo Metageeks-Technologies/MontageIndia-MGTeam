@@ -55,12 +55,12 @@ const AuthWrapper = ( { children }: { children: React.ReactNode; } ) =>
 
 
     return (
-        <div className="flex justify-center items-center gap-6">
+        <div className="flex items-center">
             { isAuthenticated &&
-                <div className="w-1/6">
+                
                     <Sidebar />
-                </div> }
-            <div className="w-5/6">
+                 }
+            <div className="md:ml-[20%] sm:ml-[25%] w-full">
                 { children }
             </div>
         </div>
