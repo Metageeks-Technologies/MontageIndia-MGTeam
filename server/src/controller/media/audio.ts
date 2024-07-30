@@ -98,8 +98,8 @@ export const reduceAudio = catchAsyncError(async (req: Request, res: Response, n
         }
     ]
     product.variants.push(...variants);
-    product.publicKey=`${uuid}-watermarked.${fileExtension}`
-    product.thumbnailKey=`${uuid}-watermarked.${fileExtension}`
+    product.publicKey=`${uuid}/audio/${uuid}-watermarked.${fileExtension}`
+    product.thumbnailKey=`${uuid}/audio/${uuid}-watermarked.${fileExtension}`
 
     const updatedProduct=await product.save();
 
