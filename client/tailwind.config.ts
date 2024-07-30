@@ -18,7 +18,7 @@ const config: Config = {
       colors: {
         webgreen: {
           light: '#BEF264',
-          DEFAULT: 'rgb(134 203 14)',
+          DEFAULT: '#BEF264',
           dark: '#BEF264',
         },
         webgreenHover:{
