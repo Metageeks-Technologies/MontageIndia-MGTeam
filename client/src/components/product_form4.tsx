@@ -3,6 +3,7 @@ import { notifySuccess } from '@/utils/toast';
 import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 import { FaRegEdit, FaTrashAlt } from 'react-icons/fa';
+import { IoIosAddCircleOutline } from 'react-icons/io';
 import { MdOutlineSave } from 'react-icons/md';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
@@ -24,6 +25,7 @@ interface FormData {
   status: string;
   mediaType: string;
   category:string[];
+  thumbnailKey:string;
 }
 
 const Form4 = ({ formData }: any) => {
@@ -168,107 +170,179 @@ const Form4 = ({ formData }: any) => {
       console.error('Error submitting form:', error);
     }
   };
+  const renderMedia = () => {
+    switch (data.mediaType) {
+      case 'audio':
+        return <>
+        <audio controls>
+          <source  src={`https://mi2-public.s3.ap-southeast-1.amazonaws.com/${data.thumbnailKey}`} type="audio/mpeg"/>
+        </audio>
+        </>;
+      case 'image':
+        return <img  src={`https://mi2-public.s3.ap-southeast-1.amazonaws.com/${data.thumbnailKey}`}  alt="Product Media" />;
+      case 'video':
+        return <>
+        <video width="320" height="240" controls>
+          <source   src={`https://mi2-public.s3.ap-southeast-1.amazonaws.com/${data.thumbnailKey}` } type="video/mp4" />
+        </video>
+        </>;
+      default:
+        return <p>No media available</p>;
+    }
+  }
 
   return (
     <div className="flex flex-col  ">
       <div className='text-3xl font-semibold w-full flex items-center justify-center'>Review Product</div>
-      <form onSubmit={handleSubmit} className="flex flex-col gap-3 m-auto w-full">
-        <div className='flex flex-col sm:flex-row gap-4'>
-          <div className='flex flex-col w-full sm:w-1/2'>
-            <span className='text-xl font-semibold'>Title</span>
-            <div className='flex flex-row gap-3'>
-              <input
-                type="text"
-                name="title"
-                className={`text-gray-700 w-full outline-none py-3 p-2 rounded-lg ${!editMode.title ? 'bg-gray-100' : 'bg-gray-200'}`}
-                value={data.title}
-                disabled={!editMode.title}  // Correctly disable when not in edit mode
-                onChange={(e) => handleChange(e, 'title')}
-              />
-              <button type="button" className={`${!editMode.title ? 'hidden' : 'block'}`} onClick={() => { handleSave('title'); handleEditToggle('title'); }}><MdOutlineSave size={20} /></button>
-              <button type="button" className={`${editMode.title ? 'hidden' : 'block'}`} onClick={() => handleEditToggle('title')}><FaRegEdit size={25} /></button>
+      <form onSubmit={handleSubmit} className="mt-2 mx-auto bg-white shadow-lg rounded-lg overflow-hidden">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="col-span-2 p-6">
+            <div className="mb-4 ">
+              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="title">
+                  Title
+                </label>
+                <div className='flex flex-row gap-4'>
+                <input
+                  type="text"
+                  name="title"
+                  className={`text-gray-700 w-full outline-none py-3 p-2 rounded-lg ${!editMode.title ? 'bg-gray-100' : 'bg-gray-200'}`}
+                  value={data.title}
+                  disabled={!editMode.title}  // Correctly disable when not in edit mode
+                  onChange={(e) => handleChange(e, 'title')}
+                />
+                <button type="button" className={`${!editMode.title ? 'hidden' : 'block'}`} onClick={() => { handleSave('title'); handleEditToggle('title'); }}><MdOutlineSave size={20} /></button>
+                <button type="button" className={`${editMode.title ? 'hidden' : 'block'}`} onClick={() => handleEditToggle('title')}><FaRegEdit size={25} /></button>
+                </div>
             </div>
-          </div>
-
-          <div className='flex flex-col w-full sm:w-1/2'>
-            <span className='text-xl font-semibold'>Slug</span>
-            <div className='flex flex-row gap-3'>
-              <input
-                type="text"
-                name="slug"
-                className={`text-gray-700 w-full outline-none py-3 p-2 rounded-lg ${!editMode.slug ? 'bg-gray-100' : 'bg-gray-200'}`}
-                value={data.slug}
-                onChange={(e) => handleChange(e, 'slug')}
-                disabled={!editMode.slug}
-              />
-              <button type="button" className={`${!editMode.slug ? 'hidden' : 'block'}`} onClick={() => { handleSave('slug'); handleEditToggle('slug'); }}><MdOutlineSave size={20} /></button>
-              <button type="button" className={`${editMode.slug ? 'hidden' : 'block'}`} onClick={() => handleEditToggle('slug')}><FaRegEdit size={25} /></button>
+            <div className='flex flex-col w-full sm:w-1/2'>
+              <span className='text-xl font-semibold'>Slug</span>
+              <div className='flex flex-row gap-3'>
+                <input
+                  type="text"
+                  name="slug"
+                  className={`text-gray-700 w-full outline-none py-3 p-2 rounded-lg ${!editMode.slug ? 'bg-gray-100' : 'bg-gray-200'}`}
+                  value={data.slug}
+                  onChange={(e) => handleChange(e, 'slug')}
+                  disabled={!editMode.slug}
+                />
+                <button type="button" className={`${!editMode.slug ? 'hidden' : 'block'}`} onClick={() => { handleSave('slug'); handleEditToggle('slug'); }}><MdOutlineSave size={20} /></button>
+                <button type="button" className={`${editMode.slug ? 'hidden' : 'block'}`} onClick={() => handleEditToggle('slug')}><FaRegEdit size={25} /></button>
+              </div>
             </div>
-          </div>
-        </div>
-
-        <div>
-          <span className='text-xl flex flex-row justify-between w-44 gap-4 font-semibold'>Description
-            <button type="button" className={`text-xl ${!editMode.description ? 'hidden' : 'block'}`} onClick={() =>{handleSave('description'); handleEditToggle('description')}}><MdOutlineSave size={20} /></button>
-            <button type="button" className={`${editMode.description ? 'hidden' : 'block'}`} onClick={() => handleEditToggle('description')}><FaRegEdit /></button>
+            <div className="mb-4">
+                 <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="media">
+                   Media
+                 </label>
+                <div className="border-dashed border-2 justify-center flex items-center m-auto border-gray-300 p-4 rounded-lg">
+                  {renderMedia()}
+                {/* <input
+                  type="text" 
+                  className={`text-gray-700 w-full outline-none py-3 p-2 rounded-lg bg-gray-200}`}
+                  value={data.mediaType}
+                  onChange={(e) => handleChange(e, 'mediaType')}
+                  disabled={!editMode.mediaType}
+                /> */}
+              </div>
+            </div>
+            <div className="">
+              <label className="w-52 gap-4 text-gray-700 flex flex-row text-sm font-bold mb-2" htmlFor="description">
+                Description
+                <button type="button" className={`text-xl ${!editMode.description ? 'hidden' : 'block'}`} onClick={() =>{handleSave('description'); handleEditToggle('description')}}><MdOutlineSave size={20} /></button>
+                <button type="button" className={`${editMode.description ? 'hidden' : 'block'}`} onClick={() => handleEditToggle('description')}>
+                  <FaRegEdit />
+                </button>
+              </label>
+              <ReactQuill
+                theme="snow"
+                className={`h-52 mt-4 mb-12 `}  
+                value={data.description}
+                onChange={(value) => handleChange(value, 'description')}
+                readOnly={!editMode.description}
+              />
+            </div>
+            <div className='flex flex-col mt-8 '>
+              {data.variants.map((variant, index) => (<>
+                <label className="w-52 gap-4 text-gray-700 flex flex-row text-sm font-bold mb-2">
+                    Version {index+1}
+                    {editingVariantIndex === index ? (
+                    <button type="button" onClick={() => handleSaveVariant(index)}><MdOutlineSave size={20} /></button>
+                  ) : (
+                    <button type="button" onClick={() => handleEditToggle('variants', index)}><FaRegEdit size={20} /></button>
+                )}
+                </label>
+                <div key={index} className='flex flex-col sm:flex-row m-2 gap-8'>
+                  <span className='flex flex-row items-center justify-between w-20'>Label :-   
+                  </span>
+                  <input
+                    type="text"
+                    className={`text-gray-700 w-fit outline-none py-3 p-2 rounded-lg ${editingVariantIndex === index ? 'bg-gray-200' : 'bg-gray-100'}`}
+                    value={variant.label}
+                    onChange={(e) => handleVariantChange(index, 'label', e.target.value)}
+                    readOnly={editingVariantIndex !== index}
+                  />
+                  <span className='flex flex-row items-center justify-between w-20'>Price:
+                  </span>
+                  <input
+                    type="text"
+                    className={`text-gray-700 w-fit outline-none py-3 p-2 rounded-lg ${editingVariantIndex === index ? 'bg-gray-200' : 'bg-gray-100'}`}
+                    value={variant.price}
+                    onChange={(e) => handleVariantChange(index, 'price', Number(e.target.value))}
+                    readOnly={editingVariantIndex !== index}
+                  />
+                </div>
+                </>  ))}
+            </div>
+            </div>
+            <div className="flex p-6">
+          <div>
+          <span className='text-xl flex flex-row gap-7 w-32 font-semibold'>Tags
+             <span className='flex items-center '>
+              {editMode.tags && (
+                  <button type="button" onClick={() => handleSave('tags')}><MdOutlineSave size={20} /></button>
+                )} 
+              <button
+              type="button"
+              className={`text-xl ${!editMode.tags ? 'block' : 'hidden'}`}
+              onClick={() => handleEditToggle('tags')}
+              >
+              <FaRegEdit size={22} />
+              </button>
+            </span>
           </span>
-          <ReactQuill
-            theme="snow"
-            className={`h-52 mt-4 mb-8`}
-            value={data.description}
-            onChange={(value) => handleChange(value, 'description')}
-            readOnly={!editMode.description}
-          />
-        </div>
-
-        <div>
-          <span className='text-xl font-semibold'>Tags <span>
-            {editMode.tags && (
-                <button type="button" onClick={() => handleSave('tags')}><MdOutlineSave size={20} /></button>
-              )} <button
-            type="button"
-            className={`text-xl ${!editMode.tags ? 'block' : 'hidden'}`}
-            onClick={() => handleEditToggle('tags')}
-          >
-            <FaRegEdit size={25} />
-          </button></span></span>
-
-          <div className='flex flex-col sm:flex-wrap gap-3'>
+          <div className='flex py-2 flex-wrap w-full'>
             {data.tags.map((tag, index) => (
-              <div key={index} className='flex items-center flex-col sm:flex-row sm:flex-wrap gap-4'>
+              <span key={index} className='flex gap-2 w-fit '>
                 <input
                   type="text"
                   value={tag}
                   onChange={(e) => handleTagChange(index, e.target.value)}
                   disabled={!editMode.tags}
-                  className={`text-gray-700 outline-none p-2 rounded-lg ${!editMode.tags ? 'bg-gray-100' : 'bg-gray-200'}`}
+                  className={` bg-gray-200 m-2 w-36 rounded-md  px-3 py-1 text-sm font-semibold text-gray-700  ${!editMode.tags ? 'bg-gray-200' : 'bg-gray-200'}`}
                 />
                 {editMode.tags && (
                   <button
                     type="button"
                     onClick={() => handleDeleteTag(index)}
-                    className='bg-red-500 text-white p-2 rounded-lg'
                   >
                     <FaTrashAlt />
                   </button>
                 )}
-              </div>
+              </span>
             ))}
             {editMode.tags && (
-              <div className='flex gap-2 mt-2'>
+              <div className='flex gap-2 items-center mt-2'>
                 <input
                   type="text"
                   value={newTag}
                   onChange={(e) => setNewTag(e.target.value)}
-                  className='text-gray-700 outline-none p-2 rounded-lg bg-gray-200'
+                  className="  bg-gray-200 w-36 rounded-md px-3 py-1 text-sm font-semibold text-gray-700  "
                   placeholder="Add new tag"
                 />
                 <button
                   type="button"
                   onClick={handleAddTag}
-                  className='bg-blue-500 text-white py-2 px-4 rounded-lg'
                 >
-                  Add Tag
+                <IoIosAddCircleOutline />
                 </button>
               </div>
             )}
@@ -276,63 +350,17 @@ const Form4 = ({ formData }: any) => {
           {/* Edit button for tags */}
           <div className='flex flex-col'>
           <span className='text-xl font-semibold'>Category</span>
-          <div className='flex flex-col'>
+          <div className='flex flex-wrap'>
             {data.category.map((cat, index) => (
-              <span key={index} className='p-2'>{cat}</span>
+              <span key={index} className='p-2 rounded-md text-white font-semibold bg-gray-500 '>{cat}</span>
             ))}
           </div>
         </div>
+          </div>
         </div>
-
-        <span className='text-xl font-semibold'>Variants </span>
-
-        <div className='flex flex-col '>
-          {data.variants.map((variant, index) => (<>
-              <span className='text-lg  items-center w-32 justify-between flex  font-semibold'>Version {index+1}
-                {editingVariantIndex === index ? (
-                <button type="button" onClick={() => handleSaveVariant(index)}><MdOutlineSave size={20} /></button>
-              ) : (
-                <button type="button" onClick={() => handleEditToggle('variants', index)}><FaRegEdit size={22} /></button>
-             )}</span>
-
-            
-            <div key={index} className='flex flex-col sm:flex-row m-2 gap-8'>
-              <span className='flex flex-row items-center justify-between w-20'>Label :-   
-              </span>
-              <input
-                type="text"
-                className={`text-gray-700 w-fit outline-none py-3 p-2 rounded-lg ${editingVariantIndex === index ? 'bg-gray-200' : 'bg-gray-100'}`}
-                value={variant.label}
-                onChange={(e) => handleVariantChange(index, 'label', e.target.value)}
-                readOnly={editingVariantIndex !== index}
-              />
-              <span className='flex flex-row items-center justify-between w-20'>Price:
-              </span>
-              <input
-                type="text"
-                className={`text-gray-700 w-fit outline-none py-3 p-2 rounded-lg ${editingVariantIndex === index ? 'bg-gray-200' : 'bg-gray-100'}`}
-                value={variant.price}
-                onChange={(e) => handleVariantChange(index, 'price', Number(e.target.value))}
-                readOnly={editingVariantIndex !== index}
-              />
-            </div>
-            </>  ))}
         </div>
-
-        <div>
-          <span className='text-xl flex flex-row justify-between w-44 gap-4 font-semibold'>Media Type
-          </span>
-          <input
-            type="text"
-            className={`text-gray-700 w-full outline-none py-3 p-2 rounded-lg bg-gray-200}`}
-            value={data.mediaType}
-            onChange={(e) => handleChange(e, 'mediaType')}
-            disabled={!editMode.mediaType}
-          />
-        </div>
-
-        <div className="flex flex-row justify-between gap-4">
-          <button type="submit" className="bg-lime-500 text-white p-2 rounded">Submit</button>
+        <div className="flex my-8  flex-row justify-center gap-4">
+          <button type="submit" className="bg-lime-500 px-20 text-white p-2 rounded">Submit</button>
         </div>
       </form>
     </div>
