@@ -273,7 +273,7 @@ const Form4 = ({ formData }: any) => {
                 </>  ))}
             </div>
             </div>
-        <div className="flex flex-col p-6">
+        <div className="flex flex-col bg-gray-50 p-6">
           <div className='text-xl flex flex-row gap-7 w-32 font-semibold'>Tags
              <span className='flex items-center '>
               {editMode.tags && (

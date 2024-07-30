@@ -71,7 +71,7 @@ const ProductDetail: React.FC = () => {
 
   const router=useRouter()
   const handleEditClick = () => {
-    router.push(`/admin/product/form?uuid=${productDetail.uuid}`);
+    router.push(`/admin/product/create?uuid=${productDetail.uuid}`);
     setIsEditing(!isEditing);
   };
 
