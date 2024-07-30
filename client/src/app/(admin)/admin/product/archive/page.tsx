@@ -4,7 +4,7 @@ import Link from "next/link";
 import instance from "@/utils/axios";
 import { Spinner } from "@nextui-org/react";
 import Multiselect from 'multiselect-react-dropdown';
-import {categoriesOptions, mediaTypesOptions} from "../../../../utils/tempData";
+import {categoriesOptions, mediaTypesOptions} from "@/utils/tempData";
 
 // Define the interfaces for the product and variant types
 interface Variant {
