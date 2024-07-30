@@ -141,16 +141,35 @@ const Home: React.FC = () => {
                   <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                     <div className="flex items-center">
                       <div className="flex-shrink-0">
-                        <img
-                          className="w-10 h-10 rounded object-cover"
-                            // src={`https://${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${prod.thumbnailKey}`}
-                          src={`https://mi2-public.s3.ap-southeast-1.amazonaws.com/${prod.thumbnailKey}`}
-                          alt={prod.title}
-                        />
+                        { prod.mediaType === "image" && (
+                          <img
+                            className="w-10 h-10 rounded object-cover"
+                            src={ `https://mi2-public.s3.ap-southeast-1.amazonaws.com/${ prod.thumbnailKey }` }
+                            alt={ prod.title }
+                          />
+                        ) }
+                        { prod.mediaType === "audio" && (
+                          <audio className="w-40 h-20" controls>
+                            <source
+                              src={ `https://mi2-public.s3.ap-southeast-1.amazonaws.com/${ prod.thumbnailKey }` }
+                              type="audio/mpeg"
+                            />
+                            Your browser does not support the audio element.
+                          </audio>
+                        ) }
+                        { prod.mediaType === "video" && (
+                          <video width="100" height="100" controls>
+                            <source
+                              src={ ` https://mi2-public.s3.ap-southeast-1.amazonaws.com/${ prod.thumbnailKey }` }
+                              type="video/mp4"
+                            />
+                            Your browser does not support the video element.
+                          </video>
+                        ) }
                       </div>
                       <div className="ml-3">
                         <p className="text-gray-900 whitespace-no-wrap">
-                          {prod.title}
+                          { prod.title }
                         </p>
                       </div>
                     </div>
