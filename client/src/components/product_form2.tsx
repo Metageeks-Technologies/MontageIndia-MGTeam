@@ -136,59 +136,93 @@ const Form2 = ({ onPrev, onNext, formData }: any) => {
   };
   
   const handleVideoSubmit = async (file: File, data: any) => {
+    if (!file || !data || !data.uuid) {
+      console.error('Invalid input data.');
+      return;
+    }
+  
     try {
       // Initiate the upload process
-      const response = await instance(
-        `/media/video/upload?uuid=${data.uuid}&filename=${file.name}`
-      );
+      const response = await instance(`/media/video/upload?uuid=${data.uuid}&filename=${file.name}`);
       
-      if (response.status === 200) {
-        // Upload the video file
-        const uploadRes = await axios.put(response.data.url, file, {
-          headers: {
-            "Content-Type": file.type,
-          },
-        });
-        console.log("upload")
-        if (uploadRes.status === 200) {
-          // Get the job IDs
-          const getJobIdRes = await instance(`media/video/job-id?uuid=${data.uuid}`);
-          console.log(getJobIdRes.data);
-          const { mainJobId, watermarkJobId } = getJobIdRes.data.emcMediaJob;
-  
-          // Poll for transcoding progress
-          const id = setInterval(async () => {
-            try {
-              const res = await instance(
-                `/media/video/transcode/progress/?watermarkJobId=${watermarkJobId}&mainJobId=${mainJobId}`
-              );
-              console.log(res.data.process,"status");
-              if (res.data.process.status === 'complete') {
-                // Update product with video info once transcoding is complete
-               const productRes =  await instance.patch(`/product/video/`, {
-                  uuid: data.uuid,
-                  mediaType: "video",
-                });
-                clearInterval(id);
-                console.log('Transcoding complete, polling stopped.');
-                setloader(false);
-                onNext(productRes.data);
-              }
-            } catch (error) {
-              console.error('Error fetching transcoding progress:', error);
-            }
-          }, 10000);
-
-          console.log("setInterval")
-  
-        } else {
-          console.error('Failed to upload the video file.');
-        }
-      } else {
+      if (response.status !== 200) {
         console.error('Failed to initiate the upload process.');
+        return;
       }
   
-      console.log("Upload successful:", data);
+      // Upload the video file
+      const uploadRes = await axios.put(response.data.url, file, {
+        headers: {
+          "Content-Type": file.type,
+        },
+      });
+  
+      if (uploadRes.status !== 200) {
+        console.error('Failed to upload the video file.');
+        return;
+      }
+  
+      // Get the job IDs
+      const pollInterval = 5000; // Poll every 5 seconds
+      const maxPollTime = 120000; // Timeout after 60 seconds
+      let elapsedTime = 0;
+      let emcMediaJob = null;
+       while (elapsedTime < maxPollTime) {
+            try {
+                const jobResponse = await instance(`/media/video/job-id/?uuid=${data.uuid}`);
+                console.log(jobResponse);
+                emcMediaJob = jobResponse.data.emcMediaJob;
+
+                if (emcMediaJob) {
+                    break; // Exit the loop if mcMediaJob is found
+                }
+            } catch (pollError) {
+                console.error('Error during polling:', pollError);
+                // Optionally, you can break the loop or handle the error as needed
+            }
+
+            await new Promise(resolve => setTimeout(resolve, pollInterval));
+            elapsedTime += pollInterval;
+        }
+
+        if (!emcMediaJob) {
+            throw new Error('Timeout: mcMediaJob not found');
+        }
+      // const getJobIdRes = await instance(`media/video/job-id?uuid=${data.uuid}`);
+      const { mainJobId, watermarkJobId } = emcMediaJob;
+  
+      let retryCount = 0;
+      const maxRetries = 30; // e.g., 30 retries (5 minutes)
+  
+      // Poll for transcoding progress
+      const id = setInterval(async () => {
+        try {
+          const res = await instance(`/media/video/transcode/progress/?watermarkJobId=${watermarkJobId}&mainJobId=${mainJobId}`);
+          
+          if (res.data.process.status === 'complete') {
+            // Update product with video info once transcoding is complete
+            const productRes = await instance.patch(`/product/video/`, {
+              uuid: data.uuid,
+              mediaType: "video",
+            });
+  
+            clearInterval(id);
+            setloader(false);
+            onNext(productRes.data);
+          } else if (retryCount >= maxRetries) {
+            clearInterval(id);
+            setloader(false);
+            console.error('Transcoding process timed out.');
+          }
+  
+          retryCount++;
+        } catch (error) {
+          clearInterval(id);
+          setloader(false);
+          console.error('Error fetching transcoding progress:', error);
+        }
+      }, 10000);
+  
     } catch (error) {
       setloader(false);
       console.error("Error uploading video:", error);
