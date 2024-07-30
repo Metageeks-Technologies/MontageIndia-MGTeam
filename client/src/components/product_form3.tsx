@@ -11,7 +11,8 @@ const Form3 = ({onNext, formData }: any) => {
   const [updatedVariants, setUpdatedVariants] = useState<any[]>([]);
   const[nextdata,setnext]=useState<any>(null);
   const [updateCount, setUpdateCount] = useState(0);
-  console.log("first",data)
+
+
   const handleButtonClick = (variant: any,index:number) => {
     setActiveVariant({...variant,index});
     setLabel(variant.label || '');

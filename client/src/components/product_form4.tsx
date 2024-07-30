@@ -25,6 +25,7 @@ interface FormData {
   status: string;
   mediaType: string;
   category:string[];
+  thumbnailKey:string;
 }
 
 const Form4 = ({ formData }: any) => {
@@ -169,6 +170,26 @@ const Form4 = ({ formData }: any) => {
       console.error('Error submitting form:', error);
     }
   };
+  const renderMedia = () => {
+    switch (data.mediaType) {
+      case 'audio':
+        return <>
+        <audio controls>
+          <source  src={`https://mi2-public.s3.ap-southeast-1.amazonaws.com/${data.thumbnailKey}`} type="audio/mpeg"/>
+        </audio>
+        </>;
+      case 'image':
+        return <img  src={`https://mi2-public.s3.ap-southeast-1.amazonaws.com/${data.thumbnailKey}`}  alt="Product Media" />;
+      case 'video':
+        return <>
+        <video width="320" height="240" controls>
+          <source   src={`https://mi2-public.s3.ap-southeast-1.amazonaws.com/${data.thumbnailKey}` } type="video/mp4" />
+        </video>
+        </>;
+      default:
+        return <p>No media available</p>;
+    }
+  }
 
   return (
     <div className="flex flex-col  ">
@@ -193,8 +214,6 @@ const Form4 = ({ formData }: any) => {
                 <button type="button" className={`${editMode.title ? 'hidden' : 'block'}`} onClick={() => handleEditToggle('title')}><FaRegEdit size={25} /></button>
                 </div>
             </div>
-
-
             <div className='flex flex-col w-full sm:w-1/2'>
               <span className='text-xl font-semibold'>Slug</span>
               <div className='flex flex-row gap-3'>
@@ -210,32 +229,32 @@ const Form4 = ({ formData }: any) => {
                 <button type="button" className={`${editMode.slug ? 'hidden' : 'block'}`} onClick={() => handleEditToggle('slug')}><FaRegEdit size={25} /></button>
               </div>
             </div>
-
             <div className="mb-4">
-                  <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="media">
-                    Media
-                  </label>
-                  <div className="border-dashed border-2 border-gray-300 p-4 rounded-lg">
-
-              <input
-                type="text"
-                className={`text-gray-700 w-full outline-none py-3 p-2 rounded-lg bg-gray-200}`}
-                value={data.mediaType}
-                onChange={(e) => handleChange(e, 'mediaType')}
-                disabled={!editMode.mediaType}
-              />
+                 <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="media">
+                   Media
+                 </label>
+                <div className="border-dashed border-2 justify-center flex items-center m-auto border-gray-300 p-4 rounded-lg">
+                  {renderMedia()}
+                {/* <input
+                  type="text" 
+                  className={`text-gray-700 w-full outline-none py-3 p-2 rounded-lg bg-gray-200}`}
+                  value={data.mediaType}
+                  onChange={(e) => handleChange(e, 'mediaType')}
+                  disabled={!editMode.mediaType}
+                /> */}
               </div>
             </div>
-
             <div className="">
               <label className="w-52 gap-4 text-gray-700 flex flex-row text-sm font-bold mb-2" htmlFor="description">
                 Description
                 <button type="button" className={`text-xl ${!editMode.description ? 'hidden' : 'block'}`} onClick={() =>{handleSave('description'); handleEditToggle('description')}}><MdOutlineSave size={20} /></button>
-                <button type="button" className={`${editMode.description ? 'hidden' : 'block'}`} onClick={() => handleEditToggle('description')}><FaRegEdit /></button>
+                <button type="button" className={`${editMode.description ? 'hidden' : 'block'}`} onClick={() => handleEditToggle('description')}>
+                  <FaRegEdit />
+                </button>
               </label>
               <ReactQuill
                 theme="snow"
-                className={`h-52 mt-4 mb-12 `}
+                className={`h-52 mt-4 mb-12 `}  
                 value={data.description}
                 onChange={(value) => handleChange(value, 'description')}
                 readOnly={!editMode.description}
@@ -251,7 +270,6 @@ const Form4 = ({ formData }: any) => {
                     <button type="button" onClick={() => handleEditToggle('variants', index)}><FaRegEdit size={20} /></button>
                 )}
                 </label>
-                
                 <div key={index} className='flex flex-col sm:flex-row m-2 gap-8'>
                   <span className='flex flex-row items-center justify-between w-20'>Label :-   
                   </span>
@@ -291,7 +309,6 @@ const Form4 = ({ formData }: any) => {
               </button>
             </span>
           </span>
-
           <div className='flex py-2 flex-wrap w-full'>
             {data.tags.map((tag, index) => (
               <span key={index} className='flex gap-2 w-fit '>
@@ -342,7 +359,6 @@ const Form4 = ({ formData }: any) => {
           </div>
         </div>
         </div>
-
         <div className="flex my-8  flex-row justify-center gap-4">
           <button type="submit" className="bg-lime-500 px-20 text-white p-2 rounded">Submit</button>
         </div>
