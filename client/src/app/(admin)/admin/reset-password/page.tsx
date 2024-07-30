@@ -1,7 +1,7 @@
 'use client';
 import { notifyError, notifySuccess } from '@/utils/toast';
 import React, { useState } from 'react';
-import { images } from '../../../../public/images/image';
+import { images } from '../../../../../public/images/image';
 import instance from '@/utils/axios';
 const ResetPassword = () =>
 {

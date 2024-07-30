@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useEffect } from "react";
-import Sidebar from "../componets/sidebar";
+import Sidebar from "@/components/admin/sidebar";
 import { FaBoxOpen, FaShippingFast } from "react-icons/fa";
 import { RiGlobalLine, RiVipCrown2Line } from "react-icons/ri";
 import { MdArrowOutward, MdOutlineKeyboardArrowDown } from "react-icons/md";

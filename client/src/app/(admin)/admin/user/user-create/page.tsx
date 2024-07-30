@@ -4,7 +4,7 @@ import instance from '@/utils/axios';
 import { notifySuccess } from '@/utils/toast';
 import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
-import { adminRolesOptions, categoriesOptions, mediaTypesOptions } from '../../../../utils/tempData';
+import { adminRolesOptions, categoriesOptions, mediaTypesOptions } from '../../../../../utils/tempData';
 
 interface User
 {

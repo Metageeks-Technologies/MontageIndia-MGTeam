@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Cookies from 'js-cookie';
-import Sidebar from "./sidebar";
+import Sidebar from "../../admin/sidebar";
 import instance from '@/utils/axios';
 
 const AuthWrapper = ( { children }: { children: React.ReactNode; } ) =>

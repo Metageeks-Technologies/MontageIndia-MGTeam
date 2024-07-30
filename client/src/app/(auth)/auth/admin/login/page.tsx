@@ -4,7 +4,7 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import { images } from "../../../../public/images/image";
+// import { images } from "";
 import Cookies from 'js-cookie';
 import { notifySuccess } from "@/utils/toast";
 import instance from "@/utils/axios";
@@ -78,8 +78,8 @@ const Page = () =>
       <div className="flex flex-col items-center justify-center min-h-screen relative px-4 sm:px-6 lg:px-8">
         <div className="flex items-center mb-6 absolute top-12 gap-3">
 
-          <div className="w-48 h-14 flex justify-center items-center rounded-xl ">
-            <img src={ images.logo.src } alt="logo" />
+          <div className="w-48 h-14 flex mb-4 justify-center items-center rounded-xl ">
+            <img src={ "/images/logo.png" } alt="logo" />
           </div>
 
         </div>
