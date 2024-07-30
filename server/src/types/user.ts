@@ -9,6 +9,7 @@ export type TAdmin = Document & {
     mediaType: String;
     resetPasswordToken: string | undefined;
     resetPasswordExpires: Number | undefined;
+    isDeleted: Boolean;
     createJWT(): string;
     comparePassword(givenPassword: string): Promise<boolean>;
 }

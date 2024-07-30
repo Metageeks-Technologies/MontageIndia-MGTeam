@@ -45,38 +45,40 @@ const Page = () =>
         }
       );
 
-      console.log( "Login successful:", response.data );
+      console.log( "Login successful:", response.data.token );
       // Set a cookie from the frontend
-      Cookies.set( 'token', response.data.token, { expires: 7, secure: true, sameSite: 'strict' } );
-      localStorage.setItem('token',response.data.token)
-
-      notifySuccess( "Login Successful" );
-      router.push( "/" );
+      // Cookies.set( 'token', response.data.token, { expires: 7, secure: true, sameSite: 'strict' } );
+      
+      localStorage.setItem( 'token', response.data.token );
+      
+      notifySuccess( "Login Successful" );  
+      router.push( "/admin/dashboard" );
       setUsernameOrEmail( "" );
       setPassword( "" );
     } catch ( error )
     {
       console.error( "Login error:", error );
-
+      
       if ( axios.isAxiosError( error ) )
-      {
-        setError( error.response?.data?.message || "An error occurred during login. Please try again." );
-      } else
-      {
-        setError( "An unexpected error occurred. Please try again." );
+        {
+          setError( error.response?.data?.message || "An error occurred during login. Please try again." );
+        } else
+        {
+          setError( "An unexpected error occurred. Please try again." );
+        }
       }
-    }
-  };
-
-
+    };
+    
+    const tokenn = Cookies.get()
+    
+    console.log("tokencokkies-",tokenn)
   return (
     <>
-      {/* // this style is for red astrix */ }
-      <style jsx>{ `.required-label::after { content: "*"; color: red; margin-left: 0.25rem; }` }</style>;
+
       <div className="flex flex-col items-center justify-center min-h-screen relative px-4 sm:px-6 lg:px-8">
         <div className="flex items-center mb-6 absolute top-12 gap-3">
 
-          <div className="w-48 h-14 bg-white border border-gray-300 flex justify-center items-center rounded-xl shadow-xl">
+          <div className="w-48 h-14 flex justify-center items-center rounded-xl ">
             <img src={ images.logo.src } alt="logo" />
           </div>
 
@@ -98,7 +100,7 @@ const Page = () =>
                 htmlFor="usernameOrEmail"
                 className="block text-sm font-medium text-gray-700 required-label"
               >
-                Username or Email
+                Username or Email <span className="text-red-500">*</span> 
               </label>
 
               <input
@@ -115,7 +117,7 @@ const Page = () =>
                 htmlFor="password"
                 className="block text-sm font-medium text-gray-700 required-label"
               >
-                Password
+                Password <span className="text-red-500">*</span> 
               </label>
               <input
                 type={ showPassword ? "text" : "password" }
@@ -146,7 +148,7 @@ const Page = () =>
               </button>
             </div>
             <button
-              className="flex items-center rounded-md justify-center w-full px-4 py-2 mt-4 text-white bg-[#BEF264] hover:bg-[#cbff70]"
+              className="flex items-center rounded-md justify-center w-full px-4 py-2 mt-4 text-white bg-webgreen hover:bg-webgreenHover"
               onClick={ handleLogin }
             >
               Continue

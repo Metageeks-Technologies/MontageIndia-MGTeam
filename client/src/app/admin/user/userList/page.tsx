@@ -32,7 +32,7 @@ export default function UserList ()
         setLoading( true );
         try
         {
-            const response = await instance.get( `auth/admin/getAllAdmin`,{withCredentials: true } );
+            const response = await instance.get( `auth/admin/getAllAdmin`, { withCredentials: true } );
             setAllUsers( response.data.users );
         } catch ( error )
         {
@@ -89,68 +89,69 @@ export default function UserList ()
                 </button>
             );
         }
-
         return pageNumbers;
     };
 
-
     return (
-        <div className="container mx-auto p-4  h-full">
-            <h1 className="text-2xl font-bold mb-4">User List</h1>
-            <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
-                <div className="overflow-x-scroll lg:overflow-x-auto">
-                    <table className="w-full text-sm text-left rtl:text-right text-gray-900 ">
-                        <thead className="text-xs text-gray-900 uppercase bg-gray-200  ">
-                            <tr className='border'>
-                                <th scope="col" className="px-4 py-3 sm:px-6">Name</th>
-                                <th scope="col" className="px-4 py-3 sm:px-6">Email</th>
-                                <th scope="col" className="px-4 py-3 sm:px-6">Role</th>
-                                <th scope="col" className="px-4 py-3 sm:px-6">Media Type</th>
-                                <th scope="col" className="px-4 py-3 sm:px-6">Category</th>
-                                <th scope="col" className="px-4 py-3 sm:px-6">
-                                    <span className="sr-only">Edit</span>
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            { loading ? (  
+        <div className="flex flex-col h-full bg-gray-100 min-w-md">
+            <div className="flex-grow p-6 md:p-0">
+                <h1 className="text-3xl font-bold mb-6 text-gray-800">User List</h1>
+                <div className="bg-white shadow-md rounded-lg overflow-hidden">
+                    <div className="overflow-x-auto">
+                        <table className="w-full text-sm text-left text-gray-900">
+                            <thead className="text-xs text-gray-700 uppercase bg-gray-200">
                                 <tr>
-                                    <td colSpan={ 6 } className="text-center py-4"><Spinner label="Loading..." color="success" /></td>
+                                    <th scope="col" className="px-6 py-3">Name</th>
+                                    <th scope="col" className="px-6 py-3">Email</th>
+                                    <th scope="col" className="px-6 py-3">Role</th>
+                                    <th scope="col" className="px-6 py-3 hidden md:table-cell">Media Type</th>
+                                    <th scope="col" className="px-6 py-3 hidden lg:table-cell">Category</th>
+                                    <th scope="col" className="px-6 py-3">
+                                        <span className="sr-only">Edit</span>
+                                    </th>
                                 </tr>
-                            ) : (
-                                paginatedUsers.map( ( user ) => (
-                                    <tr key={ user._id } className="bg-white border-b  hover:bg-gray-100 ">
-                                        <th scope="row" className="px-4 py-4 sm:px-6 font-medium text-gray-900 whitespace-nowrap">
-                                            { user.name }
-                                        </th>
-                                        <td className="px-4 py-4 sm:px-6">{ user.email }</td>
-                                        <td className="px-4 py-4 sm:px-6">{ user.role }</td>
-                                        <td className="px-4 py-4 sm:px-6">{ user.mediaType }</td>
-                                        <td className="px-4 py-4 sm:px-6">{ user.category }</td>
-                                        <td className="px-4 py-4 sm:px-6 text-right">
-                                            <button
-                                                onClick={ ( e ) =>
-                                                {
-                                                    e.preventDefault();
-                                                    handleEditClick( user._id );
-                                                } }
-                                                className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
-                                            >
-                                                Edit
-                                            </button>
+                            </thead>
+                            <tbody>
+                                { loading ? (
+                                    <tr>
+                                        <td colSpan={ 6 } className="text-center py-4">
+                                            <Spinner label="Loading..." color="success" />
                                         </td>
                                     </tr>
-                                ) )
-                            ) }
-                        </tbody>
-                    </table>
+                                ) : (
+                                    paginatedUsers.map( ( user ) => (
+                                        <tr key={ user._id } className="bg-white border-b hover:bg-gray-50">
+                                            <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
+                                                { user.name }
+                                            </th>
+                                            <td className="px-6 py-4">{ user.email }</td>
+                                            <td className="px-6 py-4">{ user.role }</td>
+                                            <td className="px-6 py-4 hidden md:table-cell">{ user.mediaType }</td>
+                                            <td className="px-6 py-4 hidden lg:table-cell">{ user.category }</td>
+                                            <td className="px-6 py-4 text-right">
+                                                <button
+                                                    onClick={ ( e ) =>
+                                                    {
+                                                        e.preventDefault();
+                                                        handleEditClick( user._id );
+                                                    } }
+                                                    className="font-medium text-blue-600 hover:underline"
+                                                >
+                                                    Edit
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    ) )
+                                ) }
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
 
-            {/* Numbered Pagination controls */ }
-            <div className="fixed bottom-4 pb-4 left-0 right-0 bg-white shadow-md">
-
-                <div className="flex justify-center items-center mt-4">
+            {/* Pagination controls */ }
+            <div className="bg-white shadow-md py-4">
+                <div className="flex justify-center items-center">
                     <button
                         onClick={ () => handlePageChange( 1 ) }
                         disabled={ currentPage === 1 }

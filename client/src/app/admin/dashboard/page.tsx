@@ -1,26 +1,39 @@
-import React from "react";
+'use client'
+
+import React, { useEffect } from "react";
 import Sidebar from "../componets/sidebar";
 import { FaBoxOpen, FaShippingFast } from "react-icons/fa";
 import { RiGlobalLine, RiVipCrown2Line } from "react-icons/ri";
 import { MdArrowOutward, MdOutlineKeyboardArrowDown } from "react-icons/md";
 import { IoArrowForward } from "react-icons/io5";
 
-const page = () => {
+const page = () =>
+{
+
+  useEffect( () =>
+  {
+
+    // if previous page was login than realod
+   
+
+  }, [] );
+
+
   return (
-    <div className="main ">
+    <div className="">
       {/* <Sidebar /> */}
 
-      <div className="flex-1 bg-white p-4">
+      <div className=" bg-white p-4">
         {/* Welcome Section */}
-        <div className="flex justify-between items-center mb-6 sm:w-full">
+        <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-semibold">Hello, Marc!</h1>
 
-          <button className="bg-[#84CC16] text-white border border-gray-400 px-4 py-3 rounded-lg shadow flex items-center space-x-2">
+          <button className="bg-webgreen text-white border border-gray-400 px-4 py-3 rounded-lg shadow flex items-center space-x-2">
             <RiGlobalLine className="h-5 w-5" />
             <span className="text-sm">Open Site</span>
           </button>
         </div>
-        <div className="bg-[#f2fee0] border border-[#84CC16] text-green-700 px-4 py-3 rounded-lg flex items-center justify-between mb-6">
+        <div className="bg-[#f2fee0] border border-webgreen text-green-700 px-4 py-3 rounded-lg flex items-center justify-between mb-6">
           <div className=" flex items-center gap-1">
             <div className=" flex items-center">
               <RiVipCrown2Line className="h-6 w-6 text-[#8B5CF6]" />
@@ -35,7 +48,7 @@ const page = () => {
           </button>
         </div>
 
-        {/* Welcome to Durara Section */}
+        {/* Welcome to Durara Section */ }
         <div className="mb-6">
           <h2 className="text-xl font-semibold mb-2">Welcome to Durara 👋</h2>
           <p className="text-gray-600 mb-4">
@@ -45,7 +58,7 @@ const page = () => {
           <div className="bg-purple-50  rounded-md border border-purple-500">
             <div className=" p-4 rounded-lg flex justify-between items-center ">
               <div className="flex items-center space-x-4">
-                <FaBoxOpen className="w-6 h-6 text-[#84CC16]" />
+                <FaBoxOpen className="w-6 h-6 text-webgreen" />
                 <div>
                   <h3 className="font-semibold">Stock your store</h3>
                   <p>Let’s get started. Tell about you and your shop</p>
@@ -58,7 +71,7 @@ const page = () => {
             </div>
             <div className=" p-4 rounded-lg flex justify-between items-center">
               <div className="flex items-center space-x-4">
-                <FaShippingFast className="w-6 h-6 text-[#84CC16]" />
+                <FaShippingFast className="w-6 h-6 text-webgreen" />
                 <div>
                   <h3 className="font-semibold">Set your shipping</h3>
                   <p>Let’s get started. Tell about you and your shop</p>
@@ -72,7 +85,7 @@ const page = () => {
           </div>
         </div>
 
-        {/* Overview Performance */}
+        {/* Overview Performance */ }
         <div className="flex justify-between gap-6">
           <div className="mb-6 basis-[65%]">
             <div className="flex flex-col">
@@ -120,7 +133,7 @@ const page = () => {
               </div>
 
               <div className="mt-6">
-                <h2 className="text-xl  font-semibold mb-2 flex justify-between items-center">
+                <h2 className="text-xl font-semibold mb-2 flex justify-between items-center">
                   Revenue{" "}
                   <button className="px-6 py-2 border flex items-center gap-2 shadow rounded-md">
                     <a href="#" className="text-medium font-semibold ">
@@ -139,7 +152,7 @@ const page = () => {
             </div>
           </div>
 
-          <div className="mb-6 basis-[35%]">
+          <div className="mb-6 ">
             <div className="flex flex-col">
               <div className="mb-2 flex justify-between items-center">
                 <h2 className="text-xl font-semibold ">Products </h2>
