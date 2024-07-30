@@ -50,8 +50,11 @@ export const getProducts = catchAsyncError(async (req, res, next) => {
         queryObject.status=status;
     }
 
-    if(searchTerm){
-        queryObject.title = { $regex: searchTerm, $options: 'i' };
+    if (searchTerm) {
+        queryObject.$or = [
+            { title: { $regex: searchTerm, $options: 'i' } },
+            { tags: { $regex: searchTerm, $options: 'i' } }
+        ];
     }
 
     if (Array.isArray(category) && category.length > 0) {
