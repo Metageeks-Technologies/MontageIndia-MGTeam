@@ -139,10 +139,11 @@ export const getAdminById= catchAsyncError(async (req, res, next) => {
     }    
 });
 
-export const getCurrentAdmin = catchAsyncError(async (req, res, next) => {
+export const getCurrentAdmin = catchAsyncError(async (req:any, res, next) => {
 
     try {
-        const { id } = req.body;
+        console.log("curr admin",req.user);
+        const { id } = req.user;
         const user = await Admin.findOne({ "_id": id });
         res.status(200).json({
             success: true,

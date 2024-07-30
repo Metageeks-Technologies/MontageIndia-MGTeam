@@ -5,7 +5,6 @@ import Activity from '@src/model/activity/activity';
 
 export const createProduct = catchAsyncError(async (req: any, res, next) => {
     
-    
     // console.log("create product",req.body);
     const {category} = req.body;
     const product= await Product.create(req.body);
@@ -15,7 +14,7 @@ export const createProduct = catchAsyncError(async (req: any, res, next) => {
         name: req.user.name,
         email: req.user.email,
         username: req.user.username,
-        action: 'create',
+        action: 'created',
         category: category[0],
         productId: product._id,
         timestamp: Date.now()
@@ -43,32 +42,39 @@ export const getProduct = catchAsyncError(async (req, res, next) => {
 
 export const getProducts = catchAsyncError(async (req, res, next) => {
     
-    const {page,status,mediaType,tags,category}= req.query;
+   const {productsPerPage='6', page = '1', status = 'published', category = [], mediaType = [], searchTerm = '',tags } = req.query;
+
     const queryObject:any = {};
 
     if(status){
         queryObject.status=status;
     }
-    if(mediaType){
-        queryObject.mediaType = mediaType;
+
+    if(searchTerm){
+        queryObject.title = { $regex: searchTerm, $options: 'i' };
     }
+
+    if (Array.isArray(category) && category.length > 0) {
+        queryObject.category = { $in: category };
+    }
+
+    if (Array.isArray(mediaType) && mediaType.length > 0) {
+        queryObject.mediaType = { $in: mediaType };
+    }
+
     if (tags) {
         const nTag = tags as string;
         const tagsArray = Array.isArray(nTag) ? nTag : nTag.split(','); // Ensure tags are in array format
         queryObject.tags = { $all: tagsArray };
     }
-    if (category) {
-        const nCategory = category as string;
-        const tagsArray = Array.isArray(nCategory) ? nCategory : nCategory.split(','); // Ensure tags are in array format
-        queryObject.tags = { $all: tagsArray };
-    }
+
+    console.log("queryObject",queryObject);
     
-
     const p = Number(page) || 1;
-    const limit = 8;
-    const skip = (p - 1) * limit;
-
-  let products = await Product.find(queryObject).skip(skip).limit(limit);
+    const limit = Number(productsPerPage);
+    const skip = (p - 1) * Number(limit);
+    
+  let products = await Product.find(queryObject).skip(skip).limit(Number(limit));
   const totalData = await Product.countDocuments(queryObject);
   const numOfPages = Math.ceil(totalData / limit);
     
@@ -80,18 +86,32 @@ export const getProducts = catchAsyncError(async (req, res, next) => {
     })
 })
 
-export const updateProduct = catchAsyncError(async (req, res, next) => {
+export const updateProduct = catchAsyncError(async (req: any, res, next) => {
     
     const {id:uuid}= req.params;
     
     const products= await Product.findOneAndUpdate({uuid},req.body); 
+    // console.log("updatedbody",req);
+    const activity={
+        adminId: req.user._id,
+        name: req.user.name,
+        email: req.user.email,
+        username: req.user.username,
+        action: 'Updated',
+        category: req.body.category?req.body.category:"unknown",
+        productId: uuid,
+        timestamp: Date.now(),
+    }
+
+    await Activity.create(activity);
+
     res.status(201).json({
         success: true,
         products    
     })
 });
 
-export const addSizeAndKeysToVideo =  catchAsyncError(async (req, res, next) => {
+export const addSizeAndKeysToVideo =  catchAsyncError(async (req:any, res, next) => {
     
     const { uuid,mediaType } = req.body;
 
@@ -113,14 +133,26 @@ export const addSizeAndKeysToVideo =  catchAsyncError(async (req, res, next) => 
         { $set: { variants, publicKey, thumbnailKey } }, // set the fields to update
         { new: true } // return the updated document
       );
-  
+    
+    const activity={
+        adminId: req.user._id,
+        name: req.user.name,
+        email: req.user.email,
+        username: req.user.username,
+        action: 'Updated',
+        category: req.body.category?req.body.category:"unknown",
+        productId: uuid,
+        timestamp: Date.now(),
+    }
+
+    await Activity.create(activity);
 
     res.json({ success: true,
         product:updatedProduct
     });
 });
 
-export const addPriceToVariant = catchAsyncError(async (req, res, next) => {
+export const addPriceToVariant = catchAsyncError(async (req:any, res, next) => {
     
     const {id:vid} = req.params;
     const {uuid,price,label} =  req.body;
@@ -146,6 +178,19 @@ export const addPriceToVariant = catchAsyncError(async (req, res, next) => {
         }
       );
       const updatedProduct = await Product.findOne({uuid});
+
+        const activity={
+        adminId: req.user._id,
+        name: req.user.name,
+        email: req.user.email,
+        username: req.user.username,
+        action: 'Updated',
+        category: req.body.category?req.body.category:"unknown",
+        productId: uuid,
+        timestamp: Date.now(),
+    }
+
+    await Activity.create(activity);
     
     res.status(201).json({
         success: true,

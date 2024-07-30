@@ -40,7 +40,7 @@ export const checkProductAccess = catchAsyncError(async (req: any, res: any, nex
         return next(new ErrorHandler("you don't have permission to access this media resource.", 403));
     }
 
-    if(req.user.category !== "all" ){
+    if(req.user.category !== "all" && req.user.category !== req.body.category){
         return next(new ErrorHandler("you don't have permission to access this category resource.", 403));
     }
 

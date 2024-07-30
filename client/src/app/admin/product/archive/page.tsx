@@ -3,6 +3,8 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import instance from "@/utils/axios";
 import { Spinner } from "@nextui-org/react";
+import Multiselect from 'multiselect-react-dropdown';
+import {categoriesOptions, mediaTypesOptions} from "../../../../utils/tempData";
 
 // Define the interfaces for the product and variant types
 interface Variant {
@@ -30,17 +32,44 @@ const Home: React.FC = () => {
   const [productData, setProductData] = useState<Product[]>([]);
   const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const productsPerPage = 6;
+  const [totalPages, setTotalPages] = useState(1);
+  const [productsPerPage, setProductsPerPage] = useState(6);
+  const [SearchTerm, setSearchTerm] = useState("");
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [selectedMediaTypes, setSelectedMediaTypes] = useState<string[]>([]);
 
+    const onSelectCategory = (selectedList: string[]) => {
+    setSelectedCategories(selectedList);
+  };
+
+  const onRemoveCategory = (selectedList: string[]) => {
+    setSelectedCategories(selectedList);
+  };
+
+  const onSelectMediaType = (selectedList: string[]) => {
+    setSelectedMediaTypes(selectedList);
+  };
+
+  const onRemoveMediaType = (selectedList: string[]) => {
+    setSelectedMediaTypes(selectedList);
+  };
+
+   const showAllProducts = async () => {
+    setSearchTerm("");
+    setSelectedCategories([]);
+    setSelectedMediaTypes([]);
+    fetchProduct();
+  }
   // fetch data from Server
   const fetchProduct = async () => {
     setLoading(true);
     try {
       const response = await instance.get(`/product`, {
-        params: { status: 'archived' },
+        params: { status: 'archived',productsPerPage, page: currentPage,category: selectedCategories, mediaType: selectedMediaTypes, searchTerm: SearchTerm  },
         withCredentials: true,
       });
       setProductData(response.data.products);
+      setTotalPages(response.data.numOfPages);
       console.log(response);
     } catch (error) {
       console.error("Error fetching products:", error);
@@ -50,7 +79,7 @@ const Home: React.FC = () => {
   };
   useEffect(() => {
     fetchProduct();
-  }, []);
+  }, [currentPage, productsPerPage]);
 
   // display words function
   function truncateText(text: string, wordLimit: number): string {
@@ -61,14 +90,8 @@ const Home: React.FC = () => {
     return text;
   }
 
-  // Calculate the number of pages
-  const totalPages = Math.ceil(productData.length / productsPerPage);
-
   // Get products for the current page
-  const currentProducts = productData.slice(
-    (currentPage - 1) * productsPerPage,
-    currentPage * productsPerPage
-  );
+  const currentProducts = productData;
 
   // Handler to change page
   const handlePageChange = (page: number) => {
@@ -78,26 +101,71 @@ const Home: React.FC = () => {
   return (
     <div className="container p-4  ">
       <div className="flex justify-between items-center my-6">
-        <input
+       <input
           type="text"
           placeholder="Search products"
-          className="border rounded px-4 py-2 w-full max-w-md"
+          value={SearchTerm}
+          onChange={( e ) => setSearchTerm( e.target.value )}
+          className="border rounded px-4 py-2 w-full max-w-sm"
         />
         <h1 className="bg-webgreen text-white px-4 py-2 rounded ml-2">
           Archive Product
         </h1>
       </div>
-      <div className="flex justify-between items-center mb-4">
-        <div>
-          <button className="bg-gray-200 px-4 py-2 rounded">
-            Show All Products
+      <div className="flex justify-between items-center gap-4 flex-wrap mb-4">
+         <div className="flex justify-start items-center flex-wrap gap-4">
+          <Multiselect
+            avoidHighlightFirstOption
+            showArrow
+            placeholder="category"
+            style={{
+              chips: {
+                background: '#BEF264'
+              },
+              searchBox: {
+                background: 'white',
+                border: '1px solid #e5e7eb',
+              },
+            }}
+            options={categoriesOptions.map((option) => ({ name: option }))} 
+            selectedValues={selectedCategories.map((category) => ({ name: category }))}
+            onSelect={(selectedList) => onSelectCategory(selectedList.map((item:any) => item.name))} 
+            onRemove={(selectedList) => onRemoveCategory(selectedList.map((item:any) => item.name))} 
+            showCheckbox
+            displayValue="name" 
+          />
+          <Multiselect
+            avoidHighlightFirstOption
+            showArrow
+            placeholder="media type"
+            options={mediaTypesOptions.map((option) => ({ name: option }))} 
+            selectedValues={selectedMediaTypes.map((type) => ({ name: type }))}
+            onSelect={(selectedList) => onSelectMediaType(selectedList.map((item:any) => item.name))} 
+            onRemove={(selectedList) => onRemoveMediaType(selectedList.map((item:any) => item.name))} 
+            showCheckbox
+            displayValue="name" 
+            style={{
+              chips: {
+                background: '#BEF264'
+              },
+              searchBox: {
+                background: 'white',
+                border: '1px solid #e5e7eb',
+              }
+            }}
+          />
+          <button className="bg-webgreen text-white px-4 py-2 rounded" onClick={fetchProduct}>
+            Search
+          </button>
+          <button className="bg-gray-200 px-4 py-2 rounded" onClick={showAllProducts}>
+            Show All
           </button>
         </div>
         <div>
-          <select className="border rounded px-4 py-2">
-            <option>6 Data per page</option>
-            <option>12 Data per page</option>
-            <option>24 Data per page</option>
+          <select className="border rounded px-4 py-2" value={productsPerPage} onChange={(e) => setProductsPerPage(parseInt(e.target.value))}>
+            <option value="6" >6 Data per page</option>
+            <option value="12">12 Data per page</option>
+            <option value="24">24 Data per page</option>
           </select>
         </div>
       </div>
