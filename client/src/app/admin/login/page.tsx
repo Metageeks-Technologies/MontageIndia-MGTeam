@@ -50,9 +50,7 @@ const Page = () =>
       // Cookies.set( 'token', response.data.token, { expires: 7, secure: true, sameSite: 'strict' } );
       
       localStorage.setItem( 'token', response.data.token );
-      // const tokenn = Cookies.get( 'token' )
-
-      // console.log("token-",tokenn)
+      
       notifySuccess( "Login Successful" );  
       router.push( "/admin/dashboard" );
       setUsernameOrEmail( "" );
@@ -60,18 +58,20 @@ const Page = () =>
     } catch ( error )
     {
       console.error( "Login error:", error );
-
+      
       if ( axios.isAxiosError( error ) )
-      {
-        setError( error.response?.data?.message || "An error occurred during login. Please try again." );
-      } else
-      {
-        setError( "An unexpected error occurred. Please try again." );
+        {
+          setError( error.response?.data?.message || "An error occurred during login. Please try again." );
+        } else
+        {
+          setError( "An unexpected error occurred. Please try again." );
+        }
       }
-    }
-  };
-
-
+    };
+    
+    const tokenn = Cookies.get()
+    
+    console.log("tokencokkies-",tokenn)
   return (
     <>
 

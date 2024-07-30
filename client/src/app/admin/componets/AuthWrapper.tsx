@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Cookies from 'js-cookie';
 import Sidebar from "./sidebar";
+import instance from '@/utils/axios';
 
 const AuthWrapper = ( { children }: { children: React.ReactNode; } ) =>
 {
@@ -13,8 +14,9 @@ const AuthWrapper = ( { children }: { children: React.ReactNode; } ) =>
 
     useEffect( () =>
     {
-        const checkAuth = () =>
+        const checkAuth = async() =>
         {
+            // const user = await instance('/auth/admin/')
             // Check token in cookies
             const cookieToken = Cookies.get( 'token' );
             console.log( 'Token from cookies:', cookieToken );
@@ -44,6 +46,7 @@ const AuthWrapper = ( { children }: { children: React.ReactNode; } ) =>
         if ( typeof window !== "undefined" && window.location.href === '/admin/login' )
         {
             setIsAuthenticated( false );
+            router.refresh();
         }
     };
     checkEndpoint();
