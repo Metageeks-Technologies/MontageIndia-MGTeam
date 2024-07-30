@@ -28,12 +28,12 @@ const page = () =>
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-semibold">Hello, Marc!</h1>
 
-          <button className="bg-[#84CC16] text-white border border-gray-400 px-4 py-3 rounded-lg shadow flex items-center space-x-2">
+          <button className="bg-webgreen text-white border border-gray-400 px-4 py-3 rounded-lg shadow flex items-center space-x-2">
             <RiGlobalLine className="h-5 w-5" />
             <span className="text-sm">Open Site</span>
           </button>
         </div>
-        <div className="bg-[#f2fee0] border border-[#84CC16] text-green-700 px-4 py-3 rounded-lg flex items-center justify-between mb-6">
+        <div className="bg-[#f2fee0] border border-webgreen text-green-700 px-4 py-3 rounded-lg flex items-center justify-between mb-6">
           <div className=" flex items-center gap-1">
             <div className=" flex items-center">
               <RiVipCrown2Line className="h-6 w-6 text-[#8B5CF6]" />
@@ -58,7 +58,7 @@ const page = () =>
           <div className="bg-purple-50  rounded-md border border-purple-500">
             <div className=" p-4 rounded-lg flex justify-between items-center ">
               <div className="flex items-center space-x-4">
-                <FaBoxOpen className="w-6 h-6 text-[#84CC16]" />
+                <FaBoxOpen className="w-6 h-6 text-webgreen" />
                 <div>
                   <h3 className="font-semibold">Stock your store</h3>
                   <p>Let’s get started. Tell about you and your shop</p>
@@ -71,7 +71,7 @@ const page = () =>
             </div>
             <div className=" p-4 rounded-lg flex justify-between items-center">
               <div className="flex items-center space-x-4">
-                <FaShippingFast className="w-6 h-6 text-[#84CC16]" />
+                <FaShippingFast className="w-6 h-6 text-webgreen" />
                 <div>
                   <h3 className="font-semibold">Set your shipping</h3>
                   <p>Let’s get started. Tell about you and your shop</p>

@@ -148,7 +148,7 @@ const Page = () =>
               </button>
             </div>
             <button
-              className="flex items-center rounded-md justify-center w-full px-4 py-2 mt-4 text-white bg-[#BEF264] hover:bg-[#cbff70]"
+              className="flex items-center rounded-md justify-center w-full px-4 py-2 mt-4 text-white bg-webgreen hover:bg-webgreenHover"
               onClick={ handleLogin }
             >
               Continue
