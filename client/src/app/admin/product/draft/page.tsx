@@ -19,10 +19,10 @@ interface Product {
   description: string;
   tags: string[];
   variants: Variant[];
+  uuid:string,
   status: string;
   mediaType: string;
   publicKey: string;
-  uuid:string;
   category: string;
   thumbnailKey: string;
   id: string;
@@ -31,19 +31,21 @@ interface Product {
 const Home: React.FC = () => {
   const [productData, setProductData] = useState<Product[]>([]);
   const [loading, setLoading] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);
-  const productsPerPage = 6;
+  const [currentPage, setCurrentPage] = useState(2);
+  const [totalPages, setTotalPages] = useState(0);
+  const productsPerPage = 8;
 
   // fetch data from Server
-  const fetchProduct = async () => {
+  const fetchProduct = async (page:number) => {
     setLoading(true);
     try {
       const response = await instance.get(`/product`, {
-        params: { status: 'published' },
+        params: { status: 'draft',page },
         withCredentials: true,
       } );
       console.log(response.data.products)
       setProductData(response.data.products);
+      setTotalPages(response.data.numOfPages);
       console.log(response);
     } catch (error) {
       console.error("Error fetching products:", error);
@@ -52,8 +54,8 @@ const Home: React.FC = () => {
     }
   };
   useEffect(() => {
-    fetchProduct();
-  }, [] );
+    fetchProduct(currentPage);
+  }, [currentPage] );
   
   // Handler to change page
   const handlePageChange = ( page: number ) =>
@@ -71,14 +73,14 @@ const Home: React.FC = () => {
   }
 
   // Calculate the number of pages
-  const totalPages = Math.ceil(productData.length / productsPerPage);
+//   const totalPages = Math.ceil(productData.length / productsPerPage);
 
-  // Get products for the current page
-  const currentProducts = productData.slice(
-    (currentPage - 1) * productsPerPage,
-    currentPage * productsPerPage
-  );
-
+//   // Get products for the current page
+//   const currentProducts = productData.slice(
+//     (currentPage - 1) * productsPerPage,
+//     currentPage * productsPerPage
+//   );
+// console.log("first",currentProducts)
 // Filter products by status "available"
 const availableProducts = productData.filter(
   ( prod ) => prod.status === "published"
@@ -114,22 +116,22 @@ const availableProducts = productData.filter(
         <table className="min-w-full leading-normal">
           <thead>
             <tr>
-              <th className="px-5 py-3 bg-gray-100 border-b border-gray-200 text-gray-800 text-left text-sm uppercase font-normal">
+              <th className="px-5 py-1 bg-gray-100 border-b border-gray-200 text-gray-800 text-left text-sm uppercase font-normal">
                 <input type="checkbox" />
               </th>
-              <th className="px-5 py-3 bg-gray-100 border-b border-gray-200 text-gray-800 text-left text-sm uppercase font-normal">
+              <th className="px-5 py-1 bg-gray-100 border-b border-gray-200 text-gray-800 text-left text-sm uppercase font-normal">
                 Product
               </th>
-              <th className="px-5 py-3 bg-gray-100 border-b border-gray-200 text-gray-800 text-left text-sm uppercase font-normal">
+              <th className="px-5 py-1 bg-gray-100 border-b border-gray-200 text-gray-800 text-left text-sm uppercase font-normal">
                 Media Type
               </th>
-              <th className="px-5 py-3 bg-gray-100 border-b border-gray-200 text-gray-800 text-left text-sm uppercase font-normal">
+              <th className="px-5 py-1 bg-gray-100 border-b border-gray-200 text-gray-800 text-left text-sm uppercase font-normal">
                 category
               </th>
-              <th className="px-5 py-3 bg-gray-100 border-b border-gray-200 text-gray-800 text-left text-sm uppercase font-normal">
+              <th className="px-5 py-1 bg-gray-100 border-b border-gray-200 text-gray-800 text-left text-sm uppercase font-normal">
                 Description
               </th>
-              <th className="px-5 py-3 bg-gray-100 border-b border-gray-200 text-gray-800 text-left text-sm uppercase font-normal">
+              <th className="px-5 py-1 bg-gray-100 border-b border-gray-200 text-gray-800 text-left text-sm uppercase font-normal">
                 Action
               </th>
             </tr>
@@ -142,12 +144,12 @@ const availableProducts = productData.filter(
                 </td>
               </tr>
             ) : (
-              currentProducts.map((prod) => (
+              productData.map((prod) => (
                 <tr key={prod._id} className="hover:bg-gray-300">
-                  <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                  <td className="px-5 py-2 border-b border-gray-200 bg-white text-sm">
                     <input type="checkbox" />
                   </td>
-                  <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                  <td className="px-5 py-2 border-b border-gray-200 bg-white text-sm">
                     <div className="flex items-center">
                       <div className="flex-shrink-0">
                         { prod.mediaType === "image" && (
@@ -183,7 +185,7 @@ const availableProducts = productData.filter(
                       </div>
                     </div>
                   </td>
-                  <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                  <td className="px-5 py-2 border-b border-gray-200 bg-white text-sm">
                     <span className="relative inline-block px-3 py-1 font-semibold leading-tight text-green-900">
                       <span
                         aria-hidden
@@ -192,17 +194,17 @@ const availableProducts = productData.filter(
                       <span className="relative">{prod.mediaType}</span>
                     </span>
                   </td>
-                  <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                  <td className="px-5 py-2 border-b border-gray-200 bg-white text-sm">
                     <p className="text-gray-900 whitespace-no-wrap">
                       {prod.category}
                     </p>
                   </td>
-                  <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                  <td className="px-5 py-2 border-b border-gray-200 bg-white text-sm">
                     <p className="text-gray-900 ">
                       {truncateText(prod.description, 3)}
                     </p>
                   </td>
-                  <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                  <td className="px-5 py-2 border-b border-gray-200 bg-white text-sm">
                     <button className="text-gray-600 hover:text-gray-900">
                       <Link
                         href={`productEdit/${prod.uuid}`}
@@ -219,40 +221,28 @@ const availableProducts = productData.filter(
         </table>
       </div>
 
-      {/* Pagination Controls */}
-      <div className="flex  items-center mt-6">
-        <button
-          onClick={() => handlePageChange(currentPage - 1)}
-          disabled={currentPage === 1}
-          className="px-4 py-2 mx-1 bg-gray-300 text-gray-700 rounded disabled:opacity-50"
-        >
-          Pre
-        </button>
-        <div className="flex">
-          {[...Array(totalPages)].map((_, index) => (
-            <button
-              key={index}
-              onClick={() => handlePageChange(index + 1)}
-              className={`px-4 py-2 mx-1 ${
-                currentPage === index + 1
-                  ? "bg-webgreen text-white"
-                  : "bg-gray-200 text-gray-700"
-              } rounded`}
-            >
-              {index + 1}
-            </button>
+      <div className="flex justify-center mt-4">
+        <ul className="flex space-x-2">
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+            <li key={page}>
+              <button
+                className={`px-4 py-2 rounded ${
+                  currentPage === page
+                    ? "bg-webgreen text-white"
+                    : "bg-gray-200 text-gray-700"
+                }`}
+                onClick={() => handlePageChange(page)}
+              >
+                {page}
+              </button>
+            </li>
           ))}
-        </div>
-        <button
-          onClick={() => handlePageChange(currentPage + 1)}
-          disabled={currentPage === totalPages}
-          className="px-4 py-2 mx-1 bg-gray-300 text-gray-700 rounded disabled:opacity-50"
-        >
-          Next
-        </button>
+        </ul>
       </div>
     </div>
   );
 };
+
+
 
 export default Home;

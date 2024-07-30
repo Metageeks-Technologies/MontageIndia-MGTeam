@@ -20,6 +20,7 @@ import { useRouter } from "next/navigation";
 import { images } from "../../../../public/images/image";
 import instance from "@/utils/axios";
 import { notifySuccess } from "@/utils/toast";
+import Link from "next/link";
 
 const Sidebar = () =>
 {
@@ -132,7 +133,8 @@ const Sidebar = () =>
                     { isProductOpen && (
                       <ul className="py-2 space-y-2">
                         <li onClick={ () => handleNavigation( '/admin/product/available' ) } className="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100    cursor-pointer">Available</li>
-                        <li className="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100    cursor-pointer">Draft</li>
+                        <li className="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100    cursor-pointer">
+                          <Link href={'/admin/product/draft'}>Draft</Link></li>
                         <li onClick={ () => handleNavigation( '/admin/product/archive' ) } className="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100    cursor-pointer">Archived</li>
                         <li onClick={ () => handleNavigation( '/admin/product/unavailable' ) } className="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100    cursor-pointer">Unavailable</li>
                         <li onClick={ () => handleNavigation( '/admin/product/form' ) } className="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100   ">Create</li>

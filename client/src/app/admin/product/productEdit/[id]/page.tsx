@@ -1,5 +1,5 @@
 "use client";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import instance from "@/utils/axios";
 import { Spinner } from "@nextui-org/react";
@@ -19,6 +19,7 @@ export interface Product {
   description: string;
   tags: string[];
   category: string;
+  uuid:string;
   status: string;
   mediaType: string;
   publicKey: string;
@@ -33,14 +34,16 @@ const ProductDetail: React.FC = () => {
   const [loading, setLoading] = useState(false);
 
   const id = params.id as string | undefined;
-
+  console.log("first",id)
   const fetchProduct = async (id: string) => {
     setLoading(true);
     try {
-      const response = await instance.get(`/product`);
-      const product = response.data.products.find((p: Product) => p._id === id);
-      setProductDetail(product);
-      console.log(product);
+      const response = await instance(`/product/${id}`);
+      console.log(response)
+      
+      // const product = response.data.products.find((p: Product) => p._id === id);
+      setProductDetail(response.data.product);
+      console.log(response.data.product);
     } catch (error) {
       console.error("Error fetching product:", error);
     } finally {
@@ -66,7 +69,9 @@ const ProductDetail: React.FC = () => {
     return <div>No product found</div>;
   }
 
+  const router=useRouter()
   const handleEditClick = () => {
+    router.push(`/admin/product/form?uuid=${productDetail.uuid}`);
     setIsEditing(!isEditing);
   };
 
