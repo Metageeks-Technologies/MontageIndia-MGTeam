@@ -15,6 +15,7 @@ const categoriesOptions = [
   { value: 'home', label: 'Home' },
   { value: 'sports', label: 'Sports' },
   { value: 'toys', label: 'Toys' },
+  { value: 'health', label: 'Health' },
   { value: 'beauty', label: 'Beauty' }
 ];
 
