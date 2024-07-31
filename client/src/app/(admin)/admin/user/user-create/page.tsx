@@ -111,7 +111,7 @@ const UserCreate: React.FC = () =>
     };
 
     return (
-        <div className="flex flex-col h-full bg-gray-100">
+        <div className=" bg-white min-h-screen flex justify-center items-center">
             <div className="flex-grow p-6">
                 <h2 className="text-3xl text-center font-bold  text-gray-800">Create User</h2>
                 <form onSubmit={ handleSubmit } className="bg-white max-w-lg rounded-lg p-8 w-full mx-auto  mt-12 min-h-full shadow-md ">
@@ -208,6 +208,7 @@ const UserCreate: React.FC = () =>
                                 avoidHighlightFirstOption
                                 showArrow
                                 id="category"
+                                className='upDropdown'
                                 options={categoriesOptions.map((option) => ({ name: option.name, value: option.value }))} 
                                 selectedValues={selectedCategories.map((type) => ({ name: type }))}
                                 onSelect={(selectedList) => onSelectCategory(selectedList.map((item:any) => item.name))} 

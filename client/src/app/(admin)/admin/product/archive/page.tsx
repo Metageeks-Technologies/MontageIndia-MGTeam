@@ -37,6 +37,7 @@ const Home: React.FC = () => {
   const [SearchTerm, setSearchTerm] = useState("");
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [selectedMediaTypes, setSelectedMediaTypes] = useState<string[]>([]);
+  const [shouldFetch, setShouldFetch] = useState(true);
 
     const onSelectCategory = (selectedList: string[]) => {
     setSelectedCategories(selectedList);
@@ -53,12 +54,12 @@ const Home: React.FC = () => {
   const onRemoveMediaType = (selectedList: string[]) => {
     setSelectedMediaTypes(selectedList);
   };
-
    const showAllProducts = async () => {
     setSearchTerm("");
     setSelectedCategories([]);
     setSelectedMediaTypes([]);
-    fetchProduct();
+    setCurrentPage(1);
+    setShouldFetch(true);
   }
   // fetch data from Server
   const fetchProduct = async () => {
@@ -70,6 +71,7 @@ const Home: React.FC = () => {
       });
       setProductData(response.data.products);
       setTotalPages(response.data.numOfPages);
+      
       console.log(response);
     } catch (error) {
       console.error("Error fetching products:", error);
@@ -78,8 +80,12 @@ const Home: React.FC = () => {
     }
   };
   useEffect(() => {
-    fetchProduct();
-  }, [currentPage, productsPerPage]);
+    if (shouldFetch) {
+      fetchProduct();
+      setShouldFetch(false);
+    }
+
+  }, [currentPage, productsPerPage,shouldFetch]);
 
   // display words function
   function truncateText(text: string, wordLimit: number): string {
@@ -89,12 +95,16 @@ const Home: React.FC = () => {
     }
     return text;
   }
-
-  // Get products for the current page
-  const currentProducts = productData;
-
+  
+   const handleproductPerPage=(e:any)=>{
+    e.preventDefault();
+    setShouldFetch(true);
+    setCurrentPage(1);
+    setProductsPerPage(parseInt(e.target.value));
+  }
   // Handler to change page
   const handlePageChange = (page: number) => {
+    setShouldFetch(true);
     setCurrentPage(page);
   };
 
@@ -157,12 +167,12 @@ const Home: React.FC = () => {
           <button className="bg-webgreen text-white px-4 py-2 rounded" onClick={fetchProduct}>
             Search
           </button>
-          <button className="bg-gray-200 px-4 py-2 rounded" onClick={showAllProducts}>
+          <button type="button" className="px-4 py-2 rounded bg-gray-200" onClick={showAllProducts}>
             Show All
           </button>
         </div>
         <div>
-          <select className="border rounded px-4 py-2" value={productsPerPage} onChange={(e) => setProductsPerPage(parseInt(e.target.value))}>
+          <select className="border rounded px-4 py-2" value={productsPerPage} onChange={(e)=>handleproductPerPage(e)}>
             <option value="6" >6 Data per page</option>
             <option value="12">12 Data per page</option>
             <option value="24">24 Data per page</option>
@@ -201,7 +211,7 @@ const Home: React.FC = () => {
                 </td>
               </tr>
             ) : (
-              currentProducts.map((prod) => (
+             productData.map((prod) => (
                 <tr key={prod._id} className="hover:bg-gray-300">
                   <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                     <input type="checkbox" />
@@ -279,7 +289,7 @@ const Home: React.FC = () => {
       </div>
 
       {/* Pagination Controls */}
-      <div className="flex  items-center mt-6">
+      <div className="flex justify-center items-center mt-6">
         <button
           onClick={() => handlePageChange(currentPage - 1)}
           disabled={currentPage === 1}

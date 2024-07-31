@@ -165,11 +165,11 @@ export default function UserDetails ( { params }: { params: { id: string; }; } )
     }
   };
 
-  if ( !user ) return <div className="flex justify-center items-center h-screen">Loading...</div>;
+  if ( !user ) return <div className="flex justify-center items-center h-screen"><Spinner  color="success" label="Loading..." /></div>;
 
   return (
     <div className="bg-gray-100 min-h-screen py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-3xl mx-auto bg-white shadow-lg rounded-lg overflow-hidden">
+      <div className="max-w-3xl mx-auto bg-white shadow-lg rounded-lg">
         <div className="px-6 py-4 bg-gray-200 text-black">
           <h1 className="text-3xl font-bold text-center">User Profile</h1>
         </div>
@@ -192,6 +192,9 @@ export default function UserDetails ( { params }: { params: { id: string; }; } )
               key !== '_id'&& key!=='username' && key!=='isDeleted' && key!=="uid" && key!=="avatar" && key !== 'createdAt' && key !== 'updatedAt' && key !== '__v' && key !== 'resetPasswordExpires' && key !== 'resetPasswordToken' && (
                 <div key={ key } className="flex flex-col">
                  {(key!=='mediaType' && key !=='category') && (<label className="text-sm font-medium text-gray-700 mb-1 capitalize">
+                    { key.replace( /([A-Z])/g, ' $1' ).trim() }
+                  </label>) } 
+                   {!isEditing && (key==='mediaType' || key=='category') && (<label className="text-sm font-medium text-gray-700 mb-1 capitalize">
                     { key.replace( /([A-Z])/g, ' $1' ).trim() }
                   </label>) } 
                   {isEditing && (key==='name' || key === 'email') &&

@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Cookies from 'js-cookie';
 import Sidebar from "../../admin/sidebar";
 import instance from '@/utils/axios';
+import { Spinner } from '@nextui-org/react';
 
 const AuthWrapper = ( { children }: { children: React.ReactNode; } ) =>
 {
@@ -53,7 +54,9 @@ const AuthWrapper = ( { children }: { children: React.ReactNode; } ) =>
 
     if ( isLoading )
     {
-        return <div>Loading...</div>;
+        return <div className="flex justify-center items-center h-screen">
+        <Spinner  color="success" label="Loading..." />
+        </div>;
     }
 
 

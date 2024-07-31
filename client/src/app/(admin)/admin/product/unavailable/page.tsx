@@ -38,7 +38,7 @@ const Home: React.FC = () => {
   const [SearchTerm, setSearchTerm] = useState("");
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [selectedMediaTypes, setSelectedMediaTypes] = useState<string[]>([]);
-
+  const [shouldFetch, setShouldFetch] = useState(true);
   const onSelectCategory = (selectedList: string[]) => {
     setSelectedCategories(selectedList);
   };
@@ -58,7 +58,8 @@ const Home: React.FC = () => {
     setSearchTerm("");
     setSelectedCategories([]);
     setSelectedMediaTypes([]);
-    fetchProduct();
+    setCurrentPage(1);
+    setShouldFetch(true);
   }
 
   // fetch data from Server
@@ -79,8 +80,12 @@ const Home: React.FC = () => {
     }
   };
   useEffect(() => {
-    fetchProduct();
-  }, [currentPage, productsPerPage]);
+    if (shouldFetch) {
+      fetchProduct();
+      setShouldFetch(false);
+    }
+
+  }, [currentPage,productsPerPage,shouldFetch]);
 
   // display words function
   function truncateText(text: string, wordLimit: number): string {
@@ -158,7 +163,7 @@ const Home: React.FC = () => {
           <button className="bg-webgreen text-white px-4 py-2 rounded" onClick={fetchProduct}>
             Search
           </button>
-          <button className="bg-gray-200 px-4 py-2 rounded" onClick={showAllProducts}>
+          <button type="button" className="bg-gray-200 px-4 py-2 rounded" onClick={showAllProducts}>
             Show All
           </button>
         </div>
@@ -280,7 +285,7 @@ const Home: React.FC = () => {
       </div>
 
       {/* Pagination Controls */}
-      <div className="flex  items-center mt-6">
+      <div className="flex justify-center items-center mt-6">
         <button
           onClick={() => handlePageChange(currentPage - 1)}
           disabled={currentPage === 1}

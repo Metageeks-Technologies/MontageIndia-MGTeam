@@ -99,7 +99,7 @@ export default function UserList ()
         <div className="flex flex-col h-full bg-gray-100 min-w-md">
             <div className="flex-grow p-6 md:p-0">
                 <h1 className="text-3xl font-bold mb-6 text-gray-800">User List</h1>
-                <div className="bg-white shadow-md rounded-lg overflow-hidden">
+                <div className="bg-white shadow-md rounded-lg ">
                     <div className="overflow-x-auto">
                         <table className="w-full text-sm text-left text-gray-900">
                             <thead className="text-xs text-gray-700 uppercase bg-gray-200">
