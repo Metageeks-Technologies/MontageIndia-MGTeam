@@ -138,7 +138,7 @@ const Sidebar = () =>
                           <Link href={'/admin/product/archive'}>Archived</Link>
                         </li>
                         <li onClick={ () => handleNavigation( '/admin/product/unavailable' ) } className="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100    cursor-pointer">Unavailable</li>
-                        <li onClick={ () => handleNavigation( '/admin/product/create' ) } className="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100   ">Create</li>
+                        <li onClick={ () => handleNavigation( '/admin/product/create' ) } className="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 cursor-pointer  ">Create</li>
                       </ul>
                     ) }
                   </li>
