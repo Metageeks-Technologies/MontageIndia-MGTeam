@@ -11,6 +11,7 @@ import errorMiddleware from './middleware/error.js';
 import {processSQSMessages} from "@src/lib/sqsQueue.js"
 import config from "@src/utils/config.js"
 import productRouter from "@src/routes/product/product"
+import fieldRouter from '@src/routes/field/field';
 import cookieParser from 'cookie-parser';
 const {mongoUrl}=config;
 
@@ -29,6 +30,7 @@ app.use("/api/v1/media/image", imageRouter);
 app.use("/api/v1/media/video", videoRouter);
 app.use("/api/v1/media/audio", audioRouter);
 app.use("/api/v1/product", productRouter);
+app.use("/api/v1/field", fieldRouter);
 
 
 app.use(errorMiddleware);
