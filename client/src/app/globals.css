@@ -16,7 +16,7 @@
   }
 }
 
-body {
+/* body {
   color: rgb(var(--foreground-rgb));
   background: linear-gradient(
       to bottom,
@@ -24,10 +24,63 @@ body {
       rgb(var(--background-end-rgb))
     )
     rgb(var(--background-start-rgb));
+} */
+
+body {
+  @apply bg-[#FAFAFA] text-black;
 }
 
 @layer utilities {
   .text-balance {
     text-wrap: balance;
+  }
+}
+
+
+.neu{
+  border-radius: 52px;
+background: #e0e0e0;
+box-shadow: inset 24px 24px 78px #bebebe,
+            inset -24px -24px 78px #ffffff;
+}
+
+.bg_glass{
+  background: rgba(34, 32, 32, 0.25);
+box-shadow: 0 8px 32px 0 rgba( 31, 38, 135, 0.37 );
+backdrop-filter: blur( 12px );
+-webkit-backdrop-filter: blur( 12px );
+border-radius: 10px;
+border: 1px solid rgba( 255, 255, 255, 0.18 );
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th, td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+/* MyComponent.module.css */
+/* .option.selected {
+ color: #BEF264;
+}
+
+.option .checkbox{
+ background-color: #BEF264;
+}
+
+.option:hover {
+  background-color: #BEF264;
+} */
+
+
+@media screen and (max-width: 600px) {
+  table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
   }
 }

@@ -4,6 +4,7 @@ import ErrorHandler from "../../utils/errorHandler";
 import ffmpeg from "fluent-ffmpeg"
 import ffmpegStatic from 'ffmpeg-static'
 import { uploadAudio } from '../../lib/uploadToS3'
+import Product from '@src/model/product/product';
 ffmpeg.setFfmpegPath(ffmpegStatic as string);
 
 function addAudioWatermark(mainAudio: string, watermarkAudio: string, output: string): Promise<void> {
@@ -40,8 +41,15 @@ export const reduceAudio = catchAsyncError(async (req: Request, res: Response, n
         next(new ErrorHandler(`Can not get file`, 400));
     }
     console.log(req.file);
-    const filename = req.file?.originalname.split('.')[0] as string
-    const fileExtension = req.file?.originalname.split('.')[1] as string
+    const uuid = JSON.parse(req.body.uuid);
+    const mediaType=  JSON.parse(req.body.mediaType);
+    if(mediaType!=="audio"){
+        return next(new ErrorHandler("Wrong mediaType", 400));
+    }
+    const filenameArr= req.file?.originalname.split('.') as string[];
+    const fileExtension = filenameArr[filenameArr?.length-1];
+    filenameArr.pop();
+    const filename = filenameArr.join('.');
 
     const originalAudioPath = `audio/${filename}.${fileExtension}`
     const watermarkAudioPath = 'audio/watermark.wav';
@@ -63,16 +71,42 @@ export const reduceAudio = catchAsyncError(async (req: Request, res: Response, n
 
     ]
 
-    for (const image of images) {
+    const s3images = [
+        { folder: `${uuid}/audio`, filename: `${uuid}-original.${fileExtension}` },
+        { folder: `${uuid}/audio`, filename: `${uuid}-watermarked.${fileExtension}` },
+
+    ]
+
+    for (let i=0;i<s3images.length;i++) {
         try {
-            await uploadAudio(image, filename);
+            await uploadAudio(images[i], s3images[i]);
         } catch (error) {
             console.log(error);
             next(new ErrorHandler(`Error uploading image`, 400));
         }
     }
 
-    res.json({ msg: "uploaded successfully" })
+    const product = await Product.findOne({uuid});
+    if(!product){
+        return next(new ErrorHandler(`Product not found`, 404));
+    }
+
+    const variants=[
+        {
+            size:"Original",
+            key:`${uuid}-original.${fileExtension}`
+        }
+    ]
+    product.variants.push(...variants);
+    product.publicKey=`${uuid}/audio/${uuid}-watermarked.${fileExtension}`
+    product.thumbnailKey=`${uuid}/audio/${uuid}-watermarked.${fileExtension}`
+
+    const updatedProduct=await product.save();
+
+    res.json({
+        success:true,
+        product:updatedProduct
+    })
 })
 
 

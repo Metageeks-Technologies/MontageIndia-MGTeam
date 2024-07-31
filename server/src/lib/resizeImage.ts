@@ -56,7 +56,7 @@ export const resizeToSmall = async (input: string, imgName: string) => {
     }
 }
 
-export const resizeForProductPage = async (input: string, imgName: string,next:NextFunction) => {
+export const resizeForProductPage = async (input: string, imgName: string) => {
 
     try {
         const { density, width, height } = await sharp(input, { limitInputPixels: 8585550069 }).metadata();
