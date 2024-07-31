@@ -16,7 +16,7 @@ import { BiCategoryAlt, BiPlus, BiLogOutCircle, BiLogInCircle } from "react-icon
 import { IoIosSearch } from "react-icons/io";
 import { MdOutlineKeyboardArrowDown, MdOutlineKeyboardArrowUp } from "react-icons/md";
 import { RiLinksFill } from "react-icons/ri";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { images } from "../../../public/images/image";
 import instance from "@/utils/axios";
 import { notifySuccess } from "@/utils/toast";
@@ -28,6 +28,8 @@ const Sidebar = () =>
   const [ isUserOpen, setIsUserOpen ] = useState( false );
   const [ currentUser, setCurrentUser ] = useState<any>( '' );
   const router = useRouter();
+  const pathname = usePathname();
+
 
   const toggleMenu = useCallback( ( menuSetter: any ) =>
   {
@@ -35,7 +37,7 @@ const Sidebar = () =>
   }, [] );
 
 
-  const handleLogout = useCallback( async () =>
+  const handleLogout = ( async () =>
   {
     try
     {
@@ -47,7 +49,7 @@ const Sidebar = () =>
     {
       console.error( "Error in logout:", error );
     }
-  }, [ router ] );
+  } );
 
   useEffect( () =>
   {
@@ -64,9 +66,8 @@ const Sidebar = () =>
       } );
   }, [] );
 
-  // if ( !currentUser ) return null;
+  const isActiveLink = ( path: string ) => pathname.startsWith( path );
 
-0
   return (
     <div className="flex">
       <button data-drawer-target="sidebar-multi-level-sidebar" data-drawer-toggle="sidebar-multi-level-sidebar" aria-controls="sidebar-multi-level-sidebar" type="button" className="inline-flex items-center p-2 mt-2 ms-3 text-sm text-gray-500 rounded-lg sm:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:focus:ring-gray-600">
@@ -110,7 +111,7 @@ const Sidebar = () =>
           <div className="flex flex-col items-center justify-between">
 
             <ul className="space-y-2 font-medium">
-              <li onClick={ () => router.push( '/admin/dashboard' ) } className="cursor-pointer">
+              <li onClick={ () => router.push( '/admin/dashboard' ) } className={ `cursor-pointer ${ isActiveLink( '/admin/dashboard' ) ? 'bg-gray-100' : '' }` }>
                 <a className="flex items-center p-2 text-gray-900 rounded-lg  hover:bg-gray-100   group">
                   <FaHome className="w-5 h-5 text-gray-500 transition duration-75  group-hover:text-gray-900 " />
                   <span className="ms-3">Home</span>
@@ -118,7 +119,7 @@ const Sidebar = () =>
               </li>
               { currentUser &&
                 <li>
-                  <Link href={'/admin/product/available'} onClick={ () => toggleMenu( setIsProductOpen ) } className="flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-100   ">
+                  <Link href={ '/admin/product/available' } onClick={ () => toggleMenu( setIsProductOpen ) } className="flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-100   ">
                     <BiCategoryAlt className="w-5 h-5 text-gray-500 transition duration-75  group-hover:text-gray-900  " />
                     <span className="flex-1 ms-3 text-left rtl:text-right whitespace-nowrap">Product</span>
                     { isProductOpen ? (
@@ -130,19 +131,20 @@ const Sidebar = () =>
                   { isProductOpen && (
                     <ul className="py-2 space-y-2">
                       <li>
-                        <Link href={ '/admin/product/available' } className="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100    cursor-pointer">Available</Link>
+                        <Link href="/admin/product/available" className={ `flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 cursor-pointer ${ isActiveLink( '/admin/product/available' ) ? 'bg-white' : '' }` }>Available</Link>
+
                       </li>
                       <li>
-                        <Link href={ '/admin/product/draft' } className="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 cursor-pointer"> Draft </Link>
+                        <Link href="/admin/product/draft" className={ `flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 cursor-pointer ${ isActiveLink( '/admin/product/draft' ) ? 'bg-white' : '' }` }>Draft</Link>
                       </li>
                       <li>
-                        <Link href={ '/admin/product/archive' } className="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 cursor-pointer">Archived</Link>
+                        <Link href="/admin/product/archive" className={ `flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 cursor-pointer ${ isActiveLink( '/admin/product/archive' ) ? 'bg-white' : '' }` }>Archived</Link>
                       </li>
                       <li>
-                        <Link href={ '/admin/product/unavailable' } className="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 cursor-pointer">Unavailable</Link>
+                        <Link href="/admin/product/unavailable" className={ `flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 cursor-pointer ${ isActiveLink( '/admin/product/unavailable' ) ? 'bg-white' : '' }` }>Unavailable</Link>
                       </li>
                       <li>
-                        <Link href={ '/admin/product/create' } className="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 ">Create</Link>
+                        <Link href="/admin/product/create" className={ `flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 ${ isActiveLink( '/admin/product/create' ) ? 'bg-white' : '' }` }>Create</Link>
                       </li>
                     </ul>
                   ) }
@@ -150,7 +152,7 @@ const Sidebar = () =>
               }
               { currentUser && currentUser.role === "superadmin" &&
                 <li>
-                  <button onClick={ () => toggleMenu( setIsUserOpen ) } className="flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-100   ">
+                  <Link href={ '/admin/user/userList' } onClick={ () => toggleMenu( setIsUserOpen ) } className="flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-100   ">
                     <FaUserFriends className="w-5 h-5 text-gray-500 transition duration-75  group-hover:text-gray-900  " />
                     <span className="flex-1 ms-3 text-left rtl:text-right whitespace-nowrap">User</span>
                     { isUserOpen ? (
@@ -158,15 +160,17 @@ const Sidebar = () =>
                     ) : (
                       <MdOutlineKeyboardArrowDown className="w-5 h-5" />
                     ) }
-                  </button>
+                  </Link>
                   { isUserOpen && (
                     <ul className="py-2 space-y-2">
                       <li>
-                        <Link href="/admin/user/userList" className="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100    cursor-pointer" >User List</Link>
-                      </li><li>
-                        <Link href="/admin/user/user-create" className="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100    cursor-pointer">User Create</Link>
-                      </li><li>
-                        <Link href="/admin/user/user-activity" className="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100    cursor-pointer">User Activity</Link>
+                        <Link href="/admin/user/userList" className={ `flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 cursor-pointer ${ isActiveLink( '/admin/user/userList' ) ? 'bg-white' : '' }` }>User List</Link>
+                      </li>
+                      <li>
+                        <Link href="/admin/user/user-create" className={ `flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 cursor-pointer ${ isActiveLink( '/admin/user/user-create' ) ? 'bg-white' : '' }` }>User Create</Link>
+                      </li>
+                      <li>
+                        <Link href="/admin/user/user-activity" className={ `flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 cursor-pointer ${ isActiveLink( '/admin/user/user-activity' ) ? 'bg-white' : '' }` }>User Activity</Link>
                       </li>
                     </ul>
                   ) }
@@ -301,6 +305,7 @@ const Sidebar = () =>
             </ul>
           </div>
         </div>
+
       </aside>
     </div>
   );

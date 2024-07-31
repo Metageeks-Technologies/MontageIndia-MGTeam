@@ -3,7 +3,8 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import instance from '@/utils/axios';
 import { notifyError, notifySuccess } from '@/utils/toast';
-import { adminRolesOptions, categoriesOptions, mediaTypesOptions } from '../../../../../../utils/tempData';
+import { adminRolesOptions, categoriesOptions, mediaTypesOptions } from '@/utils/tempData';
+import { Spinner } from '@nextui-org/react';
 
 interface User
 {
@@ -71,8 +72,10 @@ export default function UserDetails ( { params }: { params: { id: string; }; } )
         fetchUser();
         notifySuccess( response.data.message );
       }
-    } catch ( error )
+    } catch ( error:any )
     {
+      notifyError( error.response.data.message || "There is some internal server error. Please try later" );
+
       console.error( 'Error updating user:', error );
     }
   };
@@ -97,7 +100,15 @@ export default function UserDetails ( { params }: { params: { id: string; }; } )
     }
   };
 
-  if ( !user ) return <div className="flex justify-center items-center h-screen">Loading...</div>;
+  const handleUpdateCancel = () =>
+  {
+    fetchUser();
+    setIsEditing( false );
+  };
+
+  if ( !user ) return <div className="flex justify-center items-center h-screen">
+    <Spinner label="Loading..." color="success" />
+  </div>;
 
   return (
     <div className="bg-gray-100 min-h-screen py-12 px-4 sm:px-6 lg:px-8">
@@ -112,7 +123,7 @@ export default function UserDetails ( { params }: { params: { id: string; }; } )
             </div> */}
             {/* <div className='flex flex-row justify-center items-center gap-4'> */ }
             <h2 className="mt-4 text-2xl font-semibold">{ user.name }</h2>
-            <p className="text-gray-600 text-md italic ">{ user.username }</p>
+            <p className="text-gray-600 text-md italic ">User Name : { user.username }</p>
             {/* </div> */ }
 
             <p className="text-gray-600 text-md"> Email: { user.email }</p>
@@ -120,15 +131,25 @@ export default function UserDetails ( { params }: { params: { id: string; }; } )
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             { Object.entries( user ).map( ( [ key, value ] ) => (
 
-              key !== '_id'&& key!=='username' && key!=='isDeleted' && key!=="uid" && key!=="avatar" && key !== 'createdAt' && key !== 'updatedAt' && key !== '__v' && key !== 'resetPasswordExpires' && key !== 'resetPasswordToken' && (
+              key !== '_id' && key !== 'username' && key !== 'isDeleted' && key !== "uid" && key !== "avatar" && key !== 'createdAt' && key !== 'updatedAt' && key !== '__v' && key !== 'resetPasswordExpires' && key !== 'resetPasswordToken' && (
                 <div key={ key } className="flex flex-col">
                   <label className="text-sm font-medium text-gray-700 mb-1 capitalize">
                     { key.replace( /([A-Z])/g, ' $1' ).trim() }
                   </label>
-                  {isEditing && (key==='name' || key === 'email') &&
-                    <input name={key} value={value} onChange={handleInputChange} className="mt-1 block w-full p-2 rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"/>
-                }
-                  {isEditing && (key === 'role' || key === 'mediaType' || key === 'category') && (
+                  {/* { isEditing && ( key === 'name' || key === 'email' ) &&
+                    <input  type={key === 'email' ? 'email' : 'text'} name={ key } value={ value } onChange={ handleInputChange } className="mt-1 block w-full p-2 rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" />
+                  } */}
+                  { isEditing && ( key === 'name' || key === 'email' ) &&
+                    <input
+                      name={ key }
+                      value={ value }
+                      onChange={ handleInputChange }
+                      type={ key === 'email' ? 'email' : 'text' }
+                      className="mt-1 block w-full p-2 rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                    />
+                  }
+
+                  { isEditing && ( key === 'role' || key === 'mediaType' || key === 'category' ) && (
                     <select
                       name={ key }
                       value={ value }
@@ -137,8 +158,8 @@ export default function UserDetails ( { params }: { params: { id: string; }; } )
                     >
                       { key === 'role' && (
                         <>
-                          <option value="admin">Admin</option>
-                          <option value="superadmin">Super Admin</option>
+                          {/* <option value="admin">Admin</option>
+                          <option value="superadmin">Super Admin</option> */}
                           { adminRolesOptions.map( ( role, index ) => (
                             <option value={ role } key={ index }>{ role }</option>
                           ) ) }
@@ -151,9 +172,9 @@ export default function UserDetails ( { params }: { params: { id: string; }; } )
                               <option value={ mediaType } key={ index }>{ mediaType }</option>
                             ) )
                           }
-                          <option value="image">Image</option>
+                          {/* <option value="image">Image</option>
                           <option value="video">Video</option>
-                          <option value="audio">Audio</option>
+                          <option value="audio">Audio</option> */}
                         </>
                       ) }
                       { key === 'category' && (
@@ -183,7 +204,7 @@ export default function UserDetails ( { params }: { params: { id: string; }; } )
                 Save Changes
               </button>
               <button
-                onClick={ () => setIsEditing( false ) }
+                onClick={ handleUpdateCancel }
                 className="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
               >
                 Cancel

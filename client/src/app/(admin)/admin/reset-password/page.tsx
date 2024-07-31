@@ -1,10 +1,11 @@
 'use client';
 import { notifyError, notifySuccess } from '@/utils/toast';
 import React, { useState } from 'react';
-import { images } from '../../../../../public/images/image';
 import instance from '@/utils/axios';
+import { useRouter } from 'next/navigation';
 const ResetPassword = () =>
 {
+    const router = useRouter();
     const [ showForgotPasswordModal, setShowForgotPasswordModal ] = useState( false );
     const [ email, setEmail ] = useState( "" );
 
@@ -16,7 +17,6 @@ const ResetPassword = () =>
             // setError( "Please enter your email address." );
             return;
         }
-
         try
         {
             const response = await instance.post(
@@ -33,6 +33,10 @@ const ResetPassword = () =>
             notifySuccess( `Password reset instructions have been sent to ${ email }` );
             setShowForgotPasswordModal( false );
             setEmail( "" );
+            setTimeout( () =>
+            {
+                router.push( '/auth/admin/login' );
+            }, 5000 );
 
         } catch ( error: any )
         {
@@ -50,8 +54,8 @@ const ResetPassword = () =>
         <div className="fixed inset-0 bg-white bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center">
             <div className="bg-white p-8 rounded-lg shadow-xl w-full max-w-md">
                 <div className="flex items-center mb-6 justify-center gap-3 rounded-lg">
-                    <div className="w-48 h-14 bg-white border border-gray-300 flex justify-center items-center rounded-xl shadow-xl">
-                        <img src={ images.logo.src } alt="logo" />
+                    <div className="w-48 h-14">
+                        <img src={ '/images/logo.png' } alt="logo" />
                     </div>
                 </div>
                 <h2 className="text-2xl font-bold mb-4">Forgot Password</h2>
@@ -63,7 +67,7 @@ const ResetPassword = () =>
                         <input
                             type="email"
                             id="email"
-                            className="mt-1 block w-full px-3 py-2 bg-[#F4F4F5] border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                            className="mt-1 block w-full px-3 py-2 bg-[#F4F4F5] border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-webgreen focus:border-webgreen sm:text-sm"
                             placeholder="Enter your email"
                             value={ email }
                             onChange={ ( e ) => setEmail( e.target.value ) }
@@ -80,7 +84,7 @@ const ResetPassword = () =>
                         </button>
                         <button
                             type="submit"
-                            className="px-4 py-2 text-sm font-medium text-white bg-[#BEF264] rounded-md hover:bg-[#cbff70] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                            className="px-4 py-2 text-sm font-medium text-white bg-webgreen rounded-md hover:bg-webgreenHover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                         >
                             Reset Password
                         </button>

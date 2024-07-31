@@ -64,6 +64,7 @@ const ResetPassword = ( { params }: { params: { token: string; }; } ) =>
             {
                 router.push( '/auth/admin/login' );
             }, 3000 );
+
         } catch ( error: any )
         {
             console.error( 'Password reset error:', error );
@@ -75,6 +76,11 @@ const ResetPassword = ( { params }: { params: { token: string; }; } ) =>
     return (
         <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 px-4 sm:px-6 lg:px-8">
             <div className="max-w-md w-full space-y-8 bg-white p-10 rounded-xl shadow-md">
+                <div className="flex items-center mb-6 justify-center gap-3 rounded-lg">
+                    <div className="w-48 h-14">
+                        <img src={ '/images/logo.png' } alt="logo" />
+                    </div>
+                </div>
                 <div>
                     <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">Reset Your Password</h2>
                 </div>
@@ -87,7 +93,7 @@ const ResetPassword = ( { params }: { params: { token: string; }; } ) =>
                                 name="newPassword"
                                 type={ showPassword ? "text" : "password" }
                                 required
-                                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-webgreen focus:border-webgreen focus:z-10 sm:text-sm"
                                 placeholder="New Password"
                                 value={ newPassword }
                                 onChange={ ( e ) => setNewPassword( e.target.value ) }
@@ -111,7 +117,7 @@ const ResetPassword = ( { params }: { params: { token: string; }; } ) =>
                                 name="confirmPassword"
                                 type={ showConfirmPassword ? "text" : "password" }
                                 required
-                                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-webgreen focus:border-webgreen focus:z-10 sm:text-sm"
                                 placeholder="Confirm New Password"
                                 value={ confirmPassword }
                                 onChange={ ( e ) => setConfirmPassword( e.target.value ) }
