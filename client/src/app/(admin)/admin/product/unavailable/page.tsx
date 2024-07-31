@@ -17,6 +17,7 @@ interface Variant {
 interface Product {
   _id: string;
   slug: string;
+  uuid:string;
   title: string;
   description: string;
   tags: string[];
@@ -270,7 +271,7 @@ const Home: React.FC = () => {
                   <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                     <button className="text-gray-600 hover:text-gray-900">
                       <Link
-                        href={`details/${prod._id}`}
+                        href={`details/${prod.uuid}`}
                         className="bg-slate-200 px-6 py-0.5 flex items-center rounded-lg"
                       >
                         Details

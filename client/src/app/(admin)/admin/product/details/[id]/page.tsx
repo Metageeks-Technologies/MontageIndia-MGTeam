@@ -32,9 +32,10 @@ export interface Product
 const ProductDetail: React.FC = () =>
 {
   const params = useParams();
-  const [ productDetail, setProductDetail ] = useState<Product | null>( null );
-  const [ isEditing, setIsEditing ] = useState( false );
-  const [ loading, setLoading ] = useState( false );
+  const [productDetail, setProductDetail] = useState<Product | null>(null);
+  const [loading, setLoading] = useState(false);
+  const router=useRouter()
+  
 
   const id = params.id as string | undefined;
   console.log( "first", id );
@@ -58,12 +59,31 @@ const ProductDetail: React.FC = () =>
       setLoading( false );
     }
   };
-
-  useEffect( () =>
-  {
-    if ( id )
-    {
-      fetchProduct( id );
+  const renderMedia = () => {
+    switch (productDetail?.mediaType) {
+      case 'audio':
+        return <>
+        <audio controls>
+          <source  src={`https://${process.env.NEXT_PUBLIC_AWS_BUCKET}.s3.${process.env.NEXT_PUBLIC_AWS_REIGION}.amazonaws.com/${productDetail.thumbnailKey}`} type="audio/mpeg"/>
+        </audio>
+        </>;
+      case 'image':
+        return <img 
+        className="w-full h-64 object-cover"
+        src={`https://${process.env.NEXT_PUBLIC_AWS_BUCKET}.s3.${process.env.NEXT_PUBLIC_AWS_REIGION}.amazonaws.com/${productDetail.thumbnailKey}`} alt="Product Media" />;
+      case 'video':
+        return <>
+        <video width="320" height="240" controls>
+          <source   src={`https://${process.env.NEXT_PUBLIC_AWS_BUCKET}.s3.${process.env.NEXT_PUBLIC_AWS_REIGION}.amazonaws.com/${productDetail.thumbnailKey}`} type="video/mp4" />
+        </video>
+        </>;
+      default:
+        return <p>No media available</p>;
+    }
+  }
+  useEffect(() => {
+    if (id) {
+      fetchProduct(id);
     }
   }, [ id ] );
 
@@ -85,22 +105,11 @@ const ProductDetail: React.FC = () =>
     </div>;
   }
 
-  const router = useRouter();
-  const handleEditClick = () =>
-  {
-    router.push( `/admin/product/create?uuid=${ productDetail.uuid }` );
-    setIsEditing( !isEditing );
+  const handleEditClick = () => {
+    router.push(`/admin/product/create?uuid=${productDetail.uuid}`);
   };
 
-  const handleFileUpload = ( event: React.ChangeEvent<HTMLInputElement> ) =>
-  {
-    if ( event.target.files && event.target.files[ 0 ] )
-    {
-      const file = event.target.files[ 0 ];
-      // Handle file upload logic here
-      console.log( file );
-    }
-  };
+ 
 
   return (
     <div className="container mx-auto p-4">
@@ -118,7 +127,7 @@ const ProductDetail: React.FC = () =>
                 value={ productDetail.title }
                 onChange={ ( e ) => setProductDetail( { ...productDetail, title: e.target.value } ) }
                 className="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none"
-                readOnly={ !isEditing }
+                readOnly
               />
             </div>
             <div className="mb-4">
@@ -130,25 +139,18 @@ const ProductDetail: React.FC = () =>
                 value={ productDetail.description }
                 onChange={ ( e ) => setProductDetail( { ...productDetail, description: e.target.value } ) }
                 className="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none"
-                rows={ 5 }
-                readOnly={ !isEditing }
+                rows={5}
+                readOnly
               ></textarea>
             </div>
             <div className="mb-4">
               <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="media">
                 Media
               </label>
-              <div className="border-dashed border-2 border-gray-300 p-4 rounded-lg">
-                <img
-                  className="w-full h-64 object-cover"
-                  // src={`https://${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${productDetail.thumbnailKey}`}
-                  src={ `https://mi2-public.s3.ap-southeast-1.amazonaws.com/${ productDetail.thumbnailKey }` }
-                  alt={ productDetail.title }
-                />
+              <div className="border-dashed border-2 justify-center flex border-gray-300 p-4 rounded-lg">
+                {renderMedia()}
               </div>
-              { isEditing && (
-                <input type="file" onChange={ handleFileUpload } className="mt-2" />
-              ) }
+             
             </div>
             <div className="flex justify-between items-center mb-4">
               <label className="block text-gray-700 text-sm font-bold mb-2">Pricing</label>
@@ -162,7 +164,7 @@ const ProductDetail: React.FC = () =>
                   } )
                 }
                 className="px-3 py-2 text-gray-700 border rounded-lg focus:outline-none"
-                readOnly={ !isEditing }
+                readOnly
               />
             </div>
             <div className="flex items-center mb-4">
@@ -187,7 +189,7 @@ const ProductDetail: React.FC = () =>
                 value={ productDetail.category }
                 onChange={ ( e ) => setProductDetail( { ...productDetail, category: e.target.value } ) }
                 className="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none"
-                readOnly={ !isEditing }
+                readOnly
               />
             </div>
           </div>
@@ -201,7 +203,7 @@ const ProductDetail: React.FC = () =>
                 value={ productDetail.status }
                 onChange={ ( e ) => setProductDetail( { ...productDetail, status: e.target.value } ) }
                 className="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none"
-                disabled={ !isEditing }
+                disabled
               >
                 <option value="available">Available</option>
                 <option value="out of stock">Out of Stock</option>
@@ -223,32 +225,6 @@ const ProductDetail: React.FC = () =>
               </div>
             </div>
             <div className="mb-4">
-              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="mediaType">
-                Media Type
-              </label>
-              <input
-                id="mediaType"
-                type="text"
-                value={ productDetail.mediaType }
-                onChange={ ( e ) => setProductDetail( { ...productDetail, mediaType: e.target.value } ) }
-                className="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none"
-                readOnly={ !isEditing }
-              />
-            </div>
-            <div className="mb-4">
-              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="publicKey">
-                Public Key
-              </label>
-              <input
-                id="publicKey"
-                type="text"
-                value={ productDetail.publicKey }
-                onChange={ ( e ) => setProductDetail( { ...productDetail, publicKey: e.target.value } ) }
-                className="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none"
-                readOnly={ !isEditing }
-              />
-            </div>
-            <div className="mb-4">
               <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="variants">
                 Variants
               </label>
@@ -262,7 +238,7 @@ const ProductDetail: React.FC = () =>
                   </div>
                   <input
                     type="text"
-                    value={ variant.key }
+                    value={variant.label}
                     className="w-full px-3 py-2 mt-2 text-gray-700 border rounded-lg focus:outline-none"
                     readOnly
                   />
@@ -271,13 +247,11 @@ const ProductDetail: React.FC = () =>
             </div>
           </div>
         </div>
-        <div className="flex justify-end p-6 bg-gray-50">
-          <button onClick={ handleEditClick } className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-700">
-            { isEditing ? "Save" : "Edit" }
+        <div className="flex justify-center p-6 bg-gray-50">
+          <button onClick={handleEditClick} className="px-4 py-2 bg-lime-500 text-white rounded-lg hover:bg-green-700">
+            Update
           </button>
-          <button className="ml-2 px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-700">
-            Discard
-          </button>
+           
         </div>
       </div>
     </div>

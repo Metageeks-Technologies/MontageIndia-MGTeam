@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import slugify from 'slugify';
 import axios from 'axios';
@@ -7,6 +7,7 @@ import { notifyError } from '@/utils/toast';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import Select, { MultiValue, ActionMeta } from 'react-select';
+import useAdminAuth from '@/components/hooks/useAdminAuth';
 
 const categoriesOptions = [
   { value: 'electronics', label: 'Electronics' },
@@ -18,19 +19,47 @@ const categoriesOptions = [
   { value: 'beauty', label: 'Beauty' }
 ];
 
+const mediaOptions: {
+  [key: string]: { value: string; label: string };
+} = {
+  image: { value: 'image', label: 'Image' },
+  video: { value: 'video', label: 'Video' },
+  audio: { value: 'audio', label: 'Audio' }
+};
+
 const Form1 = ({ onNext }: any) => {
+  const { user } = useAdminAuth();
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const [mediaType, setMediaType] = useState(''); // Default to 'image'
+  const [mediaType, setMediaType] = useState('');
   const [tags, setTags] = useState<string[]>([]);
   const [tagInput, setTagInput] = useState('');
   const [selectedCategories, setSelectedCategories] = useState<any[]>([]);
+  
+  const [availableCategories, setAvailableCategories] = useState<any[]>([]);
+  const [availableMediaOptions, setAvailableMediaOptions] = useState<any[]>([]);
+
+  useEffect(() => {
+    if (user?.category) {
+      if (user.category.includes('all')) {
+        setAvailableCategories(categoriesOptions);
+      } else {
+        setAvailableCategories(categoriesOptions.filter(option => user.category.includes(option.value)));
+      }
+    }
+    if (user?.mediaType) {
+      const allowedMediaOptions = Object.keys(mediaOptions)
+        .filter(mediaType => user.mediaType.includes(mediaType))
+        .map(mediaType => mediaOptions[mediaType]);
+      setAvailableMediaOptions(allowedMediaOptions);
+    }
+  }, [user]);
 
   const handleNext = async () => {
     const uuid = uuidv4();
     const slug = slugify(title, { lower: true });
     const data = { uuid, slug, title, description, mediaType, category: selectedCategories.map(c => c.value), tags };
-    console.log(data)
+    console.log(data);
     try {
       const response = await instance.post(`/product/`, data, {
         headers: { 'Content-Type': 'application/json' }
@@ -41,7 +70,7 @@ const Form1 = ({ onNext }: any) => {
         console.log(data);
         onNext(data);
       }
-    } catch (error:any) {
+    } catch (error: any) {
       notifyError(error.response.data.message);
       console.error('Error sending data:', error);
     }
@@ -67,6 +96,21 @@ const Form1 = ({ onNext }: any) => {
 
   return (
     <div className='flex flex-col gap-5'>
+      <div>
+        <span className='text-lg mb-3 font-semibold mr-4'>Media Type</span>
+        <select
+          className='text-gray-700 outline-none font-semibold py-3 select-none p-2 bg-gray-100 rounded-lg'
+          value={mediaType}
+          onChange={(e) => setMediaType(e.target.value)}
+        >
+          <option className='font-semibold hover:text-gray-800' value="" disabled>Select Media</option>
+          {availableMediaOptions.map(option => (
+            <option key={option.value} className='font-semibold text-cyan-800' value={option.value}>
+              {option.label}
+            </option>
+          ))}
+        </select>
+      </div>
       <div className='flex gap-3 flex-col'>
         <span className='text-xl font-semibold'>Title</span>
         <input
@@ -85,29 +129,15 @@ const Form1 = ({ onNext }: any) => {
         <Select
           isMulti
           name="categories"
-          options={categoriesOptions}
+          options={availableCategories}
           className='basic-multi-select'
           classNamePrefix="select"
           value={selectedCategories}
-          onChange={handleCategoryChange} // Use custom handler here
+          onChange={handleCategoryChange}
         />
       </div>
       <div>
-        <span className='text-lg mb-3 font-semibold mr-4'>Media Type</span>
-        <select
-          className='text-gray-700 outline-none font-semibold py-3 select-none p-2 bg-gray-100 rounded-lg'
-          value={mediaType}
-          onChange={(e) => setMediaType(e.target.value)}
-        >
-          <option className='font-semibold hover:text-gray-800' value="" disabled>Select Media</option>
-          <option className='font-semibold text-cyan-800' value="image">Image</option>
-          <option className='font-semibold text-cyan-800' value="video">Video</option>
-          <option className='font-semibold text-cyan-800' value="audio">Audio</option>
-        </select>
-      </div>
-      <div>
-      <span className='text-lg mb-3 font-semibold mr-4'>Tags</span>
-
+        <span className='text-lg mb-3 font-semibold mr-4'>Tags</span>
         <input
           placeholder="Tags-labels"
           className='text-gray-700 outline-none py-3 p-2 bg-gray-100 rounded-lg'
