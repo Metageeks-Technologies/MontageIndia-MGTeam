@@ -14,7 +14,7 @@ export const createProduct = catchAsyncError(async (req: any, res, next) => {
         name: req.user.name,
         email: req.user.email,
         username: req.user.username,
-        action: 'created',
+        action: 'create',
         category: category[0],
         productId: product._id,
         timestamp: Date.now()
@@ -32,8 +32,9 @@ export const createProduct = catchAsyncError(async (req: any, res, next) => {
 export const getProduct = catchAsyncError(async (req, res, next) => {
     
     const {id:uuid}=req.params;
+    console.log(uuid)
     const product= await Product.findOne({uuid});
-    
+    console.log(product)
     res.status(201).json({
         success: true,
         product    
@@ -92,17 +93,17 @@ export const getProducts = catchAsyncError(async (req, res, next) => {
 export const updateProduct = catchAsyncError(async (req: any, res, next) => {
     
     const {id:uuid}= req.params;
-    
-    const products= await Product.findOneAndUpdate({uuid},req.body); 
+        console.log(uuid)
+    const product= await Product.findOneAndUpdate({uuid},req.body); 
     // console.log("updatedbody",req);
     const activity={
         adminId: req.user._id,
         name: req.user.name,
         email: req.user.email,
         username: req.user.username,
-        action: 'Updated',
+        action: 'update',
         category: req.body.category?req.body.category:"unknown",
-        productId: uuid,
+        productId: product?._id,
         timestamp: Date.now(),
     }
 
@@ -110,7 +111,7 @@ export const updateProduct = catchAsyncError(async (req: any, res, next) => {
 
     res.status(201).json({
         success: true,
-        products    
+        product 
     })
 });
 

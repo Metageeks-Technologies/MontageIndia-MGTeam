@@ -6,9 +6,12 @@ import Form1 from '@/components/admin/product/product_form1';
 import Form2 from '@/components/admin/product/product_form2';
 import Form3 from '@/components/admin/product/product_form3';
 import Form4 from '@/components/admin/product/product_form4';
+import useAdminAuth from '@/components/hooks/useAdminAuth';
 
 
   const Page = () => {
+    const {user}=useAdminAuth();
+    console.log(user)
     const searchParams = useSearchParams();
     const uuid = searchParams.get('uuid');
     const [formData, setFormData] = useState<any>({});

@@ -72,19 +72,6 @@ const Home: React.FC = () => {
     return text;
   }
 
-  // Calculate the number of pages
-//   const totalPages = Math.ceil(productData.length / productsPerPage);
-
-//   // Get products for the current page
-//   const currentProducts = productData.slice(
-//     (currentPage - 1) * productsPerPage,
-//     currentPage * productsPerPage
-//   );
-// console.log("first",currentProducts)
-// Filter products by status "available"
-const availableProducts = productData.filter(
-  ( prod ) => prod.status === "published"
-);
 
   return (
     <div className="container p-4  ">
