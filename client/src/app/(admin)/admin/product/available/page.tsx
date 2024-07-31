@@ -69,7 +69,7 @@ const Home: React.FC = () => {
     setLoading(true);
     try {
       const response = await instance.get(`/product`, {
-        params: { status: 'available',productsPerPage, page: currentPage,category: selectedCategories, mediaType: selectedMediaTypes, searchTerm: SearchTerm   },
+        params: { status: 'published',productsPerPage, page: currentPage,category: selectedCategories, mediaType: selectedMediaTypes, searchTerm: SearchTerm   },
         withCredentials: true,
       } );
       console.log(response.data.products)

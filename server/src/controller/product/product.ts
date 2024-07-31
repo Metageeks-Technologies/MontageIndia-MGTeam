@@ -132,7 +132,7 @@ export const addSizeAndKeysToVideo =  catchAsyncError(async (req:any, res, next)
     const publicKey =`${uuid}/video/${uuid}-product_page.webm`;
     const thumbnailKey = `${uuid}/video/${uuid}-thumbnail.webm`;
 
-    const updatedProduct = await Product.findOneAndUpdate(
+    const updatedProduct:any = await Product.findOneAndUpdate(
         { uuid }, // find the product by uuid
         { $set: { variants, publicKey, thumbnailKey } }, // set the fields to update
         { new: true } // return the updated document
@@ -143,9 +143,9 @@ export const addSizeAndKeysToVideo =  catchAsyncError(async (req:any, res, next)
         name: req.user.name,
         email: req.user.email,
         username: req.user.username,
-        action: 'Updated',
+        action: 'update',
         category: req.body.category?req.body.category:"unknown",
-        productId: uuid,
+        productId: updatedProduct?._id,
         timestamp: Date.now(),
     }
 
@@ -182,18 +182,20 @@ export const addPriceToVariant = catchAsyncError(async (req:any, res, next) => {
         }
       );
       const updatedProduct = await Product.findOne({uuid});
+        console.log("updatedProduct",updatedProduct);
 
         const activity={
         adminId: req.user._id,
         name: req.user.name,
         email: req.user.email,
         username: req.user.username,
-        action: 'Updated',
+        action: 'update',
         category: req.body.category?req.body.category:"unknown",
-        productId: uuid,
+        productId: updatedProduct?._id,
         timestamp: Date.now(),
     }
-
+    console.log("activity",activity);
+    
     await Activity.create(activity);
     
     res.status(201).json({

@@ -20,6 +20,14 @@ export const categoriesOptions: TDataOptions[] = [
   {name: 'sports',value:"sports"},
   {name: 'business',value:"business"},
   {name: 'lifestyle',value:"lifestyle"},
+  {name: 'finance',value:"finance"},
+  {name:'fashion',value:"fashion"},
+  {name:'travel',value:"travel"},
+  {name:'food',value:"food"},
+  {name:'home',value:"home"},
+  {name:'toys',value:"toys"},
+  {name:'beauty',value:"beauty"},
+  {name:'books',value:"books"},
 ];
 
 
