@@ -152,7 +152,7 @@ const page = () =>
             </div>
           </div>
 
-          <div className="mb-6 ">
+          <div className="mb-6 basis-[35%]">
             <div className="flex flex-col">
               <div className="mb-2 flex justify-between items-center">
                 <h2 className="text-xl font-semibold ">Products </h2>
