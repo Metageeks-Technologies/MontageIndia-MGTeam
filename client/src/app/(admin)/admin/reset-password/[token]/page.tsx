@@ -62,7 +62,7 @@ const ResetPassword = ( { params }: { params: { token: string; }; } ) =>
             setSuccess( 'Password reset successfully. You will be redirected to login page soon.' );
             setTimeout( () =>
             {
-                router.push( '/admin/login' );
+                router.push( '/auth/admin/login' );
             }, 3000 );
         } catch ( error: any )
         {

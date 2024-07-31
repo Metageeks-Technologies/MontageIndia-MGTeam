@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -12,38 +12,51 @@ const AuthWrapper = ( { children }: { children: React.ReactNode; } ) =>
     const [ isAuthenticated, setIsAuthenticated ] = useState( false );
     const [ isLoading, setIsLoading ] = useState( true );
 
+    const checkAuth = () =>
+    {
+        instance.get( '/auth/admin/getCurrAdmin' )
+            .then( response =>
+            {
+                const user = response.data;
+                console.log('user')
+                if ( user )
+                {
+                    setIsAuthenticated( true );
+                } else
+                {
+                    console.log("error in getting in user")
+                    setIsAuthenticated( false );
+                    router.push( '/auth/admin/login' );
+                }
+            } )
+            .catch( error =>
+            {
+                console.error( 'Error checking authentication', error );
+                setIsAuthenticated( false );
+                router.push( '/auth/admin/login' );
+            } )
+            .finally( () =>
+            {
+                console.log('tjos is ifnla')
+                setIsLoading( false );
+            } );
+    };
+
+    console.log("useefect caleed")  
     useEffect( () =>
     {
-        const checkAuth = async() =>
+        if ( !isAuthenticated && isLoading )
         {
-            // const user = await instance('/auth/admin/')
-            // Check token in cookies
-            const cookieToken = Cookies.get( 'token' );
-            console.log( 'Token from cookies:', cookieToken );
+            checkAuth();
+        }
+    }, [ isAuthenticated, isLoading, router ] );
 
-            // Check token in localStorage
-            const localToken = localStorage.getItem( 'token' );
-            console.log( 'Token from localStorage:', localToken );
-
-            if ( localToken )
-            {
-                setIsAuthenticated( true );
-            } else
-            {
-                setIsAuthenticated( false );
-                router.push( '/admin/login' );
-            }
-            setIsLoading( false );
-        };
-
-        checkAuth();
-    }, [ router ] );
 
     // if current endpoint is admin/login than set isathentuated(false)
 
     const checkEndpoint = () =>
     {
-        if ( typeof window !== "undefined" && window.location.href === '/admin/login' )
+        if ( typeof window !== "undefined" && window.location.href === '/auth/admin/login' )
         {
             setIsAuthenticated( false );
             router.refresh();
@@ -58,16 +71,16 @@ const AuthWrapper = ( { children }: { children: React.ReactNode; } ) =>
 
 
     return (
-        <div  className="flex items-center">
-           
+        <div className="flex items-center">
+
             { isAuthenticated &&
-                
-                    <Sidebar />
-                 }
+
+                <Sidebar />
+            }
             <div className="md:ml-[20%] sm:ml-[25%] w-full">
                 { children }
             </div>
-             
+
         </div>
     );
 };
