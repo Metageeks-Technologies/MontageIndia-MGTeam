@@ -1,14 +1,43 @@
 "use client";
-import React, { useState } from 'react';
+import { useSearchParams } from 'next/navigation';
+import instance from '@/utils/axios';
+import React, { useEffect, useState } from 'react';
 import Form1 from '@/components/admin/product/product_form1';
 import Form2 from '@/components/admin/product/product_form2';
 import Form3 from '@/components/admin/product/product_form3';
 import Form4 from '@/components/admin/product/product_form4';
 
-const Page = () => {
-  const [formData, setFormData] = useState<any>({});
-  const [currentForm, setCurrentForm] = useState(1);
 
+  const Page = () => {
+    const searchParams = useSearchParams();
+    const uuid = searchParams.get('uuid');
+    const [formData, setFormData] = useState<any>({});
+    const [currentForm, setCurrentForm] = useState(1);
+    console.log(uuid)
+  useEffect(() => {
+    if (uuid) {
+      instance(`/product/${uuid}`)
+        .then((response:any) => {
+          const data = response.data;
+          setFormData(data);
+          console.log("first",data.product)
+          if (data) {
+            if (data.product.thumbnailKey) {
+              setCurrentForm(4);
+            } else {
+              setCurrentForm(2);
+              console.log("first",data)
+            }
+          } else {
+            setCurrentForm(1);
+          }
+        })
+        .catch(() => {
+          setCurrentForm(1);
+        });
+    }
+  }, [uuid]);
+  
   const handleNext = (data: any) => {
     setFormData((prevData: any) => ({ ...prevData, ...data }));
     setCurrentForm(currentForm + 1);
