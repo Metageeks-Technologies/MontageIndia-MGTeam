@@ -128,7 +128,7 @@ const Home: React.FC = () => {
                 border: '1px solid #e5e7eb',
               },
             }}
-            options={categoriesOptions.map((option) => ({ name: option }))} 
+            options={categoriesOptions.map((option) => ({ name: option.name , value: option.value }))} 
             selectedValues={selectedCategories.map((category) => ({ name: category }))}
             onSelect={(selectedList) => onSelectCategory(selectedList.map((item:any) => item.name))} 
             onRemove={(selectedList) => onRemoveCategory(selectedList.map((item:any) => item.name))} 
@@ -139,7 +139,7 @@ const Home: React.FC = () => {
             avoidHighlightFirstOption
             showArrow
             placeholder="media type"
-            options={mediaTypesOptions.map((option) => ({ name: option }))} 
+            options={mediaTypesOptions.map((option) => ({ name: option.name , value: option.value }))} 
             selectedValues={selectedMediaTypes.map((type) => ({ name: type }))}
             onSelect={(selectedList) => onSelectMediaType(selectedList.map((item:any) => item.name))} 
             onRemove={(selectedList) => onRemoveMediaType(selectedList.map((item:any) => item.name))} 

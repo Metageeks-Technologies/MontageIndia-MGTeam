@@ -3,9 +3,9 @@
 import instance from '@/utils/axios';
 import { notifySuccess } from '@/utils/toast';
 import { useRouter } from 'next/navigation';
-import React, { useState } from 'react';
-import { adminRolesOptions, categoriesOptions, mediaTypesOptions } from '../../../../../utils/tempData';
-
+import React, { useState,useEffect } from 'react';
+import Multiselect from 'multiselect-react-dropdown';
+import {adminRolesOptions,categoriesOptions, mediaTypesOptions} from "@/utils/tempData";
 interface User
 {
     name: string;
@@ -13,8 +13,8 @@ interface User
     password: string;
     role: string;
     username: string;
-    mediaType: string;
-    category: string;
+    mediaType: string[];
+    category: string[];
 }
 
 const UserCreate: React.FC = () =>
@@ -26,9 +26,53 @@ const UserCreate: React.FC = () =>
         role: '',
         password: '',
         username: '',
-        mediaType: '',
-        category: '',
+        mediaType: [],
+        category: [],
     } );
+    const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+    const [selectedMediaTypes, setSelectedMediaTypes] = useState<string[]>([]);
+    const [error, setError] = useState<string | null>(null);
+
+    useEffect(() => {
+        setError(null);
+    }, [user]);
+    
+    const onSelectCategory = (selectedList: string[]) => {
+    setSelectedCategories(selectedList);
+    const lowerCaseList = selectedList.map(item => item.toLowerCase());
+    setUser(prevUser => ({
+            ...prevUser,
+            category: lowerCaseList,
+        }));
+
+  };
+
+  const onRemoveCategory = (selectedList: string[]) => {
+    setSelectedCategories(selectedList);
+    const lowerCaseList = selectedList.map(item => item.toLowerCase());
+    setUser(prevUser => ({
+            ...prevUser,
+            category: lowerCaseList,
+        }));
+  };
+
+  const onSelectMediaType = (selectedList: string[]) => {
+    setSelectedMediaTypes(selectedList);
+    const lowerCaseList = selectedList.map(item => item.toLowerCase());
+    setUser(prevUser => ({
+            ...prevUser,
+            mediaType: lowerCaseList,
+        }));
+  };
+
+  const onRemoveMediaType = (selectedList: string[]) => {
+    setSelectedMediaTypes(selectedList);
+    const lowerCaseList = selectedList.map(item => item.toLowerCase());
+    setUser(prevUser => ({
+            ...prevUser,
+            mediaType: lowerCaseList,
+        }));
+  };
 
     const handleChange = ( e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement> ) =>
     {
@@ -38,6 +82,10 @@ const UserCreate: React.FC = () =>
     const handleSubmit = async ( e: React.FormEvent<HTMLFormElement> ) =>
     {
         e.preventDefault();
+        if( !user.name || !user.email || !user.role || !user.password || !user.username || user.mediaType.length === 0 || user.category.length===0 ){
+            setError( "Please fill all the required fields" );
+            return;
+        }
         try
         {
             const response = await instance.post( '/auth/admin/createAdmin', user, { withCredentials: true } );
@@ -47,14 +95,18 @@ const UserCreate: React.FC = () =>
                 role: '',
                 password: '',
                 username: '',
-                mediaType: '',
-                category: '',
+                mediaType: [],
+                category: [],
             } );
+            setSelectedCategories([]);
+            setSelectedMediaTypes([]);
             notifySuccess( "New user created successfully" );
             router.push( "/admin/dashboard" );
-        } catch ( error )
+        } catch ( error:any )
         {
             console.log( "error in creating the user :-", error );
+            setError( error.response.data.message );
+            
         }
     };
 
@@ -63,9 +115,10 @@ const UserCreate: React.FC = () =>
             <div className="flex-grow p-6">
                 <h2 className="text-3xl text-center font-bold  text-gray-800">Create User</h2>
                 <form onSubmit={ handleSubmit } className="bg-white max-w-lg rounded-lg p-8 w-full mx-auto  mt-12 min-h-full shadow-md ">
+                     <div className='flex justify-start items-center'>
+                            { error && <p className="text-red-500 font-bold">{ error }</p> }
+                        </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-
-
                         <div className="col-span-1 md:col-span-2">
 
                             <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">Name  <span className="text-red-500">*</span> </label>
@@ -122,40 +175,55 @@ const UserCreate: React.FC = () =>
                             >
                                 <option value="">Select Role</option>
                                 { adminRolesOptions.map( ( adminRole, index ) => (
-                                    <option value={ adminRole } key={ index }>{ adminRole }</option>
+                                    <option value={ adminRole.value } key={ index }>{ adminRole.name }</option>
                                 ) ) }
                             </select>
                         </div>
                         <div>
                             <label htmlFor="mediaType" className="block text-sm font-medium text-gray-700 mb-1">Media Type  <span className="text-red-500">*</span></label>
-                            <select required
+                             <Multiselect
+                                avoidHighlightFirstOption
+                                showArrow
                                 id="mediaType"
-                                name="mediaType"
-                                value={ user.mediaType }
-                                onChange={ handleChange }
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#BEF264] transition duration-150 ease-in-out"
-                                
-                            >
-                                <option value="">Select Media Type</option>
-                                { mediaTypesOptions.map( ( mediaType, index ) => (
-                                    <option key={ index } value={ mediaType }>{ mediaType }</option>
-                                ) ) }
-                            </select>
+                                options={mediaTypesOptions.map((option) => ({ name: option.name, value: option.value }))} 
+                                selectedValues={selectedMediaTypes.map((type) => ({ name: type }))}
+                                onSelect={(selectedList) => onSelectMediaType(selectedList.map((item:any) => item.name))} 
+                                onRemove={(selectedList) => onRemoveMediaType(selectedList.map((item:any) => item.name))} 
+                                showCheckbox
+                                displayValue="name" 
+                                style={{
+                                chips: {
+                                    background: '#BEF264'
+                                },
+                                searchBox: {
+                                    background: 'white',
+                                    border: '1px solid #e5e7eb',
+                                }
+                                }}
+                            />
                         </div>
                         <div className="col-span-1 md:col-span-2">
                             <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-1">Category  <span className="text-red-500">*</span></label>
-                            <select required
+                             <Multiselect
+                                avoidHighlightFirstOption
+                                showArrow
                                 id="category"
-                                name="category"
-                                value={ user.category }
-                                onChange={ handleChange }
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#BEF264] transition duration-150 ease-in-out"
-                            >
-                                <option value="">Select Category</option>
-                                { categoriesOptions.map( ( category, index ) => (
-                                    <option key={ index } value={ category }>{ category }</option>
-                                ) ) }
-                            </select>
+                                options={categoriesOptions.map((option) => ({ name: option.name, value: option.value }))} 
+                                selectedValues={selectedCategories.map((type) => ({ name: type }))}
+                                onSelect={(selectedList) => onSelectCategory(selectedList.map((item:any) => item.name))} 
+                                onRemove={(selectedList) => onRemoveCategory(selectedList.map((item:any) => item.name))} 
+                                showCheckbox
+                                displayValue="name" 
+                                style={{
+                                chips: {
+                                    background: '#BEF264'
+                                },
+                                searchBox: {
+                                    background: 'white',
+                                    border: '1px solid #e5e7eb',
+                                }
+                                }}
+                            />
                         </div>
                     </div>
                     <div className="mt-8">

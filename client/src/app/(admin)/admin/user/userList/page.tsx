@@ -10,8 +10,8 @@ interface User
     name: string;
     email: string;
     role: string;
-    mediaType: string;
-    category: string;
+    mediaType: string[] ;
+    category: string[] ;
 }
 
 export default function UserList ()
@@ -41,6 +41,9 @@ export default function UserList ()
         {
             setLoading( false );
         }
+    };
+    const capitalizeFirstLetter = (str: string): string => {
+        return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
     };
 
     const paginatedUsers = useMemo( () =>
@@ -122,12 +125,28 @@ export default function UserList ()
                                     paginatedUsers.map( ( user ) => (
                                         <tr key={ user._id } className="bg-white border-b hover:bg-gray-50">
                                             <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
-                                                { user.name }
+                                                { capitalizeFirstLetter( user.name ) }
                                             </th>
-                                            <td className="px-6 py-4">{ user.email }</td>
-                                            <td className="px-6 py-4">{ user.role }</td>
-                                            <td className="px-6 py-4 hidden md:table-cell">{ user.mediaType }</td>
-                                            <td className="px-6 py-4 hidden lg:table-cell">{ user.category }</td>
+                                            <td className="px-6 py-4">{ capitalizeFirstLetter( user.email ) }</td>
+                                            <td className="px-6 py-4">{ capitalizeFirstLetter(user.role) }</td>
+                                            <td className="px-6 py-4 hidden md:table-cell">{(user.mediaType && user.mediaType.length>0)
+                                                ? user.mediaType.map((mediaType, index) => (
+                                                    <span key={index}>
+                                                        {capitalizeFirstLetter(mediaType)}
+                                                                    {index < user.mediaType.length - 1 ? ', ' : ''}
+                                                    </span>
+                                                ))
+                                                : ''}</td>
+                                            <td className="px-6 py-4 hidden lg:table-cell">{ 
+                                                (user.category && user.category.length>0)?
+                                                user.category.map((category, index) => (
+                                                    <span key={index}>
+                                                        {capitalizeFirstLetter(category)}
+                                                                    {index < user.category.length - 1 ? ', ' : ''}
+                                                    </span>
+                                                ))
+                                                : ''
+                                            }</td>
                                             <td className="px-6 py-4 text-right">
                                                 <button
                                                     onClick={ ( e ) =>

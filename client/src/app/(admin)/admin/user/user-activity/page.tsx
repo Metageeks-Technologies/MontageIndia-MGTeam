@@ -32,6 +32,9 @@ const Page = () => {
       setLoading(false);
     }
   };
+   const capitalizeFirstLetter = (str: string): string => {
+        return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+    };
 
   useEffect(() => {
     fetchUsers();
@@ -106,13 +109,13 @@ const Page = () => {
                   ) : (
                     paginatedUsers.map( ( user ) => (
                       <tr key={ user._id } className="border-b hover:bg-gray-100 text-black">
-                        <td className="px-4 py-4 sm:px-6">{ user.username }</td>
-                        <th scope="row" className="px-4 py-4 sm:px-6 font-medium whitespace-nowrap">{ user.name }</th>
-                        <td className="px-4 py-4 sm:px-6">{ user.email }</td>
-                        <td className="px-4 py-4 sm:px-6">{ user.category }</td>
-                        <td className="px-4 py-4 sm:px-6">{ user.productId }</td>
+                        <td className="px-4 py-4 sm:px-6">{ capitalizeFirstLetter(user.username) }</td>
+                        <th scope="row" className="px-4 py-4 sm:px-6 font-medium whitespace-nowrap">{ capitalizeFirstLetter(user.name) }</th>
+                        <td className="px-4 py-4 sm:px-6">{ capitalizeFirstLetter(user.email) }</td>
+                        <td className="px-4 py-4 sm:px-6">{ capitalizeFirstLetter(user.category) }</td>
+                        <td className="px-4 py-4 sm:px-6">{ capitalizeFirstLetter(user.productId) }</td>
                         <td className="px-4 py-4 sm:px-6">{ new Date( user.timestamp ).toLocaleString() }</td>
-                        <td className="px-4 py-4 sm:px-6 text-center">{ user.action }</td>
+                        <td className="px-4 py-4 sm:px-6 text-center">{ capitalizeFirstLetter(user.action )}</td>
                       </tr>
                     ) )
                   ) }
