@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import instance from '@/utils/axios';
 import { notifyError, notifySuccess } from '@/utils/toast';
-import { adminRolesOptions, categoriesOptions, mediaTypesOptions } from '../../../../../../utils/tempData';
+import { adminRolesOptions, categoriesOptions, mediaTypesOptions } from '@/utils/tempData';
 import Multiselect from 'multiselect-react-dropdown';
 import { Spinner } from '@nextui-org/react';
 
@@ -129,8 +129,10 @@ export default function UserDetails ( { params }: { params: { id: string; }; } )
         fetchUser();
         notifySuccess( response.data.message );
       }
-    } catch ( error )
+    } catch ( error:any )
     {
+      notifyError( error.response.data.message || "There is some internal server error. Please try later" );
+
       console.error( 'Error updating user:', error );
     }
   };
@@ -139,11 +141,6 @@ export default function UserDetails ( { params }: { params: { id: string; }; } )
     setSelectedCategories(user.category);
     setSelectedMediaTypes(user.mediaType);
     setIsEditing( true );
-  }
-  const handleCancel = async () =>{
-    fetchUser();
-
-    setIsEditing( false );
   }
   const handleDelete = async () =>
   {
@@ -165,7 +162,15 @@ export default function UserDetails ( { params }: { params: { id: string; }; } )
     }
   };
 
-  if ( !user ) return <div className="flex justify-center items-center h-screen"><Spinner  color="success" label="Loading..." /></div>;
+  const handleUpdateCancel = () =>
+  {
+    fetchUser();
+    setIsEditing( false );
+  };
+
+  if ( !user ) return <div className="flex justify-center items-center h-screen">
+    <Spinner label="Loading..." color="success" />
+  </div>;
 
   return (
     <div className="bg-gray-100 min-h-screen py-12 px-4 sm:px-6 lg:px-8">
@@ -181,7 +186,7 @@ export default function UserDetails ( { params }: { params: { id: string; }; } )
             </div> */}
             {/* <div className='flex flex-row justify-center items-center gap-4'> */ }
             <h2 className="mt-4 text-2xl font-semibold">{ user.name }</h2>
-            <p className="text-gray-600 text-md italic ">{ user.username }</p>
+            <p className="text-gray-600 text-md italic ">User Name : { user.username }</p>
             {/* </div> */ }
 
             <p className="text-gray-600 text-md"> Email: { user.email }</p>
@@ -189,7 +194,7 @@ export default function UserDetails ( { params }: { params: { id: string; }; } )
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             { Object.entries( user ).map( ( [ key, value ] ) => (
 
-              key !== '_id'&& key!=='username' && key!=='isDeleted' && key!=="uid" && key!=="avatar" && key !== 'createdAt' && key !== 'updatedAt' && key !== '__v' && key !== 'resetPasswordExpires' && key !== 'resetPasswordToken' && (
+              key !== '_id' && key !== 'username' && key !== 'isDeleted' && key !== "uid" && key !== "avatar" && key !== 'createdAt' && key !== 'updatedAt' && key !== '__v' && key !== 'resetPasswordExpires' && key !== 'resetPasswordToken' && (
                 <div key={ key } className="flex flex-col">
                  {(key!=='mediaType' && key !=='category') && (<label className="text-sm font-medium text-gray-700 mb-1 capitalize">
                     { key.replace( /([A-Z])/g, ' $1' ).trim() }
@@ -289,7 +294,7 @@ export default function UserDetails ( { params }: { params: { id: string; }; } )
                 Save Changes
               </button>
               <button
-                onClick={handleCancel}
+                onClick={ handleUpdateCancel }
                 className="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
               >
                 Cancel

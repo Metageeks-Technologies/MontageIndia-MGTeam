@@ -32,7 +32,7 @@ const Page = () =>
       setError( "Please enter both usernameOrEmail and password." );
       return;
     }
-
+    console.log( "login cliked" );
     try
     {
       const response = await instance.post(
@@ -46,32 +46,26 @@ const Page = () =>
       );
 
       console.log( "Login successful:", response.data.token );
-      // Set a cookie from the frontend
-      // Cookies.set( 'token', response.data.token, { expires: 7, secure: true, sameSite: 'strict' } );
-      
-      localStorage.setItem( 'token', response.data.token );
-      
-      notifySuccess( "Login Successful" );  
+
+
+      notifySuccess( "Login Successful" );
       router.push( "/admin/dashboard" );
       setUsernameOrEmail( "" );
       setPassword( "" );
     } catch ( error )
     {
       console.error( "Login error:", error );
-      
+
       if ( axios.isAxiosError( error ) )
-        {
-          setError( error.response?.data?.message || "An error occurred during login. Please try again." );
-        } else
-        {
-          setError( "An unexpected error occurred. Please try again." );
-        }
+      {
+        setError( error.response?.data?.message || "An error occurred during login. Please try again." );
+      } else
+      {
+        setError( "An unexpected error occurred. Please try again." );
       }
-    };
-    
-    const tokenn = Cookies.get()
-    
-    console.log("tokencokkies-",tokenn)
+    }
+  };
+
   return (
     <>
 
@@ -100,7 +94,7 @@ const Page = () =>
                 htmlFor="usernameOrEmail"
                 className="block text-sm font-medium text-gray-700 required-label"
               >
-                Username or Email <span className="text-red-500">*</span> 
+                Username or Email <span className="text-red-500">*</span>
               </label>
 
               <input
@@ -117,7 +111,7 @@ const Page = () =>
                 htmlFor="password"
                 className="block text-sm font-medium text-gray-700 required-label"
               >
-                Password <span className="text-red-500">*</span> 
+                Password <span className="text-red-500">*</span>
               </label>
               <input
                 type={ showPassword ? "text" : "password" }
@@ -154,12 +148,8 @@ const Page = () =>
               Continue
             </button>
           </div>
-          <p className="mt-6 text-sm text-gray-600">
-            By clicking Register, you agree to accept Durara{ " " }
-          </p>
-          <p className="underline text-black hover:text-blue-800 mt-2" onClick={ () => router.push( '/terms-and-conditions' ) }>
-            Terms and Conditions
-          </p>
+
+
 
         </div>
       </div>

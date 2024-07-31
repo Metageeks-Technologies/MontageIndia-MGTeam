@@ -1,8 +1,8 @@
 'use client';
 import { useState, useEffect, useMemo } from 'react';
-import { useRouter } from 'next/navigation';
 import instance from '@/utils/axios';
 import { Spinner } from '@nextui-org/react';
+import Link from 'next/link';
 
 interface User
 {
@@ -19,7 +19,6 @@ export default function UserList ()
     const [ allUsers, setAllUsers ] = useState<User[]>( [] );
     const [ currentPage, setCurrentPage ] = useState( 1 );
     const [ loading, setLoading ] = useState( false );
-    const router = useRouter();
     const usersPerPage = 10;
 
     useEffect( () =>
@@ -53,11 +52,6 @@ export default function UserList ()
     }, [ allUsers, currentPage ] );
 
     const totalPages = useMemo( () => Math.ceil( allUsers.length / usersPerPage ), [ allUsers ] );
-
-    const handleEditClick = ( userId: string ) =>
-    {
-        router.push( `/admin/user/userList/${ userId }` );
-    };
 
     const handlePageChange = ( newPage: number ) =>
     {
@@ -147,17 +141,10 @@ export default function UserList ()
                                                 ))
                                                 : ''
                                             }</td>
-                                            <td className="px-6 py-4 text-right">
-                                                <button
-                                                    onClick={ ( e ) =>
-                                                    {
-                                                        e.preventDefault();
-                                                        handleEditClick( user._id );
-                                                    } }
-                                                    className="font-medium text-blue-600 hover:underline"
-                                                >
+                                           <td className="px-6 py-4 text-left">
+                                                <Link href={ `/admin/user/userList/${ user._id }` } className="font-medium text-blue-600 hover:underline">
                                                     Edit
-                                                </button>
+                                                </Link>
                                             </td>
                                         </tr>
                                     ) )
