@@ -15,7 +15,10 @@ const categoriesOptions = [
   { value: 'home', label: 'Home' },
   { value: 'sports', label: 'Sports' },
   { value: 'toys', label: 'Toys' },
-  { value: 'beauty', label: 'Beauty' }
+  { value: 'beauty', label: 'Beauty' },
+  {
+    value:'health',label:'health'
+  }
 ];
 
 const Form1 = ({ onNext }: any) => {
