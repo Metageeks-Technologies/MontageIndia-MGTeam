@@ -1,0 +1,18 @@
+version: "3.6"
+services:
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "8000:80"
+  mi-server:
+    build:
+      context: .
+      args:
+        NODE_ENV: development
+        
+    volumes:
+      - ./:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+    command: npm run dev

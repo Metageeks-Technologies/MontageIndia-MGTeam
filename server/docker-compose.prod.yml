@@ -1,0 +1,15 @@
+version: "3.6"
+services:
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+  mi-server:
+    build:
+      context: .
+      args:
+        NODE_ENV: poduction
+    environment:
+      - NODE_ENV=production
+      - ./.env
+    command: npm start
