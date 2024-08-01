@@ -9,5 +9,3 @@ services:
   mi-server:
     build: .
     image: image/mi-server
-    env_file:
-      - ./.env
