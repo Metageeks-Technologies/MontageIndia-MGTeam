@@ -6,9 +6,10 @@ COPY package.json .
 
 ARG NODE_ENV
 
-RUN npm config set fetch-timeout 600000 && \
-    npm config set fetch-retries 5 && \
-    for i in 1 2 3 4 5; do npm install --verbose && break || echo "Retrying in 5 seconds..." && sleep 5; done
+RUN if [ "$NODE_ENV" = "development" ]; \
+    then npm install; \
+    else npm install --only=production; \
+    fi
 
 COPY . ./
 RUN npm run build

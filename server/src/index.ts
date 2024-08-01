@@ -14,12 +14,13 @@ import productRouter from "@src/routes/product/product"
 import fieldRouter from '@src/routes/field/field';
 import cookieParser from 'cookie-parser';
 const {mongoUrl}=config;
-
+ 
 const app: Express = express();
 app.use(cors({
   origin: process.env.CLIENT_URL,
   credentials: true 
 }));
+app.enable("trust proxy");
 app.use(express.json());
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
@@ -32,7 +33,11 @@ app.use("/api/v1/media/audio", audioRouter);
 app.use("/api/v1/product", productRouter);
 app.use("/api/v1/field", fieldRouter);
 
+app.get("/api/greet", (req,res,next)=>{
+  res.send("Hello from server..")
+});
 
+ 
 app.use(errorMiddleware);
 processSQSMessages();
 
