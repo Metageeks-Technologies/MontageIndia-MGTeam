@@ -57,7 +57,7 @@ const Sidebar = () =>
     instance.get( '/auth/admin/getCurrAdmin' )
       .then( response =>
       {
-        console.log( 'User details:', response.data );
+        // console.log( 'User details:', response.data );
         setCurrentUser( response.data.user );
       } )
       .catch( error =>
@@ -262,7 +262,7 @@ const Sidebar = () =>
           </div>
 
           <div className="border-t bg-white px-2 py-4 mt-5 rounded-md w-[90%] mx-auto">
-            <div className="flex items-center mb-4 border-b pb-2">
+            <div className="flex items-center mb-4 border-b pb-2 cursor-pointer" onClick={ () => router.push( '/admin/profile' ) }>
               <FaUserCircle className="w-10 h-10 mr-3 text-gray-800" />
               <div>
                 <h3 className="text-sm font-semibold text-gray-800">
