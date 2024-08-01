@@ -27,8 +27,8 @@ const images = [
   ];
 const WeeklyCard: React.FC = () => {
   return (
-    <div className="bg-gray-100 p-10">
-      <div className="max-w-7xl mx-auto flex justify-around items-center ">
+    <div className="bg-gray-100 py-10">
+      <div className=" flex mx-24 justify-around items-center ">
         <div className="text-center lg:text-left basis-[35%]">
           <h1 className="text-5xl font-bold mb-4">A weekly dose of inspiration, just for you</h1>
           <p className="text-gray-600 mb-6 text-xl">Sign up and get a free image or photo every week</p>

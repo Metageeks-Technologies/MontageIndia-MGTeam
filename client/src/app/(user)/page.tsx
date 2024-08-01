@@ -5,12 +5,12 @@ import CardSlider from "@/components/Home/collectionCard";
 import CompaniesCard from "@/components/Home/companyCard";
 import ImageGallery from "@/components/Home/homeImage";
 import WeeklyCard from "@/components/Home/weeklyCard";
-import Sidebar from "@/components/Sidebar";
 import { IoIosSearch } from "react-icons/io";
 
 export default function Home() {
   return (
     <div className="main  ">
+      {/* Image Routes Banner Section */}
       <div
         className="relative bg-cover bg-center h-[600px]"
         style={{
@@ -18,7 +18,6 @@ export default function Home() {
             "url(https://images.ctfassets.net/hrltx12pl8hq/01rJn4TormMsGQs1ZRIpzX/16a1cae2440420d0fd0a7a9a006f2dcb/Artboard_Copy_231.jpg?fit=fill&w=1280&h=720&fm=webp)",
         }}
       >
-        {/* <div className="absolute inset-0 bg-gradient-to-r from-orange-400 to-blue-600 opacity-60"></div> */}
         <div className="relative z-10 flex flex-col items-center justify-center h-full text-white text-center">
           <h1 className="text-5xl font-bold">
             Unleash your creativity with unrivaled images
@@ -56,7 +55,7 @@ export default function Home() {
         </div>
       </div>
 
-      <div className="p-10 px-24">
+      {/* <div className="p-10 px-24">
         <h1 className="text-3xl font-bold">
           Explore images that ignite your creativity
         </h1>
@@ -94,10 +93,10 @@ export default function Home() {
             <h1 className="font-semibold">AI Image Generator</h1>
           </div>
         </div>
-      </div>
+      </div> */}
 
       <div className="bg-[#eeeeee]">
-        <div className="p-10 px-24">
+        <div className="py-10 mx-24">
           <h1 className="text-5xl font-semibold">See what’s trending</h1>
           <ImageGallery />
         </div>
@@ -119,7 +118,7 @@ export default function Home() {
         <WeeklyCard />
       </div>
 
-      <div className="max-w-7xl mx-auto py-10">
+      <div className="mx-24 py-10">
         <h2 className="text-3xl font-bold mb-6">
           Browse by category to find your perfect visual
         </h2>
@@ -132,7 +131,7 @@ export default function Home() {
       </div>
 
       <div className="bg-gray-100">
-        <div className="max-w-7xl mx-auto py-10">
+        <div className="mx-24 py-10">
           <h2 className="text-3xl font-bold mb-6">
             Tips and tricks from our blog
           </h2>
