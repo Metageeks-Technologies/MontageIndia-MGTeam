@@ -5,9 +5,11 @@ import instance from "@/utils/axios";
 import { Spinner } from "@nextui-org/react";
 import Multiselect from 'multiselect-react-dropdown';
 import {categoriesOptions, mediaTypesOptions} from "@/utils/tempData";
-
-// Define the interfaces for the product and variant types
-interface Variant
+import { BsThreeDots } from "react-icons/bs";
+import { GoDotFill } from "react-icons/go";
+import { LuDot } from "react-icons/lu";
+import { FaStarOfLife } from "react-icons/fa";
+ interface Variant
 {
   label: string;
   price: number;
@@ -35,7 +37,7 @@ const Home: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [productsPerPage, setProductsPerPage] = useState(6);
+  const [productsPerPage, setProductsPerPage] = useState(8);
   const [SearchTerm, setSearchTerm] = useState("");
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [selectedMediaTypes, setSelectedMediaTypes] = useState<string[]>([]);
@@ -74,7 +76,7 @@ const Home: React.FC = () => {
       console.log(response);
       setProductData(response.data.products);
       setTotalPages(response.data.numOfPages);
-      setCurrentPage(1);
+      setCurrentPage(currentPage);
      
     } catch (error) {
       console.error("Error fetching products:", error);
@@ -103,7 +105,6 @@ const Home: React.FC = () => {
     setCurrentPage(page);
   };
 
-  // display words function
   function truncateText(text: string, wordLimit: number): string {
     const words = text.split(" ");
     if (words.length > wordLimit) {
@@ -188,7 +189,7 @@ const Home: React.FC = () => {
           <thead>
             <tr>
               <th className="px-5 py-1 bg-gray-100 border-b border-gray-200 text-gray-800 text-left text-sm uppercase font-normal">
-                <input type="checkbox" />
+                No.
               </th>
               <th className="px-5 py-1 bg-gray-100 border-b border-gray-200 text-gray-800 text-left text-sm uppercase font-normal">
                 Product
@@ -215,10 +216,10 @@ const Home: React.FC = () => {
                 </td>
               </tr>
             ) : (
-              productData.map((prod) => (
+              productData.map((prod,index) => (
                 <tr key={prod._id} className="hover:bg-gray-300">
                   <td className="px-5 py-2 border-b border-gray-200 bg-white text-sm">
-                    <input type="checkbox" />
+                  <FaStarOfLife size={10} />
                   </td>
                   <td className="px-5 py-2 border-b border-gray-200 bg-white text-sm">
                     <div className="flex items-center">
@@ -296,32 +297,64 @@ const Home: React.FC = () => {
         <button
           onClick={() => handlePageChange(currentPage - 1)}
           disabled={currentPage === 1}
-          className="px-4 py-2 mx-1 bg-gray-300 text-gray-700 rounded disabled:opacity-50"
+          className="px-4 py-2 mx-3 bg-gray-300 text-gray-700 rounded disabled:opacity-50"
         >
           Pre
         </button>
         <div className="flex">
-          {[...Array(totalPages)].map((_, index) => (
+       
+        {currentPage===1?(<>
+       
+         <button
+              onClick={() => handlePageChange(currentPage)}
+              className={`px-4 py-2 mx-4 hidden  ${
+                   "bg-gray-200 text-gray-700"
+              } rounded`}
+            >
+               {currentPage-1}
+            </button></>):<>
+        <span className="pt-6 text-end flex  "><LuDot /></span>
+        <span className="pt-6 text-end flex  "><LuDot /></span>
+        <span className="pt-6 text-end flex  "><LuDot /></span>
+         <button
+              onClick={() => handlePageChange(currentPage)}
+              className={`px-4 py-2 mx-4 block ${
+                   "bg-gray-200 text-gray-700"
+              } rounded`}
+            >
+               {currentPage-1}
+            </button></>}
+           
             <button
-              key={index}
-              onClick={() => handlePageChange(index + 1)}
+              onClick={() => handlePageChange(currentPage)}
               className={`px-4 py-2 mx-1 ${
-                currentPage === index + 1
+                currentPage 
                   ? "bg-webgreen text-white"
                   : "bg-gray-200 text-gray-700"
               } rounded`}
             >
-              {index + 1}
+               {currentPage}
             </button>
-          ))}
-        </div>
+            <button
+              onClick={() => handlePageChange(currentPage)}
+              className={`px-4 py-2 mx-4  ${
+                   "bg-gray-200 text-gray-700"
+              } rounded`}
+            >
+               {currentPage+1}
+            </button>
+            <span className="pt-6 text-end flex  "><LuDot /></span>
+        <span className="pt-6 text-end flex  "><LuDot /></span>
+        <span className="pt-6 text-end flex  "><LuDot /></span>
         <button
           onClick={() => handlePageChange(currentPage + 1)}
           disabled={currentPage === totalPages}
-          className="px-4 py-2 mx-1 bg-gray-300 text-gray-700 rounded disabled:opacity-50"
+          className="px-4 py-2  mx-4  bg-gray-300 text-gray-700 rounded disabled:opacity-50"
         >
           Next
         </button>
+        </div>
+        
       </div>
     </div>
   );
