@@ -94,6 +94,7 @@ export const updateProduct = catchAsyncError(async (req: any, res, next) => {
     
     const {id:uuid}= req.params;
         console.log(uuid)
+        console.log(req.body)
     const product= await Product.findOneAndUpdate({uuid},req.body); 
     // console.log("updatedbody",req);
     const activity={

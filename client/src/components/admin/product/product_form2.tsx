@@ -1,9 +1,10 @@
 import instance from '@/utils/axios';
-import { notifySuccess } from '@/utils/toast';
+import { notifyError, notifySuccess } from '@/utils/toast';
 import React, { useState, useCallback } from 'react';
 import { Accept, useDropzone } from 'react-dropzone';
 import axios from 'axios';
 import { Spinner } from '@nextui-org/react';
+import Swal from 'sweetalert2';
 
 
 
@@ -89,17 +90,24 @@ const Form2 = ({ onPrev, onNext, formData }: any) => {
           if (data.total) {
             console.log(Math.round((data.loaded / data.total) * 100));
      
-            notifySuccess("Image  upload successfully")
           }}
-
-      });
-      if (response.status === 200) {
-        const data = response.data;
+          
+        });
+        if (response.status === 200) {
+          const data = response.data;
+          notifySuccess("Image  upload successfully")
         console.log('Upload success:', data);
         onNext(data);
       }
-    } catch (error) {
+    } catch (error:any) {
+      notifyError("An error occurred while uploading the image.")
       console.error('Error uploading image:', error);
+      setloader(false)
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: error,
+      });
       setError('An error occurred while uploading the image.');
     }
   };
@@ -112,7 +120,6 @@ const Form2 = ({ onPrev, onNext, formData }: any) => {
     formData.append('mediaType', JSON.stringify(data.mediaType));
 
     const url = `/media/audio/reduce`;
-  
     try {    
       
       const response = await instance.post(url,formData,{
@@ -121,17 +128,25 @@ const Form2 = ({ onPrev, onNext, formData }: any) => {
            onUploadProgress: (data) => {
           if (data.total) {
             console.log(Math.round((data.loaded / data.total) * 100));
-     
             notifySuccess("Audio file upload successfully")
           }}
       })
       if (response.status === 200) {
         const data = response.data;
         console.log('Upload success:', data);
+        setloader(false)
         onNext(data);
       }
-    } catch (error) {
+    } catch (error:any) {
       console.error('Error uploading audio:', error);
+      const errorMessage = error.response?.data?.message || 'An error occurred while sending data';
+
+      setloader(false)
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: errorMessage,
+      }); 
       setError('An error occurred while uploading the audio.');
     }
   };
@@ -139,6 +154,11 @@ const Form2 = ({ onPrev, onNext, formData }: any) => {
   const handleVideoSubmit = async (file: File, data: any) => {
     if (!file || !data || !data.uuid) {
       console.error('Invalid input data.');
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: "Invalid input data",
+      }); 
       return;
     }
   
@@ -213,6 +233,11 @@ const Form2 = ({ onPrev, onNext, formData }: any) => {
           } else if (retryCount >= maxRetries) {
             clearInterval(id);
             setloader(false);
+            Swal.fire({
+              icon: 'error',
+              title: 'Oops...',
+              text: "Transcoding process timed out.",
+            }); 
             console.error('Transcoding process timed out.');
           }
   
@@ -224,8 +249,14 @@ const Form2 = ({ onPrev, onNext, formData }: any) => {
         }
       }, 10000);
   
-    } catch (error) {
+    } catch (error:any) {
+      const errorMessage = error.response?.data?.message || 'An error occurred while sending data';
       setloader(false);
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: errorMessage,
+      }); 
       console.error("Error uploading video:", error);
     }
   };
