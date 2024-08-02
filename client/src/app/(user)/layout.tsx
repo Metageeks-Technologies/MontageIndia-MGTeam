@@ -21,10 +21,12 @@ export default function RootLayout ( {
     <html lang="en">
       <body className={ inter.className }>
         <ToastContainer />
-        <div className="flex  ">
-        <div className="w-20"> <Sidebar/></div>
-       <div >{ children }</div>
-       </div>
+        <div className="flex">
+          <Sidebar />
+          <main className="flex-1 ml-20"> 
+            { children }
+          </main>
+        </div>
       </body>
     </html>
   );
