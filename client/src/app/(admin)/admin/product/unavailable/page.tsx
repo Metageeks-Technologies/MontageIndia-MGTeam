@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import instance from "@/utils/axios";
-import { Spinner } from "@nextui-org/react";
+import { Spinner, Pagination, Button } from "@nextui-org/react";
 import Multiselect from 'multiselect-react-dropdown';
 import {categoriesOptions, mediaTypesOptions} from "@/utils/tempData";
 
@@ -96,9 +96,6 @@ const Home: React.FC = () => {
     }
     return text;
   }
-  
-  // Get products for the current page
-  const currentProducts = productData;
 
   // Handler to change page
   const handlePageChange = (page: number) => {
@@ -208,7 +205,15 @@ const Home: React.FC = () => {
                 </td>
               </tr>
             ) : (
-              currentProducts.map((prod) => (
+              (productData===null || productData.length === 0) ? (
+                    <tr>
+                    <td colSpan={ 7 } className="text-center py-4">
+                      <p className="text-gray-400 text-sm" >No Data Found</p>
+                    </td>
+                  </tr>
+                  ):
+                 productData && productData.length>0 &&
+              productData.map((prod) => (
                 <tr key={prod._id} className="hover:bg-gray-300">
                   <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                     <input type="checkbox" />
@@ -286,37 +291,40 @@ const Home: React.FC = () => {
       </div>
 
       {/* Pagination Controls */}
-      <div className="flex justify-center items-center mt-6">
-        <button
-          onClick={() => handlePageChange(currentPage - 1)}
-          disabled={currentPage === 1}
-          className="px-4 py-2 mx-1 bg-gray-300 text-gray-700 rounded disabled:opacity-50"
-        >
-          Pre
-        </button>
-        <div className="flex">
-          {[...Array(totalPages)].map((_, index) => (
-            <button
-              key={index}
-              onClick={() => handlePageChange(index + 1)}
-              className={`px-4 py-2 mx-1 ${
-                currentPage === index + 1
-                  ? "bg-webgreen text-white"
-                  : "bg-gray-200 text-gray-700"
-              } rounded`}
-            >
-              {index + 1}
-            </button>
-          ))}
+      {totalPages>0 && <div className="flex justify-center items-center gap-4 my-4">
+                <Button
+                    size="sm"
+                    type="button"
+                    disabled={currentPage === 1}
+                    variant="flat"
+                    className={`${currentPage === 1 ? "opacity-70" : "hover:bg-webgreenHover"} bg-webgreen-light text-white rounded-md font-bold`}
+                    onPress={() => setCurrentPage((prev) => (prev > 1 ? prev - 1 : prev))}
+                    >
+                    Prev
+                </Button> 
+                <Pagination 
+                    color="success" 
+                    classNames={{
+                    item: "w-8 h-8 text-small bg-gray-100 hover:bg-gray-300 rounded-md",
+                    cursor:"bg-webgreen hover:bg-webgreen text-white rounded-md font-bold",
+                    }} 
+                    total={totalPages} 
+                    page={currentPage} 
+                    onChange={handlePageChange}  
+                    initialPage={1} />
+
+                <Button
+                type="button"
+                disabled={currentPage === totalPages}
+                size="sm"
+                variant="flat"
+                className={`${currentPage === totalPages ? "opacity-70" : "hover:bg-webgreenHover"} bg-webgreen-light text-white rounded-md font-bold`}
+                onPress={() => setCurrentPage((prev) => (prev < totalPages ? prev + 1 : prev))}
+                >
+                Next
+                </Button>
         </div>
-        <button
-          onClick={() => handlePageChange(currentPage + 1)}
-          disabled={currentPage === totalPages}
-          className="px-4 py-2 mx-1 bg-gray-300 text-gray-700 rounded disabled:opacity-50"
-        >
-          Next
-        </button>
-      </div>
+      }
     </div>
   );
 };

@@ -160,10 +160,42 @@ export const deleteAdmin = catchAsyncError(async (req, res, next) => {
 });
 
 export const getAllAdmin = catchAsyncError(async (req, res, next) => {
-    const users = await Admin.find();
+
+    const {searchTerm,currentPage,roleSearch,dataPerPage} = req.query;
+
+    const queryObject:any = {};
+    if (searchTerm) {
+        queryObject.$or = [
+            { name: { $regex: searchTerm, $options: 'i' } },
+            { username: { $regex: searchTerm, $options: 'i' } },
+            { email: { $regex: searchTerm, $options: 'i' } },
+            { role: { $regex: searchTerm, $options: 'i' } },
+            { category: { $regex: searchTerm, $options: 'i' } },
+            { mediaType: { $regex: searchTerm, $options: 'i' } },
+        ]
+    }
+
+    if (roleSearch && typeof roleSearch === 'string' && roleSearch!=='all') {
+         queryObject.role = new RegExp(`^${roleSearch}$`, 'i'); 
+    }
+
+    const limit = parseInt(dataPerPage as string, 10) || 10;
+    const skip = (parseInt(currentPage as string, 10) - 1) * limit;
+
+    const admins = await Admin.find(queryObject)
+        .skip(skip)
+        .limit(limit);
+
+    const totalAdmins = await Admin.countDocuments(queryObject);
+    const totalPages = Math.ceil(totalAdmins / limit);
+
     res.status(200).json({
         success: true,
-        users
+        admins,
+        totalAdmins,
+        totalPages,
+        currentPage: parseInt(currentPage as string),
+        message: "Admins fetched successfully",
     });
 });
 
@@ -240,6 +272,10 @@ export const changePassword = catchAsyncError(async (req, res, next) => {
 
     if (!adminToUpdate) {
         return next(new ErrorHandler("Admin not found", 401))
+    }
+
+     if (oldPassword === newPassword) {
+      return next(new ErrorHandler('New password cannot be the same as the old password.',400));
     }
 
     const verifyOldPassword = await adminToUpdate.comparePassword(oldPassword);

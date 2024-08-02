@@ -6,7 +6,7 @@ interface IActivity extends Document {
   name: string;
   username: string;
   email: string;
-  action: 'create' | 'update' | 'delete';
+  action: string;
   category: string;
   productId: mongoose.Types.ObjectId;
   timestamp: Date;
