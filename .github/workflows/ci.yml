@@ -25,6 +25,11 @@ jobs:
       run: docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
       
     - name: Build the Docker image
-      run: docker-compose -f docker-compose.yml -f docker-compose.prod.yml build mi-server
-    - name: Push to Dockerhub
-      run: docker-compose -f docker-compose.yml -f docker-compose.prod.yml push mi-server
+      run: |
+        cd server
+        docker-compose -f docker-compose.yml -f docker-compose.prod.yml build mi-server
+
+    - name: Push to DockerHub
+      run: |
+        cd server
+        docker-compose -f docker-compose.yml -f docker-compose.prod.yml push mi-server
