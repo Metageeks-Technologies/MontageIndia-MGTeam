@@ -8,7 +8,8 @@ interface CategoryRequestBody {
 
 export const createCategory = catchAsyncError(async (req: any, res, next) => {
     
-    const {category} = req.body as CategoryRequestBody;
+    const { category } = req.body as CategoryRequestBody;
+    console.log(" from req :",category)
     const modifiedCategory = category.trim().toLowerCase();
     const existingCategory = await Category.findOne({name: modifiedCategory});
     if(existingCategory){
@@ -25,11 +26,11 @@ export const createCategory = catchAsyncError(async (req: any, res, next) => {
 export const getCategories = catchAsyncError(async (req, res, next) => {
     
     const categories = await Category.find();
-    console.log("hi");
+    // console.log("hi");
     
     res.status(200).json({
         success: true,
-        categories:"no of categories are ",    
+        categories,    
     })
 });
 
