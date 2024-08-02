@@ -1,10 +1,13 @@
+"use client"
 import Footer from "@/components/Footer";
 import BlogCard from "@/components/Home/blogCard";
 import CategoryCard from "@/components/Home/categoryCard";
 import CardSlider from "@/components/Home/collectionCard";
 import ImageGallery from "@/components/Home/homeImage";
 import WeeklyCard from "@/components/Home/weeklyCard";
+import instance from "@/utils/axios";
 import { Navbar } from "@nextui-org/react";
+import { useEffect, useState } from "react";
 import { IoIosSearch } from "react-icons/io";
 
 //Image Data
@@ -240,6 +243,27 @@ const companies: Company[] = [
 ];
 
 export default function Home() {
+const [imageProducts, setImageProducts] = useState([]);
+
+
+  const getProduct = async ()  => {
+   try {
+    const res = await instance.get('/product');
+    const imageProducts = res.data.products.filter((product:any) => product.mediaType === 'image');
+    setImageProducts(imageProducts);
+    console.log(res)
+
+   } catch (error) {
+    console.log(error)
+   }
+  }
+
+  useEffect (()=>{
+ getProduct()
+  },[])
+
+
+
   return (
     <div className="main  ">
       
@@ -367,7 +391,7 @@ export default function Home() {
               </div>
             </div>
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 mt-5">
-              {imageUrls.map((data, index) => (
+              {imageProducts.map((data, index) => (
                 <ImageGallery key={index} {...data} />
               ))}
             </div>

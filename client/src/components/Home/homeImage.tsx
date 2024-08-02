@@ -3,11 +3,9 @@ import { IoIosSearch } from "react-icons/io";
 import { IoMdHeartEmpty } from "react-icons/io";
 import { HiDownload } from "react-icons/hi";
 
-type Image = {
-  image: string;
-};
 
-const ImageGallery = (data: Image) => {
+
+const ImageGallery: React.FC = (data:any) => {
   function truncateText(text: string, wordLimit: number): string {
     const words = text.split(" ");
     if (words.length > wordLimit) {
@@ -15,6 +13,7 @@ const ImageGallery = (data: Image) => {
     }
     return text;
   }
+  console.log("iamge",data)
 
   const text = "Pink macro image of a ranunculus flower";
   const truncatedText = truncateText(text, 6);
@@ -23,7 +22,7 @@ const ImageGallery = (data: Image) => {
     <div className="relative rounded-md overflow-hidden group cursor-pointer">
       <div className="aspect-w-1 aspect-h-1">
         <img
-          src={data.image}
+          src={ `https://mi2-public.s3.ap-southeast-1.amazonaws.com/${ data.publicKey}`}
           alt={`Image `}
           className="w-full h-72 object-cover"
         />
