@@ -29,49 +29,53 @@ export default function UserDetails ( { params }: { params: { id: string; }; } )
     mediaType: [],
     category: [],
   } );
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
-  const [selectedMediaTypes, setSelectedMediaTypes] = useState<string[]>([]);
+  const [ selectedCategories, setSelectedCategories ] = useState<string[]>( [] );
+  const [ selectedMediaTypes, setSelectedMediaTypes ] = useState<string[]>( [] );
   const [ isEditing, setIsEditing ] = useState( false );
 
-  const onSelectCategory = (selectedList: string[]) => {
-    const uniqueSelectedList = Array.from(new Set(selectedList));
-    const lowerCaseList = Array.from(new Set(uniqueSelectedList.map(item => item.toLowerCase())));
-    setSelectedCategories(uniqueSelectedList);
-   
-    setUser(prevUser => ({
-            ...prevUser,
-            category: lowerCaseList,
-    }));
+  const onSelectCategory = ( selectedList: string[] ) =>
+  {
+    const uniqueSelectedList = Array.from( new Set( selectedList ) );
+    const lowerCaseList = Array.from( new Set( uniqueSelectedList.map( item => item.toLowerCase() ) ) );
+    setSelectedCategories( uniqueSelectedList );
+
+    setUser( prevUser => ( {
+      ...prevUser,
+      category: lowerCaseList,
+    } ) );
 
   };
 
-  const onRemoveCategory = (selectedList: string[]) => {
-    setSelectedCategories(selectedList);
-    const lowerCaseList = selectedList.map(item => item.toLowerCase());
-    setUser(prevUser => ({
-            ...prevUser,
-            category: lowerCaseList,
-    }));
+  const onRemoveCategory = ( selectedList: string[] ) =>
+  {
+    setSelectedCategories( selectedList );
+    const lowerCaseList = selectedList.map( item => item.toLowerCase() );
+    setUser( prevUser => ( {
+      ...prevUser,
+      category: lowerCaseList,
+    } ) );
   };
 
-  const onSelectMediaType = (selectedList: string[]) => {
-    const uniqueSelectedList = Array.from(new Set(selectedList));
-    const lowerCaseList = Array.from(new Set(uniqueSelectedList.map(item => item.toLowerCase())));
+  const onSelectMediaType = ( selectedList: string[] ) =>
+  {
+    const uniqueSelectedList = Array.from( new Set( selectedList ) );
+    const lowerCaseList = Array.from( new Set( uniqueSelectedList.map( item => item.toLowerCase() ) ) );
 
-    setSelectedMediaTypes(uniqueSelectedList);
-    setUser(prevUser => ({
-            ...prevUser,
-            mediaType: lowerCaseList,
-    }));
+    setSelectedMediaTypes( uniqueSelectedList );
+    setUser( prevUser => ( {
+      ...prevUser,
+      mediaType: lowerCaseList,
+    } ) );
   };
 
-  const onRemoveMediaType = (selectedList: string[]) => {
-    setSelectedMediaTypes(selectedList);
-    const lowerCaseList = selectedList.map(item => item.toLowerCase());
-    setUser(prevUser => ({
-            ...prevUser,
-            mediaType: lowerCaseList,
-        }));
+  const onRemoveMediaType = ( selectedList: string[] ) =>
+  {
+    setSelectedMediaTypes( selectedList );
+    const lowerCaseList = selectedList.map( item => item.toLowerCase() );
+    setUser( prevUser => ( {
+      ...prevUser,
+      mediaType: lowerCaseList,
+    } ) );
   };
   const router = useRouter();
   const { id } = params;
@@ -84,8 +88,9 @@ export default function UserDetails ( { params }: { params: { id: string; }; } )
     }
   }, [ id ] );
 
-  const capitalizeFirstLetter = (str: string): string => {
-    return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+  const capitalizeFirstLetter = ( str: string ): string =>
+  {
+    return str.charAt( 0 ).toUpperCase() + str.slice( 1 ).toLowerCase();
   };
   const fetchUser = async () =>
   {
@@ -97,8 +102,8 @@ export default function UserDetails ( { params }: { params: { id: string; }; } )
       {
         console.log( response.data.user );
         setUser( response.data.user );
-        setSelectedCategories(response.data.user.category);
-        setSelectedMediaTypes(response.data.user.mediaType);
+        setSelectedCategories( response.data.user.category );
+        setSelectedMediaTypes( response.data.user.mediaType );
       }
     } catch ( error )
     {
@@ -129,7 +134,7 @@ export default function UserDetails ( { params }: { params: { id: string; }; } )
         fetchUser();
         notifySuccess( response.data.message );
       }
-    } catch ( error:any )
+    } catch ( error: any )
     {
       notifyError( error.response.data.message || "There is some internal server error. Please try later" );
 
@@ -137,11 +142,12 @@ export default function UserDetails ( { params }: { params: { id: string; }; } )
     }
   };
 
-  const handleEdit=async()=>{
-    setSelectedCategories(user.category);
-    setSelectedMediaTypes(user.mediaType);
+  const handleEdit = async () =>
+  {
+    setSelectedCategories( user.category );
+    setSelectedMediaTypes( user.mediaType );
     setIsEditing( true );
-  }
+  };
   const handleDelete = async () =>
   {
     if ( confirm( 'Are you sure you want to delete this user?' ) )
@@ -179,8 +185,8 @@ export default function UserDetails ( { params }: { params: { id: string; }; } )
           <h1 className="text-3xl font-bold text-center">User Profile</h1>
         </div>
         <div className="p-6">
-        {!user && <Spinner label='Loading..' color="success" />}
-         { user && <div className="mb-8 text-center">
+          { !user && <Spinner label='Loading..' color="success" /> }
+          { user && <div className="mb-8 text-center">
             {/* <div className="w-32 h-32 mx-auto bg-gray-300 rounded-full flex items-center justify-center text-4xl font-bold text-white">
               { user.name.charAt( 0 ) }
             </div> */}
@@ -190,22 +196,22 @@ export default function UserDetails ( { params }: { params: { id: string; }; } )
             {/* </div> */ }
 
             <p className="text-gray-600 text-md"> Email: { user.email }</p>
-          </div>}
+          </div> }
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             { Object.entries( user ).map( ( [ key, value ] ) => (
 
               key !== '_id' && key !== 'username' && key !== 'isDeleted' && key !== "uid" && key !== "avatar" && key !== 'createdAt' && key !== 'updatedAt' && key !== '__v' && key !== 'resetPasswordExpires' && key !== 'resetPasswordToken' && (
                 <div key={ key } className="flex flex-col">
-                 {(key!=='mediaType' && key !=='category') && (<label className="text-sm font-medium text-gray-700 mb-1 capitalize">
+                  { ( key !== 'mediaType' && key !== 'category' ) && ( <label className="text-sm font-medium text-gray-700 mb-1 capitalize">
                     { key.replace( /([A-Z])/g, ' $1' ).trim() }
-                  </label>) } 
-                   {!isEditing && (key==='mediaType' || key=='category') && (<label className="text-sm font-medium text-gray-700 mb-1 capitalize">
+                  </label> ) }
+                  { !isEditing && ( key === 'mediaType' || key == 'category' ) && ( <label className="text-sm font-medium text-gray-700 mb-1 capitalize">
                     { key.replace( /([A-Z])/g, ' $1' ).trim() }
-                  </label>) } 
-                  {isEditing && (key==='name' || key === 'email') &&
-                    <input name={key} value={value} onChange={handleInputChange} className="mt-1 block w-full p-2 rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"/>
-                }
-                  {isEditing && (key === 'role') && (
+                  </label> ) }
+                  { isEditing && ( key === 'name' || key === 'email' ) &&
+                    <input name={ key } value={ value } onChange={ handleInputChange } className="mt-1 block w-full p-2 rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" />
+                  }
+                  { isEditing && ( key === 'role' ) && (
                     <select
                       name={ key }
                       value={ value }
@@ -214,7 +220,7 @@ export default function UserDetails ( { params }: { params: { id: string; }; } )
                     >
                       { key === 'role' && (
                         <>
-                          
+
                           { adminRolesOptions.map( ( role, index ) => (
                             <option value={ role.value } key={ index }>{ role.name }</option>
                           ) ) }
@@ -222,62 +228,62 @@ export default function UserDetails ( { params }: { params: { id: string; }; } )
                       ) }
                     </select>
                   ) }
-                  {isEditing && (key==='mediaType') &&
-                  (<>
-                    <label className="text-sm font-medium text-gray-700 mb-1 capitalize">
-                      Media Type
-                    </label>
-                     <Multiselect
+                  { isEditing && ( key === 'mediaType' ) &&
+                    ( <>
+                      <label className="text-sm font-medium text-gray-700 mb-1 capitalize">
+                        Media Type
+                      </label>
+                      <Multiselect
                         avoidHighlightFirstOption
                         showArrow
                         id="mediaType"
-                        options={mediaTypesOptions.map((option) => ({ name: option.name, value: option.value }))} 
-                        selectedValues={selectedMediaTypes.map((type) => ({ name: type }))}
-                        onSelect={(selectedList) => onSelectMediaType(selectedList.map((item:any) => item.name))} 
-                        onRemove={(selectedList) => onRemoveMediaType(selectedList.map((item:any) => item.name))} 
+                        options={ mediaTypesOptions.map( ( option ) => ( { name: option.name, value: option.value } ) ) }
+                        selectedValues={ selectedMediaTypes.map( ( type ) => ( { name: type } ) ) }
+                        onSelect={ ( selectedList ) => onSelectMediaType( selectedList.map( ( item: any ) => item.name ) ) }
+                        onRemove={ ( selectedList ) => onRemoveMediaType( selectedList.map( ( item: any ) => item.name ) ) }
                         showCheckbox
-                        displayValue="name" 
-                        style={{
-                        chips: {
+                        displayValue="name"
+                        style={ {
+                          chips: {
                             background: '#BEF264'
-                        },
-                        searchBox: {
+                          },
+                          searchBox: {
                             background: 'white',
                             border: '1px solid #e5e7eb',
-                        }
-                        }}
-                    />
+                          }
+                        } }
+                      />
                     </>
-                  )}
-                  {isEditing && (key==='category') &&
-                  (<>
-                    <label className="text-sm font-medium text-gray-700 mb-1 capitalize">
-                      Category
-                    </label>
-                     <Multiselect
+                    ) }
+                  { isEditing && ( key === 'category' ) &&
+                    ( <>
+                      <label className="text-sm font-medium text-gray-700 mb-1 capitalize">
+                        Category
+                      </label>
+                      <Multiselect
                         avoidHighlightFirstOption
                         showArrow
                         id="category"
-                        options={categoriesOptions.map((option) => ({ name: option.name, value: option.value }))} 
-                        selectedValues={selectedCategories.map((type) => ({ name: type }))}
-                        onSelect={(selectedList) => onSelectCategory(selectedList.map((item:any) => item.name))} 
-                        onRemove={(selectedList) => onRemoveCategory(selectedList.map((item:any) => item.name))} 
+                        options={ categoriesOptions.map( ( option ) => ( { name: option.name, value: option.value } ) ) }
+                        selectedValues={ selectedCategories.map( ( type ) => ( { name: type } ) ) }
+                        onSelect={ ( selectedList ) => onSelectCategory( selectedList.map( ( item: any ) => item.name ) ) }
+                        onRemove={ ( selectedList ) => onRemoveCategory( selectedList.map( ( item: any ) => item.name ) ) }
                         showCheckbox
-                        displayValue="name" 
-                        style={{
-                        chips: {
+                        displayValue="name"
+                        style={ {
+                          chips: {
                             background: '#BEF264'
-                        },
-                        searchBox: {
+                          },
+                          searchBox: {
                             background: 'white',
                             border: '1px solid #e5e7eb',
-                        }
-                        }}
-                    />
+                          }
+                        } }
+                      />
                     </>
-                  )}
+                    ) }
                   { !isEditing && (
-                    <p className="mt-1 block w-full py-2 px-3 bg-gray-100 rounded-md">   {Array.isArray(value) ? value.map(item => capitalizeFirstLetter(item)).join(', ') : capitalizeFirstLetter(value)}</p>
+                    <p className="mt-1 block w-full py-2 px-3 bg-gray-100 rounded-md">   { Array.isArray( value ) ? value.map( item => capitalizeFirstLetter( item ) ).join( ', ' ) : capitalizeFirstLetter( value ) }</p>
                   ) }
                 </div>
               )
