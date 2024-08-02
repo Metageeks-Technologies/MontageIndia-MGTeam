@@ -10,21 +10,6 @@ services:
         NODE_ENV: poduction
     environment:
       - NODE_ENV=production
-      - PORT=${PORT}
-      - MONGO_URL=${MONGO_URL}
-      - JWT_SECRET=${JWT_SECRET}
-      - JWT_LIFETIME=${JWT_LIFETIME}
-      - NODE_ENV=${NODE_ENV}
-      - WATERMARK_IMG_NAME=${WATERMARK_IMG_NAME}
-      - AWS_REGION=${AWS_REGION}
-      - AWS_ACCESS_KEY=${AWS_ACCESS_KEY}
-      - AWS_SECRET_KEY=${AWS_SECRET_KEY}
-      - AWS_BUCKET_NAME=${AWS_BUCKET_NAME}
-      - AWS_MEDIA_CONVERT_ROLE=${AWS_MEDIA_CONVERT_ROLE}
-      - AWS_MEDIA_CONVERT_QUEUE=${AWS_MEDIA_CONVERT_QUEUE}
-      - AWS_SQS_QUEUE_URL=${AWS_SQS_QUEUE_URL}
-      - AWS_TEMP_BUCKET_NAME=${AWS_TEMP_BUCKET_NAME}
-      - CLIENT_URL=${CLIENT_URL}
-      - EMAIL_USER=${EMAIL_USER}
-      - EMAIL_PASS=${EMAIL_PASS}
+    env_file:
+      - ./.env   
     command: npm start
