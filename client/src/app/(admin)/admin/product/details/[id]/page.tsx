@@ -35,10 +35,10 @@ const ProductDetail: React.FC = () =>
   const [productDetail, setProductDetail] = useState<Product | null>(null);
   const [loading, setLoading] = useState(false);
   const router=useRouter()
-  
+  const BucketName=process.env.NEXT_PUBLIC_AWS_BUCKET;
+  const AwsRegiosn=process.env.NEXT_PUBLIC_AWS_REIGION;
 
   const id = params.id as string | undefined;
-  console.log( "first", id );
   const fetchProduct = async ( id: string ) =>
   {
     setLoading( true );
@@ -46,10 +46,10 @@ const ProductDetail: React.FC = () =>
     try
     {
       const response = await instance.get( `/product/${ id }` );
-      console.log( "response from detail page:-", response );
-
-      // const product = response.data.products.find((p: Product) => p._id === id);
-      setProductDetail( response.data.product );
+      if (response.status === 201) {
+        setProductDetail( response.data.product );
+        setLoading(false)
+      }
       console.log( response.data.product );
     } catch ( error )
     {
@@ -64,17 +64,17 @@ const ProductDetail: React.FC = () =>
       case 'audio':
         return <>
         <audio controls>
-          <source  src={`https://${process.env.NEXT_PUBLIC_AWS_BUCKET}.s3.${process.env.NEXT_PUBLIC_AWS_REIGION}.amazonaws.com/${productDetail.thumbnailKey}`} type="audio/mpeg"/>
+          <source  src={`https://${BucketName}.s3.${AwsRegiosn}.amazonaws.com/${productDetail.thumbnailKey}`} type="audio/mpeg"/>
         </audio>
-        </>;
+        </>; 
       case 'image':
         return <img 
         className="w-full h-64 object-cover"
-        src={`https://${process.env.NEXT_PUBLIC_AWS_BUCKET}.s3.${process.env.NEXT_PUBLIC_AWS_REIGION}.amazonaws.com/${productDetail.thumbnailKey}`} alt="Product Media" />;
+        src={`https://${BucketName}.s3.${AwsRegiosn}.amazonaws.com/${productDetail.thumbnailKey}`} alt="Product Media" />;
       case 'video':
         return <>
         <video width="320" height="240" controls>
-          <source   src={`https://${process.env.NEXT_PUBLIC_AWS_BUCKET}.s3.${process.env.NEXT_PUBLIC_AWS_REIGION}.amazonaws.com/${productDetail.thumbnailKey}`} type="video/mp4" />
+          <source   src={`https://${BucketName}.s3.${AwsRegiosn}.amazonaws.com/${productDetail.thumbnailKey}`} type="video/mp4" />
         </video>
         </>;
       default:
@@ -110,11 +110,14 @@ const ProductDetail: React.FC = () =>
   };
 
  
+  const capitalizeFirstLetter = (string: string) => {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+  };
 
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-semibold text-start">Edit Product</h1>
-      <div className="mt-2 mx-auto bg-white shadow-lg rounded-lg overflow-hidden">
+    <div className="container pb-8 mx-auto pt-8  p-4">
+      <h1 className="text-2xl font-semibold flex justify-center text-start">Update Product</h1>
+      <div className="mt-2 mx-auto bg-white  shadow-lg rounded-lg overflow-hidden">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="col-span-2 p-6">
             <div className="mb-4">
@@ -147,8 +150,9 @@ const ProductDetail: React.FC = () =>
               <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="media">
                 Media
               </label>
-              <div className="border-dashed border-2 justify-center flex border-gray-300 p-4 rounded-lg">
-                {renderMedia()}
+              <div className="border-dashed border-2 justify-center flex items-center m-auto border-gray-300 p-4 rounded-lg">
+                  {productDetail.thumbnailKey?<>{renderMedia()}</> :<>
+                  <img src='/images/images.png' className='h-24' alt='product image unavailable'/></>}
               </div>
              
             </div>
@@ -200,13 +204,12 @@ const ProductDetail: React.FC = () =>
               </label>
               <select
                 id="status"
-                value={ productDetail.status }
+                value={ productDetail?.status }
                 onChange={ ( e ) => setProductDetail( { ...productDetail, status: e.target.value } ) }
                 className="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none"
                 disabled
               >
-                <option value="available">Available</option>
-                <option value="out of stock">Out of Stock</option>
+              <option value={productDetail?.status}>{capitalizeFirstLetter(productDetail?.status)}</option>
               </select>
             </div>
             <div className="mb-4">

@@ -7,7 +7,7 @@ interface IActivity extends Document {
   username: string;
   email: string;
   action: 'create' | 'update' | 'delete';
-  category: string;
+  category: string[];
   productId: mongoose.Types.ObjectId;
   timestamp: Date;
 }
@@ -18,7 +18,7 @@ const ActivitySchema: Schema = new Schema({
   username: { type: String, required: true },
   email: { type: String, required: true },
   action: { type: String, enum: ['create', 'update', 'delete'], required: true },
-  category: { type: String, required: true },
+  category: [{ type: String, required: true }],
   productId: { type: mongoose.Schema.Types.ObjectId, ref: 'Product', required: true },
   timestamp: { type: Date, default: Date.now },
 });

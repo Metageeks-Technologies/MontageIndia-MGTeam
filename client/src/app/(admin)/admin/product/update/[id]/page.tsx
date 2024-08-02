@@ -1,11 +1,15 @@
 "use client"
+import useAdminAuth from '@/components/hooks/useAdminAuth';
 import instance from '@/utils/axios';
+import { categoriesOptions } from '@/utils/tempData';
 import { notifySuccess } from '@/utils/toast';
+import { Spinner } from '@nextui-org/react';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import React, { useState, useEffect } from 'react';
 import { FaRegEdit, FaTrashAlt } from 'react-icons/fa';
 import { IoIosAddCircleOutline } from 'react-icons/io';
 import { MdOutlineSave } from 'react-icons/md';
+import Select, { MultiValue, ActionMeta } from 'react-select';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 
@@ -29,22 +33,15 @@ interface FormData {
   category: string[];
   thumbnailKey: string;
 }
-
-const statusOption= [
-    { value: 'published', label: 'Published' },
-    { value: 'draft', label: 'Draft' },
-    { value: 'archived', label: 'Archived' },
-    { value: 'unavailable', label: 'Unavailable' },
- 
-  ];
-
 const Form4 = () => {
-    const params=useParams()
-    const id = params.id as string | undefined;
-    console.log(id)
-  const router = useRouter();
+  const params=useParams()
+  const id = params.id as string | undefined;
+  const {user}=useAdminAuth()
   const [data, setFormData] = useState<FormData | null>(null);
-  const [newTag, setNewTag] = useState<string>(''); // State for the new tag input
+  const[loading,setloader]=useState(false)
+  const [newTag, setNewTag] = useState<string>('');  
+  const [selectedCategories, setSelectedCategories] = useState<any[]>([]);
+  const [availableCategories, setAvailableCategories] = useState<any[]>([]);
   const [editMode, setEditMode] = useState<{ [key: string]: boolean }>({
     title: false,
     slug: false,
@@ -56,24 +53,52 @@ const Form4 = () => {
     category: false
   });
   const [editingVariantIndex, setEditingVariantIndex] = useState<number | null>(null);
-  const [status,setStatus]=useState('');
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await instance(`/product/${id}`);
-        console.log("dsds",response);
-        if (response.status === 201) {
-          console.log(response.data.product);
-          setFormData(response.data.product);
-          setStatus(response.data.product.status)
-        }
-      } catch (error) {
-        console.error('Error fetching data:', error);
+  const [status, setStatus] = useState(data?.status || '');
+  const BucketName=process.env.NEXT_PUBLIC_AWS_BUCKET;
+  const AwsRegiosn=process.env.NEXT_PUBLIC_AWS_REIGION;
+  const fetchData = async () => {
+    setloader(true)
+    try {
+      const response = await instance(`/product/${id}`);
+      console.log("dsds",response);
+      if (response.status === 201) {
+        setloader(false)
+        setFormData(response.data.product);
+        setStatus(response.data.product.status)
       }
-    };
+    } catch (error) {
+      setloader(true)
+      console.error('Error fetching data:', error);
+    }
+  };
+  useEffect(() => {
+    if (user) {
+      console.log("first",user.category[0])
+      // Check if user.category is 'all' or an array
+      if (user.category[0] === 'all') {
+        setAvailableCategories(categoriesOptions.map(cat => ({
+          value: cat.value,
+          label: cat.name,
+        })));
+      } else if (Array.isArray(user.category)) {
+        // Filter categories based on user.category
+        const filteredCategories = categoriesOptions.filter(cat =>
+          user.category.includes(cat.value)
+        ).map(cat => ({
+          value: cat.value,
+          label: cat.name,
+        }));
+        setAvailableCategories(filteredCategories);
+      } else {
+        console.warn('Expected user.category to be an array or "all", but received:', user.category);
+        setAvailableCategories([]); // Set to an empty array or handle accordingly
+      }
+  
+     
+    }
     
     fetchData();
-  }, [id]);
+  }, [user]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement> | string, field: string) => {
     if (!data) return;
@@ -120,6 +145,7 @@ const Form4 = () => {
 
   const handleSave = async (field: string) => {
     if (!data) return;
+    setloader(true)
     try {
       let updatedField = {};
       switch (field) {
@@ -130,7 +156,7 @@ const Form4 = () => {
           updatedField = { slug: data.slug };
           break;
         case 'category':
-          updatedField = { category: data.category };
+          updatedField = { category: selectedCategories.map(c => c.value)};
           break;
         case 'description':
           updatedField = { description: data.description };
@@ -146,9 +172,14 @@ const Form4 = () => {
       }
 
       const response = await instance.patch(`/product/${data.uuid}`, updatedField);
-
+      if(response.status===201){
+        setloader(false)
+        notifySuccess("Category updated successfuly")
+        fetchData()
+      }
       console.log('Save result:', response.data);
     } catch (error) {
+      setloader(false)
       console.error('Error saving data:', error);
     }
 
@@ -192,17 +223,14 @@ const Form4 = () => {
     setFormData({ ...data, tags: newTags });
   };
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const handleStatusUpdate = async (newStatus:string) => {
     if (!data) return;
     try {
-      const updatedField = { status };
-      console.log(updatedField)
+      const updatedField = { status:newStatus };
       const response = await instance.patch(`/product/${data.uuid}`, updatedField);
-
       if (response.status === 201) { 
+        setloader(false)
         notifySuccess(`Product updated successfully`);
-        router.push('/admin/product/available');
       }
 
     } catch (error) {
@@ -210,29 +238,39 @@ const Form4 = () => {
     }
   };
 
+
+  const handleStatusChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const newStatus = e.target.value;
+    setloader(true)
+    console.log('Current selected value:', newStatus);
+    setStatus(newStatus);
+    await handleStatusUpdate(newStatus);
+  };
+  const handleCategoryChange = (newValue: MultiValue<any>, actionMeta: ActionMeta<any>) => {
+    setSelectedCategories(newValue as any[]);
+  };
   const renderMedia = () => {
     if (!data) return null;
-    switch (data.mediaType) {
+    switch (data?.mediaType) {
       case 'audio':
-        return (
-          <audio controls>
-            <source src={`https://mi2-public.s3.ap-southeast-1.amazonaws.com/${data.thumbnailKey}`} type="audio/mpeg" />
-          </audio>
-        );
+        return <>
+        <audio controls>
+          <source  src={`https://${BucketName}.s3.${AwsRegiosn}.amazonaws.com/${data.thumbnailKey}`} type="audio/mpeg"/>
+        </audio>
+        </>; 
       case 'image':
-        return <img className="w-full h-64 object-cover" src={`https://mi2-public.s3.ap-southeast-1.amazonaws.com/${data.thumbnailKey}`} alt="Product Media" />;
+        return <img 
+        className="w-full h-64 object-cover"
+        src={`https://${BucketName}.s3.${AwsRegiosn}.amazonaws.com/${data.thumbnailKey}`} alt="Product Media" />;
       case 'video':
-        return (
-          <video width="320" height="240" controls>
-            <source src={`https://mi2-public.s3.ap-southeast-1.amazonaws.com/${data.thumbnailKey}`} type="video/mp4" />
-          </video>
-        );
+        return <>
+        <video width="320" height="240" controls>
+          <source   src={`https://${BucketName}.s3.${AwsRegiosn}.amazonaws.com/${data.thumbnailKey}`} type="video/mp4" />
+        </video>
+        </>;
       default:
         return <p>No media available</p>;
     }
-  };
-  const handlestatus=(curStatus:string)=>{
-    console.log("sd",curStatus)
   }
 
   if (!data) {
@@ -240,9 +278,21 @@ const Form4 = () => {
   }
 
   return (
-    <div className="flex flex-col  ">
+    <>
+    {loading?<>
+    <div role="status" className='justify-center h-screen flex items-center m-auto'>
+      <svg aria-hidden="true" className="w-8 h-8 text-gray-200 animate-spin dark:text-gray-600 fill-lime-400" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor"/>
+          <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill"/>
+      </svg>
+        <span className="sr-only">
+            <Spinner label="Loading..." color="success" />
+      </span>
+      </div>
+      </>:(<>
+    <div className="flex flex-col p-6 pb-8 ">
       <div className='text-3xl font-semibold w-full flex items-center justify-center'>Review Product</div>
-      <form onSubmit={handleSubmit} className="mt-2 mx-auto bg-white shadow-lg rounded-lg overflow-hidden">
+      <form  className="mt-2 mx-auto bg-white shadow-lg rounded-lg overflow-hidden">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="col-span-2 p-6">
             <div className="mb-4 ">
@@ -327,14 +377,12 @@ const Form4 = () => {
               <select
                 id="status"
                 value={status}
-                onChange={(e) => setStatus(e.target.value)}
-                // onChange={(e) => setProductDetail({ ...productDetail, status: e.target.value })}
+                onChange={handleStatusChange}
                 className="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none"
               >
-                <option value="available">Available</option>
+                <option value="published">Available</option>
                 <option value="archived">Archived</option>
                 <option value="unavailable">Unavailable</option>
-                <option value="out of stock">Out of Stock</option>
               </select>
             </div>
           <div className='text-xl flex flex-row gap-7 w-32 font-semibold'>Tags
@@ -401,22 +449,38 @@ const Form4 = () => {
                 readOnly
               />
           </div> 
-         <div className='flex flex-col'>
-          <span className='text-xl font-semibold'>Category</span>
-          <div className='flex flex-wrap'>
-            {data.category.map((cat, index) => (
-              <span key={index} className='p-2 rounded-md m-2 text-white font-semibold bg-gray-400 '>{cat}</span>
-            ))}
-          </div>
+          <div className='mt-4'>
+              <label className="gap-5 text-gray-700 flex flex-row text-sm font-bold mb-2" htmlFor="category">
+                  Category
+                  <button type="button" className={`${!editMode.category ? 'hidden' : 'block'}`} onClick={() => { handleSave('category'); handleEditToggle('category'); }}><MdOutlineSave size={20} /></button>
+                  <button type="button" className={`${editMode.category ? 'hidden' : 'block'}`} onClick={() => handleEditToggle('category')}><FaRegEdit size={25} /></button>
+           
+              </label>
+              <div className='flex flex-wrap gap-4'>
+                  
+              </div>
+              {editMode.category ? <>
+                <div>
+                <Select
+                  isMulti
+                  name="categories"
+                  options={availableCategories}
+                  className='basic-multi-select'
+                  classNamePrefix="select"
+                  onChange={handleCategoryChange}
+                />
+              </div>
+                    </>:<><span
+                      className={`text-gray-700 w-full outline-none py-3 p-2 rounded-lg ${!editMode.category ? 'bg-gray-100' : 'bg-gray-200'}`}
+                  >{data.category}</span></>}
         </div>
           </div>
         </div>
-        <div className="flex my-8  flex-row justify-center gap-4">
-          <button type="submit" className="bg-lime-500 px-20 text-white p-2 rounded">Update</button>
-        </div>
+       
       </form>
     </div>
-  );
+    </>)}
+  </>);
 };
 
 export default Form4;
