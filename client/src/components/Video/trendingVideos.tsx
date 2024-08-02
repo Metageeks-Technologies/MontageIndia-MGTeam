@@ -5,19 +5,11 @@ import { IoMdHeartEmpty } from "react-icons/io";
 import { GoVideo } from "react-icons/go";
 import { FaShoppingCart } from "react-icons/fa";
 
-const imageUrls: string[] = [
-  "/images/dance.webm",
-  "/images/Flower.webm",
-  "/images/sky.webm",
-  "/images/Yellow_Final.webm",
-  "/images/sky.webm",
-  "/images/Flower.webm",
-  "/images/sky.webm",
-  "/images/dance.webm",
-  "/images/Yellow_Final.webm",
-];
+type Video = {
+  video: string;
+};
 
-const Trending: React.FC = () => {
+const Trending = (data:Video) => {
   const handleMouseEnter = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     const video = e.currentTarget.querySelector("video");
     if (video) {
@@ -33,50 +25,16 @@ const Trending: React.FC = () => {
   };
 
   return (
-    <div className="container mx-auto mt-5">
-      <div className="flex justify-between ">
-        <div className=" flex space-x-4">
-          <button className="flex items-center text-small px-3 py-1 border border-gray-700  rounded-full text-gray-700 bg-transparent backdrop-blur-sm bg-opacity-20 hover:bg-opacity-30 transition duration-300">
-            <IoIosSearch className="h-5 w-5 mr-1" />
-            Space
-          </button>
-          <button className="flex items-center text-small px-3 py-1 border border-gray-700  rounded-full text-gray-700  bg-transparent backdrop-blur-sm bg-opacity-20 hover:bg-opacity-30 transition duration-300">
-            <IoIosSearch className="h-5 w-5 mr-1" />
-            Animation
-          </button>
-          <button className="flex items-center text-small px-3 py-1 border border-gray-700 rounded-full text-gray-700  bg-transparent backdrop-blur-sm bg-opacity-20 hover:bg-opacity-30 transition duration-300">
-            <IoIosSearch className="h-5 w-5 mr-1" />
-            Dance
-          </button>
-          <button className="flex items-center text-small px-3 py-1 border border-gray-700 rounded-full text-gray-700  bg-transparent backdrop-blur-sm bg-opacity-20 hover:bg-opacity-30 transition duration-300">
-            <IoIosSearch className="h-5 w-5 mr-1" />
-            city
-          </button>
-          <button className="flex items-center text-small px-3 py-1 border border-gray-700  rounded-full text-gray-700  bg-transparent backdrop-blur-sm bg-opacity-20 hover:bg-opacity-30 transition duration-300">
-            <IoIosSearch className="h-5 w-5 mr-1" />
-            Underwater
-          </button>
-          <button className="flex items-center text-small px-3 py-1 border border-gray-700 rounded-full text-gray-700  bg-transparent backdrop-blur-sm bg-opacity-20 hover:bg-opacity-30 transition duration-300">
-            <IoIosSearch className="h-5 w-5 mr-1" />
-            Timelapes
-          </button>
-        </div>
-        <div className="flex gap-5">
-          <h2 className="text-xl font-bold">Handpicked content</h2>
-          <h2 className="text-xl">Most popular</h2>
-        </div>
-      </div>
-      <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-3 mt-5">
-        {imageUrls.map((url, index) => (
+    
+       
           <div
-            key={index}
             className="relative rounded-md overflow-hidden group cursor-pointer"
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
           >
             <div className="aspect-w-1 aspect-h-1">
               <video loop muted className="w-full h-72 object-cover">
-                <source src={url} type="video/mp4" />
+                <source src={data.video} type="video/mp4" />
               </video>
             </div>
             <div className="absolute m-2 top-0 left-0 flex gap-2 ">
@@ -111,14 +69,9 @@ const Trending: React.FC = () => {
               </div>
             </div>
           </div>
-        ))}
-      </div>
-      <div className="mt-8 flex justify-center ">
-        <button className="flex items-center text-lg px-6 font-semibold py-2 border border-gray-700  rounded-full text-black bg-transparent backdrop-blur-sm bg-opacity-20 hover:bg-opacity-40 transition duration-300">
-          See more Image
-        </button>
-      </div>
-    </div>
+        
+     
+    
   );
 };
 
