@@ -1,14 +1,15 @@
 "use client";
 import { useSearchParams } from 'next/navigation';
+import dynamic from 'next/dynamic';
 import instance from '@/utils/axios';
 import React, { useEffect, useState } from 'react';
-import Form1 from '@/components/admin/product/product_form1';
-import Form2 from '@/components/admin/product/product_form2';
-import Form3 from '@/components/admin/product/product_form3';
-import Form4 from '@/components/admin/product/product_form4';
+const Form1 = dynamic(() => import('@/components/admin/product/product_form1'), { ssr: false });
+const Form2 = dynamic(() => import('@/components/admin/product/product_form2'), { ssr: false });
+const Form3 = dynamic(() => import('@/components/admin/product/product_form3'), { ssr: false });
+const Form4 = dynamic(() => import('@/components/admin/product/product_form4'), { ssr: false });
 
 
-  const Page = () => {
+const ProductCreatePage = () => {
   
     const searchParams = useSearchParams();
     const uuid = searchParams.get('uuid');
@@ -66,4 +67,4 @@ import Form4 from '@/components/admin/product/product_form4';
   );
 };
 
-export default Page;
+export default ProductCreatePage;

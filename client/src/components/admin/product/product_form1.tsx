@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import slugify from 'slugify';
-import axios from 'axios';
 import instance from '@/utils/axios';
 import { notifyError } from '@/utils/toast';
 import ReactQuill from 'react-quill';
