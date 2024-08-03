@@ -373,10 +373,12 @@ useEffect( () =>
                   Nature
                 </button>
               </div>
-              <div className="flex flex-col md:flex-row gap-2 md:gap-5 items-center">
-                <h2 className="lg:text-lg font-bold">Handpicked content</h2>
-                <h2 className="lg:text-lg ">Most popular</h2>
-              </div>
+              <div className="flex flex-wrap px-5 gap-5 item-end">
+              <button className="border-black  border-b-3 px-3 font-bold">
+                Handpicked 
+              </button>
+              <button>Most popular</button>
+            </div>
             </div>
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 mt-5">
             { imageProducts.map( ( data: any, index: number ) => (
