@@ -243,24 +243,50 @@ const companies: Company[] = [
 ];
 
 export default function Home() {
-const [imageProducts, setImageProducts] = useState([]);
+// const [imageProducts, setImageProducts] = useState([]);
 
 
-  const getProduct = async ()  => {
-   try {
-    const res = await instance.get('/product');
-    const imageProducts = res.data.products.filter((product:any) => product.mediaType === 'image');
-    setImageProducts(imageProducts);
-    console.log(res)
+//   const getProduct = async ()  => {
+//    try {
+//     const res = await instance.get('/product');
+//     const imageProducts = res.data.products.filter((product:any) => product.mediaType === 'image');
+//     setImageProducts(imageProducts);
+//     console.log(res)
 
-   } catch (error) {
-    console.log(error)
-   }
+//    } catch (error) {
+//     console.log(error)
+//    }
+//   }
+
+//   useEffect (()=>{
+//  getProduct()
+//   },[])
+
+
+const [ imageProducts, setImageProducts ] = useState( [] );
+
+
+const getProduct = async () =>
+{
+  try
+  {
+    const res = await instance.get( '/product' );
+    const imageProducts = res.data.products.filter( ( product: any ) => product.mediaType === 'image' );
+    setImageProducts( imageProducts );
+    console.log( res );
+
+  } catch ( error )
+  {
+    console.log( error );
   }
+};
 
-  useEffect (()=>{
- getProduct()
-  },[])
+useEffect( () =>
+{
+  getProduct();
+}, [] );
+
+  
 
 
 
@@ -391,9 +417,9 @@ const [imageProducts, setImageProducts] = useState([]);
               </div>
             </div>
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 mt-5">
-              {imageProducts.map((data, index) => (
-                <ImageGallery key={index} {...data} />
-              ))}
+            { imageProducts.map( ( data: any, index: number ) => (
+                <ImageGallery key={ index } { ...data } />
+              ) ) }
             </div>
           </div>
           <div className="mt-8 flex justify-center ">

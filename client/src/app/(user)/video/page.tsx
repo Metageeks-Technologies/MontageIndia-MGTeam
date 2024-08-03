@@ -1,3 +1,4 @@
+"use client"
 import Footer from "@/components/Footer";
 import Blog from "@/components/Video/blog";
 import Category from "@/components/Video/category";
@@ -5,8 +6,9 @@ import CollectionVideos from "@/components/Video/collectionVideos";
 import Explore from "@/components/Video/explore";
 import Trending from "@/components/Video/trendingVideos";
 import { IoIosSearch } from "react-icons/io";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import FAQ from "@/components/Video/fag";
+import instance from "@/utils/axios";
 
 // videos data
 type Video = {
@@ -113,6 +115,32 @@ const categories: category[] = [
 ];
 
 const Page = () => {
+
+  const [ videoProducts, setVideoProducts ] = useState( [] );
+
+
+  const getProduct = async () =>
+  {
+    try
+    {
+      const res = await instance.get( '/product' );
+      const videoProducts = res.data.products.filter( ( product: any ) => product.mediaType === 'video' );
+      setVideoProducts( videoProducts );
+      console.log( res );
+
+    } catch ( error )
+    {
+      console.log( error );
+    }
+  };
+
+  useEffect( () =>
+  {
+    getProduct();
+  }, [] );
+
+
+
   return (
     <div className="main  ">
       <div className="relative h-[550px] w-full overflow-hidden">
@@ -206,9 +234,9 @@ const Page = () => {
             </div>
 
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 mt-5">
-              {videoUrls.map((data, index) => (
-                <Trending key={index} {...data} />
-              ))}
+            { videoProducts.map( ( data: any, index: number ) => (
+                <Trending key={ index } { ...data } />
+              ) ) }
             </div>
 
           </div>
