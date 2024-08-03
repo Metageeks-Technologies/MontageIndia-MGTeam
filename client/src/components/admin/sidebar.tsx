@@ -11,6 +11,7 @@ import
   FaShoppingCart,
   FaCog,
   FaUserCircle,
+  FaCampground,
 } from "react-icons/fa";
 import { BiCategoryAlt, BiPlus, BiLogOutCircle, BiLogInCircle } from "react-icons/bi";
 import { IoIosSearch } from "react-icons/io";
@@ -174,6 +175,14 @@ const Sidebar = () =>
                       </li>
                     </ul>
                   ) }
+                </li>
+              }
+              { currentUser && currentUser.role === "superadmin" && 
+                <li>
+                  <a href="/admin/category" className="flex items-center p-2 text-gray-900 rounded-lg  hover:bg-gray-100   group">
+                    <FaCampground className="w-5 h-5 text-gray-500 transition duration-75  group-hover:text-gray-900  " />
+                    <span className="flex-1 ms-3 whitespace-nowrap">Category</span>
+                  </a>
                 </li>
               }
               <li>
