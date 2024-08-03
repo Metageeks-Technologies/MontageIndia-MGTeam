@@ -267,7 +267,7 @@ const Form1 = ( { onNext }: any ) =>
         </div>
         <button
           onClick={ handleNext }
-          className={ `p-2 px-3 w-36 text-center items-center m-auto justify-center font-semibold flex text-white rounded-lg ${ isFormValid() ? 'bg-lime-400 cursor-pointer' : 'bg-gray-400 cursor-not-allowed'
+          className={ `p-2 px-3 text-center items-center m-auto justify-center font-semibold flex text-white rounded-lg ${ isFormValid() ? 'bg-lime-400 cursor-pointer' : 'bg-gray-400 cursor-not-allowed'
             }` }
           disabled={ !isFormValid() }
         >
