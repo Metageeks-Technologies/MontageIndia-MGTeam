@@ -14,7 +14,7 @@ export const createProduct = catchAsyncError(async (req: any, res, next) => {
         name: req.user.name,
         email: req.user.email,
         username: req.user.username,
-        action: 'created',
+        action: 'create',
         category: category[0],
         productId: product._id,
         timestamp: Date.now()
@@ -32,8 +32,9 @@ export const createProduct = catchAsyncError(async (req: any, res, next) => {
 export const getProduct = catchAsyncError(async (req, res, next) => {
     
     const {id:uuid}=req.params;
+    console.log(uuid)
     const product= await Product.findOne({uuid});
-    
+    console.log(product)
     res.status(201).json({
         success: true,
         product    
@@ -42,7 +43,7 @@ export const getProduct = catchAsyncError(async (req, res, next) => {
 
 export const getProducts = catchAsyncError(async (req, res, next) => {
     
-   const {productsPerPage='6', page = '1', status = 'published', category = [], mediaType = [], searchTerm = '',tags } = req.query;
+   const {productsPerPage='20', page = '1', status = 'published', category = [], mediaType = [], searchTerm = '',tags } = req.query;
 
     const queryObject:any = {};
 
@@ -92,17 +93,17 @@ export const getProducts = catchAsyncError(async (req, res, next) => {
 export const updateProduct = catchAsyncError(async (req: any, res, next) => {
     
     const {id:uuid}= req.params;
-    
-    const products= await Product.findOneAndUpdate({uuid},req.body); 
+        console.log(uuid)
+    const product= await Product.findOneAndUpdate({uuid},req.body); 
     // console.log("updatedbody",req);
     const activity={
         adminId: req.user._id,
         name: req.user.name,
         email: req.user.email,
         username: req.user.username,
-        action: 'Updated',
+        action: 'update',
         category: req.body.category?req.body.category:"unknown",
-        productId: uuid,
+        productId: product?._id,
         timestamp: Date.now(),
     }
 
@@ -110,7 +111,7 @@ export const updateProduct = catchAsyncError(async (req: any, res, next) => {
 
     res.status(201).json({
         success: true,
-        products    
+        product 
     })
 });
 
@@ -131,7 +132,7 @@ export const addSizeAndKeysToVideo =  catchAsyncError(async (req:any, res, next)
     const publicKey =`${uuid}/video/${uuid}-product_page.webm`;
     const thumbnailKey = `${uuid}/video/${uuid}-thumbnail.webm`;
 
-    const updatedProduct = await Product.findOneAndUpdate(
+    const updatedProduct:any = await Product.findOneAndUpdate(
         { uuid }, // find the product by uuid
         { $set: { variants, publicKey, thumbnailKey } }, // set the fields to update
         { new: true } // return the updated document
@@ -142,9 +143,9 @@ export const addSizeAndKeysToVideo =  catchAsyncError(async (req:any, res, next)
         name: req.user.name,
         email: req.user.email,
         username: req.user.username,
-        action: 'Updated',
+        action: 'update',
         category: req.body.category?req.body.category:"unknown",
-        productId: uuid,
+        productId: updatedProduct?._id,
         timestamp: Date.now(),
     }
 
@@ -181,18 +182,20 @@ export const addPriceToVariant = catchAsyncError(async (req:any, res, next) => {
         }
       );
       const updatedProduct = await Product.findOne({uuid});
+        console.log("updatedProduct",updatedProduct);
 
         const activity={
         adminId: req.user._id,
         name: req.user.name,
         email: req.user.email,
         username: req.user.username,
-        action: 'Updated',
+        action: 'update',
         category: req.body.category?req.body.category:"unknown",
-        productId: uuid,
+        productId: updatedProduct?._id,
         timestamp: Date.now(),
     }
-
+    console.log("activity",activity);
+    
     await Activity.create(activity);
     
     res.status(201).json({

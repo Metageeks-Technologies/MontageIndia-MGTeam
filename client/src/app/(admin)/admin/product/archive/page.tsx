@@ -4,16 +4,18 @@ import Link from "next/link";
 import instance from "@/utils/axios";
 import { Spinner } from "@nextui-org/react";
 import Multiselect from 'multiselect-react-dropdown';
-import {categoriesOptions, mediaTypesOptions} from "@/utils/tempData";
+import { categoriesOptions, mediaTypesOptions } from "@/utils/tempData";
 
 // Define the interfaces for the product and variant types
-interface Variant {
+interface Variant
+{
   label: string;
   price: number;
   key: string;
 }
 
-interface Product {
+interface Product
+{
   _id: string;
   slug: string;
   title: string;
@@ -26,6 +28,7 @@ interface Product {
   category: string;
   thumbnailKey: string;
   id: string;
+  uuid: string;
 }
 
 const Home: React.FC = () => {
@@ -37,39 +40,47 @@ const Home: React.FC = () => {
   const [SearchTerm, setSearchTerm] = useState("");
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [selectedMediaTypes, setSelectedMediaTypes] = useState<string[]>([]);
+  const [shouldFetch, setShouldFetch] = useState(true);
 
-    const onSelectCategory = (selectedList: string[]) => {
-    setSelectedCategories(selectedList);
+  const onSelectCategory = ( selectedList: string[] ) =>
+  {
+    setSelectedCategories( selectedList );
   };
 
-  const onRemoveCategory = (selectedList: string[]) => {
-    setSelectedCategories(selectedList);
+  const onRemoveCategory = ( selectedList: string[] ) =>
+  {
+    setSelectedCategories( selectedList );
   };
 
-  const onSelectMediaType = (selectedList: string[]) => {
-    setSelectedMediaTypes(selectedList);
+  const onSelectMediaType = ( selectedList: string[] ) =>
+  {
+    setSelectedMediaTypes( selectedList );
   };
 
-  const onRemoveMediaType = (selectedList: string[]) => {
-    setSelectedMediaTypes(selectedList);
+  const onRemoveMediaType = ( selectedList: string[] ) =>
+  {
+    setSelectedMediaTypes( selectedList );
   };
-
    const showAllProducts = async () => {
     setSearchTerm("");
     setSelectedCategories([]);
     setSelectedMediaTypes([]);
-    fetchProduct();
+    setCurrentPage(1);
+    setShouldFetch(true);
   }
   // fetch data from Server
-  const fetchProduct = async () => {
-    setLoading(true);
-    try {
-      const response = await instance.get(`/product`, {
-        params: { status: 'archived',productsPerPage, page: currentPage,category: selectedCategories, mediaType: selectedMediaTypes, searchTerm: SearchTerm  },
+  const fetchProduct = async () =>
+  {
+    setLoading( true );
+    try
+    {
+      const response = await instance.get( `/product`, {
+        params: { status: 'archived', productsPerPage, page: currentPage, category: selectedCategories, mediaType: selectedMediaTypes, searchTerm: SearchTerm },
         withCredentials: true,
       });
       setProductData(response.data.products);
       setTotalPages(response.data.numOfPages);
+      
       console.log(response);
     } catch (error) {
       console.error("Error fetching products:", error);
@@ -78,34 +89,44 @@ const Home: React.FC = () => {
     }
   };
   useEffect(() => {
-    fetchProduct();
-  }, [currentPage, productsPerPage]);
+    if (shouldFetch) {
+      fetchProduct();
+      setShouldFetch(false);
+    }
+
+  }, [currentPage, productsPerPage,shouldFetch]);
 
   // display words function
-  function truncateText(text: string, wordLimit: number): string {
-    const words = text.split(" ");
-    if (words.length > wordLimit) {
-      return words.slice(0, wordLimit).join(" ") + "...";
+  function truncateText ( text: string, wordLimit: number ): string
+  {
+    const words = text.split( " " );
+    if ( words.length > wordLimit )
+    {
+      return words.slice( 0, wordLimit ).join( " " ) + "...";
     }
     return text;
   }
-
-  // Get products for the current page
-  const currentProducts = productData;
-
+  
+   const handleproductPerPage=(e:any)=>{
+    e.preventDefault();
+    setShouldFetch(true);
+    setCurrentPage(1);
+    setProductsPerPage(parseInt(e.target.value));
+  }
   // Handler to change page
   const handlePageChange = (page: number) => {
+    setShouldFetch(true);
     setCurrentPage(page);
   };
 
   return (
     <div className="container p-4  ">
       <div className="flex justify-between items-center my-6">
-       <input
+        <input
           type="text"
           placeholder="Search products"
-          value={SearchTerm}
-          onChange={( e ) => setSearchTerm( e.target.value )}
+          value={ SearchTerm }
+          onChange={ ( e ) => setSearchTerm( e.target.value ) }
           className="border rounded px-4 py-2 w-full max-w-sm"
         />
         <h1 className="bg-webgreen text-white px-4 py-2 rounded ml-2">
@@ -113,12 +134,12 @@ const Home: React.FC = () => {
         </h1>
       </div>
       <div className="flex justify-between items-center gap-4 flex-wrap mb-4">
-         <div className="flex justify-start items-center flex-wrap gap-4">
+        <div className="flex justify-start items-center flex-wrap gap-4">
           <Multiselect
             avoidHighlightFirstOption
             showArrow
             placeholder="category"
-            style={{
+            style={ {
               chips: {
                 background: '#BEF264'
               },
@@ -127,24 +148,24 @@ const Home: React.FC = () => {
                 border: '1px solid #e5e7eb',
               },
             }}
-            options={categoriesOptions.map((option) => ({ name: option }))} 
+            options={categoriesOptions.map((option) => ({ name: option.name ,value: option.value }))} 
             selectedValues={selectedCategories.map((category) => ({ name: category }))}
             onSelect={(selectedList) => onSelectCategory(selectedList.map((item:any) => item.name))} 
             onRemove={(selectedList) => onRemoveCategory(selectedList.map((item:any) => item.name))} 
             showCheckbox
-            displayValue="name" 
+            displayValue="name"
           />
           <Multiselect
             avoidHighlightFirstOption
             showArrow
             placeholder="media type"
-            options={mediaTypesOptions.map((option) => ({ name: option }))} 
+            options={mediaTypesOptions.map((option) => ({ name: option.name, value: option.value }))} 
             selectedValues={selectedMediaTypes.map((type) => ({ name: type }))}
             onSelect={(selectedList) => onSelectMediaType(selectedList.map((item:any) => item.name))} 
             onRemove={(selectedList) => onRemoveMediaType(selectedList.map((item:any) => item.name))} 
             showCheckbox
-            displayValue="name" 
-            style={{
+            displayValue="name"
+            style={ {
               chips: {
                 background: '#BEF264'
               },
@@ -152,17 +173,17 @@ const Home: React.FC = () => {
                 background: 'white',
                 border: '1px solid #e5e7eb',
               }
-            }}
+            } }
           />
-          <button className="bg-webgreen text-white px-4 py-2 rounded" onClick={fetchProduct}>
+          <button className="bg-webgreen text-white px-4 py-2 rounded" onClick={ fetchProduct }>
             Search
           </button>
-          <button className="bg-gray-200 px-4 py-2 rounded" onClick={showAllProducts}>
+          <button type="button" className="px-4 py-2 rounded bg-gray-200" onClick={showAllProducts}>
             Show All
           </button>
         </div>
         <div>
-          <select className="border rounded px-4 py-2" value={productsPerPage} onChange={(e) => setProductsPerPage(parseInt(e.target.value))}>
+          <select className="border rounded px-4 py-2" value={productsPerPage} onChange={(e)=>handleproductPerPage(e)}>
             <option value="6" >6 Data per page</option>
             <option value="12">12 Data per page</option>
             <option value="24">24 Data per page</option>
@@ -194,14 +215,14 @@ const Home: React.FC = () => {
             </tr>
           </thead>
           <tbody>
-            {loading ? (
+            { loading ? (
               <tr>
-                <td colSpan={6} className="text-center py-4">
+                <td colSpan={ 6 } className="text-center py-4">
                   <Spinner label="Loading..." color="success" />
                 </td>
               </tr>
             ) : (
-              currentProducts.map((prod) => (
+             productData.map((prod) => (
                 <tr key={prod._id} className="hover:bg-gray-300">
                   <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                     <input type="checkbox" />
@@ -248,23 +269,23 @@ const Home: React.FC = () => {
                         aria-hidden
                         className="absolute inset-0 opacity-50 bg-green-200 rounded-full"
                       ></span>
-                      <span className="relative">{prod.mediaType}</span>
+                      <span className="relative">{ prod.mediaType }</span>
                     </span>
                   </td>
                   <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                     <p className="text-gray-900 whitespace-no-wrap">
-                      {prod.category}
+                      { prod.category }
                     </p>
                   </td>
                   <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                     <p className="text-gray-900 ">
-                      {truncateText(prod.description, 3)}
+                      { truncateText( prod.description, 3 ) }
                     </p>
                   </td>
                   <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                     <button className="text-gray-600 hover:text-gray-900">
                       <Link
-                        href={`details/${prod._id}`}
+                        href={ `details/${ prod.uuid }` }
                         className="bg-slate-200 px-6 py-0.5 flex items-center rounded-lg"
                       >
                         Details
@@ -272,39 +293,38 @@ const Home: React.FC = () => {
                     </button>
                   </td>
                 </tr>
-              ))
-            )}
+              ) )
+            ) }
           </tbody>
         </table>
       </div>
 
       {/* Pagination Controls */}
-      <div className="flex  items-center mt-6">
+      <div className="flex justify-center items-center mt-6">
         <button
-          onClick={() => handlePageChange(currentPage - 1)}
-          disabled={currentPage === 1}
+          onClick={ () => handlePageChange( currentPage - 1 ) }
+          disabled={ currentPage === 1 }
           className="px-4 py-2 mx-1 bg-gray-300 text-gray-700 rounded disabled:opacity-50"
         >
           Pre
         </button>
         <div className="flex">
-          {[...Array(totalPages)].map((_, index) => (
+          { [ ...Array( totalPages ) ].map( ( _, index ) => (
             <button
-              key={index}
-              onClick={() => handlePageChange(index + 1)}
-              className={`px-4 py-2 mx-1 ${
-                currentPage === index + 1
+              key={ index }
+              onClick={ () => handlePageChange( index + 1 ) }
+              className={ `px-4 py-2 mx-1 ${ currentPage === index + 1
                   ? "bg-webgreen text-white"
                   : "bg-gray-200 text-gray-700"
-              } rounded`}
+                } rounded` }
             >
-              {index + 1}
+              { index + 1 }
             </button>
-          ))}
+          ) ) }
         </div>
         <button
-          onClick={() => handlePageChange(currentPage + 1)}
-          disabled={currentPage === totalPages}
+          onClick={ () => handlePageChange( currentPage + 1 ) }
+          disabled={ currentPage === totalPages }
           className="px-4 py-2 mx-1 bg-gray-300 text-gray-700 rounded disabled:opacity-50"
         >
           Next

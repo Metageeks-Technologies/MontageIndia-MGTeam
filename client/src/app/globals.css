@@ -75,6 +75,17 @@ th, td {
 .option:hover {
   background-color: #BEF264;
 } */
+/* 
+ .upDropdown {
+    background: #fff;
+    border-radius: 4px;
+    margin-top: 1px;
+    position: absolute;
+    width: 100%;
+    bottom: 3rem;
+    right: 0;
+    z-index: 2;
+} */
 
 
 @media screen and (max-width: 600px) {

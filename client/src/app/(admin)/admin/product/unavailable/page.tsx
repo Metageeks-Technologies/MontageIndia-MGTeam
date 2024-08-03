@@ -17,6 +17,7 @@ interface Variant {
 interface Product {
   _id: string;
   slug: string;
+  uuid:string;
   title: string;
   description: string;
   tags: string[];
@@ -38,7 +39,7 @@ const Home: React.FC = () => {
   const [SearchTerm, setSearchTerm] = useState("");
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [selectedMediaTypes, setSelectedMediaTypes] = useState<string[]>([]);
-
+  const [shouldFetch, setShouldFetch] = useState(true);
   const onSelectCategory = (selectedList: string[]) => {
     setSelectedCategories(selectedList);
   };
@@ -58,7 +59,8 @@ const Home: React.FC = () => {
     setSearchTerm("");
     setSelectedCategories([]);
     setSelectedMediaTypes([]);
-    fetchProduct();
+    setCurrentPage(1);
+    setShouldFetch(true);
   }
 
   // fetch data from Server
@@ -79,8 +81,12 @@ const Home: React.FC = () => {
     }
   };
   useEffect(() => {
-    fetchProduct();
-  }, [currentPage, productsPerPage]);
+    if (shouldFetch) {
+      fetchProduct();
+      setShouldFetch(false);
+    }
+
+  }, [currentPage,productsPerPage,shouldFetch]);
 
   // display words function
   function truncateText(text: string, wordLimit: number): string {
@@ -128,7 +134,7 @@ const Home: React.FC = () => {
                 border: '1px solid #e5e7eb',
               },
             }}
-            options={categoriesOptions.map((option) => ({ name: option }))} 
+            options={categoriesOptions.map((option) => ({ name: option.name , value: option.value }))} 
             selectedValues={selectedCategories.map((category) => ({ name: category }))}
             onSelect={(selectedList) => onSelectCategory(selectedList.map((item:any) => item.name))} 
             onRemove={(selectedList) => onRemoveCategory(selectedList.map((item:any) => item.name))} 
@@ -139,7 +145,7 @@ const Home: React.FC = () => {
             avoidHighlightFirstOption
             showArrow
             placeholder="media type"
-            options={mediaTypesOptions.map((option) => ({ name: option }))} 
+            options={mediaTypesOptions.map((option) => ({ name: option.name , value: option.value }))} 
             selectedValues={selectedMediaTypes.map((type) => ({ name: type }))}
             onSelect={(selectedList) => onSelectMediaType(selectedList.map((item:any) => item.name))} 
             onRemove={(selectedList) => onRemoveMediaType(selectedList.map((item:any) => item.name))} 
@@ -158,7 +164,7 @@ const Home: React.FC = () => {
           <button className="bg-webgreen text-white px-4 py-2 rounded" onClick={fetchProduct}>
             Search
           </button>
-          <button className="bg-gray-200 px-4 py-2 rounded" onClick={showAllProducts}>
+          <button type="button" className="bg-gray-200 px-4 py-2 rounded" onClick={showAllProducts}>
             Show All
           </button>
         </div>
@@ -265,7 +271,7 @@ const Home: React.FC = () => {
                   <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                     <button className="text-gray-600 hover:text-gray-900">
                       <Link
-                        href={`details/${prod._id}`}
+                        href={`details/${prod.uuid}`}
                         className="bg-slate-200 px-6 py-0.5 flex items-center rounded-lg"
                       >
                         Details
@@ -280,7 +286,7 @@ const Home: React.FC = () => {
       </div>
 
       {/* Pagination Controls */}
-      <div className="flex  items-center mt-6">
+      <div className="flex justify-center items-center mt-6">
         <button
           onClick={() => handlePageChange(currentPage - 1)}
           disabled={currentPage === 1}

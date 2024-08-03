@@ -1,8 +1,8 @@
 'use client';
 import { useState, useEffect, useMemo } from 'react';
-import { useRouter } from 'next/navigation';
 import instance from '@/utils/axios';
 import { Spinner } from '@nextui-org/react';
+import Link from 'next/link';
 
 interface User
 {
@@ -10,8 +10,8 @@ interface User
     name: string;
     email: string;
     role: string;
-    mediaType: string;
-    category: string;
+    mediaType: string[] ;
+    category: string[] ;
 }
 
 export default function UserList ()
@@ -19,7 +19,6 @@ export default function UserList ()
     const [ allUsers, setAllUsers ] = useState<User[]>( [] );
     const [ currentPage, setCurrentPage ] = useState( 1 );
     const [ loading, setLoading ] = useState( false );
-    const router = useRouter();
     const usersPerPage = 10;
 
     useEffect( () =>
@@ -42,6 +41,9 @@ export default function UserList ()
             setLoading( false );
         }
     };
+    const capitalizeFirstLetter = (str: string): string => {
+        return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+    };
 
     const paginatedUsers = useMemo( () =>
     {
@@ -50,11 +52,6 @@ export default function UserList ()
     }, [ allUsers, currentPage ] );
 
     const totalPages = useMemo( () => Math.ceil( allUsers.length / usersPerPage ), [ allUsers ] );
-
-    const handleEditClick = ( userId: string ) =>
-    {
-        router.push( `/admin/user/userList/${ userId }` );
-    };
 
     const handlePageChange = ( newPage: number ) =>
     {
@@ -96,7 +93,7 @@ export default function UserList ()
         <div className="flex flex-col h-full bg-gray-100 min-w-md">
             <div className="flex-grow p-6 md:p-0">
                 <h1 className="text-3xl font-bold mb-6 text-gray-800">User List</h1>
-                <div className="bg-white shadow-md rounded-lg overflow-hidden">
+                <div className="bg-white shadow-md rounded-lg ">
                     <div className="overflow-x-auto">
                         <table className="w-full text-sm text-left text-gray-900">
                             <thead className="text-xs text-gray-700 uppercase bg-gray-200">
@@ -122,23 +119,32 @@ export default function UserList ()
                                     paginatedUsers.map( ( user ) => (
                                         <tr key={ user._id } className="bg-white border-b hover:bg-gray-50">
                                             <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
-                                                { user.name }
+                                                { capitalizeFirstLetter( user.name ) }
                                             </th>
-                                            <td className="px-6 py-4">{ user.email }</td>
-                                            <td className="px-6 py-4">{ user.role }</td>
-                                            <td className="px-6 py-4 hidden md:table-cell">{ user.mediaType }</td>
-                                            <td className="px-6 py-4 hidden lg:table-cell">{ user.category }</td>
-                                            <td className="px-6 py-4 text-right">
-                                                <button
-                                                    onClick={ ( e ) =>
-                                                    {
-                                                        e.preventDefault();
-                                                        handleEditClick( user._id );
-                                                    } }
-                                                    className="font-medium text-blue-600 hover:underline"
-                                                >
+                                            <td className="px-6 py-4">{ capitalizeFirstLetter( user.email ) }</td>
+                                            <td className="px-6 py-4">{ capitalizeFirstLetter(user.role) }</td>
+                                            <td className="px-6 py-4 hidden md:table-cell">{(user.mediaType && user.mediaType.length>0)
+                                                ? user.mediaType.map((mediaType, index) => (
+                                                    <span key={index}>
+                                                        {capitalizeFirstLetter(mediaType)}
+                                                                    {index < user.mediaType.length - 1 ? ', ' : ''}
+                                                    </span>
+                                                ))
+                                                : ''}</td>
+                                            <td className="px-6 py-4 hidden lg:table-cell">{ 
+                                                (user.category && user.category.length>0)?
+                                                user.category.map((category, index) => (
+                                                    <span key={index}>
+                                                        {capitalizeFirstLetter(category)}
+                                                                    {index < user.category.length - 1 ? ', ' : ''}
+                                                    </span>
+                                                ))
+                                                : ''
+                                            }</td>
+                                           <td className="px-6 py-4 text-left">
+                                                <Link href={ `/admin/user/userList/${ user._id }` } className="font-medium text-blue-600 hover:underline">
                                                     Edit
-                                                </button>
+                                                </Link>
                                             </td>
                                         </tr>
                                     ) )

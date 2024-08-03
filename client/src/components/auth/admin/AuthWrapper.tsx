@@ -1,73 +1,75 @@
-'use client';
+"use client";
 
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import Cookies from 'js-cookie';
+import { useRouter, usePathname } from 'next/navigation';
 import Sidebar from "../../admin/sidebar";
 import instance from '@/utils/axios';
+import { Spinner } from '@nextui-org/react';
 
 const AuthWrapper = ( { children }: { children: React.ReactNode; } ) =>
 {
     const router = useRouter();
+    const pathname = usePathname();
     const [ isAuthenticated, setIsAuthenticated ] = useState( false );
     const [ isLoading, setIsLoading ] = useState( true );
 
-    useEffect( () =>
+    const isPasswordResetRoute = pathname.startsWith( '/admin/reset-password' );
+
+    const checkAuth = () =>
     {
-        const checkAuth = async() =>
-        {
-            // const user = await instance('/auth/admin/')
-            // Check token in cookies
-            const cookieToken = Cookies.get( 'token' );
-            console.log( 'Token from cookies:', cookieToken );
-
-            // Check token in localStorage
-            const localToken = localStorage.getItem( 'token' );
-            console.log( 'Token from localStorage:', localToken );
-
-            if ( localToken )
-            {
-                setIsAuthenticated( true );
-            } else
-            {
-                setIsAuthenticated( false );
-                router.push( '/admin/login' );
-            }
-            setIsLoading( false );
-        };
-
-        checkAuth();
-    }, [ router ] );
-
-    // if current endpoint is admin/login than set isathentuated(false)
-
-    const checkEndpoint = () =>
-    {
-        if ( typeof window !== "undefined" && window.location.href === '/admin/login' )
+        if ( isPasswordResetRoute )
         {
             setIsAuthenticated( false );
-            router.refresh();
+            setIsLoading( false );
+            return;
         }
+
+        instance.get( '/auth/admin/getCurrAdmin' )
+            .then( response =>
+            {
+                const user = response.data;
+                if ( user )
+                {
+                    setIsAuthenticated( true );
+                } else
+                {
+                    setIsAuthenticated( false );
+                    router.push( '/auth/admin/login' );
+                }
+            } )
+            .catch( error =>
+            {
+                console.error( 'Error checking authentication', error );
+                setIsAuthenticated( false );
+                router.push( '/auth/admin/login' );
+            } )
+            .finally( () =>
+            {
+                setIsLoading( false );
+            } );
     };
-    checkEndpoint();
+
+    useEffect( () =>
+    {
+        if ( !isAuthenticated && isLoading )
+        {
+            checkAuth();
+        }
+    }, [ isAuthenticated ] );
 
     if ( isLoading )
     {
-        return <div>Loading...</div>;
+        return <div className="flex justify-center items-center h-screen">
+            <Spinner label="Loading..." color="success" />
+        </div>;
     }
 
-
     return (
-        <div  className="flex items-center">
-           
-            { isAuthenticated &&
-                
-                    <Sidebar />
-                 }
-            <div className="md:ml-[20%] sm:ml-[25%] w-full">
+        <div className="flex items-center">
+            { isAuthenticated && !isPasswordResetRoute && <Sidebar /> }
+            <div className={ `${ isAuthenticated && !isPasswordResetRoute ? 'md:ml-[20%] sm:ml-[25%]' : '' } w-full` }>
                 { children }
             </div>
-             
         </div>
     );
 };

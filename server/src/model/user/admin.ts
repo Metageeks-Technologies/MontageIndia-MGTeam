@@ -40,13 +40,14 @@ const adminsSchema = new mongoose.Schema<TAdmin>({
         default: 'admin',
     },
     mediaType: {
-        type: String,
+        type: [String],
         required: true,
-        default: "music",
+        default: ["all"],
     },
     category: {
-        type: String,
-        default: "all"
+        type: [String],
+        required: true,
+        default: ["all"]
     },
     resetPasswordToken:{
         type: String,
