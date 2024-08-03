@@ -33,7 +33,7 @@ console.log("viedo:-",data)
             onMouseLeave={handleMouseLeave}
           >
             <div className="aspect-w-1 aspect-h-1">
-              <video loop muted className="w-full h-72 object-cover">
+              <video loop muted className="w-full h-64 object-cover">
                 <source   src={ `https://mi2-public.s3.ap-southeast-1.amazonaws.com/${ data.thumbnailKey }` } />
               </video>
             </div>
