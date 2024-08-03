@@ -22,9 +22,9 @@ const ImageGallery: React.FC = ( data: any ) =>
     <div className="relative rounded-md overflow-hidden group cursor-pointer">
       <div className="aspect-w-1 aspect-h-1">
         <img
-          src={ `https://mi2-public.s3.ap-southeast-1.amazonaws.com/${ data.thumbnailKey }` }
-          alt={ `Image ` }
-          className="w-full h-72 object-cover"  
+          src={ `https://mi2-public.s3.ap-southeast-1.amazonaws.com/${ data.thumbnailKey}`}
+          alt={`Image `}
+          className="w-full h-72 object-cover"
         />
       </div>
       <div className="absolute top-0 left-0  opacity-0 group-hover:opacity-100 transition-opacity duration-300">

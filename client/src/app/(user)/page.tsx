@@ -204,30 +204,51 @@ const companies: Company[] = [
   },
 ];
 
-export default function Home ()
+export default function Home() {
+// const [imageProducts, setImageProducts] = useState([]);
+
+
+//   const getProduct = async ()  => {
+//    try {
+//     const res = await instance.get('/product');
+//     const imageProducts = res.data.products.filter((product:any) => product.mediaType === 'image');
+//     setImageProducts(imageProducts);
+//     console.log(res)
+
+//    } catch (error) {
+//     console.log(error)
+//    }
+//   }
+
+//   useEffect (()=>{
+//  getProduct()
+//   },[])
+
+
+const [ imageProducts, setImageProducts ] = useState( [] );
+
+
+const getProduct = async () =>
 {
-  const [ imageProducts, setImageProducts ] = useState( [] );
-
-
-  const getProduct = async () =>
+  try
   {
-    try
-    {
-      const res = await instance.get( '/product' );
-      const imageProducts = res.data.products.filter( ( product: any ) => product.mediaType === 'image' );
-      setImageProducts( imageProducts );
-      console.log( res );
+    const res = await instance.get( '/product' );
+    const imageProducts = res.data.products.filter( ( product: any ) => product.mediaType === 'image' );
+    setImageProducts( imageProducts );
+    console.log( res );
 
-    } catch ( error )
-    {
-      console.log( error );
-    }
-  };
-
-  useEffect( () =>
+  } catch ( error )
   {
-    getProduct();
-  }, [] );
+    console.log( error );
+  }
+};
+
+useEffect( () =>
+{
+  getProduct();
+}, [] );
+
+  
 
 
 
@@ -352,13 +373,15 @@ export default function Home ()
                   Nature
                 </button>
               </div>
-              <div className="flex flex-col md:flex-row gap-2 md:gap-5 items-center">
-                <h2 className="lg:text-lg font-bold">Handpicked content</h2>
-                <h2 className="lg:text-lg ">Most popular</h2>
-              </div>
+              <div className="flex flex-wrap px-5 gap-5 item-end">
+              <button className="border-black  border-b-3 px-3 font-bold">
+                Handpicked 
+              </button>
+              <button>Most popular</button>
             </div>
-            <div className="grid mt-5 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 auto-rows-[200px]">
-              { imageProducts.map( ( data: any, index: number ) => (
+            </div>
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 mt-5">
+            { imageProducts.map( ( data: any, index: number ) => (
                 <ImageGallery key={ index } { ...data } />
               ) ) }
             </div>

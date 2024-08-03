@@ -1,4 +1,4 @@
-"use client";
+"use client"
 import Footer from "@/components/Footer";
 import Blog from "@/components/Video/blog";
 import Category from "@/components/Video/category";
@@ -123,8 +123,7 @@ const categories: category[] = [
   },
 ];
 
-const Page = () =>
-{
+const Page = () => {
 
   const [ videoProducts, setVideoProducts ] = useState( [] );
 
@@ -148,6 +147,8 @@ const Page = () =>
   {
     getProduct();
   }, [] );
+
+
 
   return (
     <div className="main  ">
@@ -235,14 +236,16 @@ const Page = () =>
                   Nature
                 </button>
               </div>
-              <div className="flex flex-col md:flex-row gap-2  md:gap-5 items-center">
-                <h2 className="lg:text-lg font-bold">Handpicked content</h2>
-                <h2 className="lg:text-lg ">Most popular</h2>
-              </div>
+              <div className="flex flex-wrap px-5 gap-5 item-end">
+              <button className="border-black  border-b-3 px-3 font-bold">
+                Handpicked 
+              </button>
+              <button>Most popular</button>
+            </div>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 auto-rows-[200px]">
-              { videoProducts.map( ( data: any, index: number ) => (
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 mt-5">
+            { videoProducts.map( ( data: any, index: number ) => (
                 <Trending key={ index } { ...data } />
               ) ) }
             </div>
