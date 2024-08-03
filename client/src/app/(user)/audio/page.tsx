@@ -5,6 +5,64 @@ import CardSlider from '@/components/Home/collectionCard';
 import React, { useEffect } from 'react';
 import { IoIosSearch } from "react-icons/io";
 
+export interface BlogPost
+{
+  imageUrl: string;
+  title: string;
+  description: string;
+}
+
+const posts: BlogPost[] = [
+  {
+    imageUrl:
+      "https://www.shutterstock.com/blog/wp-content/uploads/sites/5/2022/12/seasonal-sales-cover-design.jpg?resize=1250,1120",
+    title: "Free Colorful Clip Art to Promote Sales and Discounts",
+    description:
+      "Neon-colored and easy-to-use PNGs are here to assist you with any sale or promotion you’ve planned for 2023.",
+  },
+  {
+    imageUrl:
+      "https://www.shutterstock.com/blog/wp-content/uploads/sites/5/2023/01/Brand-trust-design_featured-3.jpg?resize=1250,1120",
+    title: "How to Build Brand Trust Through Good Design",
+    description:
+      "Reach your audience with five shortcuts for building brand trust through good design.",
+  },
+  {
+    imageUrl:
+      "https://www.shutterstock.com/blog/wp-content/uploads/sites/5/2023/01/generative_ai_prompts_2.jpg?resize=1250,1120",
+    title: "How to Write Better Generative AI Descriptions",
+    description:
+      "Get tips and tricks on how to adjust your text, so you can create imagery without limits.",
+  },
+];
+interface Card
+{
+  title: string;
+  image: string;
+}
+
+const cards: Card[] = [
+  {
+    title: "Fourth of July",
+    image:
+      "https://wallpapers.com/images/hd/natural-scenery-pictures-736-x-1308-2yckka60jpvm2q4e.jpg",
+  },
+  {
+    title: "Summer Gardens",
+    image:
+      "https://i.pinimg.com/736x/79/fd/d1/79fdd17253b569a417e980a99aecd978.jpg",
+  },
+  {
+    title: "Lucid Dreaming",
+    image:
+      "https://mrwallpaper.com/images/high/single-boy-in-yellow-hoodie-0lwl18k2bha6gwz6.jpg",
+  },
+  {
+    title: "Teamwork",
+    image:
+      "https://i0.wp.com/thetitansfa.com/wp-content/uploads/2024/01/034www.emmahurleyphotography.com_-scaled.jpg?fit=1708%2C2560&ssl=1",
+  },
+];
 const Page = () =>
 {
 
@@ -219,7 +277,11 @@ const Page = () =>
             See more collections
           </button>
         </div>
-        <CardSlider />
+        <div className="container mx-auto gap-4 grid lg:grid-cols-4 md:grid-cols-2 grid-cols-1 lg:mt-3">
+          { cards.map( ( card, index ) => (
+            <CardSlider key={ index } { ...card } />
+          ) ) }
+        </div>
       </div>
 
 
@@ -229,7 +291,11 @@ const Page = () =>
             Check out our blog for more articles about sound
           </h2>
 
-          <BlogCard />
+          <div className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 mt-4 gap-4">
+            { posts.map( ( data, index ) => (
+              <BlogCard key={ index } { ...data } />
+            ) ) }
+          </div>
         </div>
       </div>
 
