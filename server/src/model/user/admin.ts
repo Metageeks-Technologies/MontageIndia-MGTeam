@@ -74,7 +74,9 @@ adminsSchema.pre<TAdmin>('save', async function (next) {
     if (!this.isModified('password')) return next();
 
     const salt = await bcrypt.genSalt(10);
-    this.password = await bcrypt.hash(this.password, salt);
+    if(typeof this.password === 'string'){
+        this.password = await bcrypt.hash(this.password, salt);
+    }
     next();
 });
 
@@ -88,8 +90,11 @@ adminsSchema.methods.createJWT = function (this: TAdmin) {
 
 // Compare password
 adminsSchema.methods.comparePassword = async function (this: TAdmin, givenPassword: string) {
-    const isMatch = await bcrypt.compare(givenPassword, this.password);
-    return isMatch;
+    if(typeof this.password === 'string'){
+        const isMatch = await bcrypt.compare(givenPassword, this.password);
+        return isMatch;
+    }
+    return false;
 };
 
 // Create and export the model

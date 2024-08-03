@@ -12,6 +12,7 @@
     "@heroicons/react": "^2.1.5",
     "@nextui-org/react": "^2.4.6",
     "axios": "^1.7.2",
+    "crypto-js": "^4.2.0",
     "dotenv": "^16.4.5",
     "framer-motion": "^11.3.17",
     "js-cookie": "^3.0.5",
@@ -32,6 +33,7 @@
     "uuid": "^10.0.0"
   },
   "devDependencies": {
+    "@types/crypto-js": "^4.2.2",
     "@types/js-cookie": "^3.0.6",
     "@types/node": "^20",
     "@types/react": "^18",

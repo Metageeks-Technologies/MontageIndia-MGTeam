@@ -12,6 +12,7 @@ import {processSQSMessages} from "@src/lib/sqsQueue.js"
 import config from "@src/utils/config.js"
 import productRouter from "@src/routes/product/product"
 import cookieParser from 'cookie-parser';
+import paymentRouter from './routes/payment/payment';
 const {mongoUrl}=config;
 
 const app: Express = express();
@@ -29,6 +30,7 @@ app.use("/api/v1/media/image", imageRouter);
 app.use("/api/v1/media/video", videoRouter);
 app.use("/api/v1/media/audio", audioRouter);
 app.use("/api/v1/product", productRouter);
+app.use("/api/v1/payment", paymentRouter)
 
 
 app.use(errorMiddleware);

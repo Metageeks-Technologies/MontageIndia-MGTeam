@@ -4,7 +4,8 @@ import { useRouter } from 'next/navigation';
 import instance from '@/utils/axios';
 import { notifyError, notifySuccess } from '@/utils/toast';
 import { Spinner } from '@nextui-org/react';
-import { FiUser, FiMail, FiTag, FiFilm, FiEdit2, FiLock } from 'react-icons/fi';
+import { FiUser, FiMail, FiTag, FiFilm, FiEdit2, FiLock} from 'react-icons/fi';
+import { MdOutlineAdminPanelSettings } from "react-icons/md";
 
 interface User
 {
@@ -106,7 +107,7 @@ export default function UserDetails ( { params }: { params: { id: string; }; } )
                                     <label className="text-sm font-medium text-gray-700 mb-1 capitalize flex items-center">
                                         { key === 'name' && <FiUser className="mr-2" /> }
                                         { key === 'email' && <FiMail className="mr-2" /> }
-                                        { key === 'role' && <FiTag className="mr-2" /> }
+                                        { key === 'role' && <MdOutlineAdminPanelSettings className="mr-2" /> }
                                         { key === 'mediaType' && <FiFilm className="mr-2" /> }
                                         { key === 'category' && <FiTag className="mr-2" /> }
                                         { key.replace( /([A-Z])/g, ' $1' ).trim() }
