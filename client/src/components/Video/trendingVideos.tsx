@@ -9,14 +9,14 @@ type Video = {
   video: string;
 };
 
-const Trending = (data:Video) => {
+const Trending = (data:any) => {
   const handleMouseEnter = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     const video = e.currentTarget.querySelector("video");
     if (video) {
       video.play();
     }
   };
-
+console.log("viedo:-",data)
   const handleMouseLeave = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     const video = e.currentTarget.querySelector("video");
     if (video) {
@@ -34,7 +34,10 @@ const Trending = (data:Video) => {
           >
             <div className="aspect-w-1 aspect-h-1">
               <video loop muted className="w-full h-72 object-cover">
-                <source src={data.video} type="video/mp4" />
+          <source
+            src={ `https://mi2-public.s3.ap-southeast-1.amazonaws.com/${ data.thumbnailKey }` }
+
+            type="video/mp4" />
               </video>
             </div>
             <div className="absolute m-2 top-0 left-0 flex gap-2 ">

@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import Footer from "@/components/Footer";
 import BlogCard from "@/components/Home/blogCard";
 import CategoryCard from "@/components/Home/categoryCard";
@@ -10,50 +10,10 @@ import { Navbar } from "@nextui-org/react";
 import { useEffect, useState } from "react";
 import { IoIosSearch } from "react-icons/io";
 
-//Image Data
-type Image = {
-  image: string;
-};
-
-const imageUrls: Image[] = [
-  {
-    image:
-      "https://st4.depositphotos.com/13349494/27948/i/450/depositphotos_279485478-stock-photo-close-view-coffee-white-cup.jpg",
-  },
-  {
-    image:
-      "https://weavinghomes.in/cdn/shop/articles/wepik-export-20240307060627bjSq.jpg?v=1709791629",
-  },
-  {
-    image:
-      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSDo890dsxpB5UCLQFdVBWmK4qVxTrsrLEEUg&s",
-  },
-  {
-    image: "https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885_640.jpg",
-  },
-  {
-    image: "https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736881_640.jpg",
-  },
-  {
-    image:
-      "https://images.ctfassets.net/hrltx12pl8hq/3Z1N8LpxtXNQhBD5EnIg8X/975e2497dc598bb64fde390592ae1133/spring-images-min.jpg",
-  },
-  {
-    image:
-      "https://static.vecteezy.com/system/resources/thumbnails/026/722/501/small/illustration-image-nature-and-sustainability-eco-friendly-living-and-conservation-concept-art-of-earth-and-animal-life-in-different-environments-generative-ai-illustration-free-photo.jpg",
-  },
-  {
-    image:
-      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqSWmUnh99TCZJ2UmJt0-LR8hrCjX3LlauMw&s",
-  },
-  {
-    image:
-      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR3KLsKw0jLKi6EOWlMs2QnOvqlopxW-8i54w&s",
-  },
-];
 
 // Collection data
-interface Card {
+interface Card
+{
   title: string;
   image: string;
 }
@@ -110,7 +70,8 @@ const weekly: ImageData[] = [
 ];
 
 //Category data
-export interface Category {
+export interface Category
+{
   title: string;
   imageUrl: string;
 }
@@ -178,7 +139,8 @@ const categories: Category[] = [
 ];
 
 // Blog Data
-export interface BlogPost {
+export interface BlogPost
+{
   imageUrl: string;
   title: string;
   description: string;
@@ -242,38 +204,43 @@ const companies: Company[] = [
   },
 ];
 
-export default function Home() {
-const [imageProducts, setImageProducts] = useState([]);
+export default function Home ()
+{
+  const [ imageProducts, setImageProducts ] = useState( [] );
 
 
-  const getProduct = async ()  => {
-   try {
-    const res = await instance.get('/product');
-    const imageProducts = res.data.products.filter((product:any) => product.mediaType === 'image');
-    setImageProducts(imageProducts);
-    console.log(res)
+  const getProduct = async () =>
+  {
+    try
+    {
+      const res = await instance.get( '/product' );
+      const imageProducts = res.data.products.filter( ( product: any ) => product.mediaType === 'image' );
+      setImageProducts( imageProducts );
+      console.log( res );
 
-   } catch (error) {
-    console.log(error)
-   }
-  }
+    } catch ( error )
+    {
+      console.log( error );
+    }
+  };
 
-  useEffect (()=>{
- getProduct()
-  },[])
+  useEffect( () =>
+  {
+    getProduct();
+  }, [] );
 
 
 
   return (
     <div className="main  ">
-      
-      {/* Image Routes Banner Section */}
+
+      {/* Image Routes Banner Section */ }
       <div
         className="relative bg-cover bg-center h-[600px] md:h-[500px] sm:h-[400px]"
-        style={{
+        style={ {
           backgroundImage:
             "url(https://images.ctfassets.net/hrltx12pl8hq/01rJn4TormMsGQs1ZRIpzX/16a1cae2440420d0fd0a7a9a006f2dcb/Artboard_Copy_231.jpg?fit=fill&w=1280&h=720&fm=webp)",
-        }}
+        } }
       >
         <div className="relative z-10 flex flex-col items-center justify-center h-full text-white text-center px-4 sm:px-6 md:px-8">
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold">
@@ -390,10 +357,10 @@ const [imageProducts, setImageProducts] = useState([]);
                 <h2 className="lg:text-lg ">Most popular</h2>
               </div>
             </div>
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 mt-5">
-              {imageProducts.map((data, index) => (
-                <ImageGallery key={index} {...data} />
-              ))}
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 auto-rows-[200px]">
+              { imageProducts.map( ( data: any, index: number ) => (
+                <ImageGallery key={ index } { ...data } />
+              ) ) }
             </div>
           </div>
           <div className="mt-8 flex justify-center ">
@@ -414,9 +381,9 @@ const [imageProducts, setImageProducts] = useState([]);
           </button>
         </div>
         <div className="container mx-auto gap-4 grid lg:grid-cols-4 md:grid-cols-2 grid-cols-1 lg:mt-3">
-          {cards.map((card, index) => (
-            <CardSlider key={index} {...card} />
-          ))}
+          { cards.map( ( card, index ) => (
+            <CardSlider key={ index } { ...card } />
+          ) ) }
         </div>
       </div>
 
@@ -430,15 +397,15 @@ const [imageProducts, setImageProducts] = useState([]);
               Sign up and get a free image or photo every week
             </p>
             <div className="flex justify-center">
-            <button className="bg-red-500 text-white  py-3 px-8 rounded-full">
-              Get Started
-            </button>
+              <button className="bg-red-500 text-white  py-3 px-8 rounded-full">
+                Get Started
+              </button>
             </div>
           </div>
           <div className="flex lg:basis-[65%] lg:justify-around md:gap-5 md:mt-4 mt-4">
-            {weekly.map((data, index) => (
-              <WeeklyCard key={index} {...data} />
-            ))}
+            { weekly.map( ( data, index ) => (
+              <WeeklyCard key={ index } { ...data } />
+            ) ) }
           </div>
         </div>
       </div>
@@ -448,9 +415,9 @@ const [imageProducts, setImageProducts] = useState([]);
           Browse by category to find your perfect visual
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          {categories.map((data, index) => (
-            <CategoryCard key={index} {...data} />
-          ))}
+          { categories.map( ( data, index ) => (
+            <CategoryCard key={ index } { ...data } />
+          ) ) }
         </div>
         <div className="mt-8 flex justify-center ">
           <button className="flex items-center text-lg px-8 font-semibold py-2 border border-gray-700  rounded-full text-black bg-transparent backdrop-blur-sm bg-opacity-20 hover:bg-opacity-40 transition duration-300">
@@ -482,33 +449,33 @@ const [imageProducts, setImageProducts] = useState([]);
             </div>
           </div>
           <div className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 mt-4 gap-4">
-            {posts.map((data, index) => (
-              <BlogCard key={index} {...data} />
-            ))}
+            { posts.map( ( data, index ) => (
+              <BlogCard key={ index } { ...data } />
+            ) ) }
           </div>
         </div>
       </div>
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-10 flex flex-col  items-center">
-  <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-5 text-center">
-    Trusted by the world's largest companies
-  </h2>
-  <div className="flex flex-wrap justify-center space-x-0 sm:space-x-4 lg:space-x-8 mb-5">
-    {companies.map((company) => (
-      <div key={company.name} className="flex items-center mb-4 gap-5 sm:mb-0">
-        <img
-          src={company.logo}
-          alt={company.name}
-          className="h-16 w-32 sm:h-20 sm:w-40 object-cover"
-        />
+        <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-5 text-center">
+          Trusted by the world's largest companies
+        </h2>
+        <div className="flex flex-wrap justify-center space-x-0 sm:space-x-4 lg:space-x-8 mb-5">
+          { companies.map( ( company ) => (
+            <div key={ company.name } className="flex items-center mb-4 gap-5 sm:mb-0">
+              <img
+                src={ company.logo }
+                alt={ company.name }
+                className="h-16 w-32 sm:h-20 sm:w-40 object-cover"
+              />
+            </div>
+          ) ) }
+        </div>
+        <p className="text-center mb-5">Need a personalized package for your business?</p>
+        <button className="bg-red-500 text-white py-2 px-4 rounded-3xl">
+          Request a Quote
+        </button>
       </div>
-    ))}
-  </div>
-  <p className="text-center mb-5">Need a personalized package for your business?</p>
-  <button className="bg-red-500 text-white py-2 px-4 rounded-3xl">
-    Request a Quote
-  </button>
-</div>
 
 
       <Footer />
