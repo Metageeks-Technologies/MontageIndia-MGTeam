@@ -27,7 +27,7 @@ interface Product {
   status: string;
   mediaType: string;
   publicKey: string;
-  category: string;
+  category: string[];
   thumbnailKey: string;
   id: string;
 }
@@ -58,6 +58,9 @@ const Home: React.FC = () => {
   const onRemoveMediaType = (selectedList: string[]) => {
     setSelectedMediaTypes(selectedList);
   };
+  const capitalizeFirstLetter = (str: string): string => {
+        return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+    };
    const showAllProducts = async () => {
     setSearchTerm("");
     setSelectedCategories([]);
@@ -192,6 +195,9 @@ const Home: React.FC = () => {
                 Product
               </th>
               <th className="px-5 py-3 bg-gray-100 border-b border-gray-200 text-gray-800 text-left text-sm uppercase font-normal">
+                Product Title
+              </th>
+              <th className="px-5 py-3 bg-gray-100 border-b border-gray-200 text-gray-800 text-left text-sm uppercase font-normal">
                 Media Type
               </th>
               <th className="px-5 py-3 bg-gray-100 border-b border-gray-200 text-gray-800 text-left text-sm uppercase font-normal">
@@ -224,17 +230,19 @@ const Home: React.FC = () => {
               productData.map((prod) => (
                 <tr key={prod._id} className="hover:bg-gray-300">
                   <td className="px-5 py-2 border-b border-gray-200 bg-white text-sm">
-                    <div className="flex items-center">
-                      <div className="flex-shrink-0">
+                    <div className="flex justify-center items-center">
+                       
                         { prod.mediaType === "image" && (
+                          <div className="w-40 h-20">
                           <img
-                            className="w-10 h-10 rounded object-cover"
+                            className="w-10 h-10 rounded object-contain"
                             src={ `https://mi2-public.s3.ap-southeast-1.amazonaws.com/${ prod.thumbnailKey }`}
                         alt={ prod.title }
                           />
+                          </div>
                         )}
                         { prod.mediaType === "audio" && (
-                          <audio className="w-40 h-20" controls>
+                          <audio className="w-60 h-20 object-contain" controls>
                             <source
                               src={ `https://mi2-public.s3.ap-southeast-1.amazonaws.com/${ prod.thumbnailKey }`}
                             type="audio/mpeg"
@@ -243,7 +251,7 @@ const Home: React.FC = () => {
                           </audio>
                         ) }
                         { prod.mediaType === "video" && (
-                          <video width="100" height="100" controls>
+                          <video className="w-40 h-20 object-contain" controls>
                             <source
                               src={` https://mi2-public.s3.ap-southeast-1.amazonaws.com/${ prod.thumbnailKey }`}
                             type="video/mp4"
@@ -251,13 +259,12 @@ const Home: React.FC = () => {
                             Your browser does not support the video element.  
                           </video>
                         ) }
-                      </div>
-                      <div className="ml-3">
-                        <p className="text-gray-900 whitespace-no-wrap">
-                          { prod.title }
-                        </p>
-                      </div>
                     </div>
+                  </td>
+                   <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                    <p className="text-gray-900 whitespace-no-wrap">
+                     {capitalizeFirstLetter(prod.title)}
+                    </p>
                   </td>
                   <td className="px-5 py-2 border-b border-gray-200 bg-white text-sm">
                     <span className="relative inline-block px-3 py-1 font-semibold leading-tight text-green-900">
@@ -265,12 +272,21 @@ const Home: React.FC = () => {
                         aria-hidden
                         className="absolute inset-0 opacity-50 bg-green-200 rounded-full"
                       ></span>
-                      <span className="relative">{prod.mediaType}</span>
+                      <span className="relative">{capitalizeFirstLetter(prod.mediaType)}</span>
                     </span>
                   </td>
                   <td className="px-5 py-2 border-b border-gray-200 bg-white text-sm">
                     <p className="text-gray-900 whitespace-no-wrap">
-                      {prod.category}
+                     {
+                       (prod.category && prod.category.length>0)?
+                          prod.category.map((category, index) => (
+                              <span key={index}>
+                                  {capitalizeFirstLetter(category)}
+                                              {index < prod.category.length - 1 ? ', ' : ''}
+                              </span>
+                          ))
+                          : ''
+                    }
                     </p>
                   </td>
                   <td className="px-5 py-2 border-b border-gray-200 bg-white text-sm">
