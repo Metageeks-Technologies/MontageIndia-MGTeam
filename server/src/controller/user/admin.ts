@@ -312,7 +312,7 @@ export const resetPassword = catchAsyncError(async (req, res, next) => {
       return res.status(400).json({ message: 'Password reset token is invalid or has expired' });
     }
 
-    adminToUpdate.password = password; // Make sure to hash the password before saving
+    adminToUpdate.password = password; 
     adminToUpdate.resetPasswordToken = undefined;
     adminToUpdate.resetPasswordExpires = undefined;
 
