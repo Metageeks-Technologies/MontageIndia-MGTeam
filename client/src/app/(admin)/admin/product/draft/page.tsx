@@ -5,9 +5,11 @@ import instance from "@/utils/axios";
 import { Spinner, Pagination, Button } from "@nextui-org/react";
 import Multiselect from 'multiselect-react-dropdown';
 import {categoriesOptions, mediaTypesOptions} from "@/utils/tempData";
-
-// Define the interfaces for the product and variant types
-interface Variant
+import { BsThreeDots } from "react-icons/bs";
+import { GoDotFill } from "react-icons/go";
+import { LuDot } from "react-icons/lu";
+import { FaStarOfLife } from "react-icons/fa";
+ interface Variant
 {
   label: string;
   price: number;
@@ -35,7 +37,7 @@ const Home: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [productsPerPage, setProductsPerPage] = useState(6);
+  const [productsPerPage, setProductsPerPage] = useState(8);
   const [SearchTerm, setSearchTerm] = useState("");
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [selectedMediaTypes, setSelectedMediaTypes] = useState<string[]>([]);
@@ -102,7 +104,6 @@ const Home: React.FC = () => {
     setCurrentPage(page);
   };
 
-  // display words function
   function truncateText(text: string, wordLimit: number): string {
     const words = text.split(" ");
     if (words.length > wordLimit) {
@@ -187,22 +188,19 @@ const Home: React.FC = () => {
         <table className="min-w-full leading-normal">
           <thead>
             <tr>
-              <th className="px-5 py-1 bg-gray-100 border-b border-gray-200 text-gray-800 text-left text-sm uppercase font-normal">
-                <input type="checkbox" />
-              </th>
-              <th className="px-5 py-1 bg-gray-100 border-b border-gray-200 text-gray-800 text-left text-sm uppercase font-normal">
+              <th className="px-5 py-3 bg-gray-100 border-b border-gray-200 text-gray-800 text-left text-sm uppercase font-normal">
                 Product
               </th>
-              <th className="px-5 py-1 bg-gray-100 border-b border-gray-200 text-gray-800 text-left text-sm uppercase font-normal">
+              <th className="px-5 py-3 bg-gray-100 border-b border-gray-200 text-gray-800 text-left text-sm uppercase font-normal">
                 Media Type
               </th>
-              <th className="px-5 py-1 bg-gray-100 border-b border-gray-200 text-gray-800 text-left text-sm uppercase font-normal">
+              <th className="px-5 py-3 bg-gray-100 border-b border-gray-200 text-gray-800 text-left text-sm uppercase font-normal">
                 category
               </th>
-              <th className="px-5 py-1 bg-gray-100 border-b border-gray-200 text-gray-800 text-left text-sm uppercase font-normal">
+              <th className="px-5 py-3 bg-gray-100 border-b border-gray-200 text-gray-800 text-left text-sm uppercase font-normal">
                 Description
               </th>
-              <th className="px-5 py-1 bg-gray-100 border-b border-gray-200 text-gray-800 text-left text-sm uppercase font-normal">
+              <th className="px-5 py-3 bg-gray-100 border-b border-gray-200 text-gray-800 text-left text-sm uppercase font-normal">
                 Action
               </th>
             </tr>
@@ -225,9 +223,6 @@ const Home: React.FC = () => {
                   productData && productData.length>0 &&
               productData.map((prod) => (
                 <tr key={prod._id} className="hover:bg-gray-300">
-                  <td className="px-5 py-2 border-b border-gray-200 bg-white text-sm">
-                    <input type="checkbox" />
-                  </td>
                   <td className="px-5 py-2 border-b border-gray-200 bg-white text-sm">
                     <div className="flex items-center">
                       <div className="flex-shrink-0">
