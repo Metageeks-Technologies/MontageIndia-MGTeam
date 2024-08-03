@@ -29,7 +29,7 @@ export const getCategories = catchAsyncError(async (req, res, next) => {
     
     res.status(200).json({
         success: true,
-        categories:"hello......."  
+        categories:"hello... shiva"  
     })
 });
 
