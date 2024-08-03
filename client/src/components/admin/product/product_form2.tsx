@@ -124,7 +124,7 @@ const Form2: React.FC<Form2Props> = ( { onPrev, onNext, formData } ) =>
           if ( progressEvent.total )
           {
             const percentCompleted = Math.round( ( progressEvent.loaded * 100 ) / progressEvent.total );
-            setLoadingPer( percentCompleted-1 );
+            setLoadingPer( percentCompleted );
           }
         }
       } );
@@ -279,7 +279,7 @@ const Form2: React.FC<Form2Props> = ( { onPrev, onNext, formData } ) =>
       { loading ? (
         <div className='items-center flex justify-center h-screen'>
 
-        <Spinner label={ `Uploading...${ loadingPer }%` } color="success" />
+        <Spinner label={ `Uploading...${ loadingPer-1 }%` } color="success" />
         </div>
       ) : (
         <>
