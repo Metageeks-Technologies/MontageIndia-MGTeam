@@ -234,7 +234,7 @@ export default function Home ()
   return (
     <div className="main  ">
 
-      {/* Image Routes Banner Section */ }
+      {/*  Image Routes Banner Section */ }
       <div
         className="relative bg-cover bg-center h-[600px] md:h-[500px] sm:h-[400px]"
         style={ {
