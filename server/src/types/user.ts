@@ -1,4 +1,5 @@
-import { Document } from "mongoose";
+import mongoose,{ Document } from "mongoose";
+
 export type TAdmin = Document & {
     name: string;
     username:string;
@@ -12,4 +13,21 @@ export type TAdmin = Document & {
     isDeleted: Boolean;
     createJWT(): string;
     comparePassword(givenPassword: string): Promise<boolean>;
+}
+
+export type TCustomer = Document & {
+    username: string;
+    email: string;
+    name: string; // Customer's full name
+    password: string;
+    isDeleted: boolean;
+    credits: number;
+    creditsValidity: Date | null;
+    cart: mongoose.Types.ObjectId[]; // References to products in the cart
+    subscription: mongoose.Types.ObjectId; // References to subscription
+    purchaseHistory: mongoose.Types.ObjectId[]; // References to orders
+    subscriptionHistory: mongoose.Types.ObjectId[]; // References to subscriptions
+    phone?: string;
+    createdAt: Date;
+    updatedAt: Date;
 }

@@ -1,56 +1,48 @@
 import mongoose, { Schema, Document } from 'mongoose';
-interface IAddress {
-  street?: string;
-  city?: string;
-  state?: string;
-  postalCode?: string;
-  country?: string;
-}
+import * as validator from 'validator';
+import type { TCustomer } from "../../types/user";
 
-interface ICustomer extends Document {
-  username: string;
-  email: string;
-  name: string; // Customer's full name
-  password: string;
-  isDeleted: boolean;
-  cart: mongoose.Types.ObjectId[]; // References to products in the cart
-  subscription: {
-    credits: number;
-    validity: Date | null;
-  };
-  purchaseHistory: mongoose.Types.ObjectId[]; // References to orders
-  subscriptionHistory: mongoose.Types.ObjectId[]; // References to subscriptions
-  phone?: string;
-  address?: IAddress;
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-const CustomerSchema: Schema<ICustomer> = new Schema({
-  username: { type: String, required: true, unique: true },
-  email: { type: String, required: true, unique: true },
-  name: { type: String, required: true }, // Customer's full name
-  password: { type: String, required: true },
-  isDeleted: { type: Boolean, default: false },
-  cart: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' }],
-  subscription: {
-    credits: { type: Number, default: 0 },
-    validity: { type: Date, default: null }
+const CustomerSchema: Schema<TCustomer> = new Schema({
+  name: {
+    type: String,
+    required: [true, "please enter your name"],
+    maxlength: [30, "name can't exceed 30 characters"],
+    minlength: [4, "name should have more than 4 characters"],
+    trim: true,
+    default: "none"
   },
+  username:{
+    type: String,
+    required: [true, "please enter your username"],
+    maxlength: [30, "username can't exceed 30 characters"],
+    minlength: [4, "username should have more than 4 characters"],
+    trim: true,
+    default: "none",
+    unique: true,
+  },
+  email:{
+    type: String,
+    required: [true, "please enter your email"],
+    unique: true,
+    validate: [validator.isEmail, "please enter a valid email"],
+  },
+  password: {
+    type: String,
+    minlength: [6, "password should have a minimum of 6 characters"],
+    select: false,
+  },
+  isDeleted: { type: Boolean, default: false },
+  credits: { type: Number, default: 0 },
+  creditsValidity: { type: Date, default: null },
+  cart: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' }],
+  subscription: { type: mongoose.Schema.Types.ObjectId, ref: 'SubscriptionPlan' },
   purchaseHistory: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Order' }],
   subscriptionHistory: [{ type: mongoose.Schema.Types.ObjectId, ref: 'SubscriptionPlan' }],
   phone: { type: String },
-  address: {
-    street: { type: String },
-    city: { type: String },
-    state: { type: String },
-    postalCode: { type: String },
-    country: { type: String }
-  },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now }
 });
 
-const Customer = mongoose.model<ICustomer>('Customer', CustomerSchema);
+const Customer = mongoose.model<TCustomer>('Customer', CustomerSchema);
 
 export default Customer;
