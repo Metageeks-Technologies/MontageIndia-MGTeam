@@ -16,7 +16,7 @@ const Trending = (data:any) => {
       video.play();
     }
   };
-
+console.log("viedo:-",data)
   const handleMouseLeave = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     const video = e.currentTarget.querySelector("video");
     if (video) {

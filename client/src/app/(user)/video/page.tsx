@@ -28,7 +28,8 @@ const videoUrls: Video[] = [
 ];
 
 // collection data
-interface Card {
+interface Card
+{
   title: string;
   image: string;
 }
@@ -57,7 +58,8 @@ const cards: Card[] = [
 ];
 
 // Blog Data
-export interface BlogPost {
+export interface BlogPost
+{
   imageUrl: string;
   title: string;
   description: string;
@@ -67,51 +69,58 @@ const posts: BlogPost[] = [
   {
     imageUrl:
       "https://images.ctfassets.net/hrltx12pl8hq/6nJaRnp2pkQcIq5qDlnTlL/37e62b10f34ccd1669629045c14312ff/rgbcover.webp",
-      title: "Free Colorful Clip Art to Promote Sales and Discounts",
+    title: "Free Colorful Clip Art to Promote Sales and Discounts",
     description:
       "Neon-colored and easy-to-use PNGs are here to assist you with any sale or promotion you’ve planned for 2023.",
   },
   {
     imageUrl:
       "https://images.ctfassets.net/hrltx12pl8hq/1PMfxyPFpntWyrKVeScdDD/e59aac83bb3e5b5737d1a60cd08dd8e5/stock_footage_glossary_cover.webp",
-      title: "How to Build Brand Trust Through Good Design",
-      description:
-        "Reach your audience with five shortcuts for building brand trust through good design.",
+    title: "How to Build Brand Trust Through Good Design",
+    description:
+      "Reach your audience with five shortcuts for building brand trust through good design.",
   },
   {
     imageUrl:
       "https://images.ctfassets.net/hrltx12pl8hq/26vH4jX8NikGFE4EgOeIjB/2761c52ebba2de165a2e4dc3507acdeb/5-ProjectsFeature__1_.webp",
-      title: "How to Write Better Generative AI Descriptions",
-      description:
-        "Get tips and tricks on how to adjust your text, so you can create imagery without limits.",
+    title: "How to Write Better Generative AI Descriptions",
+    description:
+      "Get tips and tricks on how to adjust your text, so you can create imagery without limits.",
   },
 ];
 
 // category Data
-export interface category {
+export interface category
+{
   title: string;
   imageUrl: string;
 }
 
 const categories: category[] = [
-  { title: "Abstract", 
-    imageUrl: "https://images.ctfassets.net/hrltx12pl8hq/29slzVZfucEQwKoKc8QcEA/ed7ceb74525e822dd3eb888f570f0d52/adventure" 
-},
-  { title: "Animals | Wildlife", 
-    imageUrl: "https://images.ctfassets.net/hrltx12pl8hq/79UGbvGqfj9bQVi66yr9VT/1cae2227203e2c3c7ff3b21befe96a9f/Abstract" 
-},
-  { title: "The arts", 
-    imageUrl: "https://images.ctfassets.net/hrltx12pl8hq/61MiY3Wj3U6KSSKi2muig2/7e4c77aa598ca4ac93aab5858c3e7627/Autumn" 
+  {
+    title: "Abstract",
+    imageUrl: "https://images.ctfassets.net/hrltx12pl8hq/29slzVZfucEQwKoKc8QcEA/ed7ceb74525e822dd3eb888f570f0d52/adventure"
   },
-  { title: "Backgrounds | Textures",
-     imageUrl: "https://images.ctfassets.net/hrltx12pl8hq/yZsuq5HdBuUmYekaKiuUQ/d73a0e6f5fe939be07a19f22a92f2e09/Wild-Life" 
+  {
+    title: "Animals | Wildlife",
+    imageUrl: "https://images.ctfassets.net/hrltx12pl8hq/79UGbvGqfj9bQVi66yr9VT/1cae2227203e2c3c7ff3b21befe96a9f/Abstract"
   },
-  { title: "Beauty | Fashion",
-     imageUrl: "https://images.ctfassets.net/hrltx12pl8hq/77nM3vIkxOy0MSIeESAsi6/ef81eb2041ae0b3a240a8241c732b0eb/3D_Footage" 
-    },
-    { title: "Beauty | Fashion",
-        imageUrl: "https://images.ctfassets.net/hrltx12pl8hq/2R1nDTrRheK6ae2IWAgGwW/e879fceb983dd133702ecdbfb560d4cd/Aerial" 
-       },
+  {
+    title: "The arts",
+    imageUrl: "https://images.ctfassets.net/hrltx12pl8hq/61MiY3Wj3U6KSSKi2muig2/7e4c77aa598ca4ac93aab5858c3e7627/Autumn"
+  },
+  {
+    title: "Backgrounds | Textures",
+    imageUrl: "https://images.ctfassets.net/hrltx12pl8hq/yZsuq5HdBuUmYekaKiuUQ/d73a0e6f5fe939be07a19f22a92f2e09/Wild-Life"
+  },
+  {
+    title: "Beauty | Fashion",
+    imageUrl: "https://images.ctfassets.net/hrltx12pl8hq/77nM3vIkxOy0MSIeESAsi6/ef81eb2041ae0b3a240a8241c732b0eb/3D_Footage"
+  },
+  {
+    title: "Beauty | Fashion",
+    imageUrl: "https://images.ctfassets.net/hrltx12pl8hq/2R1nDTrRheK6ae2IWAgGwW/e879fceb983dd133702ecdbfb560d4cd/Aerial"
+  },
 ];
 
 const Page = () => {
@@ -258,9 +267,9 @@ const Page = () => {
           </button>
         </div>
         <div className="container mx-auto gap-4 grid lg:grid-cols-4 md:grid-cols-2 grid-cols-1 lg:mt-3">
-        {cards.map((data, index)=>(
-           <CollectionVideos key={index} {...data}/>
-        ))}
+          { cards.map( ( data, index ) => (
+            <CollectionVideos key={ index } { ...data } />
+          ) ) }
         </div>
       </div>
 
@@ -278,7 +287,7 @@ const Page = () => {
             </div>
             <div className="p-4 md:w-1/2 flex flex-col justify-center">
               <h3 className="font-semibold mb-2">
-              How to Incorporate Negative Space in Design and Photography
+                How to Incorporate Negative Space in Design and Photography
               </h3>
               <p className="text-gray-700 text-sm">
                 Learn why negative space works in design and photography, and
@@ -287,9 +296,9 @@ const Page = () => {
             </div>
           </div>
           <div className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 mt-4 gap-4">
-          {posts.map ((data,index)=>(
-            <Blog key={index} {...data}/>
-          ))}
+            { posts.map( ( data, index ) => (
+              <Blog key={ index } { ...data } />
+            ) ) }
           </div>
         </div>
       </div>
@@ -299,9 +308,9 @@ const Page = () => {
           Browse by Category: Find the Right Stock Footage Faster
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {categories.map((data, index)=>(
-          <Category key={index} {...data}/>
-        ))}
+          { categories.map( ( data, index ) => (
+            <Category key={ index } { ...data } />
+          ) ) }
         </div>
         <div className="mt-8 flex justify-center ">
           <button className="flex items-center text-lg px-8 font-semibold py-2 border border-gray-700  rounded-full text-black bg-transparent backdrop-blur-sm bg-opacity-20 hover:bg-opacity-40 transition duration-300">
