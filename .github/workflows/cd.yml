@@ -1,0 +1,23 @@
+name: CD Pipeline
+
+on:
+  workflow_run:
+    workflows: ["CI Pipeline"]
+    types:
+      - completed
+
+jobs:
+
+  build:
+
+    runs-on: self-hosted
+
+    steps:
+    - name: Pull latest server image
+      run: |
+        cd  /home/ubuntu/MontageIndia-MGTeam/server
+        docker-compose -f docker-compose.yml -f docker-compose.prod.yml pull mi-server
+    - name: Run latest server image Container
+      run: |
+        cd  /home/ubuntu/MontageIndia-MGTeam/server
+        docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d mi-server

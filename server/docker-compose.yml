@@ -8,6 +8,6 @@ services:
       - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
   mi-server:
     build: .
-    image: image/mi-server
+    image: shivashah/mi2.0-server
     env_file:
-      - ./.env
+      - ./.env 

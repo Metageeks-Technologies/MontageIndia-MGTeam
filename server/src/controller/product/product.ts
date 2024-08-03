@@ -43,7 +43,7 @@ export const getProduct = catchAsyncError(async (req, res, next) => {
 
 export const getProducts = catchAsyncError(async (req, res, next) => {
     
-   const {productsPerPage='6', page = '1', status = 'published', category = [], mediaType = [], searchTerm = '',tags } = req.query;
+   const {productsPerPage='20', page = '1', status = 'published', category = [], mediaType = [], searchTerm = '',tags } = req.query;
 
     const queryObject:any = {};
 
