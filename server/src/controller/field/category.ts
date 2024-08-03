@@ -25,11 +25,10 @@ export const createCategory = catchAsyncError(async (req: any, res, next) => {
 export const getCategories = catchAsyncError(async (req, res, next) => {
     
     const categories = await Category.find();
-    console.log("hi");
     
     res.status(200).json({
         success: true,
-        categories:"hello... shiva"  
+        categories:categories  
     })
 });
 
