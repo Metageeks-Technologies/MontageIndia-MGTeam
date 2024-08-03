@@ -5,30 +5,31 @@ import { HiDownload } from "react-icons/hi";
 
 
 
-const ImageGallery: React.FC = (data:any) => {
-  function truncateText(text: string, wordLimit: number): string {
-    const words = text.split(" ");
-    if (words.length > wordLimit) {
-      return words.slice(0, wordLimit).join(" ") + "...";
+const ImageGallery: React.FC = ( data: any ) =>
+{
+  function truncateText ( text: string, wordLimit: number ): string
+  {
+    const words = text.split( " " );
+    if ( words.length > wordLimit )
+    {
+      return words.slice( 0, wordLimit ).join( " " ) + "...";
     }
     return text;
   }
-  console.log("iamge",data)
-
-  const text = "Pink macro image of a ranunculus flower";
-  const truncatedText = truncateText(text, 6);
+  console.log( "iamge", data ); 
 
   return (
     <div className="relative rounded-md overflow-hidden group cursor-pointer">
       <div className="aspect-w-1 aspect-h-1">
         <img
-          src={ `https://mi2-public.s3.ap-southeast-1.amazonaws.com/${ data.publicKey}`}
-          alt={`Image `}
-          className="w-full h-72 object-cover"
+          src={ `https://mi2-public.s3.ap-southeast-1.amazonaws.com/${ data.thumbnailKey }` }
+          alt={ `Image ` }
+          className="w-full h-72 object-cover"  
         />
       </div>
       <div className="absolute top-0 left-0  opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-        <p className="text-white  px-2 py-2 rounded">{truncatedText}</p>
+        <p className="text-white  px-2 py-2 rounded">{ truncateText( data.description || "No description", 6 ) }
+        </p>
       </div>
       <div className="absolute top-0 right-0 m-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
         <div className="text-white bg-black bg-opacity-35 px-3 py-2 rounded-3xl flex gap-1 items-center">
