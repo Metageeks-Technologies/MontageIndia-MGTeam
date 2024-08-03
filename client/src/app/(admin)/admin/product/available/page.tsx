@@ -5,6 +5,7 @@ import instance from "@/utils/axios";
 import { Spinner } from "@nextui-org/react";
 import Multiselect from 'multiselect-react-dropdown';
 import {categoriesOptions, mediaTypesOptions} from "@/utils/tempData";
+import { LuDot } from "react-icons/lu";
 
 // Define the interfaces for the product and variant types
 interface Variant
@@ -187,9 +188,6 @@ const Home: React.FC = () => {
           <thead>
             <tr>
               <th className="px-5 py-3 bg-gray-100 border-b border-gray-200 text-gray-800 text-left text-sm uppercase font-normal">
-                <input type="checkbox" />
-              </th>
-              <th className="px-5 py-3 bg-gray-100 border-b border-gray-200 text-gray-800 text-left text-sm uppercase font-normal">
                 Product
               </th>
               <th className="px-5 py-3 bg-gray-100 border-b border-gray-200 text-gray-800 text-left text-sm uppercase font-normal">
@@ -216,9 +214,6 @@ const Home: React.FC = () => {
             ) : (
               productData.map((prod) => (
                 <tr key={prod._id} className="hover:bg-gray-300">
-                  <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                    <input type="checkbox" />
-                  </td>
                   <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                     <div className="flex items-center">
                       <div className="flex-shrink-0">
@@ -273,7 +268,7 @@ const Home: React.FC = () => {
                     <p className="text-gray-900 ">
                       {truncateText(prod.description, 3)}
                     </p>
-                  </td>
+                  </td> 
                   <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                     <button className="text-gray-600 hover:text-gray-900">
                       <Link
@@ -296,32 +291,78 @@ const Home: React.FC = () => {
         <button
           onClick={() => handlePageChange(currentPage - 1)}
           disabled={currentPage === 1}
-          className="px-4 py-2 mx-1 bg-gray-300 text-gray-700 rounded disabled:opacity-50"
+          className="px-4 py-2 mx-3 bg-gray-300 text-gray-700 rounded disabled:opacity-50"
         >
           Pre
         </button>
         <div className="flex">
-          {[...Array(totalPages)].map((_, index) => (
+       
+        {currentPage===1?(<>
+       
             <button
-              key={index}
-              onClick={() => handlePageChange(index + 1)}
+             onClick={() => handlePageChange(currentPage)}
+              className={`px-4 py-2 mx-4 hidden  ${
+                   "bg-gray-200 text-gray-700"
+              } rounded`}
+            >
+               {currentPage-1}
+            </button>
+            </>):
+            <>
+            <span className="pt-6 text-end flex  "><LuDot /></span>
+            <span className="pt-6 text-end flex  "><LuDot /></span>
+            <span className="pt-6 text-end flex  "><LuDot /></span>
+            <button
+                  onClick={() => handlePageChange(currentPage)}
+                  className={`px-4 py-2 mx-4 block ${
+                      "bg-gray-200 text-gray-700"
+                  } rounded`}
+                >
+                  {currentPage-1}
+             </button>
+            </>}
+           
+            <button
+              onClick={() => handlePageChange(currentPage)}
               className={`px-4 py-2 mx-1 ${
-                currentPage === index + 1
+                currentPage 
                   ? "bg-webgreen text-white"
                   : "bg-gray-200 text-gray-700"
               } rounded`}
             >
-              {index + 1}
+               {currentPage}
             </button>
-          ))}
+
+            {currentPage===totalPages ?  
+             <button
+             onClick={() => handlePageChange(currentPage + 1)}
+             disabled={currentPage === totalPages}
+             className="px-4 py-2  mx-4 cursor-not-allowed  bg-gray-300 text-gray-700 rounded disabled:opacity-50"
+           >
+             Next
+           </button>:<>
+           <button
+              onClick={() => handlePageChange(currentPage)}
+              className={`px-4 py-2 mx-4  ${
+                   "bg-gray-200 text-gray-700"
+              } rounded`}
+            >
+               {currentPage+1}
+            </button>
+            <span className="pt-6 text-end flex  "><LuDot /></span>
+            <span className="pt-6 text-end flex  "><LuDot /></span>
+            <span className="pt-6 text-end flex  "><LuDot /></span>
+            <button
+              onClick={() => handlePageChange(currentPage + 1)}
+              disabled={currentPage === totalPages}
+              className="px-4 py-2  mx-4  bg-gray-300 text-gray-700 rounded disabled:opacity-50"
+            >
+              Next
+            </button>
+            </>}
+           
         </div>
-        <button
-          onClick={() => handlePageChange(currentPage + 1)}
-          disabled={currentPage === totalPages}
-          className="px-4 py-2 mx-1 bg-gray-300 text-gray-700 rounded disabled:opacity-50"
-        >
-          Next
-        </button>
+        
       </div>
     </div>
   );
