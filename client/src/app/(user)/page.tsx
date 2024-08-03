@@ -357,7 +357,7 @@ export default function Home ()
                 <h2 className="lg:text-lg ">Most popular</h2>
               </div>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 auto-rows-[200px]">
+            <div className="grid mt-5 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 auto-rows-[200px]">
               { imageProducts.map( ( data: any, index: number ) => (
                 <ImageGallery key={ index } { ...data } />
               ) ) }
