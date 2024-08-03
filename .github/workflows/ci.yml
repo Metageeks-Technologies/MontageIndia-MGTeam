@@ -23,6 +23,29 @@ jobs:
         DOCKER_USERNAME: ${{secrets.DOCKER_USERNAME}}
         DOCKER_PASSWORD: ${{secrets.DOCKER_PASSWORD}}
       run: docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+
+    - name: Create .env file
+      run: |
+        cd server
+        touch .env
+        echo PORT=${{ secrets.PORT }} >> .env
+        echo MONGO_URL=${{ secrets.MONGO_URL }} >> .env
+        echo JWT_SECRET=${{ secrets.JWT_SECRET }} >> .env
+        echo JWT_LIFETIME=${{ secrets.JWT_LIFETIME }} >> .env
+        echo NODE_ENV=${{ secrets.NODE_ENV }} >> .env
+        echo WATERMARK_IMG_NAME=${{ secrets.WATERMARK_IMG_NAME }} >> .env
+        echo AWS_REGION=${{ secrets.AWS_REGION }} >> .env
+        echo AWS_ACCESS_KEY=${{ secrets.AWS_ACCESS_KEY }} >> .env
+        echo AWS_SECRET_KEY=${{ secrets.AWS_SECRET_KEY }} >> .env
+        echo AWS_BUCKET_NAME=${{ secrets.AWS_BUCKET_NAME }} >> .env
+        echo AWS_MEDIA_CONVERT_ROLE=${{ secrets.AWS_MEDIA_CONVERT_ROLE }} >> .env
+        echo AWS_MEDIA_CONVERT_QUEUE=${{ secrets.AWS_MEDIA_CONVERT_QUEUE }} >> .env
+        echo AWS_SQS_QUEUE_URL=${{ secrets.AWS_SQS_QUEUE_URL }} >> .env
+        echo AWS_TEMP_BUCKET_NAME=${{ secrets.AWS_TEMP_BUCKET_NAME }} >> .env
+        echo CLIENT_URL=${{ secrets.CLIENT_URL }} >> .env
+        echo EMAIL_USER=${{ secrets.EMAIL_USER }} >> .env
+        echo EMAIL_PASS=${{ secrets.EMAIL_PASS }} >> .env
+        cat .env 
       
     - name: Build the Docker image
       run: |
