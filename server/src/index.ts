@@ -14,6 +14,7 @@ import productRouter from "@src/routes/product/product"
 import fieldRouter from '@src/routes/field/field';
 import cookieParser from 'cookie-parser';
 import paymentRouter from './routes/payment/payment';
+import subscriptionRouter from './routes/subscription/subscription.js';
 const {mongoUrl}=config;
  
 const app: Express = express();
@@ -32,7 +33,8 @@ app.use("/api/v1/media/image", imageRouter);
 app.use("/api/v1/media/video", videoRouter);
 app.use("/api/v1/media/audio", audioRouter);
 app.use("/api/v1/product", productRouter);
-app.use("/api/v1/payment", paymentRouter)
+app.use("/api/v1/payment", paymentRouter);
+app.use("/api/v1/subscription", subscriptionRouter);
 app.use("/api/v1/field", fieldRouter);
 
 

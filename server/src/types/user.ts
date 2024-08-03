@@ -22,11 +22,11 @@ export type TCustomer = Document & {
     password: string;
     isDeleted: boolean;
     credits: number;
-    creditsValidity: Date | null;
+    creditsValidity: string ;
     cart: mongoose.Types.ObjectId[]; // References to products in the cart
     subscription: mongoose.Types.ObjectId; // References to subscription
-    purchaseHistory: mongoose.Types.ObjectId[]; // References to orders
-    subscriptionHistory: mongoose.Types.ObjectId[]; // References to subscriptions
+    purchaseHistory?: mongoose.Types.ObjectId[]; // References to orders
+    subscriptionHistory?: mongoose.Types.ObjectId[]; // References to subscriptions
     phone?: string;
     createdAt: Date;
     updatedAt: Date;

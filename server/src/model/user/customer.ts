@@ -1,8 +1,10 @@
-import mongoose, { Schema, Document } from 'mongoose';
+import mongoose, { Model } from 'mongoose';
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
 import * as validator from 'validator';
 import type { TCustomer } from "../../types/user";
 
-const CustomerSchema: Schema<TCustomer> = new Schema({
+const customerSchema = new mongoose.Schema<TCustomer>({
   name: {
     type: String,
     required: [true, "please enter your name"],
@@ -26,6 +28,7 @@ const CustomerSchema: Schema<TCustomer> = new Schema({
     unique: true,
     validate: [validator.isEmail, "please enter a valid email"],
   },
+  phone: { type: String },
   password: {
     type: String,
     minlength: [6, "password should have a minimum of 6 characters"],
@@ -33,16 +36,51 @@ const CustomerSchema: Schema<TCustomer> = new Schema({
   },
   isDeleted: { type: Boolean, default: false },
   credits: { type: Number, default: 0 },
-  creditsValidity: { type: Date, default: null },
+  creditsValidity: { type: String, default: '0'},
   cart: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' }],
   subscription: { type: mongoose.Schema.Types.ObjectId, ref: 'SubscriptionPlan' },
   purchaseHistory: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Order' }],
   subscriptionHistory: [{ type: mongoose.Schema.Types.ObjectId, ref: 'SubscriptionPlan' }],
-  phone: { type: String },
-  createdAt: { type: Date, default: Date.now },
-  updatedAt: { type: Date, default: Date.now }
+},{
+  timestamps: true
 });
 
-const Customer = mongoose.model<TCustomer>('Customer', CustomerSchema);
+// Define model interface
+interface CustomerModel extends Model<TCustomer> { }
 
-export default Customer;
+// Hash the password before saving
+customerSchema.pre<TCustomer>('save', async function (next) {
+    if (!this.isModified('password')) return next();
+
+    try {
+        const salt = await bcrypt.genSalt(10);
+        if (typeof this.password === 'string') {
+            this.password = await bcrypt.hash(this.password, salt);
+        } else {
+            throw new Error('Password is not defined');
+        }
+        next();
+    } catch (err:any) {
+        next(err);
+    }
+});
+
+// Create JWT token
+customerSchema.methods.createJWT = function (this: TCustomer) {
+    if (!process.env.JWT_SECRET) {
+        throw new Error("JWT_SECRET is not defined in the environment.");
+    }
+    return jwt.sign({ id: this._id }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_LIFETIME });
+};
+
+// Compare password
+customerSchema.methods.comparePassword = async function (this: TCustomer, givenPassword: string) {
+    if (typeof this.password === 'string') {
+        const isMatch = await bcrypt.compare(givenPassword, this.password);
+        return isMatch;
+    } else {
+        throw new Error('Password is not defined');
+    }
+};
+
+export default mongoose.model<TCustomer, CustomerModel>('Customer', customerSchema);

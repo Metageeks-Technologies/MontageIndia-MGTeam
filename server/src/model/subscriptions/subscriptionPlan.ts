@@ -7,6 +7,7 @@ interface ISubscriptionPlan extends Document {
   duration: string;
   credits: number;
   benefits: string[];
+  isDeleted: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -17,9 +18,11 @@ const SubscriptionPlanSchema: Schema = new Schema({
   price: { type: Number, required: true },
   duration: { type: String, required: true },
   credits: { type: Number, required: true },
-  benefits: { type: [String], required: true },
-  createdAt: { type: Date, default: Date.now },
-  updatedAt: { type: Date, default: Date.now }
+  benefits: [{ type: String, required: true }],
+  isDeleted: { type: Boolean, default: false },
+},
+{
+  timestamps: true
 });
 
 const SubscriptionPlan = mongoose.model<ISubscriptionPlan>('SubscriptionPlan', SubscriptionPlanSchema);
