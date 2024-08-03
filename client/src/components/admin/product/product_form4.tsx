@@ -10,6 +10,8 @@ import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import Select, { MultiValue, ActionMeta } from 'react-select';
 import useAdminAuth from '@/components/hooks/useAdminAuth';
+import Swal from 'sweetalert2';
+
 interface Variant {
   label: string;
   price: number;
@@ -91,7 +93,6 @@ const Form4 = ( { formData }: any ) =>
   {
     if ( index !== undefined )
     {
-      // Toggle edit mode for specific variant
       if ( field === 'variants' )
       {
         setEditingVariantIndex( index );
@@ -139,9 +140,15 @@ const Form4 = ( { formData }: any ) =>
         notifySuccess( "Category updated successfuly" );
         setSelectedCategories( response.data.product.category );
       }
-    } catch ( error )
+    } catch ( error:any )
     {
       setloader( false );
+      const errorMessage = error.response?.data?.message || 'An error occurred while sending data';
+      Swal.fire( {
+        icon: 'error',
+        title: 'Oops...',
+        text:errorMessage,
+      } );
       console.error( 'Error saving data:', error );
     }
 
@@ -164,9 +171,15 @@ const Form4 = ( { formData }: any ) =>
 
       // Log the response for debugging
       console.log( 'Saving variant data:', response.data );
-    } catch ( error )
+    } catch ( error:any )
     {
       console.error( 'Error saving variant:', error );
+      const errorMessage = error.response?.data?.message || 'An error occurred while sending data';
+      Swal.fire( {
+        icon: 'error',
+        title: 'Oops...',
+        text:errorMessage,
+      } );
     }
     setEditingVariantIndex( null ); // Exit edit mode for the variant
     setEditMode( prev => ( { ...prev, variants: false } ) );
@@ -199,9 +212,15 @@ const Form4 = ( { formData }: any ) =>
         router.push( '/admin/product/available' );
         setloader( false );
       }
-    } catch ( error )
+    } catch ( error:any )
     {
       console.error( 'Error submitting form:', error );
+      const errorMessage = error.response?.data?.message || 'An error occurred while sending data';
+      Swal.fire( {
+        icon: 'error',
+        title: 'Oops...',
+        text:errorMessage,
+      } );
     }
   };
   const handleCategoryChange = ( newValue: MultiValue<any>, actionMeta: ActionMeta<any> ) =>

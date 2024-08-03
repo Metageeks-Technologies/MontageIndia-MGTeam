@@ -12,6 +12,7 @@ import { MdOutlineSave } from 'react-icons/md';
 import Select, { MultiValue, ActionMeta } from 'react-select';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
+import Swal from 'sweetalert2';
 
 interface Variant {
   label: string;
@@ -66,7 +67,13 @@ const Form4 = () => {
         setFormData(response.data.product);
         setStatus(response.data.product.status)
       }
-    } catch (error) {
+    } catch (error:any) {
+      const errorMessage = error.response?.data?.message || 'An error occurred while sending data';
+      Swal.fire( {
+        icon: 'error',
+        title: 'Oops...',
+        text:errorMessage,
+      } );
       setloader(true)
       console.error('Error fetching data:', error);
     }
@@ -174,12 +181,20 @@ const Form4 = () => {
       const response = await instance.patch(`/product/${data.uuid}`, updatedField);
       if(response.status===201){
         setloader(false)
-        notifySuccess("Category updated successfuly")
+        notifySuccess(" updated successfuly")
         fetchData()
       }
       console.log('Save result:', response.data);
-    } catch (error) {
+      
+    } catch (error:any) {
       setloader(false)
+      fetchData()
+      const errorMessage = error.response?.data?.message || 'An error occurred ';
+      Swal.fire( {
+        icon: 'error',
+        title: 'Oops...',
+        text:errorMessage,
+      } );
       console.error('Error saving data:', error);
     }
 
@@ -202,7 +217,13 @@ const Form4 = () => {
 
       // Log the response for debugging
       console.log('Saving variant data:', response.data);
-    } catch (error) {
+    } catch (error:any) {
+      const errorMessage = error.response?.data?.message || 'An error occurred while sending data';
+      Swal.fire( {
+        icon: 'error',
+        title: 'Oops...',
+        text:errorMessage,
+      } );
       console.error('Error saving variant:', error);
     }
     setEditingVariantIndex(null); // Exit edit mode for the variant
@@ -274,7 +295,7 @@ const Form4 = () => {
   }
 
   if (!data) {
-    return <div>Loading...</div>; // Add a loading state
+    return <div>Loading...</div>;  
   }
 
   return (

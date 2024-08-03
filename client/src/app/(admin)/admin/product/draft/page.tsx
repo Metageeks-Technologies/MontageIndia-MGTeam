@@ -188,22 +188,19 @@ const Home: React.FC = () => {
         <table className="min-w-full leading-normal">
           <thead>
             <tr>
-              <th className="px-5 py-1 bg-gray-100 border-b border-gray-200 text-gray-800 text-left text-sm uppercase font-normal">
-                No.
-              </th>
-              <th className="px-5 py-1 bg-gray-100 border-b border-gray-200 text-gray-800 text-left text-sm uppercase font-normal">
+              <th className="px-5 py-3 bg-gray-100 border-b border-gray-200 text-gray-800 text-left text-sm uppercase font-normal">
                 Product
               </th>
-              <th className="px-5 py-1 bg-gray-100 border-b border-gray-200 text-gray-800 text-left text-sm uppercase font-normal">
+              <th className="px-5 py-3 bg-gray-100 border-b border-gray-200 text-gray-800 text-left text-sm uppercase font-normal">
                 Media Type
               </th>
-              <th className="px-5 py-1 bg-gray-100 border-b border-gray-200 text-gray-800 text-left text-sm uppercase font-normal">
+              <th className="px-5 py-3 bg-gray-100 border-b border-gray-200 text-gray-800 text-left text-sm uppercase font-normal">
                 category
               </th>
-              <th className="px-5 py-1 bg-gray-100 border-b border-gray-200 text-gray-800 text-left text-sm uppercase font-normal">
+              <th className="px-5 py-3 bg-gray-100 border-b border-gray-200 text-gray-800 text-left text-sm uppercase font-normal">
                 Description
               </th>
-              <th className="px-5 py-1 bg-gray-100 border-b border-gray-200 text-gray-800 text-left text-sm uppercase font-normal">
+              <th className="px-5 py-3 bg-gray-100 border-b border-gray-200 text-gray-800 text-left text-sm uppercase font-normal">
                 Action
               </th>
             </tr>
@@ -218,9 +215,6 @@ const Home: React.FC = () => {
             ) : (
               productData.map((prod,index) => (
                 <tr key={prod._id} className="hover:bg-gray-300">
-                  <td className="px-5 py-2 border-b border-gray-200 bg-white text-sm">
-                  <FaStarOfLife size={10} />
-                  </td>
                   <td className="px-5 py-2 border-b border-gray-200 bg-white text-sm">
                     <div className="flex items-center">
                       <div className="flex-shrink-0">
@@ -305,25 +299,28 @@ const Home: React.FC = () => {
        
         {currentPage===1?(<>
        
-         <button
-              onClick={() => handlePageChange(currentPage)}
+            <button
+             onClick={() => handlePageChange(currentPage)}
               className={`px-4 py-2 mx-4 hidden  ${
                    "bg-gray-200 text-gray-700"
               } rounded`}
             >
                {currentPage-1}
-            </button></>):<>
-        <span className="pt-6 text-end flex  "><LuDot /></span>
-        <span className="pt-6 text-end flex  "><LuDot /></span>
-        <span className="pt-6 text-end flex  "><LuDot /></span>
-         <button
-              onClick={() => handlePageChange(currentPage)}
-              className={`px-4 py-2 mx-4 block ${
-                   "bg-gray-200 text-gray-700"
-              } rounded`}
-            >
-               {currentPage-1}
-            </button></>}
+            </button>
+            </>):
+            <>
+            <span className="pt-6 text-end flex  "><LuDot /></span>
+            <span className="pt-6 text-end flex  "><LuDot /></span>
+            <span className="pt-6 text-end flex  "><LuDot /></span>
+            <button
+                  onClick={() => handlePageChange(currentPage)}
+                  className={`px-4 py-2 mx-4 block ${
+                      "bg-gray-200 text-gray-700"
+                  } rounded`}
+                >
+                  {currentPage-1}
+             </button>
+            </>}
            
             <button
               onClick={() => handlePageChange(currentPage)}
@@ -335,7 +332,16 @@ const Home: React.FC = () => {
             >
                {currentPage}
             </button>
-            <button
+
+            {currentPage===totalPages ?  
+             <button
+             onClick={() => handlePageChange(currentPage + 1)}
+             disabled={currentPage === totalPages}
+             className="px-4 py-2  mx-4 cursor-not-allowed  bg-gray-300 text-gray-700 rounded disabled:opacity-50"
+           >
+             Next
+           </button>:<>
+           <button
               onClick={() => handlePageChange(currentPage)}
               className={`px-4 py-2 mx-4  ${
                    "bg-gray-200 text-gray-700"
@@ -344,15 +350,17 @@ const Home: React.FC = () => {
                {currentPage+1}
             </button>
             <span className="pt-6 text-end flex  "><LuDot /></span>
-        <span className="pt-6 text-end flex  "><LuDot /></span>
-        <span className="pt-6 text-end flex  "><LuDot /></span>
-        <button
-          onClick={() => handlePageChange(currentPage + 1)}
-          disabled={currentPage === totalPages}
-          className="px-4 py-2  mx-4  bg-gray-300 text-gray-700 rounded disabled:opacity-50"
-        >
-          Next
-        </button>
+            <span className="pt-6 text-end flex  "><LuDot /></span>
+            <span className="pt-6 text-end flex  "><LuDot /></span>
+            <button
+              onClick={() => handlePageChange(currentPage + 1)}
+              disabled={currentPage === totalPages}
+              className="px-4 py-2  mx-4  bg-gray-300 text-gray-700 rounded disabled:opacity-50"
+            >
+              Next
+            </button>
+            </>}
+           
         </div>
         
       </div>
