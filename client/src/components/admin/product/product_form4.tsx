@@ -10,7 +10,6 @@ import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import Select, { MultiValue, ActionMeta } from 'react-select';
 import useAdminAuth from '@/components/hooks/useAdminAuth';
-import { truncate } from 'fs';
 interface Variant {
   label: string;
   price: number;
@@ -51,7 +50,7 @@ const Form4 = ({ formData }: any) => {
   });
   const [editingVariantIndex, setEditingVariantIndex] = useState<number | null>(null);
   const[loading,setloader]=useState(false)
-  const [selectedCategories, setSelectedCategories] = useState<any[]>([]);
+  const [selectedCategories, setSelectedCategories] =  useState<MultiValue<{ label: string; value: string }>>([]);
   const [availableCategories, setAvailableCategories] = useState<any[]>([]);
   const BucketName=process.env.NEXT_PUBLIC_AWS_BUCKET;
   const AwsRegiosn=process.env.NEXT_PUBLIC_AWS_REIGION;
@@ -126,6 +125,7 @@ const Form4 = ({ formData }: any) => {
         setloader(false)
         notifySuccess("Category updated successfuly")
         setSelectedCategories(response.data.product.category)
+        console.log("first",response.data.product)
       }
     } catch (error) {
       setloader(false)
@@ -138,27 +138,24 @@ const Form4 = ({ formData }: any) => {
     try {
       const variant = data.variants[index];
     
-      // Prepare the data to be sent
       const sendData = {
         uuid: initialData.uuid,
         price: variant.price,
         label: variant.label
       };
-      // Make the API call with the data
       const response = await instance.patch(`/product/variant/${variant._id}`, sendData);
   
-      // Log the response for debugging
       console.log('Saving variant data:', response.data);
     } catch (error) {
       console.error('Error saving variant:', error);
     }
-    setEditingVariantIndex(null); // Exit edit mode for the variant
+    setEditingVariantIndex(null); 
     setEditMode(prev => ({ ...prev, variants: false }));
   };
   const handleAddTag = () => {
     if (newTag.trim() !== '') {
       setFormData({ ...data, tags: [...data.tags, newTag.trim()] });
-      setNewTag(''); // Clear the input field after adding the tag 
+      setNewTag('');
     }
   };
 
@@ -181,8 +178,8 @@ const Form4 = ({ formData }: any) => {
       console.error('Error submitting form:', error);
     }
   };
-  const handleCategoryChange = (newValue: MultiValue<any>, actionMeta: ActionMeta<any>) => {
-    setSelectedCategories(newValue as any[]);
+  const handleCategoryChange = (newValue: MultiValue<{ label: string; value: string }>, actionMeta: ActionMeta<any>) => {
+    setSelectedCategories(newValue);
   };
   const renderMedia = () => {
     switch (data?.mediaType) {
@@ -229,7 +226,8 @@ const Form4 = ({ formData }: any) => {
         setAvailableCategories([]); // Set to an empty array or handle accordingly
       }
   
-     
+      setSelectedCategories(data.category.map(cat => ({ label: cat, value: cat })));
+
     }
   }, [user]);
 
@@ -404,14 +402,22 @@ const Form4 = ({ formData }: any) => {
                   className='basic-multi-select'
                   classNamePrefix="select"
                   onChange={handleCategoryChange}
+                  value={selectedCategories} // Use value prop instead of defaultValue
                 />
               </div>
-                </>:<>
+                </>: <>
+                <div className='flex-wrap flex'>
+                {data.category.map(cat => (
                   <span
-                      className={`text-gray-700 w-full outline-none py-3 p-2 rounded-lg ${!editMode.category ? 'bg-gray-100' : 'bg-gray-200'}`}
-                  >{data.category}
+                    key={cat}
+                    className={`text-gray-700 w-fit m-2  outline-none py-3 p-2 rounded-lg ${!editMode.category ? 'bg-gray-100' : 'bg-gray-200'}`}
+                  >
+                    <span>{cat}</span>
                   </span>
-                  </>}
+                ))}
+               </div>
+
+              </>}
         </div>
           </div>
         </div>
