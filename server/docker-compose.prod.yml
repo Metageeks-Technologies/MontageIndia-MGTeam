@@ -1,31 +1,15 @@
 version: "3.6"
 services:
   nginx:
-    image: nginx:alpine
     ports:
       - "80:80"
       - "443:443"
-    restart: unless-stopped  
-    volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
-      - ./certbot/conf:/etc/letsencrypt
-      - ./certbot/www:/var/www/certbot
-    networks:
-      - mi-network  
-  certbot:
-    image: certbot/certbot
-    container_name: certbot
-    networks:
-      - mi-network 
-    volumes: 
-      - ./certbot/conf:/etc/letsencrypt
-      - ./certbot/www:/var/www/certbot
-    command: certonly --webroot -w /var/www/certbot --force-renewal --email ms4544311@gmail.com -d thequantumhive.site --agree-tos    
+    volumes:  
+     - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+      - /etc/letsencrypt/live/thequantumhive.site/fullchain.pem:/etc/nginx/ssl/nginx.crt
+      - /etc/letsencrypt/live/thequantumhive.site/privkey.pem:/etc/nginx/ssl/nginx.key  
   mi-server:
-    image: shivashah/mi2.0-server
-    networks:
-      - mi-network 
-    build: 
+    build:
       context: .
       args:
         NODE_ENV: poduction
@@ -34,9 +18,3 @@ services:
     env_file:
       - ./.env   
     command: npm start
-    volumes:
-      - /home/ubuntu/MontageIndia-MGTeam/server/nginx/nginx.conf:/etc/nginx/nginx.conf
-
-networks:
-  mi-network:
-    driver: bridge
