@@ -11,7 +11,8 @@ index
 5. deleteSubscription
  */
 
-export const createSubscription = () => catchAsyncError(async (req, res, next) => {
+export const createSubscription = catchAsyncError(async (req, res, next) => {
+
     if(!req.body){
         return next(new ErrorHandler("Subscription Plan not found", 404));
     }
@@ -21,14 +22,14 @@ export const createSubscription = () => catchAsyncError(async (req, res, next) =
     if (!newSubscription) {
       return next(new ErrorHandler("Error occured while creating Subscription Plan", 404));
     }
-    return res.json({
+    res.json({
       success: true,
       message: "Subscription created successfully",
       newSubscription,
     });
-}, "Error occured while creating Subscription Plan");
+});
 
-export const getSubscription = () => catchAsyncError(async (req, res, next) => {
+export const getSubscription = catchAsyncError(async (req, res, next) => {
     const subscription = await SubscriptionPlan.find();
     if (!subscription) {
       return next(new ErrorHandler("Subscription Plan not found", 404));
@@ -36,7 +37,7 @@ export const getSubscription = () => catchAsyncError(async (req, res, next) => {
     return res.json({ success: true, subscription });
 }, "Error occured while getting Subscription Plan");
 
-export const getSubscriptionById = () => catchAsyncError(async (req, res, next) => {
+export const getSubscriptionById =catchAsyncError(async (req, res, next) => {
     const { id } = req.params;
     const subscription = await SubscriptionPlan.findById(id);
     if (!subscription) {
@@ -45,7 +46,7 @@ export const getSubscriptionById = () => catchAsyncError(async (req, res, next) 
     return res.json({ success: true, subscription });
 }, "Error occured while getting Subscription Plan");
 
-export const updateSubscription = () => catchAsyncError(async (req, res, next) => {
+export const updateSubscription = catchAsyncError(async (req, res, next) => {
     if(!req.body){
         return next(new ErrorHandler("invalid request", 404));
     }
@@ -61,7 +62,7 @@ export const updateSubscription = () => catchAsyncError(async (req, res, next) =
     return res.json({ success: true, subscription });
 }, "Error occured while updating Subscription Plan");
 
-export const deleteSubscription = () => catchAsyncError(async (req, res, next) => {
+export const deleteSubscription = catchAsyncError(async (req, res, next) => {
     
     const { id } = req.params;
     const subscription = await SubscriptionPlan.findById(id);
