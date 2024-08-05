@@ -22,6 +22,7 @@ app.use(cors({
   origin: process.env.CLIENT_URL,
   credentials: true 
 }));
+// temp
 app.enable("trust proxy");
 app.use(express.json());
 app.use(cookieParser());
