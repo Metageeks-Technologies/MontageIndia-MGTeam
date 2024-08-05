@@ -28,13 +28,21 @@ const customerSchema = new mongoose.Schema<TCustomer>({
     unique: true,
     validate: [validator.isEmail, "please enter a valid email"],
   },
-  phone: { type: String },
+  phone: { 
+    type: String,
+    minlength: [10, "phone number should have minimum 10 characters"],
+    maxlength: [10, "phone number should have maximum 10 characters"],
+    trim: true,
+    default: "none",
+  },
   password: {
     type: String,
     minlength: [6, "password should have a minimum of 6 characters"],
     select: false,
   },
   isDeleted: { type: Boolean, default: false },
+  resetPasswordToken:{ type: String,default:undefined,},
+  resetPasswordExpires:{ type: Number,default: undefined,},
   credits: { type: Number, default: 0 },
   creditsValidity: { type: String, default: '0'},
   cart: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' }],
@@ -67,10 +75,10 @@ customerSchema.pre<TCustomer>('save', async function (next) {
 
 // Create JWT token
 customerSchema.methods.createJWT = function (this: TCustomer) {
-    if (!process.env.JWT_SECRET) {
+    if (!process.env.JWT_SECRET_CUSTOMER) {
         throw new Error("JWT_SECRET is not defined in the environment.");
     }
-    return jwt.sign({ id: this._id }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_LIFETIME });
+    return jwt.sign({ id: this._id }, process.env.JWT_SECRET_CUSTOMER, { expiresIn: process.env.JWT_LIFETIME });
 };
 
 // Compare password

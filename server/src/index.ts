@@ -1,20 +1,20 @@
 import express, { Express } from 'express';
 import 'module-alias/register';
-import adminRouter from './routes/user/admin.js';
-import imageRouter from './routes/media/img.js';
-import connectDB from './utils/connectDb.js';
+import adminRouter from '@src/routes/user/admin.js';
+import imageRouter from '@src/routes/media/img.js';
+import connectDB from '@src/utils/connectDb.js';
 import cors from 'cors'
 import morgan from 'morgan'
-import videoRouter from './routes/media/video.js';
-import audioRouter from './routes/media/audio.js';
-import errorMiddleware from './middleware/error.js';
+import videoRouter from '@src/routes/media/video.js';
+import audioRouter from '@src/routes/media/audio.js';
+import errorMiddleware from '@src/middleware/error.js';
 import {processSQSMessages} from "@src/lib/sqsQueue.js"
 import config from "@src/utils/config.js"
 import productRouter from "@src/routes/product/product"
 import fieldRouter from '@src/routes/field/field';
 import cookieParser from 'cookie-parser';
-import paymentRouter from './routes/payment/payment';
-import subscriptionRouter from './routes/subscription/subscription.js';
+import paymentRouter from '@src/routes/payment/payment';
+import subscriptionRouter from '@src/routes/subscription/subscription';
 const {mongoUrl}=config;
  
 const app: Express = express();
@@ -29,6 +29,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(morgan('dev'));
 
 app.use("/api/v1/auth/admin", adminRouter);
+app.use("/api/v1/user", adminRouter);
 app.use("/api/v1/media/image", imageRouter);
 app.use("/api/v1/media/video", videoRouter);
 app.use("/api/v1/media/audio", audioRouter);

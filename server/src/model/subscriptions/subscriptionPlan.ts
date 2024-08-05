@@ -8,15 +8,13 @@ interface ISubscriptionPlan extends Document {
   credits: number;
   benefits: string[];
   isDeleted: boolean;
-  createdAt: Date;
-  updatedAt: Date;
 }
 
 const SubscriptionPlanSchema: Schema = new Schema({
   name: { type: String, required: true },
   description: { type: String, required: true },
   price: { type: Number, required: true },
-  duration: { type: String, required: true },
+  duration: { type: String, required: true },//in days
   credits: { type: Number, required: true },
   benefits: [{ type: String, required: true }],
   isDeleted: { type: Boolean, default: false },

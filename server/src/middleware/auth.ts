@@ -9,7 +9,34 @@ export const isAuthenticatedAdmin = catchAsyncError(async (req: any, res, next) 
     if (!token) {
         return next(new ErrorHandler("Please Login to access this resource", 401));
     }
+
     const decodedData = jwt.verify(token, process.env.JWT_SECRET || "");
+    const requestedUser = await Admin.findById((decodedData as JwtPayload).id);
+    if (!requestedUser) {
+        return next(new ErrorHandler("User not found", 404));
+    }
+    if(requestedUser.isDeleted){
+       return res.cookie("token", null, {
+            expires: new Date(Date.now()),
+            httpOnly: true,
+        }).status(400).json({
+            success: false,
+            message: "User not found"
+        });
+    }
+    req.user = requestedUser;
+    // console.log("user",req.user);
+    next();
+});
+
+export const isAuthenticatedCustomer = catchAsyncError(async (req: any, res, next) => {
+    // console.log("auth",req);
+    const { token } = req.cookies;
+    if (!token) {
+        return next(new ErrorHandler("Please Login to access this resource", 401));
+    }
+    
+    const decodedData = jwt.verify(token, process.env.JWT_SECRET_CUSTOMER || "");
     const requestedUser = await Admin.findById((decodedData as JwtPayload).id);
     if (!requestedUser) {
         return next(new ErrorHandler("User not found", 404));

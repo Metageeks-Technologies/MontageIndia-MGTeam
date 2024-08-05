@@ -28,6 +28,8 @@ export type TCustomer = Document & {
     purchaseHistory?: mongoose.Types.ObjectId[]; // References to orders
     subscriptionHistory?: mongoose.Types.ObjectId[]; // References to subscriptions
     phone?: string;
-    createdAt: Date;
-    updatedAt: Date;
+    resetPasswordToken?: string | undefined;
+    resetPasswordExpires?: Number | undefined;
+    createJWT(): string;
+    comparePassword(givenPassword: string): Promise<boolean>;
 }
