@@ -1,16 +1,16 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import instance from '@/utils/axios';
 import Image from 'next/image';
-import { notifySuccess } from '@/utils/toast';
+import { notifyError, notifySuccess } from '@/utils/toast';
 
 interface Category
 {
-    id: number;
+    _id: string;
     name: string;
     description: string;
-    logo?: string;
+    image?: string;
 }
 
 const CategoriesPage: React.FC = () =>
@@ -19,8 +19,12 @@ const CategoriesPage: React.FC = () =>
     const [ isModalOpen, setIsModalOpen ] = useState( false );
     const [ name, setName ] = useState( '' );
     const [ description, setDescription ] = useState( '' );
-    const [ logo, setLogo ] = useState<File | null>( null );
+    const [ image, setImage ] = useState<File | null>( null );
     const [ editingCategory, setEditingCategory ] = useState<Category | null>( null );
+    const fileInputRef = useRef<HTMLInputElement>( null );
+    const [ isLoading, setIsLoading ] = useState( false );
+    const [ error, setError ] = useState<string | null>( null );
+
     useEffect( () =>
     {
         fetchCategories();
@@ -28,6 +32,8 @@ const CategoriesPage: React.FC = () =>
 
     const fetchCategories = async () =>
     {
+        setIsLoading( true );
+        setError( null );
         try
         {
             const response = await instance.get( '/field/category' );
@@ -35,30 +41,116 @@ const CategoriesPage: React.FC = () =>
         } catch ( error )
         {
             console.error( 'Error fetching categories:', error );
+            setError( 'Failed to fetch categories. Please try again later.' );
+            notifyError( 'Failed to fetch categories' );
+        } finally
+        {
+            setIsLoading( false );
+        }
+    };
+
+    const getUploadUrl = async ( fileName: string ): Promise<string> =>
+    {
+
+        try
+        {
+            const response = await instance.post<{ url: string; }>( '/field/upload', { filename: fileName } );
+            console.log( 'Response from getting URL:', response );
+            if ( !response.data || !response.data.url )
+            {
+                throw new Error( 'Invalid response from server' );
+            }
+            return response.data.url;
+        } catch ( error )
+        {
+            console.error( 'Error getting upload URL:', error );
+            notifyError( 'Failed to get upload URL: ' + ( error instanceof Error ? error.message : String( error ) ) );
+            throw error;
+        }
+    };
+
+    const uploadImage = async ( file: File ): Promise<string | null> =>
+    {
+        setIsLoading( true );
+        try
+        {
+            const uploadUrl = await getUploadUrl( file.name );
+            console.log( 'Upload URL:', uploadUrl );
+
+            const response = await fetch( uploadUrl, {
+                method: 'PUT',
+                body: file,
+                headers: { 'Content-Type': file.type },
+            } );
+
+            if ( !response.ok )
+            {
+                throw new Error( `HTTP error! status: ${ response.status }` );
+            }
+
+            console.log( 'Upload response:', response );
+            return `https://${ process.env.NEXT_PUBLIC_AWS_BUCKET }.s3.amazonaws.com/category-images/${ file.name }`;
+        } catch ( error )
+        {
+            console.error( 'Error uploading file:', error );
+            notifyError( 'Failed to upload image. Please try again.' );
+            return null;
+        } finally
+        {
+            setIsLoading( false );
         }
     };
 
     const handleSubmit = async ( e: React.FormEvent ) =>
     {
         e.preventDefault();
+        setIsLoading( true );
+        setError( null );
         try
         {
+            let imageUrl = null;
+            if ( image )
+            {
+                imageUrl = await uploadImage( image );
+                console.log( "image url:-", imageUrl );
+                if ( !imageUrl )
+                {
+                    notifyError( 'Failed to upload image' );
+                    return;
+                }
+            }
+
+            const categoryData = {
+                category: name,
+                description,
+                image: imageUrl
+            };
             if ( editingCategory )
             {
-                await instance.put( `/field/category/${ editingCategory.id }`, { name, description } );
+                await instance.patch( `/field/category/${ editingCategory._id }`, categoryData );
             } else
             {
-                await instance.post( '/field/category', { category: name, description } );
+                await instance.post( '/field/category', categoryData );
             }
             setIsModalOpen( false );
-            notifySuccess("category added successfully")
+            notifySuccess( editingCategory ? "Category updated successfully" : "Category added successfully" );
             setEditingCategory( null );
             setName( '' );
             setDescription( '' );
+            setImage( null );
+            if ( fileInputRef.current )
+            {
+                fileInputRef.current.value = '';
+            }
             fetchCategories();
         } catch ( error )
         {
             console.error( 'Error saving category:', error );
+            setError( 'Failed to save category. Please try again.' );
+            notifyError( 'Failed to save category' );
+        } finally
+        {
+            setIsLoading( false );
         }
     };
 
@@ -67,21 +159,29 @@ const CategoriesPage: React.FC = () =>
         setEditingCategory( category );
         setName( category.name );
         setDescription( category.description );
-        setLogo( null ); // Reset logo when editing
+        setImage( null );
         setIsModalOpen( true );
     };
 
-    const handleDelete = async ( id: number ) =>
+    const handleDelete = async ( id: string ) =>
     {
         if ( window.confirm( 'Are you sure you want to delete this category?' ) )
         {
+            setIsLoading( true );
+            setError( null );
             try
             {
                 await instance.delete( `/field/category/${ id }` );
                 fetchCategories();
+                notifySuccess( "Category deleted successfully" );
             } catch ( error )
             {
                 console.error( 'Error deleting category:', error );
+                setError( 'Failed to delete category. Please try again.' );
+                notifyError( 'Failed to delete category' );
+            } finally
+            {
+                setIsLoading( false );
             }
         }
     };
@@ -90,18 +190,20 @@ const CategoriesPage: React.FC = () =>
     {
         setEditingCategory( null );
         setName( '' );
-        setLogo( null );
+        setImage( null );
         setDescription( '' );
         setIsModalOpen( true );
     };
 
-    const handleLogoChange = ( e: React.ChangeEvent<HTMLInputElement> ) =>
+    const handleImageChange = ( e: React.ChangeEvent<HTMLInputElement> ) =>
     {
         if ( e.target.files && e.target.files[ 0 ] )
         {
-            setLogo( e.target.files[ 0 ] );
+            setImage( e.target.files[ 0 ] );
         }
     };
+
+    console.log( "categoies:-", categories );
 
     return (
         <div className="container mx-auto px-4 py-8 max-w-7xl">
@@ -114,6 +216,21 @@ const CategoriesPage: React.FC = () =>
                     Add New Category
                 </button>
             </div>
+
+            { isLoading && (
+                <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50">
+                    <div className="bg-white p-4 rounded-lg shadow-lg">
+                        <p className="text-lg font-semibold">Loading...</p>
+                    </div>
+                </div>
+            ) }
+
+            { error && (
+                <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+                    <strong className="font-bold">Error: </strong>
+                    <span className="block sm:inline">{ error }</span>
+                </div>
+            ) }
 
             { isModalOpen && (
                 <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50" id="my-modal">
@@ -142,11 +259,12 @@ const CategoriesPage: React.FC = () =>
                                     />
                                 </div>
                                 <div>
-                                    <label htmlFor="logo" className="block text-sm font-medium text-gray-700">Image</label>
+                                    <label htmlFor="image" className="block text-sm font-medium text-gray-700">Image</label>
                                     <input
                                         type="file"
-                                        id="logo"
-                                        onChange={ handleLogoChange }
+                                        id="image"
+                                        ref={ fileInputRef }
+                                        onChange={ handleImageChange }
                                         className="mt-1 p-2 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-black hover:file:bg-blue-100"
                                         accept="image/*"
                                     />
@@ -182,7 +300,9 @@ const CategoriesPage: React.FC = () =>
             ) }
 
             <div className="bg-white shadow-md rounded-lg overflow-hidden">
-                <div className="overflow-x-auto">
+                { categories.length === 0 && !isLoading ? (
+                    <p className="text-center py-4 text-gray-500">No categories found. Add a new category to get started.</p>
+                ) : <div className="overflow-x-auto">
                     <table className="w-full text-sm text-left text-gray-500">
                         <thead className="text-xs text-gray-700 uppercase bg-gray-50">
                             <tr>
@@ -194,11 +314,11 @@ const CategoriesPage: React.FC = () =>
                         </thead>
                         <tbody>
                             { categories.map( ( category ) => (
-                                <tr key={ category.id } className="bg-white border-b hover:bg-gray-50">
+                                <tr key={ category._id } className="bg-white border-b hover:bg-gray-50">
                                     <td className="px-6 py-4">
                                         <Image
-                                            src={ category?.logo || '/placeholder-image.jpg' }
-                                            alt={ `${ category.name } logo` }
+                                            src={ category?.image || '/placeholder-image.jpg' }
+                                            alt={ `${ category.name } image` }
                                             width={ 50 }
                                             height={ 50 }
                                             className="rounded-full"
@@ -207,13 +327,13 @@ const CategoriesPage: React.FC = () =>
                                     <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
                                         { category.name }
                                     </th>
-                                    <td className="px-6 py-4">{ category.description }</td>
-                                    <td className="px-6 py-4 space-x-2">
+                                    <td className="px-6 py-4 w-1/2">{ category.description }</td>
+                                    <td className="px-6 py-4 flex justify-around items-center ">
                                         <button onClick={ () => handleEdit( category ) } className="font-medium text-blue-600 hover:underline">
                                             Edit
                                         </button>
                                         <button
-                                            onClick={ () => handleDelete( category.id ) }
+                                            onClick={ () => handleDelete( category?._id ) }
                                             className="font-medium text-red-600 hover:underline"
                                         >
                                             Delete
@@ -224,6 +344,7 @@ const CategoriesPage: React.FC = () =>
                         </tbody>
                     </table>
                 </div>
+                }
             </div>
         </div>
     );
