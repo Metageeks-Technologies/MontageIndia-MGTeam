@@ -80,7 +80,7 @@ const Page = () =>
         </div>
 
         <div className="w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-md p-8 bg-white border rounded-lg shadow-md">
-          <h2 className="text-2xl font-bold">Sign In</h2>
+          <h2 className="text-2xl font-bold">Log In</h2>
           <p className="mt-2 text-center text-gray-600">
             Enter your details to register and start to discover!
           </p>
