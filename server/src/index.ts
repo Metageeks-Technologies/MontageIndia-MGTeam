@@ -15,26 +15,26 @@ import fieldRouter from '@src/routes/field/field';
 import cookieParser from 'cookie-parser';
 import paymentRouter from '@src/routes/payment/payment';
 import subscriptionRouter from '@src/routes/subscription/subscription';
-const {mongoUrl}=config;
+const {mongoUrl,nodeEnv}=config;
  
 const app: Express = express();
-// app.use(cors({
-//   origin: process.env.CLIENT_URL,
-//   credentials: true 
-// }));
+app.use(cors({
+  origin:nodeEnv==="production"?"https://montage-india-mg-team.vercel.app":"http://localhost:3000", 
+  credentials: true 
+}));
 const allowedOrigins = ['https://montage-india-mg-team.vercel.app'];
 
-app.use(cors({
-  origin: function (origin, callback) {
-    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
-      console.log(origin)
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
-  credentials: true
-}));
+// app.use(cors({
+//   origin: function (origin, callback) {
+//     if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+//       console.log(origin)
+//       callback(null, true);
+//     } else {
+//       callback(new Error('Not allowed by CORS'));
+//     }
+//   },
+//   credentials: true
+// }));
 // temp
 app.enable("trust proxy");
 app.use(express.json());
