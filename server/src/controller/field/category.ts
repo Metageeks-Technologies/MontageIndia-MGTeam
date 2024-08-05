@@ -18,8 +18,7 @@ export const createCategory = catchAsyncError(async (req: any, res, next) => {
 
     res.status(201).json({
         success: true,
-        message:"hello world...",
-        // category: newCategory,
+        category: newCategory,
         
     });  
 });
@@ -30,6 +29,7 @@ export const getCategories = catchAsyncError(async (req, res, next) => {
     
     res.status(200).json({
         success: true,
+        message:"All categories",
         categories:categories  
     })
 });
