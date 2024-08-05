@@ -18,9 +18,21 @@ import subscriptionRouter from '@src/routes/subscription/subscription';
 const {mongoUrl}=config;
  
 const app: Express = express();
+// app.use(cors({
+//   origin: process.env.CLIENT_URL,
+//   credentials: true 
+// }));
+const allowedOrigins = ['https://montage-india-mg-team.vercel.app'];
+
 app.use(cors({
-  origin: process.env.CLIENT_URL,
-  credentials: true 
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true
 }));
 // temp
 app.enable("trust proxy");
