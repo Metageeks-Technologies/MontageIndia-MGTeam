@@ -34,6 +34,8 @@ services:
     env_file:
       - ./.env   
     command: npm start
+    volumes:
+      - /home/ubuntu/MontageIndia-MGTeam/server/nginx/nginx.conf:/etc/nginx/nginx.conf
 
 networks:
   mi-network:
