@@ -10,15 +10,21 @@ services:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf
       - ./certbot/conf:/etc/letsencrypt
       - ./certbot/www:/var/www/certbot
+    networks:
+      - mi-network  
   certbot:
     image: certbot/certbot
     container_name: certbot
+    networks:
+      - mi-network 
     volumes: 
       - ./certbot/conf:/etc/letsencrypt
       - ./certbot/www:/var/www/certbot
     command: certonly --webroot -w /var/www/certbot --force-renewal --email ms4544311@gmail.com -d thequantumhive.site --agree-tos    
   mi-server:
     image: shivashah/mi2.0-server
+    networks:
+      - mi-network 
     build: 
       context: .
       args:
@@ -28,3 +34,7 @@ services:
     env_file:
       - ./.env   
     command: npm start
+
+networks:
+  my_network:
+    driver: bridge
