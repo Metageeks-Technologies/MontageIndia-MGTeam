@@ -19,7 +19,7 @@ const {mongoUrl}=config;
  
 const app: Express = express();
 app.use(cors({
-  origin: process.env.CLIENT_URL,
+  origin: config.clientUrl,
   credentials: true 
 }));
 app.enable("trust proxy");
@@ -47,7 +47,7 @@ app.get("/api/greet", (req,res,next)=>{
 app.use(errorMiddleware);
 processSQSMessages();
 
-const port = process.env.PORT || 5000;
+const port = config.port || 5000;
 const start = async () => {
   try {
     await connectDB(mongoUrl);

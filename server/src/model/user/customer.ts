@@ -3,6 +3,7 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import * as validator from 'validator';
 import type { TCustomer } from "../../types/user";
+import config from '@src/utils/config';
 
 const customerSchema = new mongoose.Schema<TCustomer>({
   name: {
@@ -75,10 +76,10 @@ customerSchema.pre<TCustomer>('save', async function (next) {
 
 // Create JWT token
 customerSchema.methods.createJWT = function (this: TCustomer) {
-    if (!process.env.JWT_SECRET_CUSTOMER) {
+    if (!config.customerJwtSecret) {
         throw new Error("JWT_SECRET is not defined in the environment.");
     }
-    return jwt.sign({ id: this._id }, process.env.JWT_SECRET_CUSTOMER, { expiresIn: process.env.JWT_LIFETIME });
+    return jwt.sign({ id: this._id }, config.customerJwtSecret, { expiresIn: config.jwtLifetime });
 };
 
 // Compare password

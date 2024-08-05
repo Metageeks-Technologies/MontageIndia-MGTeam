@@ -2,6 +2,7 @@ import ErrorHandler from "../utils/errorHandler.js";
 import catchAsyncError from "./catchAsyncError.js";
 import Admin from "../model/user/admin.js";
 import jwt, { JwtPayload } from "jsonwebtoken";
+import config from "@src/utils/config.js";
 
 export const isAuthenticatedAdmin = catchAsyncError(async (req: any, res, next) => {
     // console.log("auth",req);
@@ -10,7 +11,7 @@ export const isAuthenticatedAdmin = catchAsyncError(async (req: any, res, next) 
         return next(new ErrorHandler("Please Login to access this resource", 401));
     }
 
-    const decodedData = jwt.verify(token, process.env.JWT_SECRET || "");
+    const decodedData = jwt.verify(token,config.jwtSecret|| "");
     const requestedUser = await Admin.findById((decodedData as JwtPayload).id);
     if (!requestedUser) {
         return next(new ErrorHandler("User not found", 404));
@@ -36,7 +37,7 @@ export const isAuthenticatedCustomer = catchAsyncError(async (req: any, res, nex
         return next(new ErrorHandler("Please Login to access this resource", 401));
     }
     
-    const decodedData = jwt.verify(token, process.env.JWT_SECRET_CUSTOMER || "");
+    const decodedData = jwt.verify(token, config.customerJwtSecret || "");
     const requestedUser = await Admin.findById((decodedData as JwtPayload).id);
     if (!requestedUser) {
         return next(new ErrorHandler("User not found", 404));

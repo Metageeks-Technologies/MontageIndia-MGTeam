@@ -1,5 +1,6 @@
 import catchAsyncError from '../../middleware/catchAsyncError.js';
 import ErrorHandler from '../../utils/errorHandler.js';
+import config from '@src/utils/config.js';
 import sendToken from '../../utils/sendToken.js';
 import Admin from '../../model/user/admin.js';
 import { sendEmail } from '@src/utils/nodemailer/mailer/mailer.js';
@@ -313,12 +314,12 @@ export const forgetPassword = catchAsyncError(async (req, res, next) => {
     await admin.save();
 
     const mailOptions = {
-        from: process.env.EMAIL_USER as string,
+        from: config.emailUser as string,
         to: email as string,
         subject: 'Password Reset' as string,
         text: `You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n
         Please click on the following link, or paste this into your browser to complete the process:\n\n
-        ${process.env.CLIENT_URL}/admin/reset-password/${token}\n\n
+        ${config.clientUrl}/admin/reset-password/${token}\n\n
         If you did not request this, please ignore this email and your password will remain unchanged.\n` as string
     };
 

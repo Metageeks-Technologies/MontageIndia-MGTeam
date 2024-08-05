@@ -4,6 +4,7 @@ import sendToken from '@src/utils/sendToken.js';
 import Customer from '@src/model/user/customer.js';
 import { sendEmail } from '@src/utils/nodemailer/mailer/mailer.js';
 import crypto from "crypto";
+import config from '@src/utils/config';
 
 
 /* 
@@ -239,12 +240,12 @@ export const forgetPassword = catchAsyncError(async (req, res, next) => {
     await customer.save();
 
     const mailOptions = {
-        from: process.env.EMAIL_USER as string,
+        from: config.emailUser as string,
         to: email as string,
         subject: 'Password Reset' as string,
         text: `You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n
         Please click on the following link, or paste this into your browser to complete the process:\n\n
-        ${process.env.CLIENT_URL}/customer/reset-password/${token}\n\n
+        ${config.clientUrl}/customer/reset-password/${token}\n\n
         If you did not request this, please ignore this email and your password will remain unchanged.\n` as string
     };
 
