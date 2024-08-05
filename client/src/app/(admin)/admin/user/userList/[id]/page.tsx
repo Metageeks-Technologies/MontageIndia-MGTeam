@@ -3,7 +3,9 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import instance from '@/utils/axios';
 import { notifyError, notifySuccess } from '@/utils/toast';
-import { adminRolesOptions, categoriesOptions, mediaTypesOptions } from '../../../../../../utils/tempData';
+import { adminRolesOptions, categoriesOptions, mediaTypesOptions } from '@/utils/tempData';
+import Multiselect from 'multiselect-react-dropdown';
+import { Spinner } from '@nextui-org/react';
 
 interface User
 {
@@ -12,14 +14,69 @@ interface User
   email: string;
   role: string;
   username: string;
-  mediaType: string;
-  category: string;
+  mediaType: string[];
+  category: string[];
 }
 
 export default function UserDetails ( { params }: { params: { id: string; }; } )
 {
-  const [ user, setUser ] = useState<User | null>( null );
+  const [ user, setUser ] = useState<User>( {
+    id: '',
+    name: '',
+    email: '',
+    role: '',
+    username: '',
+    mediaType: [],
+    category: [],
+  } );
+  const [ selectedCategories, setSelectedCategories ] = useState<string[]>( [] );
+  const [ selectedMediaTypes, setSelectedMediaTypes ] = useState<string[]>( [] );
   const [ isEditing, setIsEditing ] = useState( false );
+
+  const onSelectCategory = ( selectedList: string[] ) =>
+  {
+    const uniqueSelectedList = Array.from( new Set( selectedList ) );
+    const lowerCaseList = Array.from( new Set( uniqueSelectedList.map( item => item.toLowerCase() ) ) );
+    setSelectedCategories( uniqueSelectedList );
+
+    setUser( prevUser => ( {
+      ...prevUser,
+      category: lowerCaseList,
+    } ) );
+
+  };
+
+  const onRemoveCategory = ( selectedList: string[] ) =>
+  {
+    setSelectedCategories( selectedList );
+    const lowerCaseList = selectedList.map( item => item.toLowerCase() );
+    setUser( prevUser => ( {
+      ...prevUser,
+      category: lowerCaseList,
+    } ) );
+  };
+
+  const onSelectMediaType = ( selectedList: string[] ) =>
+  {
+    const uniqueSelectedList = Array.from( new Set( selectedList ) );
+    const lowerCaseList = Array.from( new Set( uniqueSelectedList.map( item => item.toLowerCase() ) ) );
+
+    setSelectedMediaTypes( uniqueSelectedList );
+    setUser( prevUser => ( {
+      ...prevUser,
+      mediaType: lowerCaseList,
+    } ) );
+  };
+
+  const onRemoveMediaType = ( selectedList: string[] ) =>
+  {
+    setSelectedMediaTypes( selectedList );
+    const lowerCaseList = selectedList.map( item => item.toLowerCase() );
+    setUser( prevUser => ( {
+      ...prevUser,
+      mediaType: lowerCaseList,
+    } ) );
+  };
   const router = useRouter();
   const { id } = params;
 
@@ -31,6 +88,10 @@ export default function UserDetails ( { params }: { params: { id: string; }; } )
     }
   }, [ id ] );
 
+  const capitalizeFirstLetter = ( str: string ): string =>
+  {
+    return str.charAt( 0 ).toUpperCase() + str.slice( 1 ).toLowerCase();
+  };
   const fetchUser = async () =>
   {
 
@@ -41,6 +102,8 @@ export default function UserDetails ( { params }: { params: { id: string; }; } )
       {
         console.log( response.data.user );
         setUser( response.data.user );
+        setSelectedCategories( response.data.user.category );
+        setSelectedMediaTypes( response.data.user.mediaType );
       }
     } catch ( error )
     {
@@ -71,12 +134,20 @@ export default function UserDetails ( { params }: { params: { id: string; }; } )
         fetchUser();
         notifySuccess( response.data.message );
       }
-    } catch ( error )
+    } catch ( error: any )
     {
+      notifyError( error.response.data.message || "There is some internal server error. Please try later" );
+
       console.error( 'Error updating user:', error );
     }
   };
 
+  const handleEdit = async () =>
+  {
+    setSelectedCategories( user.category );
+    setSelectedMediaTypes( user.mediaType );
+    setIsEditing( true );
+  };
   const handleDelete = async () =>
   {
     if ( confirm( 'Are you sure you want to delete this user?' ) )
@@ -97,38 +168,50 @@ export default function UserDetails ( { params }: { params: { id: string; }; } )
     }
   };
 
-  if ( !user ) return <div className="flex justify-center items-center h-screen">Loading...</div>;
+  const handleUpdateCancel = () =>
+  {
+    fetchUser();
+    setIsEditing( false );
+  };
+
+  if ( !user ) return <div className="flex justify-center items-center h-screen">
+    <Spinner label="Loading..." color="success" />
+  </div>;
 
   return (
     <div className="bg-gray-100 min-h-screen py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-3xl mx-auto bg-white shadow-lg rounded-lg overflow-hidden">
+      <div className="max-w-3xl mx-auto bg-white shadow-lg rounded-lg">
         <div className="px-6 py-4 bg-gray-200 text-black">
           <h1 className="text-3xl font-bold text-center">User Profile</h1>
         </div>
         <div className="p-6">
-          <div className="mb-8 text-center">
+          { !user && <Spinner label='Loading..' color="success" /> }
+          { user && <div className="mb-8 text-center">
             {/* <div className="w-32 h-32 mx-auto bg-gray-300 rounded-full flex items-center justify-center text-4xl font-bold text-white">
               { user.name.charAt( 0 ) }
             </div> */}
             {/* <div className='flex flex-row justify-center items-center gap-4'> */ }
             <h2 className="mt-4 text-2xl font-semibold">{ user.name }</h2>
-            <p className="text-gray-600 text-md italic ">{ user.username }</p>
+            <p className="text-gray-600 text-md italic ">User Name : { user.username }</p>
             {/* </div> */ }
 
             <p className="text-gray-600 text-md"> Email: { user.email }</p>
-          </div>
+          </div> }
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             { Object.entries( user ).map( ( [ key, value ] ) => (
 
-              key !== '_id'&& key!=='username' && key!=='isDeleted' && key!=="uid" && key!=="avatar" && key !== 'createdAt' && key !== 'updatedAt' && key !== '__v' && key !== 'resetPasswordExpires' && key !== 'resetPasswordToken' && (
+              key !== '_id' && key !== 'username' && key !== 'isDeleted' && key !== "uid" && key !== "avatar" && key !== 'createdAt' && key !== 'updatedAt' && key !== '__v' && key !== 'resetPasswordExpires' && key !== 'resetPasswordToken' && (
                 <div key={ key } className="flex flex-col">
-                  <label className="text-sm font-medium text-gray-700 mb-1 capitalize">
+                  { ( key !== 'mediaType' && key !== 'category' ) && ( <label className="text-sm font-medium text-gray-700 mb-1 capitalize">
                     { key.replace( /([A-Z])/g, ' $1' ).trim() }
-                  </label>
-                  {isEditing && (key==='name' || key === 'email') &&
-                    <input name={key} value={value} onChange={handleInputChange} className="mt-1 block w-full p-2 rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"/>
-                }
-                  {isEditing && (key === 'role' || key === 'mediaType' || key === 'category') && (
+                  </label> ) }
+                  { !isEditing && ( key === 'mediaType' || key == 'category' ) && ( <label className="text-sm font-medium text-gray-700 mb-1 capitalize">
+                    { key.replace( /([A-Z])/g, ' $1' ).trim() }
+                  </label> ) }
+                  { isEditing && ( key === 'name' || key === 'email' ) &&
+                    <input name={ key } value={ value } onChange={ handleInputChange } className="mt-1 block w-full p-2 rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" />
+                  }
+                  { isEditing && ( key === 'role' ) && (
                     <select
                       name={ key }
                       value={ value }
@@ -137,36 +220,70 @@ export default function UserDetails ( { params }: { params: { id: string; }; } )
                     >
                       { key === 'role' && (
                         <>
-                          <option value="admin">Admin</option>
-                          <option value="superadmin">Super Admin</option>
+
                           { adminRolesOptions.map( ( role, index ) => (
-                            <option value={ role } key={ index }>{ role }</option>
-                          ) ) }
-                        </>
-                      ) }
-                      { key === 'mediaType' && (
-                        <>
-                          {
-                            mediaTypesOptions.map( ( mediaType, index ) => (
-                              <option value={ mediaType } key={ index }>{ mediaType }</option>
-                            ) )
-                          }
-                          <option value="image">Image</option>
-                          <option value="video">Video</option>
-                          <option value="audio">Audio</option>
-                        </>
-                      ) }
-                      { key === 'category' && (
-                        <>
-                          { categoriesOptions.map( ( category, index ) => (
-                            <option value={ category } key={ index }>{ category }</option>
+                            <option value={ role.value } key={ index }>{ role.name }</option>
                           ) ) }
                         </>
                       ) }
                     </select>
                   ) }
+                  { isEditing && ( key === 'mediaType' ) &&
+                    ( <>
+                      <label className="text-sm font-medium text-gray-700 mb-1 capitalize">
+                        Media Type
+                      </label>
+                      <Multiselect
+                        avoidHighlightFirstOption
+                        showArrow
+                        id="mediaType"
+                        options={ mediaTypesOptions.map( ( option ) => ( { name: option.name, value: option.value } ) ) }
+                        selectedValues={ selectedMediaTypes.map( ( type ) => ( { name: type } ) ) }
+                        onSelect={ ( selectedList ) => onSelectMediaType( selectedList.map( ( item: any ) => item.name ) ) }
+                        onRemove={ ( selectedList ) => onRemoveMediaType( selectedList.map( ( item: any ) => item.name ) ) }
+                        showCheckbox
+                        displayValue="name"
+                        style={ {
+                          chips: {
+                            background: '#BEF264'
+                          },
+                          searchBox: {
+                            background: 'white',
+                            border: '1px solid #e5e7eb',
+                          }
+                        } }
+                      />
+                    </>
+                    ) }
+                  { isEditing && ( key === 'category' ) &&
+                    ( <>
+                      <label className="text-sm font-medium text-gray-700 mb-1 capitalize">
+                        Category
+                      </label>
+                      <Multiselect
+                        avoidHighlightFirstOption
+                        showArrow
+                        id="category"
+                        options={ categoriesOptions.map( ( option ) => ( { name: option.name, value: option.value } ) ) }
+                        selectedValues={ selectedCategories.map( ( type ) => ( { name: type } ) ) }
+                        onSelect={ ( selectedList ) => onSelectCategory( selectedList.map( ( item: any ) => item.name ) ) }
+                        onRemove={ ( selectedList ) => onRemoveCategory( selectedList.map( ( item: any ) => item.name ) ) }
+                        showCheckbox
+                        displayValue="name"
+                        style={ {
+                          chips: {
+                            background: '#BEF264'
+                          },
+                          searchBox: {
+                            background: 'white',
+                            border: '1px solid #e5e7eb',
+                          }
+                        } }
+                      />
+                    </>
+                    ) }
                   { !isEditing && (
-                    <p className="mt-1 block w-full py-2 px-3 bg-gray-100 rounded-md">{ value }</p>
+                    <p className="mt-1 block w-full py-2 px-3 bg-gray-100 rounded-md">   { Array.isArray( value ) ? value.map( item => capitalizeFirstLetter( item ) ).join( ', ' ) : capitalizeFirstLetter( value ) }</p>
                   ) }
                 </div>
               )
@@ -183,7 +300,7 @@ export default function UserDetails ( { params }: { params: { id: string; }; } )
                 Save Changes
               </button>
               <button
-                onClick={ () => setIsEditing( false ) }
+                onClick={ handleUpdateCancel }
                 className="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
               >
                 Cancel
@@ -191,7 +308,7 @@ export default function UserDetails ( { params }: { params: { id: string; }; } )
             </>
           ) : (
             <button
-              onClick={ () => setIsEditing( true ) }
+              onClick={ handleEdit }
               className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
             >
               Edit Profile

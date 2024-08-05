@@ -4,6 +4,7 @@ import "../globals.css";
 const inter = Inter( { subsets: [ "latin" ] } );
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import Sidebar from "@/components/Sidebar";
 
 export const metadata: Metadata = {
   title: "Montage India",
@@ -20,7 +21,10 @@ export default function RootLayout ( {
     <html lang="en">
       <body className={ inter.className }>
         <ToastContainer />
-        Sidebar for the user.
+        {/* <div className="flex  ">
+        <div className="w-20"> <Sidebar/></div>
+       <div >{ children }</div>
+       </div> */}
        { children }
       </body>
     </html>

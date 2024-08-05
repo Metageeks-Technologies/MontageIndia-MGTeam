@@ -1,39 +1,44 @@
 'use client';
 import { useState, useEffect, useMemo } from 'react';
-import { useRouter } from 'next/navigation';
 import instance from '@/utils/axios';
-import { Spinner } from '@nextui-org/react';
+import { Spinner, Pagination,Button } from '@nextui-org/react';
+import Link from 'next/link';
 
 interface User
 {
     _id: string;
     name: string;
+    username: string;
     email: string;
     role: string;
-    mediaType: string;
-    category: string;
+    mediaType: string[] ;
+    category: string[] ;
 }
 
 export default function UserList ()
 {
-    const [ allUsers, setAllUsers ] = useState<User[]>( [] );
+    const [ allAdmins, setAllAdmins ] = useState<User[]>( [] );
     const [ currentPage, setCurrentPage ] = useState( 1 );
+    const [ totalPages, setTotalPages] = useState(1);
+    const [ searchTerm, setSearchTerm ] = useState( '' );
+    const [ dataPerPage, setDataPerPage] = useState(6);
+    const [ roleSearch, setRoleSearch] = useState('all');
     const [ loading, setLoading ] = useState( false );
-    const router = useRouter();
-    const usersPerPage = 10;
 
     useEffect( () =>
     {
         fetchUsers();
-    }, [] );
+    }, [currentPage, dataPerPage,roleSearch] );
 
     const fetchUsers = async () =>
     {
         setLoading( true );
         try
         {
-            const response = await instance.get( `auth/admin/getAllAdmin`, { withCredentials: true } );
-            setAllUsers( response.data.users );
+            const response = await instance.get( `auth/admin/getAllAdmin`, {
+            params: {searchTerm,currentPage,dataPerPage,roleSearch},withCredentials: true } );
+            setAllAdmins( response.data.admins );
+            setTotalPages( response.data.totalPages );
         } catch ( error )
         {
             console.error( 'Error fetching users:', error );
@@ -42,66 +47,60 @@ export default function UserList ()
             setLoading( false );
         }
     };
-
-    const paginatedUsers = useMemo( () =>
-    {
-        const startIndex = ( currentPage - 1 ) * usersPerPage;
-        return allUsers.slice( startIndex, startIndex + usersPerPage );
-    }, [ allUsers, currentPage ] );
-
-    const totalPages = useMemo( () => Math.ceil( allUsers.length / usersPerPage ), [ allUsers ] );
-
-    const handleEditClick = ( userId: string ) =>
-    {
-        router.push( `/admin/user/userList/${ userId }` );
+    const capitalizeFirstLetter = (str: string): string => {
+        return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
     };
 
+    const handleRoleSearch = ( e: React.ChangeEvent<HTMLSelectElement> ) =>{
+        setRoleSearch(e.target.value);
+        setCurrentPage(1);
+    }
     const handlePageChange = ( newPage: number ) =>
     {
         setCurrentPage( newPage );
     };
-
-    const renderPaginationNumbers = () =>
-    {
-        const pageNumbers = [];
-        const maxPagesToShow = 5; // Adjust this number to show more or fewer page numbers
-
-        let startPage = Math.max( 1, currentPage - Math.floor( maxPagesToShow / 2 ) );
-        let endPage = Math.min( totalPages, startPage + maxPagesToShow - 1 );
-
-        if ( endPage - startPage + 1 < maxPagesToShow )
-        {
-            startPage = Math.max( 1, endPage - maxPagesToShow + 1 );
-        }
-
-        for ( let i = startPage; i <= endPage; i++ )
-        {
-            pageNumbers.push(
-                <button
-                    key={ i }
-                    onClick={ () => handlePageChange( i ) }
-                    className={ `px-3 py-1 mx-1 rounded ${ currentPage === i
-                        ? 'text-white bg-[#BEF264] hover:bg-[#cbff70] rounded-md transition duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#BEF264]'
-                        : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                        }` }
-                >
-                    { i }
-                </button>
-            );
-        }
-        return pageNumbers;
-    };
+    const handleDataperPage=(e:any)=>{
+        setDataPerPage(e.target.value);
+        setCurrentPage(1);
+    }
 
     return (
-        <div className="flex flex-col h-full bg-gray-100 min-w-md">
+        <div className="flex flex-col min-h-screen min-w-md">
             <div className="flex-grow p-6 md:p-0">
                 <h1 className="text-3xl font-bold mb-6 text-gray-800">User List</h1>
-                <div className="bg-white shadow-md rounded-lg overflow-hidden">
+                 <div className="flex justify-between items-center gap-4 flex-wrap my-6">
+                    <input
+                    type="text"
+                    placeholder="Search"
+                    value={searchTerm}
+                    onChange={( e ) => setSearchTerm( e.target.value )}
+                    onKeyDown={( e ) => e.key === "Enter" && fetchUsers()}
+                    className="border rounded px-4 py-2 w-full max-w-sm"
+                    />
+                    <div className="flex items-center flex-wrap gap-4 ">
+                    <div>
+                    <select className="border rounded px-4 py-2" onChange={( e ) => handleRoleSearch( e )} value={roleSearch} >
+                        <option value="all">All Admin</option>
+                        <option value="admin" >Admin</option>
+                        <option value="superadmin">SuperAdmin</option>
+                    </select>
+                    </div>
+                    <div>
+                    <select className="border rounded px-4 py-2" onChange={( e ) => handleDataperPage( e )} value={dataPerPage} >
+                        <option value={6} >6 Data per page</option>
+                        <option value={12}>12 Data per page</option>
+                        <option value={24}>24 Data per page</option>
+                    </select>
+                    </div>
+                </div>
+                </div>
+                <div className="bg-white shadow-md rounded-lg ">
                     <div className="overflow-x-auto">
                         <table className="w-full text-sm text-left text-gray-900">
                             <thead className="text-xs text-gray-700 uppercase bg-gray-200">
                                 <tr>
                                     <th scope="col" className="px-6 py-3">Name</th>
+                                    <th scope="col" className="px-6 py-3">UserName</th>
                                     <th scope="col" className="px-6 py-3">Email</th>
                                     <th scope="col" className="px-6 py-3">Role</th>
                                     <th scope="col" className="px-6 py-3 hidden md:table-cell">Media Type</th>
@@ -111,7 +110,7 @@ export default function UserList ()
                                     </th>
                                 </tr>
                             </thead>
-                            <tbody>
+                            <tbody >
                                 { loading ? (
                                     <tr>
                                         <td colSpan={ 6 } className="text-center py-4">
@@ -119,26 +118,44 @@ export default function UserList ()
                                         </td>
                                     </tr>
                                 ) : (
-                                    paginatedUsers.map( ( user ) => (
+                                    (allAdmins===null || allAdmins.length === 0) ? (
+                                            <tr>
+                                            <td colSpan={ 7 } className="text-center py-4">
+                                            <p>No Data Found</p>
+                                            </td>
+                                        </tr>
+                                        ):
+                                    allAdmins && allAdmins.length>0 && 
+                                   allAdmins.map( ( user ) => (
                                         <tr key={ user._id } className="bg-white border-b hover:bg-gray-50">
                                             <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
-                                                { user.name }
+                                                { capitalizeFirstLetter( user.name ) }
                                             </th>
-                                            <td className="px-6 py-4">{ user.email }</td>
-                                            <td className="px-6 py-4">{ user.role }</td>
-                                            <td className="px-6 py-4 hidden md:table-cell">{ user.mediaType }</td>
-                                            <td className="px-6 py-4 hidden lg:table-cell">{ user.category }</td>
-                                            <td className="px-6 py-4 text-right">
-                                                <button
-                                                    onClick={ ( e ) =>
-                                                    {
-                                                        e.preventDefault();
-                                                        handleEditClick( user._id );
-                                                    } }
-                                                    className="font-medium text-blue-600 hover:underline"
-                                                >
+                                            <td className="px-6 py-4">{ capitalizeFirstLetter( user.username ) }</td>
+                                            <td className="px-6 py-4">{ capitalizeFirstLetter( user.email ) }</td>
+                                            <td className="px-6 py-4">{ capitalizeFirstLetter(user.role) }</td>
+                                            <td className="px-6 py-4 hidden md:table-cell">{(user.mediaType && user.mediaType.length>0)
+                                                ? user.mediaType.map((mediaType, index) => (
+                                                    <span key={index}>
+                                                        {capitalizeFirstLetter(mediaType)}
+                                                                    {index < user.mediaType.length - 1 ? ', ' : ''}
+                                                    </span>
+                                                ))
+                                                : ''}</td>
+                                            <td className="px-6 py-4 hidden lg:table-cell">{ 
+                                                (user.category && user.category.length>0)?
+                                                user.category.map((category, index) => (
+                                                    <span key={index}>
+                                                        {capitalizeFirstLetter(category)}
+                                                                    {index < user.category.length - 1 ? ', ' : ''}
+                                                    </span>
+                                                ))
+                                                : ''
+                                            }</td>
+                                           <td className="px-6 py-4 text-center">
+                                                <Link href={ `/admin/user/userList/${ user._id }` } className="bg-slate-200 text-gray-600 hover:bg-slate-300 px-6 py-0.5 text-center rounded-lg">
                                                     Edit
-                                                </button>
+                                                </Link>
                                             </td>
                                         </tr>
                                     ) )
@@ -148,41 +165,41 @@ export default function UserList ()
                     </div>
                 </div>
             </div>
+           
+            {totalPages>0 && <div className="flex justify-center items-center gap-4 my-4">
+                <Button
+                    size="sm"
+                    type="button"
+                    disabled={currentPage === 1}
+                    variant="flat"
+                    className={`${currentPage === 1 ? "opacity-70" : "hover:bg-webgreenHover"} bg-webgreen-light text-white rounded-md font-bold`}
+                    onPress={() => setCurrentPage((prev) => (prev > 1 ? prev - 1 : prev))}
+                    >
+                    Prev
+                </Button> 
+                <Pagination 
+                    color="success" 
+                    classNames={{
+                    item: "w-8 h-8 text-small bg-gray-100 hover:bg-gray-300 rounded-md",
+                    cursor:"bg-webgreen hover:bg-webgreen text-white rounded-md font-bold",
+                    }} 
+                    total={totalPages} 
+                    page={currentPage} 
+                    onChange={handlePageChange}  
+                    initialPage={1} />
 
-            {/* Pagination controls */ }
-            <div className="bg-white shadow-md py-4">
-                <div className="flex justify-center items-center">
-                    <button
-                        onClick={ () => handlePageChange( 1 ) }
-                        disabled={ currentPage === 1 }
-                        className="px-3 py-1 mx-1 rounded bg-gray-200 text-gray-700 hover:bg-gray-300 disabled:bg-gray-100 disabled:text-gray-400"
-                    >
-                        First
-                    </button>
-                    <button
-                        onClick={ () => handlePageChange( currentPage - 1 ) }
-                        disabled={ currentPage === 1 }
-                        className="px-3 py-1 mx-1 rounded bg-gray-200 text-gray-700 hover:bg-gray-300 disabled:bg-gray-100 disabled:text-gray-400"
-                    >
-                        &lt;
-                    </button>
-                    { renderPaginationNumbers() }
-                    <button
-                        onClick={ () => handlePageChange( currentPage + 1 ) }
-                        disabled={ currentPage === totalPages }
-                        className="px-3 py-1 mx-1 rounded bg-gray-200 text-gray-700 hover:bg-gray-300 disabled:bg-gray-100 disabled:text-gray-400"
-                    >
-                        &gt;
-                    </button>
-                    <button
-                        onClick={ () => handlePageChange( totalPages ) }
-                        disabled={ currentPage === totalPages }
-                        className="px-3 py-1 mx-1 rounded bg-gray-200 text-gray-700 hover:bg-gray-300 disabled:bg-gray-100 disabled:text-gray-400"
-                    >
-                        Last
-                    </button>
-                </div>
-            </div>
+                <Button
+                type="button"
+                disabled={currentPage === totalPages}
+                size="sm"
+                variant="flat"
+                className={`${currentPage === totalPages ? "opacity-70" : "hover:bg-webgreenHover"} bg-webgreen-light text-white rounded-md font-bold`}
+                onPress={() => setCurrentPage((prev) => (prev < totalPages ? prev + 1 : prev))}
+                >
+                Next
+                </Button>
+        </div>
+      }
         </div>
     );
 }

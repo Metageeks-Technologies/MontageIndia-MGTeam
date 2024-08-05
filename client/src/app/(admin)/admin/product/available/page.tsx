@@ -2,7 +2,10 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import instance from "@/utils/axios";
-import { Spinner } from "@nextui-org/react";
+import { Spinner,Pagination,Button } from "@nextui-org/react";
+import Multiselect from 'multiselect-react-dropdown';
+import {categoriesOptions, mediaTypesOptions} from "@/utils/tempData";
+import { LuDot } from "react-icons/lu";
 
 // Define the interfaces for the product and variant types
 interface Variant
@@ -23,7 +26,7 @@ interface Product {
   mediaType: string;
   publicKey: string;
   uuid:string;
-  category: string;
+  category: string[];
   thumbnailKey: string;
   id: string;
 }
@@ -32,18 +35,52 @@ const Home: React.FC = () => {
   const [productData, setProductData] = useState<Product[]>([]);
   const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const productsPerPage = 6;
+  const [totalPages, setTotalPages] = useState(1);
+  const [productsPerPage, setProductsPerPage] = useState(6);
+  const [SearchTerm, setSearchTerm] = useState("");
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [selectedMediaTypes, setSelectedMediaTypes] = useState<string[]>([]);
+  const [shouldFetch, setShouldFetch] = useState(true);
 
+
+  const onSelectCategory = (selectedList: string[]) => {
+    setSelectedCategories(selectedList);
+  };
+
+  const onRemoveCategory = (selectedList: string[]) => {
+    setSelectedCategories(selectedList);
+  };
+
+  const onSelectMediaType = (selectedList: string[]) => {
+    setSelectedMediaTypes(selectedList);
+  };
+
+
+  const onRemoveMediaType = (selectedList: string[]) => {
+    setSelectedMediaTypes(selectedList);
+  };
+  const capitalizeFirstLetter = (str: string): string => {
+        return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+    };
+   const showAllProducts = async () => {
+    setSearchTerm("");
+    setSelectedCategories([]);
+    setSelectedMediaTypes([]);
+    setCurrentPage(1);
+    setShouldFetch(true);
+  }
   // fetch data from Server
+
   const fetchProduct = async () => {
     setLoading(true);
     try {
       const response = await instance.get(`/product`, {
-        params: { status: 'published' },
+        params: { status: 'published',productsPerPage, page: currentPage,category: selectedCategories, mediaType: selectedMediaTypes, searchTerm: SearchTerm   },
         withCredentials: true,
       } );
       console.log(response.data.products)
       setProductData(response.data.products);
+      setTotalPages(response.data.numOfPages);
       console.log(response);
     } catch (error) {
       console.error("Error fetching products:", error);
@@ -52,13 +89,23 @@ const Home: React.FC = () => {
     }
   };
   useEffect(() => {
-    fetchProduct();
-  }, [] );
+    if (shouldFetch) {
+      fetchProduct();
+      setShouldFetch(false);
+    }
+
+  }, [currentPage, productsPerPage,shouldFetch]);
   
+   const handleproductPerPage=(e:any)=>{
+    e.preventDefault();
+    setShouldFetch(true);
+    setCurrentPage(1);
+    setProductsPerPage(parseInt(e.target.value));
+  }
   // Handler to change page
-  const handlePageChange = ( page: number ) =>
-  {
-    setCurrentPage( page );
+  const handlePageChange = (page: number) => {
+    setShouldFetch(true);
+    setCurrentPage(page);
   };
 
   // display words function
@@ -69,44 +116,75 @@ const Home: React.FC = () => {
     }
     return text;
   }
-
-  // Calculate the number of pages
-  const totalPages = Math.ceil(productData.length / productsPerPage);
-
-  // Get products for the current page
-  const currentProducts = productData.slice(
-    (currentPage - 1) * productsPerPage,
-    currentPage * productsPerPage
-  );
-
-// Filter products by status "available"
-const availableProducts = productData.filter(
-  ( prod ) => prod.status === "published"
-);
-
+  
   return (
     <div className="container p-4  ">
       <div className="flex justify-between items-center my-6">
         <input
           type="text"
           placeholder="Search products"
-          className="border rounded px-4 py-2 w-full max-w-md"
+          value={SearchTerm}
+          onChange={( e ) => setSearchTerm( e.target.value )}
+          className="border rounded px-4 py-2 w-full max-w-sm"
         />
         <h1 className="bg-webgreen text-white px-4 py-2 rounded ml-2">
           Available Product
         </h1>
       </div>
-      <div className="flex justify-between items-center mb-4">
-        <div>
-          <button className="bg-gray-200 px-4 py-2 rounded">
-            Show All Products
+      <div className="flex justify-between items-center flex-wrap gap-4 mb-4">
+       <div className="flex justify-start items-center flex-wrap gap-4">
+          <Multiselect
+            avoidHighlightFirstOption
+            showArrow
+            placeholder="category"
+            style={{
+              chips: {
+                background: '#BEF264'
+              },
+              searchBox: {
+                background: 'white',
+                border: '1px solid #e5e7eb',
+              },
+            }}
+            options={categoriesOptions.map((option) => ({ name: option.name ,value: option.value }))} 
+            selectedValues={selectedCategories.map((category) => ({ name: category }))}
+            onSelect={(selectedList) => onSelectCategory(selectedList.map((item:any) => item.name))} 
+            onRemove={(selectedList) => onRemoveCategory(selectedList.map((item:any) => item.name))} 
+            showCheckbox
+            displayValue="name" 
+          />
+          <Multiselect
+            avoidHighlightFirstOption
+            showArrow
+            placeholder="media type"
+            options={mediaTypesOptions.map((option) => ({ name: option.name, value: option.value }))} 
+            selectedValues={selectedMediaTypes.map((type) => ({ name: type }))}
+            onSelect={(selectedList) => onSelectMediaType(selectedList.map((item:any) => item.name))} 
+            onRemove={(selectedList) => onRemoveMediaType(selectedList.map((item:any) => item.name))} 
+            showCheckbox
+            displayValue="name" 
+            style={{
+              chips: {
+                background: '#BEF264'
+              },
+              searchBox: {
+                background: 'white',
+                border: '1px solid #e5e7eb',
+              }
+            }}
+          />
+          <button className="bg-webgreen text-white px-4 py-2 rounded" onClick={fetchProduct}>
+            Search
+          </button>
+          <button type="button" className="px-4 py-2 rounded bg-gray-200" onClick={showAllProducts}>
+            Show All
           </button>
         </div>
         <div>
-          <select className="border rounded px-4 py-2">
-            <option>6 Data per page</option>
-            <option>12 Data per page</option>
-            <option>24 Data per page</option>
+          <select className="border rounded px-4 py-2" value={productsPerPage} onChange={(e) => handleproductPerPage(e)}>
+            <option value={6} >6 Data per page</option>
+            <option value={12}>12 Data per page</option>
+            <option value={24}>24 Data per page</option>
           </select>
         </div>
       </div>
@@ -115,10 +193,10 @@ const availableProducts = productData.filter(
           <thead>
             <tr>
               <th className="px-5 py-3 bg-gray-100 border-b border-gray-200 text-gray-800 text-left text-sm uppercase font-normal">
-                <input type="checkbox" />
-              </th>
-              <th className="px-5 py-3 bg-gray-100 border-b border-gray-200 text-gray-800 text-left text-sm uppercase font-normal">
                 Product
+              </th>
+               <th className="px-5 py-3 bg-gray-100 border-b border-gray-200 text-gray-800 text-left text-sm uppercase font-normal">
+                Product Title
               </th>
               <th className="px-5 py-3 bg-gray-100 border-b border-gray-200 text-gray-800 text-left text-sm uppercase font-normal">
                 Media Type
@@ -142,23 +220,29 @@ const availableProducts = productData.filter(
                 </td>
               </tr>
             ) : (
-              currentProducts.map((prod) => (
+              (productData===null || productData.length === 0) ? (
+                    <tr>
+                    <td colSpan={ 7 } className="text-center py-4">
+                      <p className="text-gray-400 text-sm ">No Data Found</p>
+                    </td>
+                  </tr>
+                  ):
+                  productData && productData.length>0 &&
+              productData.map((prod) => (
                 <tr key={prod._id} className="hover:bg-gray-300">
                   <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                    <input type="checkbox" />
-                  </td>
-                  <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                    <div className="flex items-center">
-                      <div className="flex-shrink-0">
+                    <div className="flex justify-center items-center">
                         { prod.mediaType === "image" && (
-                          <img
-                            className="w-10 h-10 rounded object-cover"
-                            src={ `https://mi2-public.s3.ap-southeast-1.amazonaws.com/${ prod.thumbnailKey }`}
-                        alt={ prod.title }
+                          <div className="w-40 h-20">
+                             <img
+                                className="w-full h-full rounded object-contain"
+                                src={ `https://mi2-public.s3.ap-southeast-1.amazonaws.com/${ prod.thumbnailKey }`}
+                                alt={ prod.title }
                           />
+                          </div>
                         )}
                         { prod.mediaType === "audio" && (
-                          <audio className="w-40 h-20" controls>
+                          <audio className="w-60 h-20 object-contain" controls>
                             <source
                               src={ `https://mi2-public.s3.ap-southeast-1.amazonaws.com/${ prod.thumbnailKey }`}
                             type="audio/mpeg"
@@ -167,21 +251,22 @@ const availableProducts = productData.filter(
                           </audio>
                         ) }
                         { prod.mediaType === "video" && (
-                          <video width="100" height="100" controls>
-                            <source
-                              src={` https://mi2-public.s3.ap-southeast-1.amazonaws.com/${ prod.thumbnailKey }`}
-                            type="video/mp4"
-                            />
-                            Your browser does not support the video element.  
-                          </video>
+                           
+                              <video className="w-40 h-20 object-contain" controls>
+                                <source 
+                                  src={` https://mi2-public.s3.ap-southeast-1.amazonaws.com/${ prod.thumbnailKey }`}
+                                type="video/mp4"
+                                />
+                                Your browser does not support the video element.  
+                              </video>
+                         
                         ) }
-                      </div>
-                      <div className="ml-3">
-                        <p className="text-gray-900 whitespace-no-wrap">
-                          { prod.title }
-                        </p>
-                      </div>
                     </div>
+                  </td>
+                 <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                    <p className="text-gray-900 whitespace-no-wrap">
+                      {capitalizeFirstLetter(prod.title)}
+                    </p>
                   </td>
                   <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                     <span className="relative inline-block px-3 py-1 font-semibold leading-tight text-green-900">
@@ -189,23 +274,32 @@ const availableProducts = productData.filter(
                         aria-hidden
                         className="absolute inset-0 opacity-50 bg-green-200 rounded-full"
                       ></span>
-                      <span className="relative">{prod.mediaType}</span>
+                      <span className="relative">{capitalizeFirstLetter(prod.mediaType)}</span>
                     </span>
                   </td>
                   <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                     <p className="text-gray-900 whitespace-no-wrap">
-                      {prod.category}
+                    {
+                       (prod.category && prod.category.length>0)?
+                          prod.category.map((category, index) => (
+                              <span key={index}>
+                                  {capitalizeFirstLetter(category)}
+                                              {index < prod.category.length - 1 ? ', ' : ''}
+                              </span>
+                          ))
+                          : ''
+                    }
                     </p>
                   </td>
                   <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                     <p className="text-gray-900 ">
                       {truncateText(prod.description, 3)}
                     </p>
-                  </td>
+                  </td> 
                   <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                     <button className="text-gray-600 hover:text-gray-900">
                       <Link
-                        href={`details/${prod.uuid}`}
+                        href={`/admin/product/update/${prod.uuid}`}
                         className="bg-slate-200 px-6 py-0.5 flex items-center rounded-lg"
                       >
                         Details
@@ -220,37 +314,41 @@ const availableProducts = productData.filter(
       </div>
 
       {/* Pagination Controls */}
-      <div className="flex  items-center mt-6">
-        <button
-          onClick={() => handlePageChange(currentPage - 1)}
-          disabled={currentPage === 1}
-          className="px-4 py-2 mx-1 bg-gray-300 text-gray-700 rounded disabled:opacity-50"
-        >
-          Pre
-        </button>
-        <div className="flex">
-          {[...Array(totalPages)].map((_, index) => (
-            <button
-              key={index}
-              onClick={() => handlePageChange(index + 1)}
-              className={`px-4 py-2 mx-1 ${
-                currentPage === index + 1
-                  ? "bg-webgreen text-white"
-                  : "bg-gray-200 text-gray-700"
-              } rounded`}
-            >
-              {index + 1}
-            </button>
-          ))}
+      {totalPages>0 && <div className="flex justify-center items-center gap-4 my-4">
+                <Button
+                    size="sm"
+                    type="button"
+                    disabled={currentPage === 1}
+                    variant="flat"
+                    className={`${currentPage === 1 ? "opacity-70" : "hover:bg-webgreenHover"} bg-webgreen-light text-white rounded-md font-bold`}
+                    onPress={() => setCurrentPage((prev) => (prev > 1 ? prev - 1 : prev))}
+                    >
+                    Prev
+                </Button> 
+                <Pagination 
+                    color="success" 
+                    classNames={{
+                    item: "w-8 h-8 text-small bg-gray-100 hover:bg-gray-300 rounded-md",
+                    cursor:"bg-webgreen hover:bg-webgreen text-white rounded-md font-bold",
+                    }} 
+                    total={totalPages} 
+                    page={currentPage} 
+                    onChange={handlePageChange}  
+                    initialPage={1} />
+
+                <Button
+                type="button"
+                disabled={currentPage === totalPages}
+                size="sm"
+                variant="flat"
+                className={`${currentPage === totalPages ? "opacity-70" : "hover:bg-webgreenHover"} bg-webgreen-light text-white rounded-md font-bold`}
+                onPress={() => setCurrentPage((prev) => (prev < totalPages ? prev + 1 : prev))}
+                >
+                Next
+                </Button>
         </div>
-        <button
-          onClick={() => handlePageChange(currentPage + 1)}
-          disabled={currentPage === totalPages}
-          className="px-4 py-2 mx-1 bg-gray-300 text-gray-700 rounded disabled:opacity-50"
-        >
-          Next
-        </button>
-      </div>
+      }
+
     </div>
   );
 };

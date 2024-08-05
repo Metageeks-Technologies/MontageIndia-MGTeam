@@ -2,9 +2,10 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import instance from "@/utils/axios";
-import { Spinner } from "@nextui-org/react";
+import { Spinner, Pagination, Button } from "@nextui-org/react";
 import Multiselect from 'multiselect-react-dropdown';
 import {categoriesOptions, mediaTypesOptions} from "@/utils/tempData";
+import { LuDot } from "react-icons/lu";
 
 
 // Define the interfaces for the product and variant types
@@ -17,6 +18,7 @@ interface Variant {
 interface Product {
   _id: string;
   slug: string;
+  uuid:string;
   title: string;
   description: string;
   tags: string[];
@@ -24,7 +26,7 @@ interface Product {
   status: string;
   mediaType: string;
   publicKey: string;
-  category: string;
+  category: string[];
   thumbnailKey: string;
   id: string;
 }
@@ -38,7 +40,7 @@ const Home: React.FC = () => {
   const [SearchTerm, setSearchTerm] = useState("");
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [selectedMediaTypes, setSelectedMediaTypes] = useState<string[]>([]);
-
+  const [shouldFetch, setShouldFetch] = useState(true);
   const onSelectCategory = (selectedList: string[]) => {
     setSelectedCategories(selectedList);
   };
@@ -54,11 +56,15 @@ const Home: React.FC = () => {
   const onRemoveMediaType = (selectedList: string[]) => {
     setSelectedMediaTypes(selectedList);
   };
+  const capitalizeFirstLetter = (str: string): string => {
+        return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+    };
   const showAllProducts = async () => {
     setSearchTerm("");
     setSelectedCategories([]);
     setSelectedMediaTypes([]);
-    fetchProduct();
+    setCurrentPage(1);
+    setShouldFetch(true);
   }
 
   // fetch data from Server
@@ -79,8 +85,12 @@ const Home: React.FC = () => {
     }
   };
   useEffect(() => {
-    fetchProduct();
-  }, [currentPage, productsPerPage]);
+    if (shouldFetch) {
+      fetchProduct();
+      setShouldFetch(false);
+    }
+
+  }, [currentPage,productsPerPage,shouldFetch]);
 
   // display words function
   function truncateText(text: string, wordLimit: number): string {
@@ -90,9 +100,6 @@ const Home: React.FC = () => {
     }
     return text;
   }
-  
-  // Get products for the current page
-  const currentProducts = productData;
 
   // Handler to change page
   const handlePageChange = (page: number) => {
@@ -128,7 +135,7 @@ const Home: React.FC = () => {
                 border: '1px solid #e5e7eb',
               },
             }}
-            options={categoriesOptions.map((option) => ({ name: option }))} 
+            options={categoriesOptions.map((option) => ({ name: option.name , value: option.value }))} 
             selectedValues={selectedCategories.map((category) => ({ name: category }))}
             onSelect={(selectedList) => onSelectCategory(selectedList.map((item:any) => item.name))} 
             onRemove={(selectedList) => onRemoveCategory(selectedList.map((item:any) => item.name))} 
@@ -139,7 +146,7 @@ const Home: React.FC = () => {
             avoidHighlightFirstOption
             showArrow
             placeholder="media type"
-            options={mediaTypesOptions.map((option) => ({ name: option }))} 
+            options={mediaTypesOptions.map((option) => ({ name: option.name , value: option.value }))} 
             selectedValues={selectedMediaTypes.map((type) => ({ name: type }))}
             onSelect={(selectedList) => onSelectMediaType(selectedList.map((item:any) => item.name))} 
             onRemove={(selectedList) => onRemoveMediaType(selectedList.map((item:any) => item.name))} 
@@ -158,7 +165,7 @@ const Home: React.FC = () => {
           <button className="bg-webgreen text-white px-4 py-2 rounded" onClick={fetchProduct}>
             Search
           </button>
-          <button className="bg-gray-200 px-4 py-2 rounded" onClick={showAllProducts}>
+          <button type="button" className="bg-gray-200 px-4 py-2 rounded" onClick={showAllProducts}>
             Show All
           </button>
         </div>
@@ -179,6 +186,9 @@ const Home: React.FC = () => {
               </th>
               <th className="px-5 py-3 bg-gray-100 border-b border-gray-200 text-gray-800 text-left text-sm uppercase font-normal">
                 Product
+              </th>
+               <th className="px-5 py-3 bg-gray-100 border-b border-gray-200 text-gray-800 text-left text-sm uppercase font-normal">
+                Product Title
               </th>
               <th className="px-5 py-3 bg-gray-100 border-b border-gray-200 text-gray-800 text-left text-sm uppercase font-normal">
                 Media Type
@@ -202,23 +212,32 @@ const Home: React.FC = () => {
                 </td>
               </tr>
             ) : (
-              currentProducts.map((prod) => (
+              (productData===null || productData.length === 0) ? (
+                    <tr>
+                    <td colSpan={ 7 } className="text-center py-4">
+                      <p className="text-gray-400 text-sm" >No Data Found</p>
+                    </td>
+                  </tr>
+                  ):
+                 productData && productData.length>0 &&
+              productData.map((prod) => (
                 <tr key={prod._id} className="hover:bg-gray-300">
                   <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                     <input type="checkbox" />
                   </td>
                   <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                    <div className="flex items-center">
-                      <div className="flex-shrink-0">
+                    <div className="flex justify-center items-center">
                         { prod.mediaType === "image" && (
+                           <div className="w-40 h-20">
                           <img
-                            className="w-10 h-10 rounded object-cover"
+                            className="w-10 h-10 rounded object-contain"
                             src={ `https://mi2-public.s3.ap-southeast-1.amazonaws.com/${ prod.thumbnailKey }` }
                             alt={ prod.title }
                           />
+                          </div>
                         ) }
                         { prod.mediaType === "audio" && (
-                          <audio className="w-40 h-20" controls>
+                          <audio className="w-60 h-20 object-contain" controls>
                             <source
                               src={ `https://mi2-public.s3.ap-southeast-1.amazonaws.com/${ prod.thumbnailKey }` }
                               type="audio/mpeg"
@@ -227,7 +246,7 @@ const Home: React.FC = () => {
                           </audio>
                         ) }
                         { prod.mediaType === "video" && (
-                          <video width="100" height="100" controls>
+                          <video className="w-40 h-20 object-contain" controls>
                             <source
                               src={ ` https://mi2-public.s3.ap-southeast-1.amazonaws.com/${ prod.thumbnailKey }` }
                               type="video/mp4"
@@ -235,13 +254,12 @@ const Home: React.FC = () => {
                             Your browser does not support the video element.
                           </video>
                         ) }
-                      </div>
-                      <div className="ml-3">
-                        <p className="text-gray-900 whitespace-no-wrap">
-                          { prod.title }
-                        </p>
-                      </div>
                     </div>
+                  </td>
+                   <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                    <p className="text-gray-900 whitespace-no-wrap">
+                      {capitalizeFirstLetter(prod.title)}
+                    </p>
                   </td>
                   <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                     <span className="relative inline-block px-3 py-1 font-semibold leading-tight text-green-900">
@@ -249,12 +267,21 @@ const Home: React.FC = () => {
                         aria-hidden
                         className="absolute inset-0 opacity-50 bg-green-200 rounded-full"
                       ></span>
-                      <span className="relative">{prod.mediaType}</span>
+                      <span className="relative">{capitalizeFirstLetter(prod.mediaType)}</span>
                     </span>
                   </td>
                   <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                     <p className="text-gray-900 whitespace-no-wrap">
-                      {prod.category}
+                       {
+                       (prod.category && prod.category.length>0)?
+                          prod.category.map((category, index) => (
+                              <span key={index}>
+                                  {capitalizeFirstLetter(category)}
+                                              {index < prod.category.length - 1 ? ', ' : ''}
+                              </span>
+                          ))
+                          : ''
+                    }
                     </p>
                   </td>
                   <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
@@ -265,7 +292,7 @@ const Home: React.FC = () => {
                   <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                     <button className="text-gray-600 hover:text-gray-900">
                       <Link
-                        href={`details/${prod._id}`}
+                        href={`/admin/product/update/${prod.uuid}`}
                         className="bg-slate-200 px-6 py-0.5 flex items-center rounded-lg"
                       >
                         Details
@@ -280,37 +307,41 @@ const Home: React.FC = () => {
       </div>
 
       {/* Pagination Controls */}
-      <div className="flex  items-center mt-6">
-        <button
-          onClick={() => handlePageChange(currentPage - 1)}
-          disabled={currentPage === 1}
-          className="px-4 py-2 mx-1 bg-gray-300 text-gray-700 rounded disabled:opacity-50"
-        >
-          Pre
-        </button>
-        <div className="flex">
-          {[...Array(totalPages)].map((_, index) => (
-            <button
-              key={index}
-              onClick={() => handlePageChange(index + 1)}
-              className={`px-4 py-2 mx-1 ${
-                currentPage === index + 1
-                  ? "bg-webgreen text-white"
-                  : "bg-gray-200 text-gray-700"
-              } rounded`}
-            >
-              {index + 1}
-            </button>
-          ))}
+      {totalPages>0 && <div className="flex justify-center items-center gap-4 my-4">
+                <Button
+                    size="sm"
+                    type="button"
+                    disabled={currentPage === 1}
+                    variant="flat"
+                    className={`${currentPage === 1 ? "opacity-70" : "hover:bg-webgreenHover"} bg-webgreen-light text-white rounded-md font-bold`}
+                    onPress={() => setCurrentPage((prev) => (prev > 1 ? prev - 1 : prev))}
+                    >
+                    Prev
+                </Button> 
+                <Pagination 
+                    color="success" 
+                    classNames={{
+                    item: "w-8 h-8 text-small bg-gray-100 hover:bg-gray-300 rounded-md",
+                    cursor:"bg-webgreen hover:bg-webgreen text-white rounded-md font-bold",
+                    }} 
+                    total={totalPages} 
+                    page={currentPage} 
+                    onChange={handlePageChange}  
+                    initialPage={1} />
+
+                <Button
+                type="button"
+                disabled={currentPage === totalPages}
+                size="sm"
+                variant="flat"
+                className={`${currentPage === totalPages ? "opacity-70" : "hover:bg-webgreenHover"} bg-webgreen-light text-white rounded-md font-bold`}
+                onPress={() => setCurrentPage((prev) => (prev < totalPages ? prev + 1 : prev))}
+                >
+                Next
+                </Button>
         </div>
-        <button
-          onClick={() => handlePageChange(currentPage + 1)}
-          disabled={currentPage === totalPages}
-          className="px-4 py-2 mx-1 bg-gray-300 text-gray-700 rounded disabled:opacity-50"
-        >
-          Next
-        </button>
-      </div>
+      }
+
     </div>
   );
 };
