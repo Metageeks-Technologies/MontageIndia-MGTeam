@@ -36,5 +36,5 @@ services:
     command: npm start
 
 networks:
-  my_network:
+  mi-network:
     driver: bridge
