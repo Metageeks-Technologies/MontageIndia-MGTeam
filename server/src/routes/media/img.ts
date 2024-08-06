@@ -11,7 +11,14 @@ const storage = multer.diskStorage({
         cb(null, file.originalname); // Use the original file name
     },
 });
-const upload = multer({ storage: storage });
+const upload = multer({
+    storage: storage,
+    limits: { fileSize: 100 * 1024 * 1024 }, // 100MB
+    fileFilter: (req, file, cb) => {
+        // You can add additional file type validation here if needed
+        cb(null, true);
+    }
+});
 const imageRouter = express.Router();
 
 imageRouter.route("/reduce").post(upload.single('image'), reduceImage);
