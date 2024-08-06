@@ -18,11 +18,11 @@ import subscriptionRouter from '@src/routes/subscription/subscription';
 const {mongoUrl,nodeEnv}=config;
  
 const app: Express = express();
-app.use(cors({
-  origin:nodeEnv==="production"?"https://montage-india-mg-team.vercel.app":"http://localhost:3000", 
-  credentials: true 
-}));
-const allowedOrigins = ['https://montage-india-mg-team.vercel.app'];
+// app.use(cors({
+//   origin:nodeEnv==="production"?"https://montage-india-mg-team.vercel.app":"http://localhost:3000", 
+//   credentials: true 
+// }));
+// const allowedOrigins = ['https://montage-india-mg-team.vercel.app'];
 
 // app.use(cors({
 //   origin: function (origin, callback) {
@@ -36,6 +36,27 @@ const allowedOrigins = ['https://montage-india-mg-team.vercel.app'];
 //   credentials: true
 // }));
 // temp
+const allowedOrigins = ['https://montage-india-mg-team.vercel.app'];
+
+const corsOptions = {
+  origin: function (origin:any, callback:any) {
+    if (!origin || allowedOrigins.includes(origin) || (nodeEnv !== 'production' && origin === 'http://localhost:3000')) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+};
+
+app.use(cors(corsOptions));
+
+// Handle preflight requests
+app.options('*', cors(corsOptions));
+
+
 app.enable("trust proxy");
 app.use(express.json());
 app.use(cookieParser());
