@@ -15,6 +15,7 @@ import fieldRouter from '@src/routes/field/field';
 import cookieParser from 'cookie-parser';
 import paymentRouter from '@src/routes/payment/payment';
 import subscriptionRouter from '@src/routes/subscription/subscription';
+import userRouter from './routes/user/customer';
 const {mongoUrl,nodeEnv}=config;
  
 const app: Express = express();
@@ -64,7 +65,7 @@ app.use(express.urlencoded({limit: "500mb" ,extended: true }));
 app.use(morgan('dev'));
 
 app.use("/api/v1/auth/admin", adminRouter);
-app.use("/api/v1/user", adminRouter);
+app.use("/api/v1/user", userRouter);
 app.use("/api/v1/media/image", imageRouter);
 app.use("/api/v1/media/video", videoRouter);
 app.use("/api/v1/media/audio", audioRouter);
