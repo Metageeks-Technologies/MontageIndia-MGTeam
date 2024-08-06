@@ -1,93 +1,124 @@
 // pages/index.tsx
-import { FC } from "react";
 "use client"
+import { FC } from "react";
 import {
   AiOutlineUser,
   AiOutlineShoppingCart,
   AiOutlineLink,
 } from "react-icons/ai";
 import { FiSettings } from "react-icons/fi";
+import { useState, useEffect } from 'react';
+import instance from '@/utils/axios';
+import { notifyError } from '@/utils/toast';
 
-interface ProfileField {
-  label: string;
-  value: string;
+interface User {
+    id: string;
+    name: string;
+    email: string;
+    phone: string;
+    username: string;
+    _id: string;
 }
 
-const profileData: ProfileField[] = [
-  { label: "Name", value: "Md Sajid" },
-  { label: "User ID", value: "437578279" },
-  { label: "User Name", value: "mdsajidalam70615464" },
-  { label: "Email", value: "mdsajidalam706154@gmail.com" },
-  { label: "Password", value: "******" }, // Masked for security
-];
-
-
-
 const Home: FC = () => {
-  return (
-    <div className="flex gap-6 h-screen bg-white">
-      {/* Sidebar */}
-      <div className=" w-80 bg-gray-100 p-4 py-12 border">
-        <div className="">
-          <h1 className="text-lg font-medium">My Account</h1>
-          <div className="p-4">
-            <div className="flex items-center text-gray-700 py-2">
-              <AiOutlineUser className="mr-2" />
-              <span>Profile</span>
-            </div>
-            <div className="flex items-center text-gray-700 py-2">
-              <FiSettings className="mr-2" />
-              <span>Plans</span>
-            </div>
-            <div className="flex items-center text-gray-700 py-2">
-              <AiOutlineShoppingCart className="mr-2" />
-              <span>Purchase History</span>
-            </div>
-            <div className="flex items-center text-gray-700 py-2">
-              <AiOutlineLink className="mr-2" />
-              <span>Connected Accounts</span>
-            </div>
-            <div className="flex items-center text-gray-700 py-2">
-              <FiSettings className="mr-2" />
-              <span>Developers</span>
-            </div>
-          </div>
-        </div>
-      </div>
+    const [user, setUser] = useState<User | null>(null);
 
-      <div className="w-full p-8">
-        <h2 className="text-2xl font-bold ">Profile</h2>
-        <p className="py-6">userList</p>
-        <div className="border-t border-gray-200 pt-4 border">
-          {profileData.map((field, index) => (
-            <div
-              key={index}
-              className="flex justify-between items-center mx-6 py-3 border-b"
-            >
-              <div className="text-gray-700">
-                <p>{field.label}</p>
-              </div>
-              <div className="text-gray-700">
-                {" "}
-                <p>{field.value}</p>
-              </div>
-              <button className="text-blue-600">Edit</button>
+    const fetchUser = async () => {
+        try {
+            const response = await instance.get(`/user/getCurrent`);
+            console.log("user", response)
+            if (response.data && response.data.user) {
+                setUser(response.data.user);
+            }
+        } catch (error) {
+            console.error("Error fetching user:", error);
+            notifyError("Failed to fetch user data");
+        }
+    };
+
+    useEffect(() => {
+        fetchUser()
+    }, []);
+
+    return (
+        <div className="flex gap-6 h-screen bg-white">
+            {/* Sidebar */}
+            <div className="w-80 bg-gray-100 p-4 py-12 border">
+                <div>
+                    <h1 className="text-md text-gray-700 font-medium">My Account</h1>
+                    <div className="mt-4">
+                        <div className="flex items-center text-gray-700 px-4 py-2 hover:bg-gray-200 cursor-pointer">
+                            <AiOutlineUser className="mr-3 h-6 w-6" />
+                            <span>Profile</span>
+                        </div>
+                        <div className="flex items-center text-gray-700 px-4 py-2 hover:bg-gray-200 cursor-pointer">
+                            <FiSettings className="mr-3 h-6 w-6" />
+                            <span>Plans</span>
+                        </div>
+                        <div className="flex items-center text-gray-700 px-4 py-2 hover:bg-gray-200 cursor-pointer">
+                            <AiOutlineShoppingCart className="mr-3 h-6 w-6" />
+                            <span>Purchase History</span>
+                        </div>
+                        <hr />
+                        <div className="flex items-center text-gray-700 px-4 py-2 hover:bg-gray-200 cursor-pointer">
+                            <AiOutlineLink className="mr-3 h-6 w-6" />
+                            <span>Connected Accounts</span>
+                        </div>
+                        <div className="flex items-center text-gray-700 px-4 py-2 hover:bg-gray-200 cursor-pointer">
+                            <FiSettings className="mr-3 h-6 w-6" />
+                            <span>Developers</span>
+                        </div>
+                    </div>
+                </div>
             </div>
-          ))}
+
+            <div className="w-full p-8">
+                <h2 className="text-4xl font-bold">Profile</h2>
+                <p className="py-6">User details</p>
+                <div className="border border-gray-200 pt-4">
+                    {user && (
+                        <>
+                            <div className="flex justify-between  items-center mx-6 py-2 border-b">
+                                <div className="text-gray-700">Name</div>
+                                <div className="text-gray-700">{user.name}</div>
+                                <button className="text-blue-600">Edit</button>
+                            </div>
+                            <div className="flex justify-between items-center mx-6 py-3 border-b">
+                                <div className="text-gray-700">User ID</div>
+                                <div className="text-gray-700">{user._id}</div>
+                                <button/>
+                            </div>
+                            <div className="flex justify-between items-center mx-6 py-3 border-b">
+                                <div className="text-gray-700">User Name</div>
+                                <div className="text-gray-700">{user.username}</div>
+                                <button/>
+                            </div>
+                            <div className="flex justify-between items-center mx-6 py-3 border-b">
+                                <div className="text-gray-700">Password</div>
+                                <div className="text-gray-700">********</div>
+                                <button className="text-blue-600">Edit</button>
+                            </div>
+                            <div className="flex justify-between items-center mx-6 py-3 border-b">
+                                <div className="text-gray-700">E-mail</div>
+                                <div className="text-gray-700">{user.email}</div>
+                                <button className="text-blue-600">Edit</button>
+                            </div>
+                        </>
+                    )}
+                </div>
+
+                <div className="mt-10">
+                    <h1 className="text-lg font-bold">Delete my Account</h1>
+                    <div className="border w-full mt-2 p-6 flex flex-col gap-2">
+                        <p className="text-sm text-gray-700">
+                            This will remove all of your personal data forever.
+                        </p>
+                        <p className="text-blue-600 hover:underline cursor-pointer">Delete my Account</p>
+                    </div>
+                </div>
+            </div>
         </div>
-        
-        <div className="mt-10">
-            <h1>Delete my Acount</h1>
-        <div className="border w-full  mt-2 p-6 flex lg:flex-col gap-2">
-          <p className="text-sm text-gray-700">
-            This will remove all of your personal data forever.
-          </p>
-          <p className="text-blue-600 ">Delete my Acount</p>
-        </div>
-        </div>
-      </div>
-    </div>
-  );
+    );
 };
 
 export default Home;

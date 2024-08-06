@@ -17,7 +17,7 @@ const ImageGallery: React.FC = ( data: any ) =>
     }
     return text;
   }
-  console.log( "iamge", data );
+  // console.log( "iamge", data );
   
   const router = useRouter()
 
