@@ -15,6 +15,7 @@ import fieldRouter from '@src/routes/field/field';
 import cookieParser from 'cookie-parser';
 import paymentRouter from '@src/routes/payment/payment';
 import subscriptionRouter from '@src/routes/subscription/subscription';
+import userRouter from './routes/user/customer';
 const {mongoUrl,nodeEnv}=config;
  
 const app: Express = express();
@@ -50,6 +51,8 @@ const corsOptions = {
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS','PATCH'],
   allowedHeaders: ['Content-Type', 'Authorization']
 };
+
+
 
 app.use(cors(corsOptions));
 
