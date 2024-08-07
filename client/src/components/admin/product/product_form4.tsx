@@ -55,7 +55,7 @@ const Form4 = ( { formData }: any ) =>
   const [selectedCategories, setSelectedCategories] =  useState<MultiValue<{ label: string; value: string }>>([]);
   const [availableCategories, setAvailableCategories] = useState<any[]>([]);
   const BucketName=process.env.NEXT_PUBLIC_AWS_BUCKET;
-  const [isPublishButtonDisabled, setIsPublishButtonDisabled] = useState(true);
+  const [isPublishButtonDisabled, setIsPublishButtonDisabled] = useState(false);
   const AwsRegiosn=process.env.NEXT_PUBLIC_AWS_REIGION;
   console.log("first",data)
 
@@ -107,8 +107,21 @@ const Form4 = ( { formData }: any ) =>
     } 
   };
 
+  const filteredTags = data.tags.filter(tag => tag.trim() !== '');
+  const isTagsEmpty: boolean = filteredTags.length === 0;
+
   const handleSave = async ( field: string ) =>
   {
+    if (!data.title || !data.description || filteredTags.length === 0) {
+    Swal.fire({
+      icon: 'error',
+      title: 'Invalid input',
+      text: `${field} must be valid and not empty.`,
+    });
+    setEditMode( prev => ({ ...prev,[ field ]:false}));
+
+    return ;
+  }
     try
     {
       let updatedField = {};
@@ -117,9 +130,6 @@ const Form4 = ( { formData }: any ) =>
         case 'title':
           updatedField = { title: data.title };
           break;
-        case 'slug':
-          updatedField = { slug: data.slug };
-          break;
         case 'category':
           updatedField = { category: selectedCategories.map( c => c.label ) };
           break;
@@ -127,14 +137,12 @@ const Form4 = ( { formData }: any ) =>
           updatedField = { description: data.description };
           break;
         case 'tags':
-          updatedField = { tags: data.tags };
+          updatedField = { tags: filteredTags };
           break;
-        case 'variants':
-          updatedField = { variants: data.variants };
-          break;
-        default:
+         default:
           throw new Error( 'Unknown field' );
       }
+      console.log(updatedField)
       const response = await instance.patch( `/product/${ initialData.uuid }`, updatedField );
       if (response.status === 201) {
         notifySuccess(`${field} updated successfully`);
@@ -164,9 +172,22 @@ const Form4 = ( { formData }: any ) =>
   };
   const handleSaveVariant = async ( index: number ) =>
   {
+    const variant = data.variants[ index ];
+
+    if (!variant.price || variant.price <= 0 || !variant.label || variant.label.trim() === '') {
+      Swal.fire({
+        icon: 'error',
+        title: 'Invalid input',
+        text: 'Label and price must be valid and not empty.',
+      });
+      const allVariantsValid = data.variants.every(variant =>
+        variant.label?.trim() !== '' && variant.price > 0
+      );
+      setIsPublishButtonDisabled(allVariantsValid);
+      return;
+    }
     try
     {
-      const variant = data.variants[ index ];
       const sendData = {
         uuid: initialData.uuid,
         price: variant.price,
@@ -174,13 +195,21 @@ const Form4 = ( { formData }: any ) =>
       };
       const response = await instance.patch( `/product/variant/${ variant._id }`, sendData );
 
+      if(response.status===201){
       console.log( 'Saving variant data:', response.data );
       setFormData(response.data.product)
         console.log("h",data)
-      
+      }
+        const isAllVariantsValid = data.variants.every(variant => 
+          variant.label && variant.price
+        );
+        setIsPublishButtonDisabled(isAllVariantsValid);
 
     } catch ( error:any )
-    {
+    {  const isAllVariantsValid = data.variants.every(variant => 
+      variant.label && variant.price
+    );
+    setIsPublishButtonDisabled(isAllVariantsValid);
       console.error( 'Error saving variant:', error );
       const errorMessage = error.response?.data?.message || 'An error occurred while sending data';
       Swal.fire( {
@@ -206,9 +235,17 @@ const Form4 = ( { formData }: any ) =>
     const newTags = data.tags.filter( ( _, i ) => i !== index );
     setFormData( { ...data, tags: newTags } );
   };
+  
   const handleSubmit = async ( e: React.FormEvent<HTMLFormElement> ) =>
   {
     e.preventDefault();
+  
+    if (!isPublishButtonDisabled || Object.values(editMode).some(mode => mode) || isTagsEmpty) {
+      // Optionally, you can show an error message here if desired
+      console.log(isPublishButtonDisabled, Object.values(editMode).some(mode => mode) ,isTagsEmpty)
+      console.log('Form submission is not allowed due to invalid conditions.');
+      return; // Prevent form submission if conditions are not met
+    }
     try
     {
       const updatedField = { status: "published" };
@@ -260,7 +297,7 @@ const Form4 = ( { formData }: any ) =>
     }
   };
 
-  const getCategories = async () =>
+  const getCategories = async () => 
   {
     try
     {
@@ -277,14 +314,12 @@ const Form4 = ( { formData }: any ) =>
   };
 
   useEffect( () =>
-  {
-    getCategories();
-        const isAllVariantsValid = data.variants.every(variant => 
-      variant.label && variant.price
+  { console.log("dsd",isTagsEmpty)
+    const allVariantsValid = data.variants.every(variant =>
+      variant.label?.trim() !== '' && variant.price > 0
     );
-    setIsPublishButtonDisabled(!isAllVariantsValid);
-  }, [ user ,data] );
-
+    setIsPublishButtonDisabled(allVariantsValid)
+    }, [] );
   return ( <>  { loading ? <>
     <div role="status" className='justify-center h-screen flex items-center m-auto'>
       <svg aria-hidden="true" className="w-8 h-8 text-gray-200 animate-spin dark:text-gray-600 fill-lime-400" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -375,38 +410,41 @@ const Form4 = ( { formData }: any ) =>
           <div className="flex flex-col bg-gray-50 p-6">
             <div className='text-xl flex flex-row gap-7 w-32 font-semibold'>Tags
               <span className='flex items-center '>
-                { editMode.tags && (
-                  <button type="button" onClick={ () => handleSave( 'tags' ) }><MdOutlineSave size={ 20 } /></button>
-                ) }
+                { !editMode.tags ? 
+                  
                 <button
-                  type="button"
-                  className={ `text-xl ${ !editMode.tags ? 'block' : 'hidden' }` }
-                  onClick={ () => handleEditToggle( 'tags' ) }
-                >
-                  <FaRegEdit size={ 22 } />
-                </button>
+                type="button"
+                className={ `text-xl ` }
+                onClick={ () => handleEditToggle( 'tags' ) }
+              >
+                <FaRegEdit size={ 22 } />
+              </button> :<button type="button" onClick={ () => handleSave( 'tags' ) }><MdOutlineSave size={ 20 } /></button>}
+                
               </span>
             </div>
             <div className='flex py-2 flex-wrap w-full'>
-              { data.tags.map( ( tag, index ) => (
-                <span key={ index } className='flex gap-2 w-fit '>
-                  <input
-                    type="text"
-                    value={ tag }
-                    onChange={ ( e ) => handleTagChange( index, e.target.value ) }
-                    disabled={ !editMode.tags }
-                    className={ ` bg-gray-200 m-2 w-32 rounded-md  px-3 py-1 text-sm font-semibold text-gray-700  ${ !editMode.tags ? 'bg-gray-200' : 'bg-gray-200' }` }
-                  />
-                  { editMode.tags && (
-                    <button
-                      type="button"
-                      onClick={ () => handleDeleteTag( index ) }
-                    >
-                      <FaTrashAlt />
-                    </button>
-                  ) }
-                </span>
-              ) ) }
+            {data.tags.map((tag, index) => (
+                  tag.trim() !== '' && ( // Filter out empty tags
+                    <span key={index} className='flex gap-2 w-fit'>
+                      <input
+                        type="text"
+                        value={tag}
+                        required
+                        onChange={(e) => handleTagChange(index, e.target.value)}
+                        disabled={!editMode.tags}
+                        className={`bg-gray-200 m-2 w-32 rounded-md px-3 py-1 text-sm font-semibold text-gray-700 ${!editMode.tags ? 'bg-gray-200' : 'bg-gray-200'}`}
+                      />
+                      {editMode.tags && (
+                        <button
+                          type="button"
+                          onClick={() => handleDeleteTag(index)}
+                        >
+                          <FaTrashAlt />
+                        </button>
+                      )}
+                    </span>
+                  )
+                ))}
               { editMode.tags && (
                 <div className='flex gap-2 items-center mt-2'>
                   <input
@@ -467,9 +505,16 @@ const Form4 = ( { formData }: any ) =>
             </div>
           </div>
         </div>
-        <div className="flex my-8  flex-row justify-center gap-4">
-          <button type="submit" disabled={isPublishButtonDisabled} className={` px-20 text-white p-2 rounded ${!isPublishButtonDisabled?"bg-lime-500 cursor-pointer":"cursor-not-allowed bg-lime-300"}`}>Publish</button>
+        <div className="flex my-8 flex-row justify-center gap-4">
+          <button
+            type="submit"
+            disabled={!(isTagsEmpty === false && isPublishButtonDisabled === true && !Object.values(editMode).some(mode => mode))}
+            className={`px-20 text-white p-2 rounded ${!(isTagsEmpty === false && isPublishButtonDisabled === true && !Object.values(editMode).some(mode => mode)) ? "cursor-not-allowed bg-lime-300" : "bg-lime-500 cursor-pointer"}`}
+          >
+            Publish
+          </button>
         </div>
+
       </form>
     </div></> ) }
   </> );

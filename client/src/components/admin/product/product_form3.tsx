@@ -36,35 +36,24 @@ const Form3: React.FC<Form3Props> = ({ onNext, formData }) => {
   const [updateCount, setUpdateCount] = useState(0);
   const [loading, setLoading] = useState(false);
 
-  const handleButtonClick = (variant: Variant, index: number) => {
-    setActiveVariant({ ...variant });
-    setLabel(variant.label);
-    setPrice(variant.price);
-  };
 
-  const handleSave = async () => {
-    if (!activeVariant) return;
-    const { _id } = activeVariant;
-    const uuid = product.uuid;
-    const postData = { uuid, label, price };
-
-    try {
-      const response = await instance.patch(`/product/variant/${_id}`, postData);
-      if (response.data) {
-        setLabel('');
-        setPrice('');
-        setUpdatedVariants([...updatedVariants, _id]);
-        setActiveVariant(null);
-        setUpdateCount(updateCount + 1);
-      }
-    } catch (error) {
-      console.error('Error saving variant:', error);
-    }
-  };
 
   const handleSaveVariant = async (index: number) => {
+    const variant = product.variants[index];
+
+    if (!variant.price || variant.price <= 0 || !variant.label || variant.label.trim() === '') {
+      Swal.fire({
+        icon: 'error',
+        title: 'Invalid input',
+        text: 'Label and price must be valid and not empty.',
+      });
+      // const allVariantsValid = pro.variants.every(variant =>
+      //   variant.label?.trim() !== '' && variant.price > 0
+      // );
+      // setIsPublishButtonDisabled(allVariantsValid);
+      return;
+    }
     try {
-      const variant = product.variants[index];
       const sendData = {
         uuid: product.uuid,
         price: variant.price,
@@ -90,12 +79,15 @@ const Form3: React.FC<Form3Props> = ({ onNext, formData }) => {
   };
 
   const handleVariantChange = (index: number, key: keyof Variant, value: string | number) => {
+    console.log("first",value)
     const newVariants = [...product.variants];
     newVariants[index] = {
       ...newVariants[index],
       [key]: value
     } as Variant;
-    formData.product.variants = newVariants;
+    // formData.product.variants = newVariants;
+    setProduct( { ...product, variants: newVariants } );
+
   };
 
   const handleEditToggle = (field: string, index?: number) => {
@@ -174,7 +166,7 @@ const Form3: React.FC<Form3Props> = ({ onNext, formData }) => {
                       className={ `text-gray-700 w-full py-2 px-3 rounded-md ${ editingVariantIndex === index ? 'border-2 border-lime-500' : 'bg-gray-100'
                         }` }
                       value={ variant.label }
-                      disabled={ editingVariantIndex !== index }
+                      readOnly={ editingVariantIndex !== index }
                       onChange={ ( e ) => handleVariantChange( index, 'label', e.target.value ) }
                     />
                   </div>
@@ -185,7 +177,7 @@ const Form3: React.FC<Form3Props> = ({ onNext, formData }) => {
                       className={ `text-gray-700 w-full py-2 px-3 rounded-md ${ editingVariantIndex === index ? 'border-2 border-lime-500' : 'bg-gray-100'
                         }` }
                       value={ variant.price }
-                      disabled={ editingVariantIndex !== index }
+                      readOnly={ editingVariantIndex !== index }
                       onChange={ ( e ) => handleVariantChange( index, 'price', parseFloat( e.target.value ) ) }
                     />
                   </div>
