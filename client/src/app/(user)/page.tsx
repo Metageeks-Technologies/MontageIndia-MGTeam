@@ -9,7 +9,7 @@ import instance from "@/utils/axios";
 import { Navbar } from "@nextui-org/react";
 import { useEffect, useState } from "react";
 import { IoIosSearch } from "react-icons/io";
-
+import CartPopup from '@/components/cart/cartPage';
 
 // Collection data
 interface Card
@@ -204,304 +204,308 @@ const companies: Company[] = [
   },
 ];
 
-export default function Home() {
-// const [imageProducts, setImageProducts] = useState([]);
-
-
-//   const getProduct = async ()  => {
-//    try {
-//     const res = await instance.get('/product');
-//     const imageProducts = res.data.products.filter((product:any) => product.mediaType === 'image');
-//     setImageProducts(imageProducts);
-//     console.log(res)
-
-//    } catch (error) {
-//     console.log(error)
-//    }
-//   }
-
-//   useEffect (()=>{
-//  getProduct()
-//   },[])
-
-
-const [ imageProducts, setImageProducts ] = useState( [] );
-
-
-const getProduct = async () =>
+export default function Home ()
 {
-  try
+  // const [imageProducts, setImageProducts] = useState([]);
+
+
+  //   const getProduct = async ()  => {
+  //    try {
+  //     const res = await instance.get('/product');
+  //     const imageProducts = res.data.products.filter((product:any) => product.mediaType === 'image');
+  //     setImageProducts(imageProducts);
+  //     console.log(res)
+
+  //    } catch (error) {
+  //     console.log(error)
+  //    }
+  //   }
+
+  //   useEffect (()=>{
+  //  getProduct()
+  //   },[])
+
+
+  const [ imageProducts, setImageProducts ] = useState( [] );
+
+
+  const getProduct = async () =>
   {
-    const res = await instance.get( '/product' );
-    const imageProducts = res.data.products.filter( ( product: any ) => product.mediaType === 'image' );
-    setImageProducts( imageProducts );
-    console.log( res );
+    try
+    {
+      const res = await instance.get( '/product' );
+      const imageProducts = res.data.products.filter( ( product: any ) => product.mediaType === 'image' );
+      setImageProducts( imageProducts );
+      console.log( res );
 
-  } catch ( error )
+    } catch ( error )
+    {
+      console.log( error );
+    }
+  };
+
+  useEffect( () =>
   {
-    console.log( error );
-  }
-};
+    getProduct();
+  }, [] );
 
-useEffect( () =>
-{
-  getProduct();
-}, [] );
 
-  
 
 
 
   return (
-    <div className="main  ">
+    // <div className="main  ">
 
-      {/*  Image Routes Banner Section */ }
-      <div
-        className="relative bg-cover bg-center h-[600px] md:h-[500px] sm:h-[400px]"
-        style={ {
-          backgroundImage:
-            "url(https://images.ctfassets.net/hrltx12pl8hq/01rJn4TormMsGQs1ZRIpzX/16a1cae2440420d0fd0a7a9a006f2dcb/Artboard_Copy_231.jpg?fit=fill&w=1280&h=720&fm=webp)",
-        } }
-      >
-        <div className="relative z-10 flex flex-col items-center justify-center h-full text-white text-center px-4 sm:px-6 md:px-8">
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold">
-            Unleash your creativity with unrivaled images
-          </h1>
-          <p className="mt-4 text-lg sm:text-xl">
-            Add wonder to your stories with 450M+ photos, vectors,
-            illustrations, and editorial images.
-          </p>
-          <div className="mt-6 flex flex-wrap justify-center space-x-2 sm:space-x-4 md:space-y-2 space-y-2">
-            <button className="flex items-center px-4 py-2 border border-white rounded-full text-white bg-transparent backdrop-blur-sm bg-opacity-20 hover:bg-opacity-30 transition duration-300">
-              <IoIosSearch className="h-5 w-5 mr-2" />
-              Happy birthday
-            </button>
-            <button className="flex items-center px-4 py-2 border border-white rounded-full text-white bg-transparent backdrop-blur-sm bg-opacity-20 hover:bg-opacity-30 transition duration-300">
-              <IoIosSearch className="h-5 w-5 mr-2" />
-              Thank You
-            </button>
-            <button className="flex items-center px-4 py-2 border border-white rounded-full text-white bg-transparent backdrop-blur-sm bg-opacity-20 hover:bg-opacity-30 transition duration-300">
-              <IoIosSearch className="h-5 w-5 mr-2" />
-              Background
-            </button>
-            <button className="flex items-center px-4 py-2 border border-white rounded-full text-white bg-transparent backdrop-blur-sm bg-opacity-20 hover:bg-opacity-30 transition duration-300">
-              <IoIosSearch className="h-5 w-5 mr-2" />
-              Congratulations
-            </button>
-            <button className="flex items-center px-4 py-2 border border-white rounded-full text-white bg-transparent backdrop-blur-sm bg-opacity-20 hover:bg-opacity-30 transition duration-300">
-              <IoIosSearch className="h-5 w-5 mr-2" />
-              Business
-            </button>
-            <button className="flex items-center px-4 py-2 border border-white rounded-full text-white bg-transparent backdrop-blur-sm bg-opacity-20 hover:bg-opacity-30 transition duration-300">
-              <IoIosSearch className="h-5 w-5 mr-2" />
-              Welcome
-            </button>
-          </div>
-        </div>
-      </div>
+    //   {/*  Image Routes Banner Section */ }
+    //   <div
+    //     className="relative bg-cover bg-center h-[600px] md:h-[500px] sm:h-[400px]"
+    //     style={ {
+    //       backgroundImage:
+    //         "url(https://images.ctfassets.net/hrltx12pl8hq/01rJn4TormMsGQs1ZRIpzX/16a1cae2440420d0fd0a7a9a006f2dcb/Artboard_Copy_231.jpg?fit=fill&w=1280&h=720&fm=webp)",
+    //     } }
+    //   >
+    //     <div className="relative z-10 flex flex-col items-center justify-center h-full text-white text-center px-4 sm:px-6 md:px-8">
+    //       <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold">
+    //         Unleash your creativity with unrivaled images
+    //       </h1>
+    //       <p className="mt-4 text-lg sm:text-xl">
+    //         Add wonder to your stories with 450M+ photos, vectors,
+    //         illustrations, and editorial images.
+    //       </p>
+    //       <div className="mt-6 flex flex-wrap justify-center space-x-2 sm:space-x-4 md:space-y-2 space-y-2">
+    //         <button className="flex items-center px-4 py-2 border border-white rounded-full text-white bg-transparent backdrop-blur-sm bg-opacity-20 hover:bg-opacity-30 transition duration-300">
+    //           <IoIosSearch className="h-5 w-5 mr-2" />
+    //           Happy birthday
+    //         </button>
+    //         <button className="flex items-center px-4 py-2 border border-white rounded-full text-white bg-transparent backdrop-blur-sm bg-opacity-20 hover:bg-opacity-30 transition duration-300">
+    //           <IoIosSearch className="h-5 w-5 mr-2" />
+    //           Thank You
+    //         </button>
+    //         <button className="flex items-center px-4 py-2 border border-white rounded-full text-white bg-transparent backdrop-blur-sm bg-opacity-20 hover:bg-opacity-30 transition duration-300">
+    //           <IoIosSearch className="h-5 w-5 mr-2" />
+    //           Background
+    //         </button>
+    //         <button className="flex items-center px-4 py-2 border border-white rounded-full text-white bg-transparent backdrop-blur-sm bg-opacity-20 hover:bg-opacity-30 transition duration-300">
+    //           <IoIosSearch className="h-5 w-5 mr-2" />
+    //           Congratulations
+    //         </button>
+    //         <button className="flex items-center px-4 py-2 border border-white rounded-full text-white bg-transparent backdrop-blur-sm bg-opacity-20 hover:bg-opacity-30 transition duration-300">
+    //           <IoIosSearch className="h-5 w-5 mr-2" />
+    //           Business
+    //         </button>
+    //         <button className="flex items-center px-4 py-2 border border-white rounded-full text-white bg-transparent backdrop-blur-sm bg-opacity-20 hover:bg-opacity-30 transition duration-300">
+    //           <IoIosSearch className="h-5 w-5 mr-2" />
+    //           Welcome
+    //         </button>
+    //       </div>
+    //     </div>
+    //   </div>
 
-      {/* <div className="p-10 px-24">
-        <h1 className="text-3xl font-bold">
-          Explore images that ignite your creativity
-        </h1>
-        <div className="flex justify-between">
-          <div className="flex gap-3 mt-5 items-center">
-            <img
-              src="https://images.ctfassets.net/hrltx12pl8hq/2ppk3Ug2z6oFMZY5z8WXnx/75af41f13939954c93de0ff8c1972612/shutterstock_1922207966.jpg?fit=fill&w=120&h=120&fm=webp"
-              alt="photo"
-              className="object-cover rounded-md h-28 w-28"
-            />
-            <h1 className="font-semibold">Photos</h1>
-          </div>
-          <div className="flex gap-3 mt-5 items-center">
-            <img
-              src="https://images.ctfassets.net/hrltx12pl8hq/1qoVFqqABKxtFRMkUh0v6l/6a9bbdc723ac373f4e44400de87997b2/shutterstock_1734177410__1_.jpg?fit=fill&w=120&h=120&fm=webp"
-              alt="photo"
-              className="object-cover rounded-md h-28 w-28"
-            />
-            <h1 className="font-semibold">vector</h1>
-          </div>
-          <div className="flex gap-3 mt-5 items-center">
-            <img
-              src="https://images.ctfassets.net/hrltx12pl8hq/go6z2gBaTMDvTrtoOipOw/3b9d21ff7003ca392a2daeb569d629fc/shutterstock_1802211250.jpg?fit=fill&w=120&h=120&fm=webp"
-              alt="photo"
-              className="object-cover rounded-md h-28 w-28"
-            />
-            <h1 className="font-semibold">IIIustrations</h1>
-          </div>
-          <div className="flex gap-3 mt-5 items-center">
-            <img
-              src="https://images.ctfassets.net/hrltx12pl8hq/ss2daMHu3XewLBroGgbtp/6cf4fbe1fc297c20ee6cd2bb303e12a1/shutterstock_2390735237.jpg?fit=fill&w=120&h=120&fm=webp"
-              alt="photo"
-              className="object-cover rounded-md h-28 w-28"
-            />
-            <h1 className="font-semibold">AI Image Generator</h1>
-          </div>
-        </div>
-      </div> */}
+    //   {/* <div className="p-10 px-24">
+    //     <h1 className="text-3xl font-bold">
+    //       Explore images that ignite your creativity
+    //     </h1>
+    //     <div className="flex justify-between">
+    //       <div className="flex gap-3 mt-5 items-center">
+    //         <img
+    //           src="https://images.ctfassets.net/hrltx12pl8hq/2ppk3Ug2z6oFMZY5z8WXnx/75af41f13939954c93de0ff8c1972612/shutterstock_1922207966.jpg?fit=fill&w=120&h=120&fm=webp"
+    //           alt="photo"
+    //           className="object-cover rounded-md h-28 w-28"
+    //         />
+    //         <h1 className="font-semibold">Photos</h1>
+    //       </div>
+    //       <div className="flex gap-3 mt-5 items-center">
+    //         <img
+    //           src="https://images.ctfassets.net/hrltx12pl8hq/1qoVFqqABKxtFRMkUh0v6l/6a9bbdc723ac373f4e44400de87997b2/shutterstock_1734177410__1_.jpg?fit=fill&w=120&h=120&fm=webp"
+    //           alt="photo"
+    //           className="object-cover rounded-md h-28 w-28"
+    //         />
+    //         <h1 className="font-semibold">vector</h1>
+    //       </div>
+    //       <div className="flex gap-3 mt-5 items-center">
+    //         <img
+    //           src="https://images.ctfassets.net/hrltx12pl8hq/go6z2gBaTMDvTrtoOipOw/3b9d21ff7003ca392a2daeb569d629fc/shutterstock_1802211250.jpg?fit=fill&w=120&h=120&fm=webp"
+    //           alt="photo"
+    //           className="object-cover rounded-md h-28 w-28"
+    //         />
+    //         <h1 className="font-semibold">IIIustrations</h1>
+    //       </div>
+    //       <div className="flex gap-3 mt-5 items-center">
+    //         <img
+    //           src="https://images.ctfassets.net/hrltx12pl8hq/ss2daMHu3XewLBroGgbtp/6cf4fbe1fc297c20ee6cd2bb303e12a1/shutterstock_2390735237.jpg?fit=fill&w=120&h=120&fm=webp"
+    //           alt="photo"
+    //           className="object-cover rounded-md h-28 w-28"
+    //         />
+    //         <h1 className="font-semibold">AI Image Generator</h1>
+    //       </div>
+    //     </div>
+    //   </div> */}
 
-      <div className="bg-[#eeeeee]">
-        <div className="py-10 lg:mx-24 sm:mx-4 mx-2">
-          <h1 className="lg:text-5xl sm:text-3xl text-2xl font-semibold lg:text-start md:text-center text-center">
-            See what’s trending
-          </h1>
-          <div className="mx-auto mt-4">
-            <div className="flex flex-col md:flex-col md:gap-4 lg:flex-row justify-between items-center space-y-4 md:space-y-0">
-              <div className="flex flex-wrap justify-center  md:space-y-1 space-y-1  space-x-2 sm:space-x-2">
-                <button className="flex items-center text-sm px-3 py-1 border border-gray-700 rounded-full text-gray-700 bg-transparent backdrop-blur-sm bg-opacity-20 hover:bg-opacity-30 transition duration-300">
-                  <IoIosSearch className="h-5 w-5 mr-1" />
-                  Flower
-                </button>
-                <button className="flex items-center text-sm px-3 py-1 border border-gray-700 rounded-full text-gray-700 bg-transparent backdrop-blur-sm bg-opacity-20 hover:bg-opacity-30 transition duration-300">
-                  <IoIosSearch className="h-5 w-5 mr-1" />
-                  Portrait
-                </button>
-                <button className="flex items-center text-sm px-3 py-1 border border-gray-700 rounded-full text-gray-700 bg-transparent backdrop-blur-sm bg-opacity-20 hover:bg-opacity-30 transition duration-300">
-                  <IoIosSearch className="h-5 w-5 mr-1" />
-                  Interior
-                </button>
-                <button className="flex items-center text-sm px-3 py-1 border border-gray-700 rounded-full text-gray-700 bg-transparent backdrop-blur-sm bg-opacity-20 hover:bg-opacity-30 transition duration-300">
-                  <IoIosSearch className="h-5 w-5 mr-1" />
-                  Texture
-                </button>
-                <button className="flex items-center text-sm px-3 py-1 border border-gray-700 rounded-full text-gray-700 bg-transparent backdrop-blur-sm bg-opacity-20 hover:bg-opacity-30 transition duration-300">
-                  <IoIosSearch className="h-5 w-5 mr-1" />
-                  Animal
-                </button>
-                <button className="flex items-center text-sm px-3 py-1 border border-gray-700 rounded-full text-gray-700 bg-transparent backdrop-blur-sm bg-opacity-20 hover:bg-opacity-30 transition duration-300">
-                  <IoIosSearch className="h-5 w-5 mr-1" />
-                  Nature
-                </button>
-              </div>
-              <div className="flex flex-wrap px-5 gap-5 item-end">
-              <button className="border-black  border-b-3 px-3 font-bold">
-                Handpicked 
-              </button>
-              <button>Most popular</button>
-            </div>
-            </div>
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 mt-5">
-            { imageProducts.map( ( data: any, index: number ) => (
-                <ImageGallery key={ index } { ...data } />
-              ) ) }
-            </div>
-          </div>
-          <div className="mt-8 flex justify-center ">
-            <button className="flex items-center text-lg px-6 font-semibold py-2 border border-gray-700  rounded-full text-black bg-transparent backdrop-blur-sm bg-opacity-20 hover:bg-opacity-40 transition duration-300">
-              See more Image
-            </button>
-          </div>
-        </div>
-      </div>
+    //   <div className="bg-[#eeeeee]">
+    //     <div className="py-10 lg:mx-24 sm:mx-4 mx-2">
+    //       <h1 className="lg:text-5xl sm:text-3xl text-2xl font-semibold lg:text-start md:text-center text-center">
+    //         See what’s trending
+    //       </h1>
+    //       <div className="mx-auto mt-4">
+    //         <div className="flex flex-col md:flex-col md:gap-4 lg:flex-row justify-between items-center space-y-4 md:space-y-0">
+    //           <div className="flex flex-wrap justify-center  md:space-y-1 space-y-1  space-x-2 sm:space-x-2">
+    //             <button className="flex items-center text-sm px-3 py-1 border border-gray-700 rounded-full text-gray-700 bg-transparent backdrop-blur-sm bg-opacity-20 hover:bg-opacity-30 transition duration-300">
+    //               <IoIosSearch className="h-5 w-5 mr-1" />
+    //               Flower
+    //             </button>
+    //             <button className="flex items-center text-sm px-3 py-1 border border-gray-700 rounded-full text-gray-700 bg-transparent backdrop-blur-sm bg-opacity-20 hover:bg-opacity-30 transition duration-300">
+    //               <IoIosSearch className="h-5 w-5 mr-1" />
+    //               Portrait
+    //             </button>
+    //             <button className="flex items-center text-sm px-3 py-1 border border-gray-700 rounded-full text-gray-700 bg-transparent backdrop-blur-sm bg-opacity-20 hover:bg-opacity-30 transition duration-300">
+    //               <IoIosSearch className="h-5 w-5 mr-1" />
+    //               Interior
+    //             </button>
+    //             <button className="flex items-center text-sm px-3 py-1 border border-gray-700 rounded-full text-gray-700 bg-transparent backdrop-blur-sm bg-opacity-20 hover:bg-opacity-30 transition duration-300">
+    //               <IoIosSearch className="h-5 w-5 mr-1" />
+    //               Texture
+    //             </button>
+    //             <button className="flex items-center text-sm px-3 py-1 border border-gray-700 rounded-full text-gray-700 bg-transparent backdrop-blur-sm bg-opacity-20 hover:bg-opacity-30 transition duration-300">
+    //               <IoIosSearch className="h-5 w-5 mr-1" />
+    //               Animal
+    //             </button>
+    //             <button className="flex items-center text-sm px-3 py-1 border border-gray-700 rounded-full text-gray-700 bg-transparent backdrop-blur-sm bg-opacity-20 hover:bg-opacity-30 transition duration-300">
+    //               <IoIosSearch className="h-5 w-5 mr-1" />
+    //               Nature
+    //             </button>
+    //           </div>
+    //           <div className="flex flex-wrap px-5 gap-5 item-end">
+    //           <button className="border-black  border-b-3 px-3 font-bold">
+    //             Handpicked 
+    //           </button>
+    //           <button>Most popular</button>
+    //         </div>
+    //         </div>
+    //         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 mt-5">
+    //         { imageProducts.map( ( data: any, index: number ) => (
+    //             <ImageGallery key={ index } { ...data } />
+    //           ) ) }
+    //         </div>
+    //       </div>
+    //       <div className="mt-8 flex justify-center ">
+    //         <button className="flex items-center text-lg px-6 font-semibold py-2 border border-gray-700  rounded-full text-black bg-transparent backdrop-blur-sm bg-opacity-20 hover:bg-opacity-40 transition duration-300">
+    //           See more Image
+    //         </button>
+    //       </div>
+    //     </div>
+    //   </div>
 
-      <div className="lg:mx-24 md:mx-4 mx-4 py-12 ">
-        <div className="flex flex-col md:flex-row justify-between items-center">
-          <h2 className="text-2xl sm:text-3xl lg:text-5xl font-semibold mb-4 md:mb-0">
-            Explore fresh collections
-          </h2>
-          <button className="flex mb-2 items-center text-lg sm:text-lg px-4 sm:px-8 font-semibold py-2 border border-gray-700 rounded-full text-black bg-transparent backdrop-blur-sm bg-opacity-20 hover:bg-opacity-40 transition duration-300">
-            See more Images
-          </button>
-        </div>
-        <div className="container mx-auto gap-4 grid lg:grid-cols-4 md:grid-cols-2 grid-cols-1 lg:mt-3">
-          { cards.map( ( card, index ) => (
-            <CardSlider key={ index } { ...card } />
-          ) ) }
-        </div>
-      </div>
+    //   <div className="lg:mx-24 md:mx-4 mx-4 py-12 ">
+    //     <div className="flex flex-col md:flex-row justify-between items-center">
+    //       <h2 className="text-2xl sm:text-3xl lg:text-5xl font-semibold mb-4 md:mb-0">
+    //         Explore fresh collections
+    //       </h2>
+    //       <button className="flex mb-2 items-center text-lg sm:text-lg px-4 sm:px-8 font-semibold py-2 border border-gray-700 rounded-full text-black bg-transparent backdrop-blur-sm bg-opacity-20 hover:bg-opacity-40 transition duration-300">
+    //         See more Images
+    //       </button>
+    //     </div>
+    //     <div className="container mx-auto gap-4 grid lg:grid-cols-4 md:grid-cols-2 grid-cols-1 lg:mt-3">
+    //       { cards.map( ( card, index ) => (
+    //         <CardSlider key={ index } { ...card } />
+    //       ) ) }
+    //     </div>
+    //   </div>
 
-      <div className="bg-gray-100 py-10">
-        <div className="flex lg:mx-32 md:mx-4 mx-4 items-center lg:flex-row sm:flex-col flex-col">
-          <div className="lg:text-left lg:basis-[35%]">
-            <h1 className="lg:text-5xl md:text-3xl text-2xl font-bold mb-4">
-              A weekly dose of inspiration, just for you
-            </h1>
-            <p className="text-gray-600 mb-6 text-xl">
-              Sign up and get a free image or photo every week
-            </p>
-            <div className="flex justify-center">
-              <button className="bg-red-500 text-white  py-3 px-8 rounded-full">
-                Get Started
-              </button>
-            </div>
-          </div>
-          <div className="flex lg:basis-[65%] lg:justify-around md:gap-5 md:mt-4 mt-4">
-            { weekly.map( ( data, index ) => (
-              <WeeklyCard key={ index } { ...data } />
-            ) ) }
-          </div>
-        </div>
-      </div>
+    //   <div className="bg-gray-100 py-10">
+    //     <div className="flex lg:mx-32 md:mx-4 mx-4 items-center lg:flex-row sm:flex-col flex-col">
+    //       <div className="lg:text-left lg:basis-[35%]">
+    //         <h1 className="lg:text-5xl md:text-3xl text-2xl font-bold mb-4">
+    //           A weekly dose of inspiration, just for you
+    //         </h1>
+    //         <p className="text-gray-600 mb-6 text-xl">
+    //           Sign up and get a free image or photo every week
+    //         </p>
+    //         <div className="flex justify-center">
+    //           <button className="bg-red-500 text-white  py-3 px-8 rounded-full">
+    //             Get Started
+    //           </button>
+    //         </div>
+    //       </div>
+    //       <div className="flex lg:basis-[65%] lg:justify-around md:gap-5 md:mt-4 mt-4">
+    //         { weekly.map( ( data, index ) => (
+    //           <WeeklyCard key={ index } { ...data } />
+    //         ) ) }
+    //       </div>
+    //     </div>
+    //   </div>
 
-      <div className="lg:mx-24 md:mx-4 mx-4 py-10">
-        <h2 className="text-3xl font-bold mb-6">
-          Browse by category to find your perfect visual
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          { categories.map( ( data, index ) => (
-            <CategoryCard key={ index } { ...data } />
-          ) ) }
-        </div>
-        <div className="mt-8 flex justify-center ">
-          <button className="flex items-center text-lg px-8 font-semibold py-2 border border-gray-700  rounded-full text-black bg-transparent backdrop-blur-sm bg-opacity-20 hover:bg-opacity-40 transition duration-300">
-            See more
-          </button>
-        </div>
-      </div>
+    //   <div className="lg:mx-24 md:mx-4 mx-4 py-10">
+    //     <h2 className="text-3xl font-bold mb-6">
+    //       Browse by category to find your perfect visual
+    //     </h2>
+    //     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+    //       { categories.map( ( data, index ) => (
+    //         <CategoryCard key={ index } { ...data } />
+    //       ) ) }
+    //     </div>
+    //     <div className="mt-8 flex justify-center ">
+    //       <button className="flex items-center text-lg px-8 font-semibold py-2 border border-gray-700  rounded-full text-black bg-transparent backdrop-blur-sm bg-opacity-20 hover:bg-opacity-40 transition duration-300">
+    //         See more
+    //       </button>
+    //     </div>
+    //   </div>
 
-      <div className="bg-gray-100">
-        <div className="lg:mx-24 sm:mx-4 mx-4 py-10">
-          <h2 className="text-3xl font-bold mb-6">
-            Tips and tricks from our blog
-          </h2>
-          <div className="flex flex-col md:flex-row rounded-lg overflow-hidden">
-            <div className="md:w-1/2">
-              <img
-                src="https://www.shutterstock.com/blog/wp-content/uploads/sites/5/2023/01/negative_space_cover.jpg?resize=1250,1120"
-                className="w-full h-[23rem] object-cover"
-              />
-            </div>
-            <div className="p-4 md:w-1/2 flex flex-col justify-center">
-              <h3 className="font-semibold mb-2">
-                How to Incorporate Negative Space in Design and Photography
-              </h3>
-              <p className="text-gray-700 text-sm">
-                Learn why negative space works in design and photography, and
-                pick up a few tips for using it in your own creative content.
-              </p>
-            </div>
-          </div>
-          <div className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 mt-4 gap-4">
-            { posts.map( ( data, index ) => (
-              <BlogCard key={ index } { ...data } />
-            ) ) }
-          </div>
-        </div>
-      </div>
+    //   <div className="bg-gray-100">
+    //     <div className="lg:mx-24 sm:mx-4 mx-4 py-10">
+    //       <h2 className="text-3xl font-bold mb-6">
+    //         Tips and tricks from our blog
+    //       </h2>
+    //       <div className="flex flex-col md:flex-row rounded-lg overflow-hidden">
+    //         <div className="md:w-1/2">
+    //           <img
+    //             src="https://www.shutterstock.com/blog/wp-content/uploads/sites/5/2023/01/negative_space_cover.jpg?resize=1250,1120"
+    //             className="w-full h-[23rem] object-cover"
+    //           />
+    //         </div>
+    //         <div className="p-4 md:w-1/2 flex flex-col justify-center">
+    //           <h3 className="font-semibold mb-2">
+    //             How to Incorporate Negative Space in Design and Photography
+    //           </h3>
+    //           <p className="text-gray-700 text-sm">
+    //             Learn why negative space works in design and photography, and
+    //             pick up a few tips for using it in your own creative content.
+    //           </p>
+    //         </div>
+    //       </div>
+    //       <div className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 mt-4 gap-4">
+    //         { posts.map( ( data, index ) => (
+    //           <BlogCard key={ index } { ...data } />
+    //         ) ) }
+    //       </div>
+    //     </div>
+    //   </div>
 
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-10 flex flex-col  items-center">
-        <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-5 text-center">
-          Trusted by the world's largest companies
-        </h2>
-        <div className="flex flex-wrap justify-center space-x-0 sm:space-x-4 lg:space-x-8 mb-5">
-          { companies.map( ( company ) => (
-            <div key={ company.name } className="flex items-center mb-4 gap-5 sm:mb-0">
-              <img
-                src={ company.logo }
-                alt={ company.name }
-                className="h-16 w-32 sm:h-20 sm:w-40 object-cover"
-              />
-            </div>
-          ) ) }
-        </div>
-        <p className="text-center mb-5">Need a personalized package for your business?</p>
-        <button className="bg-red-500 text-white py-2 px-4 rounded-3xl">
-          Request a Quote
-        </button>
-      </div>
+    //   <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-10 flex flex-col  items-center">
+    //     <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-5 text-center">
+    //       Trusted by the world's largest companies
+    //     </h2>
+    //     <div className="flex flex-wrap justify-center space-x-0 sm:space-x-4 lg:space-x-8 mb-5">
+    //       { companies.map( ( company ) => (
+    //         <div key={ company.name } className="flex items-center mb-4 gap-5 sm:mb-0">
+    //           <img
+    //             src={ company.logo }
+    //             alt={ company.name }
+    //             className="h-16 w-32 sm:h-20 sm:w-40 object-cover"
+    //           />
+    //         </div>
+    //       ) ) }
+    //     </div>
+    //     <p className="text-center mb-5">Need a personalized package for your business?</p>
+    //     <button className="bg-red-500 text-white py-2 px-4 rounded-3xl">
+    //       Request a Quote
+    //     </button>
+    //   </div>
 
 
-      <Footer />
+    //   <Footer />
+    // </div>
+    <div className="text-center justify-end top-10">
+      <CartPopup />
     </div>
   );
 }

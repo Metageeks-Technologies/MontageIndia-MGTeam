@@ -2,7 +2,7 @@ import React from "react";
 import { IoIosSearch } from "react-icons/io";
 import { IoMdHeartEmpty } from "react-icons/io";
 import { HiDownload } from "react-icons/hi";
-
+import { PiShoppingCartThin } from "react-icons/pi";
 
 
 const ImageGallery: React.FC = ( data: any ) =>
@@ -55,7 +55,8 @@ const ImageGallery: React.FC = ( data: any ) =>
       </div>
       <div className="absolute bottom-0 right-0 m-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
         <div className="text-white bg-red-500  p-2 rounded-full ">
-          <HiDownload className="h-6 w-6" />
+          {/* <IoCaretBackCircleOutline className="h-6 w-6" /> */}
+          <PiShoppingCartThin />
         </div>
       </div>
     </div>

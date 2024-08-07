@@ -204,3 +204,11 @@ export const addPriceToVariant = catchAsyncError(async (req:any, res, next) => {
         product :updatedProduct   
     });
 })
+
+// get products by ids, for cart
+export const getProductsByIds = catchAsyncError( async ( req: any, res, next ) => {
+    const productIds = req.body.productIds;
+    const products = await Product.find( { _id: { $in: productIds } } );
+    res.status( 200 ).json( products );
+} )
+    

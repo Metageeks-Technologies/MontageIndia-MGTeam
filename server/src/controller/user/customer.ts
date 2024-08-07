@@ -282,4 +282,30 @@ export const resetPassword = catchAsyncError(async (req, res, next) => {
 
     res.status(200).json({ message: 'Password has been reset suscessfully.now you can close this tab or window'});
 
+} );
+
+// add product id to user cart
+export const addProductToCart = catchAsyncError( async ( req:any, res, next ) =>
+{
+    const { productId,id } = req.body;
+    //   const {id}= req.user;
+    const customer = await Customer.findById( id );
+    customer?.cart.push( productId )
+    await customer?.save();
+    res.status(200).json({ message: 'Product added to cart successfully' });
+} )
+
+// remove the product id from user cart
+export const removeProductFromCart = catchAsyncError(async (req:any, res, next) => {
+  const { productId } = req.body;
+  const { id } = req.user;
+  const customer = await Customer.findById(id);
+  if (customer) {
+    customer.cart = customer.cart.filter((id) => id.toString() !== productId.toString());
+    await customer.save();
+    res.status(200).json({ message: 'Product removed from cart successfully' });
+  } else {
+    res.status(404).json({ message: 'Customer not found' });
+  }
 });
+
