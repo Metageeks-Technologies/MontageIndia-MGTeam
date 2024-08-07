@@ -5,8 +5,8 @@ import Activity from '@src/model/activity/activity';
 
 export const createProduct = catchAsyncError(async (req: any, res, next) => {
     
-    // console.log("create product",req.body);
-    const {category} = req.body;
+    req.body.createdBy = req.user._id;
+
     const product= await Product.create(req.body);
     
     const activity={
@@ -15,7 +15,7 @@ export const createProduct = catchAsyncError(async (req: any, res, next) => {
         email: req.user.email,
         username: req.user.username,
         action: 'create',
-        category: category[0],
+        category: req.body.category,
         productId: product._id,
         timestamp: Date.now()
     }
@@ -41,7 +41,7 @@ export const getProduct = catchAsyncError(async (req, res, next) => {
     })
 })
 
-export const getProducts = catchAsyncError(async (req, res, next) => {
+export const getProducts = catchAsyncError(async (req:any, res, next) => {
     
    const {productsPerPage='20', page = '1', status = 'published', category = [], mediaType = [], searchTerm = '',tags } = req.query;
 
@@ -70,6 +70,10 @@ export const getProducts = catchAsyncError(async (req, res, next) => {
         const nTag = tags as string;
         const tagsArray = Array.isArray(nTag) ? nTag : nTag.split(','); // Ensure tags are in array format
         queryObject.tags = { $all: tagsArray };
+    }
+
+    if (req.user.role !== 'superadmin') {
+        queryObject.createdBy = req.user._id;
     }
 
     console.log("queryObject",queryObject);

@@ -1,8 +1,9 @@
 import ErrorHandler from "../utils/errorHandler.js";
 import catchAsyncError from "./catchAsyncError.js";
-import Admin from "../model/user/admin.js";
+import Admin from "@src/model/user/admin.js";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import config from "@src/utils/config.js";
+import Customer from "@src/model/user/customer.js";
 
 export const isAuthenticatedAdmin = catchAsyncError(async (req: any, res, next) => {
     // console.log("auth",req);
@@ -38,7 +39,7 @@ export const isAuthenticatedCustomer = catchAsyncError(async (req: any, res, nex
     }
     
     const decodedData = jwt.verify(token, config.customerJwtSecret || "");
-    const requestedUser = await Admin.findById((decodedData as JwtPayload).id);
+    const requestedUser = await Customer.findById((decodedData as JwtPayload).id);
     if (!requestedUser) {
         return next(new ErrorHandler("User not found", 404));
     }
