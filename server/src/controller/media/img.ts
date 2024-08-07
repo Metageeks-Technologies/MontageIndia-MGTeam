@@ -41,27 +41,26 @@ export const reduceImage = catchAsyncError(async (req, res, next) => {
 
     // Upload the processed images
     const s3images = [
-        { folder: `${uuid}/images`, filename: `original-${imgName}` },
+        
         { folder: `${uuid}/images`, filename: `medium-${imgName}` },
         { folder: `${uuid}/images`, filename: `small-${imgName}` },
         { folder: `${uuid}/images`, filename: `productPage-${imgName}` },
         { folder: `${uuid}/images`, filename: `thumbnail-${imgName}` },
+        { folder: `${uuid}/images`, filename: `original-${imgName}` },
     ];
 
     // upload images to s3
     for (let i=0;i<s3images.length;i++) {
         try {
             await uploadImage(s3images[i]);
+            deleteLocalFile(`output/${s3images[i].filename}`);
         } catch (error) {
             console.log(error);
             next(new ErrorHandler(`Error uploading image`, 400));
         }
     }
     // delete local files
-    for (let i=0;i<s3images.length;i++) {
-        deleteLocalFile(`output/${s3images[i].filename}`);
-    }
-    deleteLocalFile(input);
+    
 
     const product = await Product.findOne({uuid});
     if(!product){
@@ -86,6 +85,11 @@ export const reduceImage = catchAsyncError(async (req, res, next) => {
     product.publicKey=`${uuid}/images/productPage-${uuid}`
     product.thumbnailKey=`${uuid}/images/thumbnail-${uuid}`
     const updatedProduct=await product.save();
+
+    for (let i=0;i<s3images.length;i++) {
+        deleteLocalFile(`output/${s3images[i].filename}`);
+    }
+    deleteLocalFile(input);
 
     res.json({
         success:true,
