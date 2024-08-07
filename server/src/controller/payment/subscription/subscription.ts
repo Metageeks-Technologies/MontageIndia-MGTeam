@@ -53,17 +53,77 @@ export const createPlan= catchAsyncError(async (req, res, next) => {
     },
     notes:response.notes
 });
-
-// console.log("step 3",newPlan);
-
-
     await newPlan.save();
     res.send({
         success: true,
         message: "Subscription Plan created successfully",
         response: response,
-        newPlan
+        // newPlan
     });
+});
+
+export const updatePlan= catchAsyncError(async (req, res, next) => {
+
+    const razorpay:any = razorpayInstance();
+    const {name,description,amount,currency,period,interval,credits,validity}=req.body;
+    
+    const { id } = req.params;
+    const options :any = {
+        period: period,
+        interval: interval,
+        item:{
+            name:name,
+            description:description,
+            amount:amount,
+            currency:currency
+        },
+        notes:{
+            credits:credits,
+            validity:validity
+        }
+    };
+    console.log("step 1",options);
+    
+    const response = await razorpay.plans.create(options);
+    console.log("step2",response)
+
+    if (!response) {
+        return next(new ErrorHandler("Error occured while creating Subscription Plan", 404));
+    }
+
+     const updatedPlanData = {
+        planId: response.id,
+        entity: response.entity,
+        interval: response.interval,
+        period: response.period,
+        item: {
+            id: response.item.id,
+            active: response.item.active,
+            name: response.item.name,
+            description: response.item.description,
+            amount: response.item.amount,
+            unit_amount: response.item.unit_amount,
+            currency: response.item.currency
+        },
+        notes: {
+            credits: response.notes.credits,
+            validity: response.notes.validity
+        }
+    };
+
+    const updatedPlan = await SubscriptionPlan.findByIdAndUpdate(id, updatedPlanData, { new: true });
+
+    console.log("step 4",updatedPlan);
+    if (!updatedPlan) {
+        return next(new ErrorHandler("Subscription Plan not found", 404));
+    }
+
+    res.send({
+        success: true,
+        message: "Subscription Plan updated successfully",
+        response: response,
+        plan:updatedPlan
+    }); 
 });
 
 export const fetchAllPlans= catchAsyncError(async (req, res, next) => {

@@ -25,6 +25,11 @@ interface SubscriptionPlan {
         validity: number;
     };
 }
+declare global {
+  interface Window {
+    Razorpay: any; 
+  }
+}
 
 interface Props {
     plan: SubscriptionPlan;

@@ -15,7 +15,7 @@ import
 } from "react-icons/fa";
 import { BiCategoryAlt, BiPlus, BiLogOutCircle, BiLogInCircle } from "react-icons/bi";
 import { IoIosSearch } from "react-icons/io";
-import { MdOutlineKeyboardArrowDown, MdOutlineKeyboardArrowUp } from "react-icons/md";
+import { MdOutlineKeyboardArrowDown, MdOutlineKeyboardArrowUp,MdOutlinePayment } from "react-icons/md";
 import { RiLinksFill } from "react-icons/ri";
 import { usePathname, useRouter } from "next/navigation";
 import { images } from "../../../public/images/image";
@@ -178,19 +178,28 @@ const Sidebar = () =>
                 </li>
               }
               { currentUser && currentUser.role === "superadmin" && 
+              <>
                 <li>
                   <a href="/admin/category" className="flex items-center p-2 text-gray-900 rounded-lg  hover:bg-gray-100   group">
                     <FaCampground className="w-5 h-5 text-gray-500 transition duration-75  group-hover:text-gray-900  " />
                     <span className="flex-1 ms-3 whitespace-nowrap">Category</span>
                   </a>
                 </li>
-              }
-              <li>
+                <li>
                 <a href="/Not-Found" className="flex items-center p-2 text-gray-900 rounded-lg  hover:bg-gray-100   group">
                   <FaUsers className="w-5 h-5 text-gray-500 transition duration-75  group-hover:text-gray-900  " />
                   <span className="flex-1 ms-3 whitespace-nowrap">Customers</span>
                 </a>
               </li>
+                <li>
+                  <a href="/admin/subscription" className="flex items-center p-2 text-gray-900 rounded-lg  hover:bg-gray-100   group">
+                    <MdOutlinePayment className="w-5 h-5 text-gray-500 transition duration-75  group-hover:text-gray-900  " />
+                    <span className="flex-1 ms-3 whitespace-nowrap">Subscription</span>
+                  </a>
+                </li>
+                </>
+              }
+              
               <li>
                 <a href="/Not-Found" className="flex items-center p-2 text-gray-900 rounded-lg  hover:bg-gray-100   group">
                   <FaBullhorn className="w-5 h-5 text-gray-500 transition duration-75  group-hover:text-gray-900  " />
