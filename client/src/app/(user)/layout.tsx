@@ -25,6 +25,7 @@ export default function RootLayout ( {
         <div className="w-20"> <Sidebar/></div>
        <div >{ children }</div>
        </div> */}
+       <Sidebar/>
        { children }
       </body>
     </html>
