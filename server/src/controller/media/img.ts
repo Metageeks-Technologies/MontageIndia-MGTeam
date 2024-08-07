@@ -53,14 +53,11 @@ export const reduceImage = catchAsyncError(async (req, res, next) => {
     for (let i=0;i<s3images.length;i++) {
         try {
             await uploadImage(s3images[i]);
-            deleteLocalFile(`output/${s3images[i].filename}`);
         } catch (error) {
             console.log(error);
             next(new ErrorHandler(`Error uploading image`, 400));
         }
     }
-    // delete local files
-    
 
     const product = await Product.findOne({uuid});
     if(!product){
@@ -69,21 +66,21 @@ export const reduceImage = catchAsyncError(async (req, res, next) => {
     const variants=[
         {
             size:"Original",
-            key:`${uuid}/images/original-${uuid}`
+            key:`${uuid}/images/original-${imgName}`
         },
         {
             size:"Medium",
-            key:`${uuid}/images/medium-${uuid}`
+            key:`${uuid}/images/medium-${imgName}`
         },
         {
             size:"Small",
-            key:`${uuid}/images/small-${uuid}`
+            key:`${uuid}/images/small-${imgName}`
         }
     ]
 
     product.variants.push(...variants);
-    product.publicKey=`${uuid}/images/productPage-${uuid}`
-    product.thumbnailKey=`${uuid}/images/thumbnail-${uuid}`
+    product.publicKey=`${uuid}/images/productPage-${imgName}`
+    product.thumbnailKey=`${uuid}/images/thumbnail-${imgName}`
     const updatedProduct=await product.save();
 
     for (let i=0;i<s3images.length;i++) {

@@ -76,7 +76,7 @@ export const resizeForThumbnail = async (input: string, imgName: string) => {
 
     try {
         const { density, width, height } = await sharp(input, { limitInputPixels: 8585550069 }).metadata();
-        if (width && height && density) await sharp(input, { limitInputPixels: 8585550069 }).resize({ width: 150 }).withMetadata({ density: 72 }).toFile(`output/thumbnail-${imgName}`)
+        if (width && height && density) await sharp(input, { limitInputPixels: 8585550069 }).resize({ width: 500 }).withMetadata({ density: 72 }).toFile(`output/thumbnail-${imgName}`)
 
     } catch (error) {
         throw error;
