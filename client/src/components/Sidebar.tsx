@@ -75,7 +75,7 @@ const Sidebar = () => {
           <MdLanguage className="text-gray-700 w-6 h-6" />
           <AiOutlineHeart className="text-gray-700 w-6 h-6" />
           <AiOutlineShoppingCart className="text-gray-700 w-6 h-6" />
-          <AiOutlineUser className="text-gray-700 w-6 h-6" />
+          <AiOutlineUser onClick={ () => router.push( '/user-profile' ) } className="text-gray-700 w-6 h-6 cursor-pointer" />
         </div>
         </div>
       
