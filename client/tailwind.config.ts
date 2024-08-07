@@ -25,7 +25,17 @@ const config: Config = {
           light:'#a8f521',
           DEFAULT:'#a8f521',
           dark:'#a8f521'
-        }
+        },
+        var1: {
+          light: '#f31260d6',
+          DEFAULT: '#f31260',
+          dark: '#f70459',
+        },
+        var2: {
+          light: '#BEF264',
+          DEFAULT: '#BEF264',
+          dark: '#BEF264',
+        },
       },
     },
   },

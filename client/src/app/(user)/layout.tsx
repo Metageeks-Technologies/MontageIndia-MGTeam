@@ -4,7 +4,7 @@ import "../globals.css";
 const inter = Inter( { subsets: [ "latin" ] } );
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import Sidebar from "@/components/Sidebar";
+import Head from "next/head";
 
 export const metadata: Metadata = {
   title: "Montage India",
@@ -19,6 +19,9 @@ export default function RootLayout ( {
 {
   return (
     <html lang="en">
+     <Head>
+          <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+        </Head>
       <body className={ inter.className }>
         <ToastContainer />
         {/* <div className="flex  ">
