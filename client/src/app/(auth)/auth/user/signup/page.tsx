@@ -10,6 +10,8 @@ import { notifySuccess } from "@/utils/toast";
 import instance from "@/utils/axios";
 import TermsModal from "@/components/user/termsCondition";
 import Link from "next/link";
+import Swal from "sweetalert2";
+import { Spinner } from "@nextui-org/react";
 
 const Page = () =>
 {
@@ -21,6 +23,7 @@ const Page = () =>
   const [phone,setphone]=useState("")
   const [terms,SetTerms]=useState<boolean>(false);
   const [ error, setError ] = useState( "" );
+  const [loading,setloading]=useState(false)
   const [isModalOpen, setIsModalOpen] = useState(false); 
   const [ showPassword, setShowPassword ] = useState( false );
 
@@ -64,6 +67,7 @@ const Page = () =>
     console.log("login clicked");
     try
     {
+      setloading(true)
       const response = await instance.post(
         `/user/signup`,
         { name,username,email, password ,phone},
@@ -75,15 +79,23 @@ const Page = () =>
       );
 
       console.log( "Login successful:", response.data );
-
-        console.log(name,username,email,password)
+      if(response.status===201){
+        setloading(false)
+      console.log(name,username,email,password)
       notifySuccess( "Login Successful" );
       router.push( "/" );
+      }
 
-    } catch ( error )
+    } catch ( error:any )
     {
+      setloading(false)
       console.error( "Login error:", error );
-
+      const errorMessage = error.response?.data?.message || `Please try again later`;
+      Swal.fire( {
+        icon: 'error',
+        title: 'Error',
+        text: errorMessage,
+      } );
       if ( axios.isAxiosError( error ) )
       {
         setError( error.response?.data?.message || "An error occurred during login. Please try again." );
@@ -179,7 +191,6 @@ const Page = () =>
                 onChange={ ( e ) => {  setEmail( e.target.value ); } }
                 required
               />
- 
             </div>
             <div className="mt-4 relative">
               <label
@@ -234,13 +245,23 @@ const Page = () =>
               </Link>
               </div>
             </div>
-            <button
-            disabled={!terms==true}
-              className="flex items-center rounded-md justify-center w-full px-4 py-2 mt-4 text-white bg-webgreen hover:bg-webgreenHover"
-              onClick={ handleLogin }
-            >
-              Continue
-            </button>
+            {loading?
+               <button
+               disabled={!terms==true}
+                 className="flex items-center rounded-md justify-center w-full px-4 py-1 mt-4  bg-webgreen"
+                 onClick={ handleLogin }
+               >
+                 <Spinner color="white"/>
+              </button>
+                :
+              <button
+              disabled={!terms==true}
+                className="flex items-center rounded-md justify-center w-full px-4 py-2 mt-4 text-white bg-webgreen hover:bg-webgreenHover"
+                onClick={ handleLogin }
+              >
+                Continue
+              </button>
+              }            
           </div>
         </div>
       </div>

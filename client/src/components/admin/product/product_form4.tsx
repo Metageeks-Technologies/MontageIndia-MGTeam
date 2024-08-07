@@ -2,7 +2,7 @@ import instance from '@/utils/axios';
 import { categoriesOptions } from '@/utils/tempData';
 import { notifySuccess } from '@/utils/toast';
 import { useRouter } from 'next/navigation';
-import React, { useEffect, useState } from 'react';
+import React, {  useEffect, useState } from 'react';
 import { FaRegEdit, FaTrashAlt } from 'react-icons/fa';
 import { IoIosAddCircleOutline } from 'react-icons/io';
 import { MdOutlineSave } from 'react-icons/md';
@@ -38,9 +38,7 @@ const Form4 = ( { formData }: any ) =>
   const router = useRouter();
   const { user } = useAdminAuth();
   const initialData = formData.product || {};
-  console.log( "initialData", initialData );
   const [ data, setFormData ] = useState<FormData>( initialData );
-  console.log( "sd", data );
   const [ newTag, setNewTag ] = useState<string>( '' ); // State for the new tag input
   const [ editMode, setEditMode ] = useState<{ [ key: string ]: boolean; }>( {
     title: false,
@@ -57,20 +55,25 @@ const Form4 = ( { formData }: any ) =>
   const [selectedCategories, setSelectedCategories] =  useState<MultiValue<{ label: string; value: string }>>([]);
   const [availableCategories, setAvailableCategories] = useState<any[]>([]);
   const BucketName=process.env.NEXT_PUBLIC_AWS_BUCKET;
+  const [isPublishButtonDisabled, setIsPublishButtonDisabled] = useState(true);
   const AwsRegiosn=process.env.NEXT_PUBLIC_AWS_REIGION;
+  console.log("first",data)
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement> | string, field: string) => {
     if (typeof e === 'string') {
       // Handle cases where e is a string, e.g., for rich text editors
-      setFormData( { ...data, description: e } );
-    } else
-    {
+      setFormData({ ...data, description: e });
+      console.log(e,field)
+    } else {
       const { name, value } = e.target;
-      setFormData( {
+      setFormData({
         ...data,
-        [ name ]: value
-      } );
+        [name]: value
+      });
     }
   };
+
+
 
   const handleTagChange = ( index: number, value: string ) =>
   {
@@ -101,12 +104,11 @@ const Form4 = ( { formData }: any ) =>
     } else
     {
       setEditMode( prev => ( { ...prev, [ field ]: !prev[ field ] } ) );
-    }
+    } 
   };
 
   const handleSave = async ( field: string ) =>
   {
-    setloader( true );
     try
     {
       let updatedField = {};
@@ -134,11 +136,17 @@ const Form4 = ( { formData }: any ) =>
           throw new Error( 'Unknown field' );
       }
       const response = await instance.patch( `/product/${ initialData.uuid }`, updatedField );
-      if ( response.status === 201 )
-      {
-        setloader( false );
-        notifySuccess( "Category updated successfuly" );
-        setSelectedCategories( response.data.product.category );
+      if (response.status === 201) {
+        notifySuccess(`${field} updated successfully`);
+
+      const updatedDataResponse = await instance.get(`/product/${initialData.uuid}`);
+      if (updatedDataResponse.status === 201) {
+        setFormData(updatedDataResponse.data.product);
+
+        setSelectedCategories(response.data.product.category);
+        }   else {
+          throw new Error('Failed to fetch updated data');
+        }
       }
     } catch ( error:any )
     {
@@ -159,18 +167,18 @@ const Form4 = ( { formData }: any ) =>
     try
     {
       const variant = data.variants[ index ];
-
-      // Prepare the data to be sent
       const sendData = {
         uuid: initialData.uuid,
         price: variant.price,
         label: variant.label
       };
-      // Make the API call with the data
       const response = await instance.patch( `/product/variant/${ variant._id }`, sendData );
 
-      // Log the response for debugging
       console.log( 'Saving variant data:', response.data );
+      setFormData(response.data.product)
+        console.log("h",data)
+      
+
     } catch ( error:any )
     {
       console.error( 'Error saving variant:', error );
@@ -271,8 +279,11 @@ const Form4 = ( { formData }: any ) =>
   useEffect( () =>
   {
     getCategories();
-  }, [ user ] );
-
+        const isAllVariantsValid = data.variants.every(variant => 
+      variant.label && variant.price
+    );
+    setIsPublishButtonDisabled(!isAllVariantsValid);
+  }, [ user ,data] );
 
   return ( <>  { loading ? <>
     <div role="status" className='justify-center h-screen flex items-center m-auto'>
@@ -457,7 +468,7 @@ const Form4 = ( { formData }: any ) =>
           </div>
         </div>
         <div className="flex my-8  flex-row justify-center gap-4">
-          <button type="submit" className="bg-lime-500 px-20 text-white p-2 rounded">Publish</button>
+          <button type="submit" disabled={isPublishButtonDisabled} className={` px-20 text-white p-2 rounded ${!isPublishButtonDisabled?"bg-lime-500 cursor-pointer":"cursor-not-allowed bg-lime-300"}`}>Publish</button>
         </div>
       </form>
     </div></> ) }

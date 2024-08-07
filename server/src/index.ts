@@ -37,7 +37,7 @@ const app: Express = express();
 //   credentials: true
 // }));
 // temp
-const allowedOrigins = ['https://montage-india-mg-team.vercel.app'];
+const allowedOrigins = ['http://localhost:3000'];
 
 const corsOptions = {
   origin: function (origin:any, callback:any) {
