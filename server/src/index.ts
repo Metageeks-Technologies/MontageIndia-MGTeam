@@ -14,21 +14,22 @@ import productRouter from "@src/routes/product/product"
 import fieldRouter from '@src/routes/field/field';
 import cookieParser from 'cookie-parser';
 import paymentRouter from '@src/routes/payment/payment';
+import userRouter from './routes/user/customer';
 const {mongoUrl}=config;
  
 const app: Express = express();
 app.use(cors({
-  origin: config.clientUrl,
+  origin: process.env.CLIENT_URL,
   credentials: true 
 }));
 app.enable("trust proxy");
-app.use(express.json());
+app.use(express.json({ limit: "500mb" }));
 app.use(cookieParser());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({limit: "500mb" ,extended: true }));
 app.use(morgan('dev'));
 
 app.use("/api/v1/auth/admin", adminRouter);
-app.use("/api/v1/user", adminRouter);
+app.use("/api/v1/user", userRouter);
 app.use("/api/v1/media/image", imageRouter);
 app.use("/api/v1/media/video", videoRouter);
 app.use("/api/v1/media/audio", audioRouter);

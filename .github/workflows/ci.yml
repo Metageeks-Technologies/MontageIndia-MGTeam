@@ -45,6 +45,9 @@ jobs:
         echo CLIENT_URL=${{ secrets.CLIENT_URL }} >> .env
         echo EMAIL_USER=${{ secrets.EMAIL_USER }} >> .env
         echo EMAIL_PASS=${{ secrets.EMAIL_PASS }} >> .env
+        echo JWT_SECRET_CUSTOMER=${{ secrets.JWT_SECRET_CUSTOMER }} >> .env
+        echo NEXT_PUBLIC_RAZORPAY_KEY=${{ secrets.NEXT_PUBLIC_RAZORPAY_KEY }} >> .env
+        echo RAZORPAY_SECRET=${{ secrets.RAZORPAY_SECRET }} >> .env
         cat .env 
       
     - name: Build the Docker image
