@@ -6,6 +6,7 @@ import jwt, { JwtPayload } from "jsonwebtoken";
 export const isAuthenticatedAdmin = catchAsyncError(async (req: any, res, next) => {
     // console.log("auth",req);
     const { token } = req.cookies;
+    console.log("token",token);
     if (!token) {
         return next(new ErrorHandler("Please Login to access this resource", 401));
     }
@@ -25,7 +26,7 @@ export const isAuthenticatedAdmin = catchAsyncError(async (req: any, res, next) 
         });
     }
     req.user = requestedUser;
-    // console.log("user",req.user);
+    console.log("user",req.user);
     next();
 });
 
