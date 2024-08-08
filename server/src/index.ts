@@ -15,7 +15,8 @@ import fieldRouter from '@src/routes/field/field';
 import cookieParser from 'cookie-parser';
 import paymentRouter from '@src/routes/payment/payment';
 import subscriptionRouter from '@src/routes/subscription/subscription';
-const {mongoUrl,nodeEnv}=config;
+import userRouter from './routes/user/customer';
+const {mongoUrl}=config;
  
 const app: Express = express();
 // app.use(cors({
@@ -36,7 +37,7 @@ const app: Express = express();
 //   credentials: true
 // }));
 // temp
-const allowedOrigins = ['https://montage-india-mg-team.vercel.app'];
+const allowedOrigins = ['http://localhost:3000'];
 
 const corsOptions = {
   origin: function (origin:any, callback:any) {
@@ -64,7 +65,7 @@ app.use(express.urlencoded({limit: "500mb" ,extended: true }));
 app.use(morgan('dev'));
 
 app.use("/api/v1/auth/admin", adminRouter);
-app.use("/api/v1/user", adminRouter);
+app.use("/api/v1/user", userRouter);
 app.use("/api/v1/media/image", imageRouter);
 app.use("/api/v1/media/video", videoRouter);
 app.use("/api/v1/media/audio", audioRouter);

@@ -160,7 +160,7 @@ export const addSizeAndKeysToVideo =  catchAsyncError(async (req:any, res, next)
 export const addPriceToVariant = catchAsyncError(async (req:any, res, next) => {
     
     const {id:vid} = req.params;
-    const {uuid,price,label} =  req.body;
+    const {uuid,price,label,credit} =  req.body;
 
     const product  =  await Product.findOne({uuid});
 
@@ -174,6 +174,8 @@ export const addPriceToVariant = catchAsyncError(async (req:any, res, next) => {
     const updateFields:any = {};
     if (label) updateFields[`variants.${variantIndex}.label`] = label;
     if (price) updateFields[`variants.${variantIndex}.price`] = price;
+    if (credit) updateFields[`variants.${variantIndex}.credit`] = credit;
+
 
     const result = await Product.updateOne(
         { uuid, "variants._id": vid },

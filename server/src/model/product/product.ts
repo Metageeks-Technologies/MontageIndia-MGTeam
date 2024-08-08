@@ -14,6 +14,7 @@ const productSchema = new mongoose.Schema({
         label: { type: String },
         size:{type:String},
         price: { type: Number},
+        credit: { type: Number},
         key: { type: String}
     }],
     status: { type: String, enum: ["published", "archived", "unavailable","draft"], required: true ,default:"draft"},

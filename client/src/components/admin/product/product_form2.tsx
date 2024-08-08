@@ -273,13 +273,13 @@ const Form2: React.FC<Form2Props> = ( { onPrev, onNext, formData } ) =>
     image: 'PNG, JPG, JPEG',
     video: 'MP4, AVI',
   };
-
+  const displayPercentage = loadingPer >= 98 ? 98 : loadingPer;
   return (
     <div className="flex flex-col items-center w-full max-w-md mx-auto mt-10">
       { loading ? (
         <div className='items-center flex justify-center h-screen'>
 
-        <Spinner label={ `Uploading...${ loadingPer-1 }%` } color="success" />
+        <Spinner label={ `Uploading...${ displayPercentage }%` } color="success" />
         </div>
       ) : (
         <>

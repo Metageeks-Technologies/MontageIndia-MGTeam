@@ -55,6 +55,8 @@ const Form4 = () => {
   });
   const [editingVariantIndex, setEditingVariantIndex] = useState<number | null>(null);
   const [status, setStatus] = useState(data?.status || '');
+  const [isPublishButtonDisabled, setIsPublishButtonDisabled] = useState(false);
+
   const BucketName=process.env.NEXT_PUBLIC_AWS_BUCKET;
   const AwsRegiosn=process.env.NEXT_PUBLIC_AWS_REIGION;
   const fetchData = async () => {
@@ -150,10 +152,22 @@ const Form4 = () => {
     }
   };
 
+  const filteredTags = data?.tags.filter(tag => tag.trim() !== '');
+  const isTagsEmpty: boolean = filteredTags?.length === 0;
+
   const handleSave = async (field: string) => {
     if (!data) return;
-    setloader(true)
-    try {
+
+ if (!data.title || !data.description || filteredTags?.length === 0) {
+    Swal.fire({
+      icon: 'error',
+      title: 'Invalid input',
+      text: `${field} must be valid and not empty.`,
+    });
+    setEditMode( prev => ({ ...prev,[ field ]:false}));
+
+    return ;
+  }    try {
       let updatedField = {};
       switch (field) {
         case 'title':
@@ -203,8 +217,21 @@ const Form4 = () => {
 
   const handleSaveVariant = async (index: number) => {
     if (!data) return;
+    const variant = data.variants[index];
+
+    if (!variant.price || variant.price <= 0 || !variant.label || variant.label.trim() === '') {
+      Swal.fire({
+        icon: 'error',
+        title: 'Invalid input',
+        text: 'Label and price must be valid and not empty.',
+      });
+      const allVariantsValid = data.variants.every(variant =>
+        variant.label?.trim() !== '' && variant.price > 0
+      );
+      setIsPublishButtonDisabled(allVariantsValid);
+      return;
+    }
     try {
-      const variant = data.variants[index];
 
       // Prepare the data to be sent
       const sendData = {
@@ -421,25 +448,28 @@ const Form4 = () => {
             </span>
           </div>
           <div className='flex py-2 flex-wrap w-full'>
-            {data.tags.map((tag, index) => (
-              <span key={index} className='flex gap-2 w-fit '>
-                <input
-                  type="text"
-                  value={tag}
-                  onChange={(e) => handleTagChange(index, e.target.value)}
-                  disabled={!editMode.tags}
-                  className={` bg-gray-200 m-2 w-32 rounded-md  px-3 py-1 text-sm font-semibold text-gray-700  ${!editMode.tags ? 'bg-gray-200' : 'bg-gray-200'}`}
-                />
-                {editMode.tags && (
-                  <button
-                    type="button"
-                    onClick={() => handleDeleteTag(index)}
-                  >
-                    <FaTrashAlt />
-                  </button>
-                )}
-              </span>
-            ))}
+          {data.tags.map((tag, index) => (
+                  tag.trim() !== '' && ( // Filter out empty tags
+                    <span key={index} className='flex gap-2 w-fit'>
+                      <input
+                        type="text"
+                        value={tag}
+                        required
+                        onChange={(e) => handleTagChange(index, e.target.value)}
+                        disabled={!editMode.tags}
+                        className={`bg-gray-200 m-2 w-32 rounded-md px-3 py-1 text-sm font-semibold text-gray-700 ${!editMode.tags ? 'bg-gray-200' : 'bg-gray-200'}`}
+                      />
+                      {editMode.tags && (
+                        <button
+                          type="button"
+                          onClick={() => handleDeleteTag(index)}
+                        >
+                          <FaTrashAlt />
+                        </button>
+                      )}
+                    </span>
+                  )
+                ))}
             {editMode.tags && (
               <div className='flex gap-2 items-center mt-2'>
                 <input
