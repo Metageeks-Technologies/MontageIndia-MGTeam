@@ -1,6 +1,6 @@
 import express from "express";
 import { createOrder, paymentCapture } from "@src/controller/payment/orders/order";
-import { createPlan, createSubscription, fetchAllPlans, fetchPlanById, updatePlan } from "@src/controller/payment/subscription/subscription";
+import { createPlan, createSubscription, fetchAllPlans, fetchPlanById, updatePlan, verifyPayment } from "@src/controller/payment/subscription/subscription";
 import { paymentWebHook } from "@src/controller/payment/webhook";
 
 const paymentRouter = express.Router();
@@ -19,6 +19,7 @@ paymentRouter.route('/fetchAllPlans').get(fetchAllPlans);
 paymentRouter.route('/plan/:id').get(fetchPlanById);
 paymentRouter.route('/createSubscription').post(createSubscription);
 paymentRouter.route('/plan/:id').patch(updatePlan);
+paymentRouter.route('/verifySubscription').post(verifyPayment);
 
 
 export default paymentRouter;

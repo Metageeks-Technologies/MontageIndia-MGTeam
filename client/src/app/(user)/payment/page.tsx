@@ -32,20 +32,11 @@ interface SubscriptionPlan {
 
 const SubscriptionTable=()=>{
   const [plans, setPlans] = useState<SubscriptionPlan[]>([]);
-  const [monthlyPlans, setMonthlyPlans] = useState<SubscriptionPlan[]>([]);
-  const [yearlyPlans, setYearlyPlans] = useState<SubscriptionPlan[]>([]);
   const [selected, setSelected] = useState<Key | null | undefined>("login");
   const fetchPlans = async () => {
     try {
       const response = await instance.get('/payment/fetchAllPlans');
-      const fetchedPlans = response.data.response as SubscriptionPlan[];
-      setPlans(fetchedPlans);
-      
-      const monthly = fetchedPlans.filter(plan => plan.period === 'monthly');
-      const yearly = fetchedPlans.filter(plan => plan.period === 'yearly');
-      
-      setMonthlyPlans(monthly);
-      setYearlyPlans(yearly);
+      setPlans(response.data.response as SubscriptionPlan[]);
     } catch (error) {
         console.error('Error fetching plans:', error);
     }
@@ -67,21 +58,19 @@ const SubscriptionTable=()=>{
           >
             <Tab key="Monthly" title="Monthly Plans">
               <div className="flex flex-wrap justify-center items-center gap-4">
-        {monthlyPlans.map((plan) => (
-           <SubscriptionCard plan={plan}/>
-        ))}
-      </div>
+                {plans.map((plan) => (
+                  plan.period==="monthly" && <SubscriptionCard plan={plan}/>
+                ))}
+              </div>
      
       
             </Tab>
             <Tab key="Yearly" title="Yearly Plans">
- <div className="flex flex-wrap justify-center items-center gap-4">
-        {plans.map((plan) => (
-           <SubscriptionCard plan={plan}/>
-        ))}
-      </div>
-      
-     
+              <div className="flex flex-wrap justify-center items-center gap-4">
+                {plans.map((plan) => (
+                  plan.period==="yearly" && <SubscriptionCard plan={plan}/>
+                ))}
+              </div>
             </Tab>
           </Tabs>
         </div>

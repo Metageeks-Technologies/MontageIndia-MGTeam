@@ -3,6 +3,7 @@ import SubscriptionPlan from "@src/model/subscriptions/subscriptionPlan";
 import Razorpay from "razorpay";
 import config from "@src/utils/config";
 import ErrorHandler from "@src/utils/errorHandler";
+import crypto from "crypto";
 /*
 index
 
@@ -65,7 +66,7 @@ export const createPlan= catchAsyncError(async (req, res, next) => {
 export const updatePlan= catchAsyncError(async (req, res, next) => {
 
     const razorpay:any = razorpayInstance();
-    const {name,description,amount,currency,period,interval,credits,validity}=req.body;
+    const {name,description,amount,currency,credits,period,interval}=req.body;
     
     const { id } = req.params;
     const options :any = {
@@ -79,7 +80,6 @@ export const updatePlan= catchAsyncError(async (req, res, next) => {
         },
         notes:{
             credits:credits,
-            validity:validity
         }
     };
     console.log("step 1",options);
@@ -107,7 +107,6 @@ export const updatePlan= catchAsyncError(async (req, res, next) => {
         },
         notes: {
             credits: response.notes.credits,
-            validity: response.notes.validity
         }
     };
 
@@ -172,4 +171,35 @@ export const createSubscription= catchAsyncError(async (req, res, next) => {
         response
     });
 
+});
+
+export const verifyPayment=catchAsyncError(async (req, res, next) => {
+        const {
+            subscriptionCreationId,
+            razorpayPaymentId,
+            razorpaySubscriptionId,
+            razorpaySignature,
+        } = req.body;
+
+        // Creating our own digest
+        // The format should be like this:
+        // digest = hmac_sha256(orderCreationId + "|" + razorpayPaymentId, secret);
+        const shasum = crypto.createHmac("sha256", config.razorpaySecret as string);
+
+        shasum.update(`${subscriptionCreationId}|${razorpayPaymentId}`);
+
+        const digest = shasum.digest("hex");
+
+        // comaparing our digest with the actual signature
+        if (digest !== razorpaySignature)
+            return res.status(400).json({ msg: "Transaction not legit!" });
+
+        // THE PAYMENT IS LEGIT & VERIFIED
+        // YOU CAN SAVE THE DETAILS IN YOUR DATABASE IF YOU WANT
+
+        res.json({
+            msg: "success",
+            orderId: razorpaySubscriptionId,
+            paymentId: razorpayPaymentId,
+        });
 });

@@ -1,6 +1,7 @@
 import React,{useState,useEffect} from 'react';
 import { loadScript } from '../../utils/loadScript';
 import instance from '@/utils/axios';
+import {ScrollShadow} from '@nextui-org/react'
 
 interface SubscriptionPlan {
     planId: string;
@@ -102,18 +103,17 @@ const SubscriptionCard: React.FC<Props> = ({ plan }) => {
     console.log(plan);
     return (
         <div className="flex-1 text-xl rounded-xl border border-[#4E67E5]/25 bg-[#080C23] p-10">
-            <div className="text-center">{plan.item.name}</div>
-            <div className=" text-6xl my-5 text-center font-light">
+            <div className="text-center h-[10vh] mb-4">{plan.item.name}</div>
+            <div className="text-6xl mb-4 text-center font-light">
                 {plan.item.amount / 100} {plan.item.currency}
             </div>
-            <div className='text-lg h-[10vh]'>
-                {plan.item.description}
-            </div>
+             <ScrollShadow hideScrollBar size={0} className="h-[20vh] mb-4">
+        {plan.item.description}
+        </ScrollShadow>
              
-            <ul className='text-lg flex justify-start items-center gap-4'>
-                <li>Credits: {plan.notes.credits}</li>
-                <li>Validity: {plan.notes.validity} days</li>
-            </ul>
+            <ul className="text-lg flex justify-start items-center gap-4 mb-4">
+        <li>Credits: {plan.notes.credits}</li>
+      </ul>
              <button onClick={handleSubsription}
                 className="my-5 w-full text-white p-5 max-sm:p-2 rounded-3xl bg-var1 text-xl max-sm:text-lg hover:bg-var1-light transition-all"
               >

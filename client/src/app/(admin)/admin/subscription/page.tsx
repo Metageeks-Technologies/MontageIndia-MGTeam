@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { Key } from "@react-types/shared";
-import {Modal, ModalContent,Autocomplete,AutocompleteItem, ModalHeader, ModalBody, ModalFooter,Tabs, Tab, Input, Link, Button,Textarea, useDisclosure} from "@nextui-org/react";
+import {ScrollShadow,Modal, ModalContent,Autocomplete,AutocompleteItem, ModalHeader, ModalBody, ModalFooter,Tabs, Tab, Input, Link, Button,Textarea, useDisclosure} from "@nextui-org/react";
 import instance from "@/utils/axios";
 import { notifySuccess } from '@/utils/toast';
 
@@ -10,7 +10,7 @@ interface SubscriptionPlan {
   planId: string;
   entity: string;
   interval: number;
-  period: string | Key | null | undefined;
+  period: string;
   total_count: number;
   customer_notify: boolean;
   item: {
@@ -37,11 +37,16 @@ interface Form{
     description: string;
     amount: number;
     currency: string;
-    period: string | Key | null | undefined;
-    interval: number;
     credits: number;
-    validity: number;
+    period: string;
+    interval: number;
 }
+
+interface CardProps {
+  plan: SubscriptionPlan;
+  handleOpen: (plan: SubscriptionPlan) => void;
+}
+
 
 export const periods = [
   {label: "Monthly", value: "monthly", description: "user will be charged monthly"},
@@ -58,10 +63,9 @@ const SubscriptionPage = () => {
         description: "",
         amount: 0.00,
         currency: "",
-        period: "",
-        interval: 0,
         credits: 0,
-        validity: 0
+        period: "",
+        interval: 0
     });
     const [selected, setSelected] = useState<Key | null | undefined>("monthly");
   const fetchPlans = async () => {
@@ -85,13 +89,11 @@ const SubscriptionPage = () => {
       description: plan.item.description,
       amount: plan.item.amount,
       currency: plan.item.currency,
-      id: plan._id,
       period: plan.period,
-      interval: plan.interval,
+      id: plan._id,
       credits: plan.notes.credits,
-      validity: plan.notes.validity
+      interval: plan.interval
     });
-
     setFormTitle(plan.item.name);
     onOpen();
   }
@@ -127,23 +129,7 @@ const SubscriptionPage = () => {
                 <div className="flex flex-wrap justify-center items-start gap-4">
                   {plans.map((plan) => (
                     plan.period==="monthly"&&(
-                      <div className="flex-1 text-xl rounded-xl border border-[#4E67E5]/25 bg-[#080C23] p-10">
-                        <div className="text-center h-[10vh]">{plan.item.name}</div>
-                        <div className=" text-6xl my-5 text-center font-light">
-                          {plan.item.amount / 100} {plan.item.currency}
-                        </div>
-                        <div className="text-lg h-[10vh]">
-                          {plan.item.description}
-                        </div>
-
-                        <ul className="text-lg flex justify-start items-center gap-4">
-                          <li>Credits: {plan.notes.credits}</li>
-                          <li>Validity: {plan.notes.validity} days</li>
-                        </ul>
-                        <button onClick={()=>handleOpen(plan)} className="my-5 w-full text-white p-5 max-sm:p-2 rounded-3xl bg-var1 text-xl max-sm:text-lg hover:bg-var1-light transition-all">
-                          Update
-                        </button>
-                      </div>
+                      <Card key={plan._id} plan={plan} handleOpen={handleOpen} />
                     )
                   ))}
                 </div>
@@ -152,23 +138,7 @@ const SubscriptionPage = () => {
                 <div className="flex flex-wrap justify-center items-center gap-4">
                   {plans.map((plan) => (
                     plan.period==="yearly"&&(
-                           <div className="flex-1 text-xl rounded-xl border border-[#4E67E5]/25 bg-[#080C23] p-10">
-                      <div className="text-center h-[10vh]">{plan.item.name}</div>
-                      <div className=" text-6xl my-5 text-center font-light">
-                        {plan.item.amount / 100} {plan.item.currency}
-                      </div>
-                      <div className="text-lg h-[10vh]">
-                        {plan.item.description}
-                      </div>
-
-                      <ul className="text-lg flex justify-start items-center gap-4">
-                        <li>Credits: {plan.notes.credits}</li>
-                        <li>Validity: {plan.notes.validity} days</li>
-                      </ul>
-                      <button onClick={()=>handleOpen(plan)} className="my-5 w-full text-white p-5 max-sm:p-2 rounded-3xl bg-var1 text-xl max-sm:text-lg hover:bg-var1-light transition-all">
-                        Update
-                      </button>
-                    </div>
+                       <Card key={plan._id} plan={plan} handleOpen={handleOpen} />
                 )))}
                 </div>
               </Tab>
@@ -184,11 +154,10 @@ const SubscriptionPage = () => {
             <>
               <ModalHeader className="flex flex-col gap-1">{formTitle}</ModalHeader>
               <ModalBody>
-               <form action="">
+               <form>
                 <div className="flex w-full flex-wrap items-center flex-col mb-6 md:mb-0 gap-4">
                     <Input type="text" variant="bordered" label="Plan Name" value={selectedPlan?.name} onChange={(e) => setSelectedPlan({...selectedPlan, name: e.target.value})}/>
                     <Textarea maxRows={3} label="Description" variant="bordered" value={selectedPlan?.description} onChange={(e) => setSelectedPlan({...selectedPlan, description: e.target.value})}/>
-                    <Input min={1} type="text" variant="bordered" label="Interval" value={selectedPlan?.interval.toString()} onChange={(e) => setSelectedPlan({ ...selectedPlan, interval: Number(e.target.value) })} />
                     <div className="w-full">
                     <div className="relative mt-2 rounded-md shadow-sm">
                         <Input type="text" variant="bordered" label="Price"  value={selectedPlan?.amount.toString() } onChange={(e) => setSelectedPlan({ ...selectedPlan, amount: Number(e.target.value) })} />
@@ -200,7 +169,7 @@ const SubscriptionPage = () => {
                         </div>
                     </div>
                     </div>
-                     <div className="w-full">
+                     {/* <div className="w-full">
                       <Autocomplete
                         label="Period"
                         variant="bordered"
@@ -210,7 +179,7 @@ const SubscriptionPage = () => {
                       >
                       {(item) => <AutocompleteItem key={item.value}>{item.label}</AutocompleteItem>}
                       </Autocomplete>
-                  </div>
+                  </div> */}
                     <Input type="text" variant="bordered" label="Credits" value={selectedPlan?.credits.toString()} onChange={(e) => setSelectedPlan({...selectedPlan,credits: Number(e.target.value)} )} />
                 </div>
                </form>
@@ -232,3 +201,29 @@ const SubscriptionPage = () => {
 };
 
 export default SubscriptionPage;
+
+
+const Card: React.FC<CardProps> = ({ plan, handleOpen }) => {
+  return (
+    <div className="flex-1 text-xl rounded-xl border border-[#4E67E5]/25 bg-[#080C23] p-10">
+      <div className="text-center h-[10vh] mb-4">{plan.item.name}</div>
+      <div className="text-6xl mb-4 text-center font-light">
+        {plan.item.amount / 100} {plan.item.currency}
+      </div>
+       <ScrollShadow hideScrollBar size={0} className="h-[20vh] mb-4">
+        {plan.item.description}
+        </ScrollShadow>
+
+      <ul className="text-lg flex justify-start items-center gap-4 mb-4">
+        <li>Credits: {plan.notes.credits}</li>
+      </ul>
+      <button
+        onClick={() => handleOpen(plan)}
+        className="my-5 w-full text-white p-5 max-sm:p-2 rounded-3xl bg-var1 text-xl max-sm:text-lg hover:bg-var1-light transition-all"
+      >
+        Update
+      </button>
+    </div>
+  );
+};
+
