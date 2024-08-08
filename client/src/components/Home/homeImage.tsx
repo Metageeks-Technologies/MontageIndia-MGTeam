@@ -3,6 +3,8 @@ import { IoIosSearch } from "react-icons/io";
 import { IoMdHeartEmpty } from "react-icons/io";
 import { HiDownload } from "react-icons/hi";
 import { PiShoppingCartThin } from "react-icons/pi";
+import { useRouter } from "next/navigation";
+
 
 
 const ImageGallery: React.FC = ( data: any ) =>
@@ -16,10 +18,14 @@ const ImageGallery: React.FC = ( data: any ) =>
     }
     return text;
   }
-  console.log( "iamge", data ); 
+  // console.log( "iamge", data );
+  
+  const router = useRouter()
+
+
 
   return (
-    <div className="relative rounded-md overflow-hidden group cursor-pointer">
+    <div className="relative rounded-md overflow-hidden group cursor-pointer" onClick={()=>router.push(`/image-detail/${data.uuid}`)}>
       <div className="aspect-w-1 aspect-h-1">
         <img
           src={ `https://mi2-public.s3.ap-southeast-1.amazonaws.com/${ data.thumbnailKey}`}
