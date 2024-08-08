@@ -1,7 +1,20 @@
-import React from "react";
+"use client"
+import React, { useEffect } from "react";
 import {Dropdown, DropdownTrigger, DropdownMenu, DropdownSection, DropdownItem, Button, User} from "@nextui-org/react";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchCart } from "@/app/redux/reducer/cartSlice";
 
-export default function CartPopup() {
+ function CartPopup ()
+{
+  // const productIds = [ "66ac95b11526869ca548fa31", "66acd04b88a01a94656d7ade", "66acd27488a01a94656d7beb" ]
+  // const products = useSelector( ( state ) => state )
+  // console.log("Products:-",products)
+  // const dispatch = useDispatch()
+  // useEffect( () =>
+  // {
+  //   dispatch(fetchCart(productIds))
+  // },[])
+
   return (
     <Dropdown
       showArrow
@@ -157,3 +170,5 @@ export default function CartPopup() {
     </Dropdown>
   );
 }
+
+export default CartPopup

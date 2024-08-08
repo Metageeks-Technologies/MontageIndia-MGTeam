@@ -20,7 +20,8 @@ index
 9.forget password
 10.reset password
 11.getCustomerById
-
+12.add product id to user cart
+13. remove the product id from user cart
 */
 
 
@@ -284,7 +285,6 @@ export const resetPassword = catchAsyncError(async (req, res, next) => {
 
 } );
 
-// add product id to user cart
 export const addProductToCart = catchAsyncError( async ( req:any, res, next ) =>
 {
     const { productId,id } = req.body;
@@ -295,10 +295,9 @@ export const addProductToCart = catchAsyncError( async ( req:any, res, next ) =>
     res.status(200).json({ message: 'Product added to cart successfully' });
 } )
 
-// remove the product id from user cart
 export const removeProductFromCart = catchAsyncError(async (req:any, res, next) => {
-  const { productId } = req.body;
-  const { id } = req.user;
+  const { productId,id } = req.body;
+//   const { id } = req.user;
   const customer = await Customer.findById(id);
   if (customer) {
     customer.cart = customer.cart.filter((id) => id.toString() !== productId.toString());
