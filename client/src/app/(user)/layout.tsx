@@ -5,6 +5,7 @@ const inter = Inter( { subsets: [ "latin" ] } );
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Head from "next/head";
+import Navbar from "@/components/navbar/Navbar";
 
 export const metadata: Metadata = {
   title: "Montage India",
@@ -28,7 +29,7 @@ export default function RootLayout ( {
         <div className="w-20"> <Sidebar/></div>
        <div >{ children }</div>
        </div> */}
-       <Sidebar/>
+       <Navbar />
        { children }
       </body>
     </html>

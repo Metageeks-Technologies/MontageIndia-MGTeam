@@ -12,7 +12,7 @@ import { IoMdArrowDropdown } from 'react-icons/io';
 import { useRouter } from 'next/navigation';
 
 
-const Sidebar = () => {
+const Navbar = () => {
   const router = useRouter();
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -108,7 +108,7 @@ const Sidebar = () => {
   );
 };
 
-export default Sidebar;
+export default Navbar;
 
 
 
