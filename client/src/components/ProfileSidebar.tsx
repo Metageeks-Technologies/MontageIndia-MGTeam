@@ -14,7 +14,7 @@ const ProfileSidebar = () => {
         <div>
           <h1 className="text-md text-gray-700 font-medium">My Account</h1>
           <div className="mt-4">
-            <div className="flex items-center text-gray-700 px-4 py-2 hover:bg-gray-200 cursor-pointer">
+            <div onClick={() => router.push(`/user-profile`)}  className="flex items-center text-gray-700 px-4 py-2 hover:bg-gray-200 cursor-pointer">
               <AiOutlineUser className="mr-3 h-6 w-6" />
               <span>Profile</span>
             </div>

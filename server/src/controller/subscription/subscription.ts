@@ -78,6 +78,8 @@ export const deleteSubscription = catchAsyncError(async (req, res, next) => {
     return res.json({ success: true, subscription });
 }, "Error occured while deleting Subscription Plan");
 
+
+
 export const getSubscriptionByUserId =catchAsyncError(async (req, res, next) => {
   const { userId } = req.params;
   const user =  await  Customer.findById(userId).populate("subscriptionHistory");
