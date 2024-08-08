@@ -59,13 +59,15 @@ const Form4 = ( { formData }: any ) =>
   const AwsRegiosn=process.env.NEXT_PUBLIC_AWS_REIGION;
   console.log("first",data)
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement> | string, field: string) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>| string, field: string) => {
     if (typeof e === 'string') {
       // Handle cases where e is a string, e.g., for rich text editors
-      setFormData({ ...data, description: e });
-      console.log(e,field)
+      setFormData({ ...data, [field]: e });
+      // console.log(e, field);
     } else {
+      console.log(field)
       const { name, value } = e.target;
+      console.log(name,value)
       setFormData({
         ...data,
         [name]: value
@@ -351,7 +353,7 @@ const Form4 = ( { formData }: any ) =>
                 <button type="button" className={ `${ editMode.title ? 'hidden' : 'block' }` } onClick={ () => handleEditToggle( 'title' ) }><FaRegEdit size={ 25 } /></button>
               </div>
             </div>
-            <div className="">
+            <div className="flex flex-col">
               <label className="w-52 gap-4 text-gray-700 flex flex-row text-sm font-bold mb-2" htmlFor="description">
                 Description
                 <button type="button" className={ `text-xl ${ !editMode.description ? 'hidden' : 'block' }` } onClick={ () => { handleSave( 'description' ); handleEditToggle( 'description' ); } }><MdOutlineSave size={ 20 } /></button>
@@ -359,13 +361,12 @@ const Form4 = ( { formData }: any ) =>
                   <FaRegEdit />
                 </button>
               </label>
-              <ReactQuill
-                theme="snow"
-                className={ `h-52 mt-4 mb-12 ` }
-                value={ data.description }
-                onChange={ ( value ) => handleChange( value, 'description' ) }
-                readOnly={ !editMode.description }
-              />
+              <textarea
+               name="description"
+               value={ data.description } 
+              readOnly={ !editMode.description }
+              className='outline-none p-4 bg-gray-100 h-72  rounded-lg' 
+              onChange={ (value) => handleChange(value, 'description' ) }/>
             </div>
             <div className="mb-4">
               <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="media">

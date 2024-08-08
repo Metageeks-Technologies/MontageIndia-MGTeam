@@ -19,7 +19,7 @@ const productSchema = new mongoose.Schema({
     status: { type: String, enum: ["published", "archived", "unavailable","draft"], required: true ,default:"draft"},
     mediaType: { type: String, enum: ["image", "video", "audio"], required: true },
     createdBy: { type: mongoose.Schema.Types.ObjectId}
-});
+},{timestamps:true});
 
 const Product = mongoose.model<TProduct & mongoose.Document>('Product', productSchema);
 

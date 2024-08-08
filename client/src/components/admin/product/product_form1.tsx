@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, ChangeEvent } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import slugify from 'slugify';
 import instance from '@/utils/axios';
@@ -125,7 +125,9 @@ const Form1 = ( { onNext }: any ) =>
       console.log( "error in getting the category:-", error );
     }
   };
-
+  const handleChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
+    setDescription(event.target.value);
+  };
   const handleNext = async () =>
   {
     const uuid = uuidv4();
@@ -221,9 +223,10 @@ const Form1 = ( { onNext }: any ) =>
             onChange={ ( e ) => setTitle( e.target.value ) }
           />
         </div>
-        <div>
+        <div className=' flex flex-col'>
           <span className='text-xl font-semibold'>Description</span>
-          <ReactQuill theme="snow" className='h-52 mt-4 mb-8' value={ description } onChange={ setDescription } />
+          <textarea value={description} className='outline-none p-4 bg-gray-100  rounded-lg'   onChange={handleChange}/>
+          {/* <ReactQuill theme="snow" className='h-52 mt-4 mb-8' value={ description } onChange={ setDescription } /> */}
         </div>
         <div>
           <span className='text-xl mb-3 font-semibold mr-4'>Category</span>
