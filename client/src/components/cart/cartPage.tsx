@@ -1,18 +1,22 @@
 'use client'
 import React, { useState, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+// import { useDispatch, useSelector } from "react-redux";
+import { useAppDispatch,useAppSelector } from "@/app/redux/hooks";
 import { fetchCart } from "@/app/redux/reducer/cartSlice";
 import { AiOutlineShoppingCart, AiOutlineClose } from "react-icons/ai";
 import { Button } from "@nextui-org/react";
+import { getCurrAdmin } from "@/app/redux/feature/user/api";
 
 function CartPopup() {
   const [isOpen, setIsOpen] = useState(false);
   const productIds = ["66ac95b11526869ca548fa31", "66acd04b88a01a94656d7ade", "66acd27488a01a94656d7beb"];
-  const products = useSelector((state) => state.cart);
-  const dispatch = useDispatch();
+  // const products = useSelector((state) => state.cart);
+  const products = useAppSelector((state) => state.cart);
+  // const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
-    dispatch(fetchCart(productIds));
+    getCurrAdmin(dispatch, "66ac95b11526869ca548fa31");
   }, []);
 
   useEffect(() => {

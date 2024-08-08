@@ -5,7 +5,7 @@ const inter = Inter( { subsets: [ "latin" ] } );
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Sidebar from "@/components/Sidebar";
-import { Providers } from "./provider";
+import {ReduxProvider} from "@/app/redux/provider";
 
 export const metadata: Metadata = {
   title: "Montage India",
@@ -21,8 +21,8 @@ export default function RootLayout ( {
   return (
     <html lang="en">
       <body className={ inter.className }>
-        <Providers>
-        <ToastContainer />
+      <ToastContainer />
+        <ReduxProvider>        
         {/* <div className="flex  ">
         <div className="w-20"> <Sidebar/></div>
        <div >{ children }</div>
@@ -30,7 +30,7 @@ export default function RootLayout ( {
 
           <Sidebar />
           { children }
-        </Providers>
+        </ReduxProvider>
       </body>
     </html>
   );
