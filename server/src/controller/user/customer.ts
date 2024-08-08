@@ -295,6 +295,7 @@ export const addProductToCart = catchAsyncError( async ( req:any, res, next ) =>
     }
     const customer = await Customer.findById( id );
     customer?.cart.push( productId )
+    console.log("added new prosuct:",customer)
     await customer?.save();
     res.status(200).json({ message: 'Product added to cart successfully' });
 } )
