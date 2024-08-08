@@ -80,7 +80,7 @@ const Sidebar = () =>
           {/* <AiOutlineShoppingCart className="text-gray-700 w-6 h-6" /> */ }
           {/* this is cart */ }
           <CartPopup />
-          <AiOutlineUser className="text-gray-700 w-6 h-6" />
+          <AiOutlineUser onClick={ () => router.push( '/user-profile' ) } className="text-gray-700 w-6 h-6 cursor-pointer" />
         </div>
       </div>
 

@@ -1,11 +1,5 @@
 "use client";
 import { FC, useState, useEffect } from "react";
-import {
-  AiOutlineUser,
-  AiOutlineShoppingCart,
-  AiOutlineLink,
-} from "react-icons/ai";
-import { FiSettings } from "react-icons/fi";
 import instance from "@/utils/axios";
 import { notifyError, notifySuccess } from "@/utils/toast";
 import { useRouter } from "next/navigation";
@@ -60,24 +54,23 @@ const Home: FC = () => {
     }
   };
 
-//   const deleteUser = async () => {
-//     if (!user) return;
-  
-//     const confirmed = confirm("Are you sure you want to delete your account? This action cannot be undone.");
-//     if (!confirmed) return;
-  
-//     try {
-//       const response = await instance.delete(`/user/delete/${user._id}`);
-//       if (response.data && response.data.success) {
-//         notifySuccess("Account deleted successfully");
-//         router.push("/"); 
-//       }
-//     } catch (error) {
-//       console.error("Error deleting account:", error);
-//       notifyError("Failed to delete account");
-//     }
-//   };
-  
+  //   const deleteUser = async () => {
+  //     if (!user) return;
+
+  //     const confirmed = confirm("Are you sure you want to delete your account? This action cannot be undone.");
+  //     if (!confirmed) return;
+
+  //     try {
+  //       const response = await instance.delete(`/user/delete/${user._id}`);
+  //       if (response.data && response.data.success) {
+  //         notifySuccess("Account deleted successfully");
+  //         router.push("/");
+  //       }
+  //     } catch (error) {
+  //       console.error("Error deleting account:", error);
+  //       notifyError("Failed to delete account");
+  //     }
+  //   };
 
   useEffect(() => {
     fetchUser();
@@ -93,7 +86,7 @@ const Home: FC = () => {
   };
 
   return (
-    <div className="flex  h-screen bg-white">
+    <div className="  w-full px-4 py-8">
       {isPopupOpen && (
         <div className="fixed inset-0 bg-gray-900 bg-opacity-85 flex justify-center items-center">
           <div className="bg-white p-8 rounded-2xl shadow-lg w-[25rem] relative">
@@ -130,36 +123,8 @@ const Home: FC = () => {
       )}
 
       {/* Sidebar */}
-      <div className="w-80 bg-gray-100 p-4 py-12 border">
-        <div>
-          <h1 className="text-md text-gray-700 font-medium">My Account</h1>
-          <div className="mt-4">
-            <div className="flex items-center text-gray-700 px-4 py-2 hover:bg-gray-200 cursor-pointer">
-              <AiOutlineUser className="mr-3 h-6 w-6" />
-              <span>Profile</span>
-            </div>
-            <div className="flex items-center text-gray-700 px-4 py-2 hover:bg-gray-200 cursor-pointer">
-              <FiSettings className="mr-3 h-6 w-6" />
-              <span>Plans</span>
-            </div>
-            <div className="flex items-center text-gray-700 px-4 py-2 hover:bg-gray-200 cursor-pointer">
-              <AiOutlineShoppingCart className="mr-3 h-6 w-6" />
-              <span>Purchase History</span>
-            </div>
-            <hr />
-            <div className="flex items-center text-gray-700 px-4 py-2 hover:bg-gray-200 cursor-pointer">
-              <AiOutlineLink className="mr-3 h-6 w-6" />
-              <span>Connected Accounts</span>
-            </div>
-            <div className="flex items-center text-gray-700 px-4 py-2 hover:bg-gray-200 cursor-pointer">
-              <FiSettings className="mr-3 h-6 w-6" />
-              <span>Developers</span>
-            </div>
-          </div>
-        </div>
-      </div>
 
-      <div className="w-full p-8">
+      
         <h2 className="text-4xl font-bold">Profile</h2>
         <p className="py-6">User details</p>
         <div className="border border-gray-200 pt-4">
@@ -223,13 +188,13 @@ const Home: FC = () => {
             <p className="text-sm text-gray-700">
               This will remove all of your personal data forever.
             </p>
-            <p  className="text-blue-600 hover:underline cursor-pointer">
+            <p className="text-blue-600 hover:underline cursor-pointer">
               Delete my Account
             </p>
           </div>
         </div>
       </div>
-    </div>
+  
   );
 };
 
