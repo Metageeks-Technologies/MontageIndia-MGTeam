@@ -14,6 +14,6 @@ userRouter.route('/changePassword').patch(isAuthenticatedCustomer,changePassword
 userRouter.route('/forgetPassword').post(forgetPassword);
 userRouter.route('/resetPassword').post(resetPassword);
 userRouter.route( '/:id' ).get( isAuthenticatedCustomer, getCustomerById );
-userRouter.route( '/addToCart' ).post( addProductToCart );
-userRouter.route( '/removeFromCart' ).post( removeProductFromCart );
+userRouter.route( '/addToCart' ).post(isAuthenticatedCustomer, addProductToCart );
+userRouter.route( '/removeFromCart' ).post(isAuthenticatedCustomer, removeProductFromCart );
 export default userRouter;

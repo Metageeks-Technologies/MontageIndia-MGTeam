@@ -1,43 +1,90 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+// cartSlice.ts
+import instance from '@/utils/axios';
+import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 
-interface cart
-{
-  cartData: [];
+interface CartState {
+  cartData: any[]; // Change the type if you have a specific type for cart items
   loading: boolean;
   error: string | null;
 }
 
-const initialState: cart = {
+const initialState: CartState = {
   cartData: [],
   loading: false,
   error: null,
 };
 
+export const fetchCart = createAsyncThunk('cart/fetchCart', async (productIds: string[]) => {
+  try {
+    const response = await instance.post('/product/cart', productIds);
+    console.log('response in getting cartitems:-', response);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+});
+
+export const addCartItem = createAsyncThunk('cart/addCartItem', async (productId: string, id) => {
+  try {
+    const response = await instance.post(`/user/addToCart`, { productId, id });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+});
+
+export const removeCartItem = createAsyncThunk('cart/removeCartItem', async (productId: string, id) => {
+  try {
+    await instance.post(`/user/removeFromCart`, { productId, id });
+    return id;
+  } catch (error) {
+    throw error;
+  }
+});
 
 const cartSlice = createSlice({
   name: 'cart',
   initialState,
-  reducers: {
-    // CREATE
-    addItem: (state, action: PayloadAction<any>) => {
-      state.cartData.push(action.payload);
-    },
-    // READ
-    getCart: (state) => state,
-    // UPDATE
-    updateItem: (state, action: PayloadAction<any>) => {
-      const index = state.cartData.findIndex((item) => item.id === action.payload.id);
-      if (index !== -1) {
-        state.cartData[index] = action.payload;
-      }
-    },
-    // DELETE
-    removeItem: (state, action: PayloadAction<number>) => {
-      state.cartData = state.cartData.filter((item) => item.id !== action.payload);
-    },
+  reducers: {},
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchCart.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchCart.fulfilled, (state, action: PayloadAction<any[]>) => {
+        state.loading = false;
+        state.cartData = action.payload;
+      })
+      .addCase(fetchCart.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message || 'Failed to fetch cart';
+      })
+      .addCase(addCartItem.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(addCartItem.fulfilled, (state: any, action: any) => {
+        state.loading = false;
+        state.cartData.push(action.payload);
+      })
+      .addCase(addCartItem.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message || 'Failed to add item to cart';
+      })
+      .addCase(removeCartItem.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(removeCartItem.fulfilled, (state: any, action: any) => {
+        state.loading = false;
+        state.cartData = action.payload
+      })
+      .addCase(removeCartItem.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message || 'Failed to remove cart item';
+      });
   },
 });
 
-export const { addItem, getCart, updateItem, removeItem } = cartSlice.actions;
 export default cartSlice.reducer;
-typ

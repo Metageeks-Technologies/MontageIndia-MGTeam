@@ -504,8 +504,6 @@ export default function Home ()
 
       <Footer />
     </div>
-    // <div className="text-center justify-end top-10">
-    //   <CartPopup />
-    // </div>
+  
   );
 }
