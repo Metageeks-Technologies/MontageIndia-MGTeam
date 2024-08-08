@@ -40,6 +40,8 @@ const Home: React.FC = () => {
   const [SearchTerm, setSearchTerm] = useState("");
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [selectedMediaTypes, setSelectedMediaTypes] = useState<string[]>([]);
+  const [ availableCategories, setAvailableCategories ] = useState<any[]>( [] );
+
   const [shouldFetch, setShouldFetch] = useState(true);
 
 
@@ -70,7 +72,22 @@ const Home: React.FC = () => {
     setShouldFetch(true);
   }
   // fetch data from Server
-
+  const getCategories = async () =>
+    {
+      try
+      {
+        const response = await instance.get( '/field/category' );
+        const formattedCategories = response.data.categories.map( ( category: any ) => ( {
+          name: category.name ? category.name : 'Unknown' // Handle undefined names
+        } ) );
+        setAvailableCategories( formattedCategories );
+        console.log("sdsd",response)
+      } catch ( error )
+      {
+        console.log( "error in getting the category:-", error );
+      }
+    };
+    
   const fetchProduct = async () => {
     setLoading(true);
     try {
@@ -89,6 +106,7 @@ const Home: React.FC = () => {
     }
   };
   useEffect(() => {
+    getCategories()
     if (shouldFetch) {
       fetchProduct();
       setShouldFetch(false);
@@ -144,7 +162,7 @@ const Home: React.FC = () => {
                     border: '1px solid #e5e7eb',
                   },
                 }}
-                options={categoriesOptions.map((option) => ({ name: option.name ,value: option.value }))} 
+                options={availableCategories} 
                 selectedValues={selectedCategories.map((category) => ({ name: category }))}
                 onSelect={(selectedList) => onSelectCategory(selectedList.map((item:any) => item.name))} 
                 onRemove={(selectedList) => onRemoveCategory(selectedList.map((item:any) => item.name))} 

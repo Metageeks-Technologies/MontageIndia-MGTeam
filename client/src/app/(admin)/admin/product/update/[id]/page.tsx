@@ -16,7 +16,9 @@ import Swal from 'sweetalert2';
 
 interface Variant {
   label: string;
+  size: string;
   price: number;
+  credit: number;
   key: string;
   _id: string;
 }
@@ -45,7 +47,7 @@ const Form4 = () => {
   const [availableCategories, setAvailableCategories] = useState<any[]>([]);
   const [editMode, setEditMode] = useState<{ [key: string]: boolean }>({
     title: false,
-    slug: false,
+    slug: false, 
     description: false,
     tags: false,
     variants: false,
@@ -80,34 +82,25 @@ const Form4 = () => {
       console.error('Error fetching data:', error);
     }
   };
-  useEffect(() => {
-    if (user) {
-      console.log("first",user.category[0])
-      // Check if user.category is 'all' or an array
-      if (user.category[0] === 'all') {
-        setAvailableCategories(categoriesOptions.map(cat => ({
-          value: cat.value,
-          label: cat.name,
-        })));
-      } else if (Array.isArray(user.category)) {
-        // Filter categories based on user.category
-        const filteredCategories = categoriesOptions.filter(cat =>
-          user.category.includes(cat.value)
-        ).map(cat => ({
-          value: cat.value,
-          label: cat.name,
+  const getCategories = async () => 
+    {
+      try
+      {
+        const response = await instance.get( '/field/category' );
+        const formattedCategories = response.data.categories.map((category: any) => ({
+          label: category.name ? category.name : 'Unknown', // Display text
+          value: category.name ? category.name : 'Unknown', // Underlying value
         }));
-        setAvailableCategories(filteredCategories);
-      } else {
-        console.warn('Expected user.category to be an array or "all", but received:', user.category);
-        setAvailableCategories([]); // Set to an empty array or handle accordingly
+        setAvailableCategories( formattedCategories );
+      } catch ( error )
+      {
+        console.log( "error in getting the category:-", error );
       }
-  
-     
-    }
-    
+    };
+  useEffect(() => {
+    getCategories()
     fetchData();
-  }, [user]);
+  }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | string, field: string) => {
     if (!data) return;
@@ -158,23 +151,22 @@ const Form4 = () => {
   const handleSave = async (field: string) => {
     if (!data) return;
 
- if (!data.title || !data.description || filteredTags?.length === 0) {
-    Swal.fire({
-      icon: 'error',
-      title: 'Invalid input',
-      text: `${field} must be valid and not empty.`,
-    });
-    setEditMode( prev => ({ ...prev,[ field ]:false}));
+    if (!data.title || !data.description || filteredTags?.length === 0) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Invalid input',
+          text: `${field} must be valid and not empty.`,
+        });
+        setEditMode( prev => ({ ...prev,[ field ]:false}));
 
-    return ;
-  }    try {
+        return ;
+      }  
+    setloader(true)
+    try {
       let updatedField = {};
       switch (field) {
         case 'title':
           updatedField = { title: data.title };
-          break;
-        case 'slug':
-          updatedField = { slug: data.slug };
           break;
         case 'category':
           updatedField = { category: selectedCategories.map(c => c.value)};
@@ -184,9 +176,6 @@ const Form4 = () => {
           break;
         case 'tags':
           updatedField = { tags: data.tags };
-          break;
-        case 'variants':
-          updatedField = { variants: data.variants };
           break;
         default:
           throw new Error('Unknown field');
@@ -219,11 +208,11 @@ const Form4 = () => {
     if (!data) return;
     const variant = data.variants[index];
 
-    if (!variant.price || variant.price <= 0 || !variant.label || variant.label.trim() === '') {
+    if (!variant.price || variant.price <= 0 || !variant.credit || variant.credit <= 0 || !variant.label || variant.label.trim() === '') {
       Swal.fire({
         icon: 'error',
         title: 'Invalid input',
-        text: 'Label and price must be valid and not empty.',
+        text: 'Label, price and credit must be valid and not empty.',
       });
       const allVariantsValid = data.variants.every(variant =>
         variant.label?.trim() !== '' && variant.price > 0
@@ -237,7 +226,8 @@ const Form4 = () => {
       const sendData = {
         uuid: data.uuid,
         price: variant.price,
-        label: variant.label
+        label: variant.label,
+        credit:variant.credit
       };
       // Make the API call with the data
       const response = await instance.patch(`/product/variant/${variant._id}`, sendData);
@@ -376,7 +366,7 @@ const Form4 = () => {
                 <button type="button" className={`text-xl ${!editMode.description ? 'hidden' : 'block'}`} onClick={() =>{handleSave('description'); handleEditToggle('description')}}><MdOutlineSave size={20} /></button>
                 <button type="button" className={`${editMode.description ? 'hidden' : 'block'}`} onClick={() => handleEditToggle('description')}>
                   <FaRegEdit />
-                </button>
+                </button> 
               </label>
               <textarea
                name="description"
@@ -397,14 +387,15 @@ const Form4 = () => {
             <div className='flex flex-col mt-8 '>
               {data.variants.map((variant, index) => (<>
                 <div className="w-52 gap-4 text-gray-700 flex flex-row text-sm font-bold mb-2">
-                    Version {index+1}
+                    {variant.size}
                     {editingVariantIndex === index ? (
                     <button type="button" onClick={() => handleSaveVariant(index)}><MdOutlineSave size={20} /></button>
                   ) : (
                     <button type="button" onClick={() => handleEditToggle('variants', index)}><FaRegEdit size={20} /></button>
                 )}
                 </div>
-                <div key={index} className='flex flex-col sm:flex-row m-2 gap-8'>
+                <div key={index} className='flex flex-wrap m-2 gap-8'>
+                  <div className='flex flex-row gap-2'>
                   <span className='flex flex-row items-center justify-between w-20'>Label :-   
                   </span>
                   <input
@@ -414,6 +405,8 @@ const Form4 = () => {
                     onChange={(e) => handleVariantChange(index, 'label', e.target.value)}
                     readOnly={editingVariantIndex !== index}
                   />
+                  </div>
+                  <div className='flex flex-row gap-2'>
                   <span className='flex flex-row items-center justify-between w-20'>Price:
                   </span>
                   <input
@@ -423,6 +416,18 @@ const Form4 = () => {
                     onChange={(e) => handleVariantChange(index, 'price', Number(e.target.value))}
                     readOnly={editingVariantIndex !== index}
                   />
+                  </div>
+                  <div className='flex flex-row gap-2'>
+                  <span className='flex flex-row items-center justify-between w-20'>Credit:
+                  </span>
+                  <input
+                    type="number"
+                    className={`text-gray-700 w-fit outline-none py-3 p-2 rounded-lg ${editingVariantIndex === index ? 'bg-gray-200' : 'bg-gray-100'}`}
+                    value={variant.credit}
+                    onChange={(e) => handleVariantChange(index, 'credit', Number(e.target.value))}
+                    readOnly={editingVariantIndex !== index}
+                  />
+                  </div>
                 </div>
                 </>  ))}
             </div>
@@ -459,7 +464,7 @@ const Form4 = () => {
           </div>
           <div className='flex py-2 flex-wrap w-full'>
           {data.tags.map((tag, index) => (
-                  tag.trim() !== '' && ( // Filter out empty tags
+                  tag.trim() !== '' && ( 
                     <span key={index} className='flex gap-2 w-fit'>
                       <input
                         type="text"
@@ -520,20 +525,24 @@ const Form4 = () => {
               <div className='flex flex-wrap gap-4'>
                   
               </div>
-              {editMode.category ? <>
+              { editMode.category ? <>
                 <div>
-                <Select
+               <Select
                   isMulti
                   name="categories"
                   options={availableCategories}
                   className='basic-multi-select'
                   classNamePrefix="select"
                   onChange={handleCategoryChange}
-                />
+                  />
+               </div>
+              </> : <>
+                <div className='flex flex-wrap'>
+                  {data.category.map((cat, index) => (
+                    <span key={index} className='p-2 rounded-md m-2 font-semibold bg-gray-200  text-gray-600'>{cat}</span>
+                  ))}
               </div>
-                    </>:<><span
-                      className={`text-gray-700 w-full outline-none py-3 p-2 rounded-lg ${!editMode.category ? 'bg-gray-100' : 'bg-gray-200'}`}
-                  >{data.category}</span></>}
+              </> }
         </div>
           </div>
         </div>
