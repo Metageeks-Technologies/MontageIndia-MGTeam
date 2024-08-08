@@ -23,7 +23,8 @@ export type TCustomer = Document & {
     isDeleted: boolean;
     cart: mongoose.Types.ObjectId[]; // References to products in the cart
     subscription: {
-        subscriptionId:mongoose.Types.ObjectId;
+        subscriptionId:string;
+        PlanId: string;
         credits: number;
         planValidity: Date;
     } // References to subscription
