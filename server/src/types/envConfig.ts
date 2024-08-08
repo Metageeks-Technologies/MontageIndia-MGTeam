@@ -12,5 +12,6 @@ export type TConfig ={
     awsMediaConvertRole: string;
     awsMediaConvertQueue: string;
     awsSqsQueueUrl: string;
-    awsTempBucketName:string
+    awsTempBucketName:string;
+    clientUrl:string;
   }
