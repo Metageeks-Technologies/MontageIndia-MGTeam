@@ -16,7 +16,7 @@ import cookieParser from 'cookie-parser';
 import paymentRouter from '@src/routes/payment/payment';
 import subscriptionRouter from '@src/routes/subscription/subscription';
 import userRouter from './routes/user/customer';
-const {mongoUrl}=config;
+const {mongoUrl,nodeEnv}=config;
  
 const app: Express = express();
 // app.use(cors({
