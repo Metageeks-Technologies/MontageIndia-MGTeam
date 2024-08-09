@@ -4,8 +4,9 @@ import "../globals.css";
 const inter = Inter( { subsets: [ "latin" ] } );
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import {ReduxProvider} from "@/app/redux/provider";
+import Sidebar from "@/components/admin/sidebar";
 import Head from "next/head";
-import Navbar from "@/components/navbar/Navbar";
 
 export const metadata: Metadata = {
   title: "Montage India",
@@ -24,13 +25,16 @@ export default function RootLayout ( {
           <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
         </Head>
       <body className={ inter.className }>
-        <ToastContainer />
+      <ToastContainer />
+        <ReduxProvider>        
         {/* <div className="flex  ">
         <div className="w-20"> <Sidebar/></div>
        <div >{ children }</div>
        </div> */}
-       <Navbar />
-       { children }
+
+          <Sidebar />
+          { children }
+        </ReduxProvider>
       </body>
     </html>
   );

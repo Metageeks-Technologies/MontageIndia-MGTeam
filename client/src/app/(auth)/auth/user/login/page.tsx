@@ -9,6 +9,8 @@ import Cookies from 'js-cookie';
 import { notifySuccess } from "@/utils/toast";
 import instance from "@/utils/axios";
 import Link from "next/link";
+import { Spinner } from "@nextui-org/react";
+import Swal from "sweetalert2";
 
 const Page = () =>
 {
@@ -17,6 +19,8 @@ const Page = () =>
   const [ password, setPassword ] = useState( "" );
   const [ error, setError ] = useState( "" );
   const [ showPassword, setShowPassword ] = useState( false );
+  const [loading,setloading]=useState(false)
+
 
 
   const togglePasswordVisibility = () =>
@@ -36,6 +40,7 @@ const Page = () =>
     console.log( "login cliked" );
     try
     {
+      setloading(true)
       const response = await instance.post(
         `/user/login`,
         { usernameOrEmail, password },
@@ -46,17 +51,24 @@ const Page = () =>
         }
       );
 
+      if(response.status===200){
       console.log( "Login successful:", response.data.token );
-
-
+        setloading(false)
       notifySuccess( "Login Successful" );
       router.push( "/" );
       setUsernameOrEmail( "" );
       setPassword( "" );
-    } catch ( error )
+      }
+    } catch ( error:any )
     {
       console.error( "Login error:", error );
-
+      setloading(false)
+      const errorMessage = error.response?.data?.message || `Login failed. Please try again later`;
+      Swal.fire( {
+        icon: 'error',
+        title: 'Login error',
+        text: errorMessage,
+      } );
       if ( axios.isAxiosError( error ) )
       {
         setError( error.response?.data?.message || "An error occurred during login. Please try again." );
@@ -136,7 +148,7 @@ const Page = () =>
             </div>
             <div className="flex justify-end mt-2">
               <button
-                onClick={ () => router.push( '/admin/reset-password' ) }
+                onClick={ () => router.push( '/auth/user/reset-password' ) }
                 className="text-sm text-[#65A30D] hover:underline focus:outline-none"
               >
                 Forgot Password?
@@ -152,22 +164,26 @@ const Page = () =>
               <div
                 className="text-sm mx-2 font-medium hover:underline focus:outline-none"
               >
-                Did'nt have an account.
+                Didn't have an account.
                <Link
                className="text-blue-600"
               href={'/auth/user/signup'} > Please sigup
               </Link>
               </div>
             </div>
+            {loading?
+               <button
+                 className="flex items-center rounded-md justify-center w-full px-4 py-2 mt-4  bg-webgreen"
+               >
+                 <Spinner color="white"/>
+              </button>:
             <button
               className="flex items-center rounded-md justify-center w-full px-4 py-2 mt-4 text-white bg-webgreen hover:bg-webgreenHover"
               onClick={ handleLogin }
             >
               Continue
-            </button>
+            </button>}
           </div>
-
-
 
         </div>
       </div>
