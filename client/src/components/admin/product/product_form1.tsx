@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, ChangeEvent } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import slugify from 'slugify';
 import instance from '@/utils/axios';
@@ -125,7 +125,9 @@ const Form1 = ( { onNext }: any ) =>
       console.log( "error in getting the category:-", error );
     }
   };
-
+  const handleChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
+    setDescription(event.target.value);
+  };
   const handleNext = async () =>
   {
     const uuid = uuidv4();
@@ -212,19 +214,6 @@ const Form1 = ( { onNext }: any ) =>
             ) ) }
           </select>
         </div>
-        <div className='flex gap-3 flex-col'>
-          <span className='text-xl font-semibold'>Title</span>
-          <input
-            placeholder="Enter Title"
-            className='text-gray-700 outline-none py-3 p-2 bg-gray-100 rounded-lg'
-            value={ title }
-            onChange={ ( e ) => setTitle( e.target.value ) }
-          />
-        </div>
-        <div>
-          <span className='text-xl font-semibold'>Description</span>
-          <ReactQuill theme="snow" className='h-52 mt-4 mb-8' value={ description } onChange={ setDescription } />
-        </div>
         <div>
           <span className='text-xl mb-3 font-semibold mr-4'>Category</span>
           {/* <Select
@@ -244,9 +233,22 @@ const Form1 = ( { onNext }: any ) =>
             classNamePrefix="select"
             value={ selectedCategories }
             onChange={ handleCategoryChange }
-            components={ { MenuList: CustomMenu } }
+            
           // onAddCategory={ handleAddCategory }  
           />
+        </div>
+        <div className='flex gap-3 flex-col'>
+          <span className='text-xl font-semibold'>Title</span>
+          <input
+            placeholder="Enter Title"
+            className='text-gray-700 outline-none py-3 p-2 bg-gray-100 rounded-lg'
+            value={ title }
+            onChange={ ( e ) => setTitle( e.target.value ) }
+          />
+        </div>
+        <div className=' flex flex-col'>
+          <span className='text-xl font-semibold'>Description</span>
+          <textarea value={description} className='outline-none p-4 h-44 bg-gray-100  rounded-lg'   onChange={handleChange}/>
         </div>
         <div>
           <span className='text-lg mb-3 font-semibold mr-4'>Tags</span>

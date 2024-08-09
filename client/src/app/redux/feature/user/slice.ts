@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
 export interface InitialState {
-  user: null;
+  user?: null;
   loading?: boolean;
   error?: string;
   cartData: any[];

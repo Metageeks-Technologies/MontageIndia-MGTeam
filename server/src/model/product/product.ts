@@ -14,12 +14,13 @@ const productSchema = new mongoose.Schema({
         label: { type: String },
         size:{type:String},
         price: { type: Number},
+        credit: { type: Number},
         key: { type: String}
     }],
     status: { type: String, enum: ["published", "archived", "unavailable","draft"], required: true ,default:"draft"},
     mediaType: { type: String, enum: ["image", "video", "audio"], required: true },
     createdBy: { type: mongoose.Schema.Types.ObjectId}
-});
+},{timestamps:true});
 
 const Product = mongoose.model<TProduct & mongoose.Document>('Product', productSchema);
 

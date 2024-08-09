@@ -5,6 +5,8 @@ import ffmpeg from "fluent-ffmpeg"
 import ffmpegStatic from 'ffmpeg-static'
 import { uploadAudio } from '../../lib/uploadToS3'
 import Product from '@src/model/product/product';
+import { deleteLocalFile } from '@src/utils/helper';
+
 ffmpeg.setFfmpegPath(ffmpegStatic as string);
 
 function addAudioWatermark(mainAudio: string, watermarkAudio: string, output: string): Promise<void> {
@@ -62,6 +64,8 @@ export const reduceAudio = catchAsyncError(async (req: Request, res: Response, n
         console.error('Audio watermarking failed:', error);
     }
 
+
+
     // return res.json({ msg: "uploaded successfully" })
 
 
@@ -102,6 +106,9 @@ export const reduceAudio = catchAsyncError(async (req: Request, res: Response, n
     product.thumbnailKey=`${uuid}/audio/${uuid}-watermarked.${fileExtension}`
 
     const updatedProduct=await product.save();
+
+    deleteLocalFile(originalAudioPath);
+    deleteLocalFile(outputAudioPath);
 
     res.json({
         success:true,

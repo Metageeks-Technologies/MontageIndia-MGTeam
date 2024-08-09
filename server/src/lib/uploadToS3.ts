@@ -9,8 +9,8 @@ const { awsBucketName: bucketName, awsTempBucketName } = config;
 
 type fileType = { folder: string; filename: string };
 
-async function uploadImage(image: fileType, s3image: fileType) {
-  const fileStream = fs.createReadStream(`output/${image.filename}`);
+async function uploadImage( s3image: fileType) {
+  const fileStream = fs.createReadStream(`output/${s3image.filename}`);
 
   try {
     const upload = new Upload({
