@@ -1,6 +1,7 @@
 import catchAsyncError from "@src/middleware/catchAsyncError";
 import SubscriptionPlan from "@src/model/subscriptions/subscriptionPlan";
 import ErrorHandler from "@src/utils/errorHandler";
+import Customer from "@src/model/user/customer";
 /*
 index
 
@@ -76,3 +77,15 @@ export const deleteSubscription = catchAsyncError(async (req, res, next) => {
     }
     return res.json({ success: true, subscription });
 }, "Error occured while deleting Subscription Plan");
+
+
+
+export const getSubscriptionByUserId =catchAsyncError(async (req, res, next) => {
+  const { userId } = req.params;
+  const user =  await  Customer.findById(userId).populate("subscriptionHistory");
+  if(!user){
+    return next(new ErrorHandler("User not found", 404));
+  }
+
+  return res.json({ success: true, subscription:user.subscriptionHistory });
+});

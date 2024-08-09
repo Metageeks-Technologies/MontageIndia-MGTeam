@@ -219,3 +219,13 @@ export const addPriceToVariant = catchAsyncError(async (req:any, res, next) => {
         product :updatedProduct   
     });
 })
+
+// get products by ids, for cart
+export const getProductsByIds = catchAsyncError( async ( req: any, res, next ) => {
+    const productIds = req.body;
+    // console.log("product its:",req)
+    const products = await Product.find( { _id: { $in: productIds } } );
+    // console.log(products)
+    res.status( 200 ).json( products );
+} )
+    

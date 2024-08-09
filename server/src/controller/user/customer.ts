@@ -20,7 +20,8 @@ index
 9.forget password
 10.reset password
 11.getCustomerById
-
+12.add product id to user cart
+13. remove the product id from user cart
 */
 
 
@@ -99,7 +100,9 @@ export const getCustomerById= catchAsyncError(async (req, res, next) => {
 export const getCurrentCustomer = catchAsyncError(async (req:any, res, next) => {
 
     const { id } = req.user;
-    const user = await Customer.findOne({ "_id": id });
+    console.log(id)
+    const user = await Customer.findOne({ _id: id });
+    console.log(user)
     res.status(200).json({
         success: true,
         user
@@ -282,4 +285,38 @@ export const resetPassword = catchAsyncError(async (req, res, next) => {
 
     res.status(200).json({ message: 'Password has been reset suscessfully.now you can close this tab or window'});
 
+} );
+
+export const addProductToCart = catchAsyncError( async ( req:any, res, next ) => {
+    const { productId } = req.body;
+    const { id } = req.user;
+    
+    if ( !id )   {
+        console.log('user dpes not exists')
+        next(new ErrorHandler("user does not exit", 404));
+    }
+    const customer = await Customer.findById( id );
+    customer?.cart.push( productId )
+    console.log("added new prosuct:",customer)
+    await customer?.save();
+    res.status(200).json({ message: 'Product added to cart successfully' });
+} )
+
+export const removeProductFromCart = catchAsyncError(async (req:any, res, next) => {
+  const { productId } = req.body;
+    const { id } = req.user;
+    
+    if ( !id )    {
+        console.log('user dpes not exists')
+        next(new ErrorHandler("user does not exit", 404));
+    }
+  const customer = await Customer.findById(id);
+  if (customer) {
+    customer.cart = customer.cart.filter((id) => id.toString() !== productId.toString());
+    await customer.save();
+    res.status(200).json({ message: 'Product removed from cart successfully' });
+  } else {
+    res.status(404).json({ message: 'Customer not found' });
+  }
 });
+
