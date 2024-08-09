@@ -285,19 +285,29 @@ export const resetPassword = catchAsyncError(async (req, res, next) => {
 
 } );
 
-export const addProductToCart = catchAsyncError( async ( req:any, res, next ) =>
-{
-    const { productId,id } = req.body;
-    //   const {id}= req.user;
+export const addProductToCart = catchAsyncError( async ( req:any, res, next ) => {
+    const { productId } = req.body;
+    const { id } = req.user;
+    
+    if ( !id )   {
+        console.log('user dpes not exists')
+        next(new ErrorHandler("user does not exit", 404));
+    }
     const customer = await Customer.findById( id );
     customer?.cart.push( productId )
+    console.log("added new prosuct:",customer)
     await customer?.save();
     res.status(200).json({ message: 'Product added to cart successfully' });
 } )
 
 export const removeProductFromCart = catchAsyncError(async (req:any, res, next) => {
-  const { productId,id } = req.body;
-//   const { id } = req.user;
+  const { productId } = req.body;
+    const { id } = req.user;
+    
+    if ( !id )    {
+        console.log('user dpes not exists')
+        next(new ErrorHandler("user does not exit", 404));
+    }
   const customer = await Customer.findById(id);
   if (customer) {
     customer.cart = customer.cart.filter((id) => id.toString() !== productId.toString());

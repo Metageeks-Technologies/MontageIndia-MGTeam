@@ -11,6 +11,7 @@ import { MdLanguage } from 'react-icons/md';
 import { IoMdArrowDropdown } from 'react-icons/io';
 import { useRouter } from 'next/navigation';
 import CartPopup from './cart/cartPage';
+// import CartPopup from './cart/cartPage';
 
 
 const Sidebar = () =>
@@ -79,7 +80,7 @@ const Sidebar = () =>
           {/* <AiOutlineShoppingCart className="text-gray-700 w-6 h-6" /> */ }
           {/* this is cart */ }
           <CartPopup />
-          <AiOutlineUser className="text-gray-700 w-6 h-6" />
+          <AiOutlineUser onClick={ () => router.push( '/user-profile' ) } className="text-gray-700 w-6 h-6 cursor-pointer" />
         </div>
       </div>
 
