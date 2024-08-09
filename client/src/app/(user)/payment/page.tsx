@@ -35,7 +35,12 @@ const SubscriptionTable=()=>{
   const [selected, setSelected] = useState<Key | null | undefined>("login");
   const fetchPlans = async () => {
     try {
-      const response = await instance.get('/payment/fetchAllPlans');
+      const response = await instance.get('/payment/fetchAllPlans', {
+        headers: {
+          'ngrok-skip-browser-warning': true
+        }
+}
+);
       setPlans(response.data.response as SubscriptionPlan[]);
     } catch (error) {
         console.error('Error fetching plans:', error);

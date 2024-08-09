@@ -4,6 +4,8 @@ import Razorpay from "razorpay";
 import config from "@src/utils/config";
 import ErrorHandler from "@src/utils/errorHandler";
 import crypto from "crypto";
+import { response } from "express";
+import customer from "@src/model/user/customer";
 /*
 index
 
@@ -146,7 +148,7 @@ export const fetchPlanById= catchAsyncError(async (req, res, next) => {
     });
 });
 
-export const createSubscription= catchAsyncError(async (req, res, next) => {
+export const createSubscription= catchAsyncError(async (req:any, res, next) => {
     const razorpay = razorpayInstance();
     console.log("step1",req.body);
     const options: any = {
@@ -156,7 +158,6 @@ export const createSubscription= catchAsyncError(async (req, res, next) => {
         expire_by: req.body.expire_by,
         notes: {
             credits: req.body.notes.credits,
-            validity: req.body.notes.validity
         }
     };
     console.log("step2",options);
@@ -165,6 +166,25 @@ export const createSubscription= catchAsyncError(async (req, res, next) => {
     if(!response){
         return next(new ErrorHandler("Error occured while creating Subscription", 404));
     }
+    const updatedCustomer = await customer.findByIdAndUpdate(
+    req.user._id,
+    {
+      'subscription.subscriptionId': response.id,
+      'subscription.PlanId': req.body.plan_id,
+      'subscription.credits': req.body.notes.credits,
+      'subscription.planValidity': req.body.expire_by, // Assuming response.current_end is in Unix timestamp
+      'subscription.status': 'initiated',
+    },
+    { new: true } // Return the updated document
+  );
+
+  console.log("step4",updatedCustomer);
+
+  if (!updatedCustomer) {
+    return next(new ErrorHandler("Customer not found", 404));
+  }
+
+
     res.send({
         success: true,
         message: "Subscription created successfully",
@@ -174,32 +194,30 @@ export const createSubscription= catchAsyncError(async (req, res, next) => {
 });
 
 export const verifyPayment=catchAsyncError(async (req, res, next) => {
-        const {
-            subscriptionCreationId,
-            razorpayPaymentId,
-            razorpaySubscriptionId,
-            razorpaySignature,
-        } = req.body;
+        
+        console.log("step1",req.body);
+     
+        const {razorpay_payment_id,razorpay_subscription_id,razorpay_signature,subscriptionCreationId}=req.body;
+        
+        let hmac = crypto.createHmac('sha256', config.razorpayKey); 
 
-        // Creating our own digest
-        // The format should be like this:
-        // digest = hmac_sha256(orderCreationId + "|" + razorpayPaymentId, secret);
-        const shasum = crypto.createHmac("sha256", config.razorpaySecret as string);
+        hmac.update(subscriptionCreationId + "|" + razorpay_payment_id);
+        
+        const generated_signature = hmac.digest('hex');
 
-        shasum.update(`${subscriptionCreationId}|${razorpayPaymentId}`);
+        // // comaparing our digest with the actual signature
+        if (generated_signature !== razorpay_signature)
+           {
+            console.log("Transaction not legit!");
+           }
 
-        const digest = shasum.digest("hex");
+           else{
+            console.log("Transaction legit!");
+           }
 
-        // comaparing our digest with the actual signature
-        if (digest !== razorpaySignature)
-            return res.status(400).json({ msg: "Transaction not legit!" });
 
         // THE PAYMENT IS LEGIT & VERIFIED
         // YOU CAN SAVE THE DETAILS IN YOUR DATABASE IF YOU WANT
 
-        res.json({
-            msg: "success",
-            orderId: razorpaySubscriptionId,
-            paymentId: razorpayPaymentId,
-        });
+       res.send({ status:true, response: "Transaction legit!" });
 });

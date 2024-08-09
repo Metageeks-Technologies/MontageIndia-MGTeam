@@ -46,12 +46,13 @@ const customerSchema = new mongoose.Schema<TCustomer>({
   resetPasswordExpires:{ type: Number,default: undefined,},
   cart: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' }],
   subscription: { 
-      subscriptionId: {type: mongoose.Schema.Types.ObjectId, ref: 'SubscriptionPlan'},
+      subscriptionId: {type:String ,default:''},
+      PlanId: { type:String, default:'' },
       credits: { type: Number, default: 0 },
       planValidity: { type: Date, default: Date.now() },
+      status: { type: String, default: 'inactive' }
    },
   purchaseHistory: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Order' }],
-  subscriptionHistory: [{ type: mongoose.Schema.Types.ObjectId, ref: 'SubscriptionPlan' }],
 },{
   timestamps: true
 });

@@ -1,6 +1,95 @@
 import catchAsyncError from "@src/middleware/catchAsyncError.js";
+import customer from "@src/model/user/customer";
 import config from "@src/utils/config";
 import { validateWebhookSignature } from "razorpay/dist/utils/razorpay-utils";
+
+const subscriptionActivated= async(event:any,payload:any)=>{
+  try {
+    console.log("subscription activated",payload);
+    const planId=payload.subscription.entity.id;
+
+    const user = await customer.findOneAndUpdate(
+    { 'subscription.subscriptionId': planId },
+    { 'subscription.status': 'active' },
+    { new: true } // Return the updated document
+  );
+
+if(!user){
+  console.log("no user found");
+}
+console.log("user",user);
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+const subscriptionCharged= async(event:any,payload:any)=>{
+  try {
+    const planId=payload.subscription.entity.id;
+
+    const user = await customer.findOneAndUpdate(
+    { 'subscription.subscriptionId': planId },
+    { 'subscription.status': 'active' },
+    { new: true } // Return the updated document
+  );
+  
+
+if(!user){
+  console.log("no user found");
+}
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+const subscriptionAuthorized= async(event:any,payload:any)=>{
+  try {
+    const planId=payload.subscription.entity.id;
+    console.log("subscription authorized",payload);
+    const user = await customer.findOneAndUpdate(
+    { 'subscription.subscriptionId': planId },
+    { 'subscription.status': 'active' },
+    { new: true } // Return the updated document
+  );
+
+    if(!user){
+      console.log("no user found");
+    }
+    console.log("user",user);
+      } catch (error) {
+        console.log(error);
+      }
+};
+
+const subscriptionCompleted= async(event:any,payload:any)=>{
+  try {
+    const planId=payload.subscription.entity.id;
+    console.log("subscription completed",payload);
+    const user = await customer.findOneAndUpdate(
+    { 'subscription.subscriptionId': planId },
+    { 'subscription.status': 'expired' },
+    { new: true } // Return the updated document
+  );
+
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+const subscriptionCancelled= async(event:any,payload:any)=>{
+  try {
+    const planId=payload.subscription.entity.id;
+    console.log("subscription cancelled",payload);
+    const user = await customer.findOneAndUpdate(
+    { 'subscription.subscriptionId': planId },
+    { 'subscription.status': 'cancelled' },
+    { new: true } // Return the updated document
+  );
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 
 export const paymentWebHook= catchAsyncError(async (req, res, next) => {
     const signature = req.headers["x-razorpay-signature"] as string;
@@ -40,41 +129,19 @@ export const paymentWebHook= catchAsyncError(async (req, res, next) => {
             console.log("payment link paid");
             break;
          }
-         case "payment_link.partially_paid":
-         {
-            console.log("payment link partially paid");
-            break;
-         }
-         case "payment_link.expired":{
-            console.log("payment link expired");
-            break;
-         }
-         case "payment_link.cancelled":{
-            console.log("payment link cancelled");
-            break;
-         }
         case "subscription.authenticated":{
-            console.log("subscription authenticated");
+            // console.log("subscription authenticated");
+            subscriptionAuthorized(event,payload);
             break;
         }
         case "subscription.charged":{
-            console.log("subscription charged");
+            // console.log("subscription charged",event);
+            subscriptionCharged(event,payload);
             break;
         }
         case "subscription.activated":{
-            console.log("subscription activated");
-            break;
-        }
-        case "subscription.paused":{
-            console.log("subscription paused");
-            break;
-        }
-        case "subscription.resumed":{
-            console.log("subscription resumed");
-            break;
-        }
-        case "subscription.pending":{
-            console.log("subscription pending");
+            // console.log("subscription activated",event);
+            subscriptionActivated(event,payload);
             break;
         }
         case "subscription.halted":{
@@ -82,11 +149,13 @@ export const paymentWebHook= catchAsyncError(async (req, res, next) => {
             break;
         }
         case "subscription.cancelled":{
-            console.log("subscription cancelled");
+            // console.log("subscription cancelled");
+            subscriptionCancelled(event,payload);
             break;
         }
         case "subscription.completed":{
-            console.log("subscription completed");
+            // console.log("subscription completed");
+            subscriptionCompleted(event,payload);
             break;
         }
         default:

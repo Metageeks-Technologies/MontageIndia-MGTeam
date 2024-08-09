@@ -39,7 +39,15 @@ interface Props {
 const SubscriptionCard: React.FC<Props> = ({ plan }) => {
     const [loading, setLoading] = useState(false);
     const [loaded, setLoaded] = useState(false);
-    
+  
+    const handlePaymentSuccess= async(res:any) => {
+      const response:any= await instance.post('/payment/verifySubscription',res);
+      
+      if(response.data.status){
+        console.log("payment success");
+        alert("payment success");
+      }
+    }
   const handlePayment = (options: any) => {
     console.log("payment called",options);
     if (!loaded || typeof window.Razorpay === 'undefined') {
@@ -69,13 +77,19 @@ const SubscriptionCard: React.FC<Props> = ({ plan }) => {
           customer_notify:plan.customer_notify?1:0,
           notes:{
             credits:plan.notes.credits,
-            validity:plan.notes.validity
           }
       }
       console.log("subsciptionOption",subsciptionOption);
-      const response :any= await instance.post('/payment/createSubscription',{
-        ...subsciptionOption
-      });
+    const response: any = await instance.post(
+  '/payment/createSubscription',
+  subsciptionOption, // This is the request body
+  {
+    headers: {
+      'ngrok-skip-browser-warning': true,
+    },
+    withCredentials: true,
+  }
+);
 
      console.log("subscription response",response);
 
@@ -85,9 +99,9 @@ const SubscriptionCard: React.FC<Props> = ({ plan }) => {
       description: 'Pay & Checkout this product',
       image: 'https://logowik.com/content/uploads/images/mumbai-indians-mi-emblem1608.logowik.com.webp',
       subscription_id: response.data.response.id,
-      handler: (response: any) => {
-       console.log(response);
-        alert('This step of Payment Succeeded');
+      handler: (res: any) => {
+        res.subscriptionCreationId = response.data.response.id;
+        handlePaymentSuccess(res);
       },
       theme: {
         color: '#2300a3',
