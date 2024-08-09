@@ -11,6 +11,7 @@ export default (user:any, statusCode:number, res:Response) => {
     httpOnly: nodeEnv === 'production',
     expires: new Date(Date.now() +  7*24*60*60*1000),
     secure: nodeEnv === 'production',
+    sameSite: nodeEnv === 'production' ? 'none' : 'lax' as 'none' | 'strict' | 'lax' | undefined,
   };
   res.status(statusCode).cookie("token", token, options).json({
     success: true,
