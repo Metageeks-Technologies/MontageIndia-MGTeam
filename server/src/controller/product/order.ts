@@ -2,6 +2,9 @@ import { Request, Response, NextFunction } from 'express';
 
 import catchAsyncError from '@src/middleware/catchAsyncError';
 import Order from '@src/model/product/order';
+import ErrorHandler from '@src/utils/errorHandler';
+import Customer from "@src/model/user/customer";
+
 
 
 // Create Order API
@@ -61,20 +64,29 @@ export const createOrder = catchAsyncError(async (req: Request, res: Response, n
 });
 
 
+
 export const fetchOrdersByCustomerId = catchAsyncError(async (req, res, next) => {
   const { id } = req.params; 
-  console.log(id)
-  const response = await Order.findOne({id});
- console.log(response)
-  if (!response) {
-      return res.status(404).json({
-          success: false,
-          message: "No orders found for this customer"
-      });
-  }
-  res.json({
+
+  try {
+    // Fetch the customer by ID and populate the purchaseHistory
+    const customer = await Customer.findById(id).populate('purchaseHistory');
+
+    if (!customer) {
+      return next(new ErrorHandler('Customer not found', 404));
+    }
+
+    // Debugging: Log the populated purchaseHistory
+    console.log('Populated Purchase History:', customer.purchaseHistory);
+
+    res.json({
       success: true,
-      message: "Orders fetched successfully",
-      response
-  });
+      message: 'Orders fetched successfully',
+      purchaseHistory: customer.purchaseHistory
+    });
+  } catch (error) {
+    next(error);
+  }
 });
+
+

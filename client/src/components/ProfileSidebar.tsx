@@ -10,7 +10,7 @@ import { FiSettings } from 'react-icons/fi';
 const ProfileSidebar = () => {
   const router = useRouter();
   return (
-    <div className="w-80 bg-gray-100 p-4 py-12 border">
+    <div className="w-80  p-4 py-12 border-r ">
         <div>
           <h1 className="text-md text-gray-700 font-medium">My Account</h1>
           <div className="mt-4">
@@ -18,7 +18,7 @@ const ProfileSidebar = () => {
               <AiOutlineUser className="mr-3 h-6 w-6" />
               <span>Profile</span>
             </div>
-            <div onClick={() => router.push(`/user-profile/plan`)} className="flex items-center text-gray-700 px-4 py-2 hover:bg-gray-200 cursor-pointer">
+            <div className="flex items-center text-gray-700 px-4 py-2 hover:bg-gray-200 cursor-pointer">
               <FiSettings className="mr-3 h-6 w-6" />
               <span>Plans</span>
             </div>
