@@ -4,20 +4,11 @@ import React, { useState, useEffect } from "react";
 import { useAppDispatch,useAppSelector } from "@/app/redux/hooks";
 import { AiOutlineShoppingCart, AiOutlineClose } from "react-icons/ai";
 import { Button } from "@nextui-org/react";
-import { getCurrAdmin,getCartData } from "@/app/redux/feature/user/api";
+import { getCartData } from "@/app/redux/feature/user/api";
 
 function CartPopup() {
   const [isOpen, setIsOpen] = useState(false);
-  const productIds = ["66ac95b11526869ca548fa31", "66acd04b88a01a94656d7ade", "66acd27488a01a94656d7beb"];
-  // const products = useSelector((state) => state.cart);
-  const products = useAppSelector((state) => state.user);
-  // const dispatch = useDispatch();
-  const dispatch = useAppDispatch();
-console.log(products)
-  useEffect(() => {
-    // getCurrAdmin(dispatch, "66ac95b11526869ca548fa31");
-    getCartData(dispatch, productIds)
-  }, []);
+  // const productIds=user.cart
 
   useEffect(() => {
     if (isOpen) {

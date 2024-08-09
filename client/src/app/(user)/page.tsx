@@ -10,6 +10,8 @@ import { Navbar } from "@nextui-org/react";
 import { useEffect, useState } from "react";
 import { IoIosSearch } from "react-icons/io";
 import CartPopup from '@/components/cart/cartPage';
+import { getCartData, getCurrCustomer } from "../redux/feature/user/api";
+import { useAppDispatch, useAppSelector } from "../redux/hooks";
 
 // Collection data
 interface Card
@@ -243,15 +245,18 @@ export default function Home ()
       console.log( error );
     }
   };
+  const dispatch=useAppDispatch()
+  const productIds = useAppSelector((state:any) => state.user?.user?.cart);
 
   useEffect( () =>
   {
+    getCurrCustomer(dispatch)
+    getCartData(dispatch, productIds)
     getProduct();
   }, [] );
 
-
-
-
+  const cartProduct = useAppSelector((state) => state.user.cartData);
+  console.log("cartProduct",cartProduct)
 
   return (
     <div className="main  ">
