@@ -46,7 +46,7 @@ const adminsSchema = new mongoose.Schema<TAdmin>({
     },
     category: {
         type: [String],
-        required: true,
+        // required: true,
         default: ["all"]
     },
     resetPasswordToken:{
