@@ -21,6 +21,7 @@ const {mongoUrl,nodeEnv,clientUrl}=config;
 const app: Express = express();
 
 
+console.log(nodeEnv);
 app.use(cors({ origin:clientUrl , credentials: true }));
 
 
