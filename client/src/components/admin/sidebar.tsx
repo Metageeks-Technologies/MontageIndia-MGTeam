@@ -132,17 +132,17 @@ const Sidebar = () =>
                   { isProductOpen && (
                     <ul className="py-2 space-y-2">
                       <li>
-                        <Link href="/admin/product/available" className={ `flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 cursor-pointer ${ isActiveLink( '/admin/product/available' ) ? 'bg-white' : '' }` }>Available</Link>
+                        <Link href="/admin/product/available" className={ `flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 cursor-pointer ${ isActiveLink( '/admin/product/available' ) ? 'bg-white' : '' }` }>Published</Link>
 
                       </li>
                       <li>
                         <Link href="/admin/product/draft" className={ `flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 cursor-pointer ${ isActiveLink( '/admin/product/draft' ) ? 'bg-white' : '' }` }>Draft</Link>
                       </li>
                       <li>
-                        <Link href="/admin/product/archive" className={ `flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 cursor-pointer ${ isActiveLink( '/admin/product/archive' ) ? 'bg-white' : '' }` }>Archived</Link>
+                        <Link href="/admin/product/archive" className={ `flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 cursor-pointer ${ isActiveLink( '/admin/product/archive' ) ? 'bg-white' : '' }` }>Deleted</Link>
                       </li>
                       <li>
-                        <Link href="/admin/product/unavailable" className={ `flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 cursor-pointer ${ isActiveLink( '/admin/product/unavailable' ) ? 'bg-white' : '' }` }>Unavailable</Link>
+                        {/* <Link href="/admin/product/unavailable" className={ `flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 cursor-pointer ${ isActiveLink( '/admin/product/unavailable' ) ? 'bg-white' : '' }` }>Unavailable</Link> */}
                       </li>
                       <li>
                         <Link href="/admin/product/create" className={ `flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 ${ isActiveLink( '/admin/product/create' ) ? 'bg-white' : '' }` }>Create</Link>
@@ -155,7 +155,7 @@ const Sidebar = () =>
                 <li>
                   <Link href={ '/admin/user/userList' } onClick={ () => toggleMenu( setIsUserOpen ) } className="flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-100   ">
                     <FaUserFriends className="w-5 h-5 text-gray-500 transition duration-75  group-hover:text-gray-900  " />
-                    <span className="flex-1 ms-3 text-left rtl:text-right whitespace-nowrap">User</span>
+                    <span className="flex-1 ms-3 text-left rtl:text-right whitespace-nowrap">Staff</span>
                     { isUserOpen ? (
                       <MdOutlineKeyboardArrowUp className="w-5 h-5" />
                     ) : (
@@ -165,13 +165,13 @@ const Sidebar = () =>
                   { isUserOpen && (
                     <ul className="py-2 space-y-2">
                       <li>
-                        <Link href="/admin/user/userList" className={ `flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 cursor-pointer ${ isActiveLink( '/admin/user/userList' ) ? 'bg-white' : '' }` }>User List</Link>
+                        <Link href="/admin/user/userList" className={ `flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 cursor-pointer ${ isActiveLink( '/admin/user/userList' ) ? 'bg-white' : '' }` }>Staff List</Link>
                       </li>
                       <li>
-                        <Link href="/admin/user/user-create" className={ `flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 cursor-pointer ${ isActiveLink( '/admin/user/user-create' ) ? 'bg-white' : '' }` }>User Create</Link>
+                        <Link href="/admin/user/user-create" className={ `flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 cursor-pointer ${ isActiveLink( '/admin/user/user-create' ) ? 'bg-white' : '' }` }> Create Staff</Link>
                       </li>
                       <li>
-                        <Link href="/admin/user/user-activity" className={ `flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 cursor-pointer ${ isActiveLink( '/admin/user/user-activity' ) ? 'bg-white' : '' }` }>User Activity</Link>
+                        <Link href="/admin/user/user-activity" className={ `flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 cursor-pointer ${ isActiveLink( '/admin/user/user-activity' ) ? 'bg-white' : '' }` }>Staff Activity</Link>
                       </li>
                     </ul>
                   ) }

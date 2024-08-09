@@ -2,6 +2,7 @@ import catchAsyncError from '@src/middleware/catchAsyncError.js';
 import ErrorHandler from '@src/utils/errorHandler.js';
 import Product from '@src/model/product/product';
 import Activity from '@src/model/activity/activity';
+import type { TAdmin } from '@src/types/user';
 
 export const createProduct = catchAsyncError(async (req: any, res, next) => {
     
@@ -45,10 +46,22 @@ export const getProducts = catchAsyncError(async (req, res, next) => {
     
    const {productsPerPage='20', page = '1', status = 'published', category = [], mediaType = [], searchTerm = '',tags } = req.query;
 
+    let user:TAdmin | null = null;
+    if('user' in req){
+        user=  req.user as TAdmin;
+    };
+    console.log(user,"user");
+
+    
+
     const queryObject:any = {};
 
     if(status){
         queryObject.status=status;
+    }
+    if(user?.role !== "superadmin"){
+        console.log("false");
+        queryObject.createdBy = user?._id;
     }
 
     if (searchTerm) {

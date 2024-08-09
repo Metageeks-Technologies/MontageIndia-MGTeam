@@ -209,7 +209,7 @@ const Home: React.FC = () => {
               </div>
               </div>
         <h1 className="bg-webgreen text-white px-4 py-2 rounded ml-2">
-          Archive Product
+          Deleted Product
         </h1>
       </div>
       <div className="flex  items-center gap-4 flex-wrap mb-4">
