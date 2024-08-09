@@ -210,7 +210,7 @@ export const getProductsByIds = catchAsyncError( async ( req: any, res, next ) =
     const productIds = req.body;
     // console.log("product its:",req)
     const products = await Product.find( { _id: { $in: productIds } } );
-    console.log(products)
+    // console.log(products)
     res.status( 200 ).json( products );
 } )
     
