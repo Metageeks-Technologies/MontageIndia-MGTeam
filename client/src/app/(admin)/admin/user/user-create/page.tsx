@@ -29,7 +29,7 @@ const UserCreate: React.FC = () =>
         mediaType: [],
         category: [],
     } );
-    const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+    // const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
     const [selectedMediaTypes, setSelectedMediaTypes] = useState<string[]>([]);
     const [error, setError] = useState<string | null>(null);
 
@@ -37,24 +37,24 @@ const UserCreate: React.FC = () =>
         setError(null);
     }, [user]);
     
-    const onSelectCategory = (selectedList: string[]) => {
-    setSelectedCategories(selectedList);
-    const lowerCaseList = selectedList.map(item => item.toLowerCase());
-    setUser(prevUser => ({
-            ...prevUser,
-            category: lowerCaseList,
-        }));
+//     const onSelectCategory = (selectedList: string[]) => {
+//     setSelectedCategories(selectedList);
+//     const lowerCaseList = selectedList.map(item => item.toLowerCase());
+//     setUser(prevUser => ({
+//             ...prevUser,
+//             category: lowerCaseList,
+//         }));
 
-  };
+//   };
 
-  const onRemoveCategory = (selectedList: string[]) => {
-    setSelectedCategories(selectedList);
-    const lowerCaseList = selectedList.map(item => item.toLowerCase());
-    setUser(prevUser => ({
-            ...prevUser,
-            category: lowerCaseList,
-        }));
-  };
+//   const onRemoveCategory = (selectedList: string[]) => {
+//     setSelectedCategories(selectedList);
+//     const lowerCaseList = selectedList.map(item => item.toLowerCase());
+//     setUser(prevUser => ({
+//             ...prevUser,
+//             category: lowerCaseList,
+//         }));
+//   };
 
   const onSelectMediaType = (selectedList: string[]) => {
     setSelectedMediaTypes(selectedList);
@@ -82,7 +82,7 @@ const UserCreate: React.FC = () =>
     const handleSubmit = async ( e: React.FormEvent<HTMLFormElement> ) =>
     {
         e.preventDefault();
-        if( !user.name || !user.email || !user.role || !user.password || !user.username || user.mediaType.length === 0 || user.category.length===0 ){
+        if( !user.name || !user.email || !user.role || !user.password || !user.username || user.mediaType.length === 0  ){
             setError( "Please fill all the required fields" );
             return;
         }
@@ -98,7 +98,7 @@ const UserCreate: React.FC = () =>
                 mediaType: [],
                 category: [],
             } );
-            setSelectedCategories([]);
+            // setSelectedCategories([]);
             setSelectedMediaTypes([]);
             notifySuccess( "New user created successfully" );
             router.push( "/admin/dashboard" );
@@ -202,7 +202,7 @@ const UserCreate: React.FC = () =>
                                 }}
                             />
                         </div>
-                        <div className="col-span-1 md:col-span-2">
+                        {/* <div className="col-span-1 md:col-span-2">
                             <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-1">Category  <span className="text-red-500">*</span></label>
                              <Multiselect
                                 avoidHighlightFirstOption
@@ -225,7 +225,7 @@ const UserCreate: React.FC = () =>
                                 }
                                 }}
                             />
-                        </div>
+                        </div> */}
                     </div>
                     <div className="mt-8">
                         <button

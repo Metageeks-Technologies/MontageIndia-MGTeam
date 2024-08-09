@@ -7,7 +7,9 @@ import Swal from 'sweetalert2';
 
 interface Variant {
   label: string;
+  size:string;
   price: number;
+  credit:number;
   key: string;
   _id: string;
 }
@@ -41,11 +43,11 @@ const Form3: React.FC<Form3Props> = ({ onNext, formData }) => {
   const handleSaveVariant = async (index: number) => {
     const variant = product.variants[index];
 
-    if (!variant.price || variant.price <= 0 || !variant.label || variant.label.trim() === '') {
+    if (!variant.price || variant.price <= 0 ||!variant.credit || variant.credit <= 0 || !variant.label || variant.label.trim() === '') {
       Swal.fire({
         icon: 'error',
         title: 'Invalid input',
-        text: 'Label and price must be valid and not empty.',
+        text: 'Label, price and credit must be valid and not empty.',
       });
       // const allVariantsValid = pro.variants.every(variant =>
       //   variant.label?.trim() !== '' && variant.price > 0
@@ -57,7 +59,8 @@ const Form3: React.FC<Form3Props> = ({ onNext, formData }) => {
       const sendData = {
         uuid: product.uuid,
         price: variant.price,
-        label: variant.label
+        label: variant.label,
+        credit:variant.credit
       };
 
       const response = await instance.patch(`/product/variant/${variant._id}`, sendData);
@@ -147,7 +150,7 @@ const Form3: React.FC<Form3Props> = ({ onNext, formData }) => {
             { product.variants.map( ( variant, index ) => (
               <div key={ variant._id } className="bg-gray-50 p-4  rounded-lg shadow-sm">
                 <div className="flex justify-between items-center mb-4">
-                  <h3 className="text-lg font-semibold text-gray-700">Version { index + 1 }</h3>
+                  <h3 className="text-lg font-semibold text-gray-700">{variant.size}</h3>
                   { editingVariantIndex === index ? (
                     <button type="button" onClick={ () => handleSaveVariant( index ) } className="text-lime-600 hover:text-lime-700 transition-colors">
                       <MdOutlineSave size={ 24 } />
@@ -179,6 +182,17 @@ const Form3: React.FC<Form3Props> = ({ onNext, formData }) => {
                       value={ variant.price }
                       readOnly={ editingVariantIndex !== index }
                       onChange={ ( e ) => handleVariantChange( index, 'price', parseFloat( e.target.value ) ) }
+                    />
+                  </div>
+                  <div className="flex flex-col">
+                    <label className="text-sm font-medium text-gray-600 mb-1">Credit:</label>
+                    <input
+                      type="number"
+                      className={ `text-gray-700 w-full py-2 px-3 rounded-md ${ editingVariantIndex === index ? 'border-2 border-lime-500' : 'bg-gray-100'
+                        }` }
+                      value={ variant.credit }
+                      readOnly={ editingVariantIndex !== index }
+                      onChange={ ( e ) => handleVariantChange( index, 'credit', parseFloat( e.target.value ) ) }
                     />
                   </div>
                 </div>

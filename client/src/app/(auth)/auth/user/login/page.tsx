@@ -164,7 +164,7 @@ const Page = () =>
               <div
                 className="text-sm mx-2 font-medium hover:underline focus:outline-none"
               >
-                Did'nt have an account.
+                Didn't have an account.
                <Link
                className="text-blue-600"
               href={'/auth/user/signup'} > Please sigup
