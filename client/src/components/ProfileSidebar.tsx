@@ -22,7 +22,7 @@ const ProfileSidebar = () => {
               <FiSettings className="mr-3 h-6 w-6" />
               <span>Plans</span>
             </div>
-            <div className="flex items-center text-gray-700 px-4 py-2 hover:bg-gray-200 cursor-pointer">
+            <div onClick={() => router.push(`/user-profile/purchase`)}  className="flex items-center text-gray-700 px-4 py-2 hover:bg-gray-200 cursor-pointer">
               <AiOutlineShoppingCart className="mr-3 h-6 w-6" />
               <span>Purchase History</span>
             </div>

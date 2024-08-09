@@ -15,6 +15,7 @@ import fieldRouter from '@src/routes/field/field';
 import cookieParser from 'cookie-parser';
 import paymentRouter from '@src/routes/payment/payment';
 import userRouter from './routes/user/customer';
+import router from './routes/product/order';
 const {mongoUrl}=config;
  
 const app: Express = express();
@@ -36,6 +37,8 @@ app.use("/api/v1/media/audio", audioRouter);
 app.use("/api/v1/product", productRouter);
 app.use("/api/v1/payment", paymentRouter);
 app.use("/api/v1/field", fieldRouter);
+
+app.use("/api/v1", router);
 
 
 app.get("/api/greet", (req,res,next)=>{
