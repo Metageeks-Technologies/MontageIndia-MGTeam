@@ -12,5 +12,12 @@ export type TConfig ={
     awsMediaConvertRole: string;
     awsMediaConvertQueue: string;
     awsSqsQueueUrl: string;
-    awsTempBucketName:string
+    awsTempBucketName:string;
+    emailUser: string;
+    emailPass: string;
+    clientUrl: string;
+    razorpayKey:string;
+    razorpaySecret:string;
+    customerJwtSecret:string;
+    razorpayWebhookSecret:string;
   }

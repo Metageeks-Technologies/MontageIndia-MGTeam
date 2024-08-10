@@ -10,7 +10,8 @@ import { AiOutlineHeart, AiOutlineShoppingCart, AiOutlineUser, AiOutlineMenu, Ai
 import { MdLanguage } from 'react-icons/md';
 import { IoMdArrowDropdown } from 'react-icons/io';
 import { useRouter } from 'next/navigation';
-import CartPopup from './cart/cartPage';
+import CartPopup from '../cart/cartPage';
+// import CartPopup from './cart/cartPage';
 // import CartPopup from './cart/cartPage';
 
 
@@ -114,7 +115,7 @@ const Sidebar = () =>
   );
 };
 
-export default Sidebar;
+export default Sidebar ;
 
 
 

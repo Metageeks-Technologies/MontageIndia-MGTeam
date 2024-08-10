@@ -130,9 +130,13 @@ const Form1 = ( { onNext }: any ) =>
   };
   const handleNext = async () =>
   {
+    if(!user){
+      notifyError('Please login to continue');
+      return;
+    }
     const uuid = uuidv4();
     const slug = slugify( title, { lower: true } );
-    const data = { uuid, slug, title, description, mediaType, category: selectedCategories.map( c => c.label ), tags };
+    const data = { uuid, slug,createdBy:user._id, title, description, mediaType, category: selectedCategories.map( c => c.label ), tags };
     setloader( true );
     try
     {

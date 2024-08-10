@@ -252,7 +252,7 @@ const ProductDetail: React.FC = () =>
         </div>
         <div className="flex justify-center p-6 bg-gray-50">
           <button onClick={handleEditClick} className="px-4 py-2 bg-lime-500 text-white rounded-lg hover:bg-green-700">
-            Update
+          Complete & Publish
           </button>
            
         </div>

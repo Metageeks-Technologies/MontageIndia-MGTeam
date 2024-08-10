@@ -1,3 +1,4 @@
+import config from '@src/utils/config';
 import nodemailer from 'nodemailer';
 
 interface MailOptions {
@@ -12,8 +13,8 @@ export const sendEmail = async (mailOptions: MailOptions): Promise<void> => {
   const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASS
+      user: config.emailUser,
+      pass: config.emailPass
     }
   });
 

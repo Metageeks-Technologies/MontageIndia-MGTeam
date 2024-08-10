@@ -9,7 +9,7 @@ import Cookies from 'js-cookie';
 import { notifySuccess } from "@/utils/toast";
 import instance from "@/utils/axios";
 
-const Page = () =>
+const AdminLoginPage = () =>
 {
   const router = useRouter();
   const [ usernameOrEmail, setUsernameOrEmail ] = useState( "" );
@@ -158,4 +158,4 @@ const Page = () =>
   );
 };
 
-export default Page;
+export default AdminLoginPage;

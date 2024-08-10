@@ -5,7 +5,7 @@ export type TAdmin = Document & {
     username:string;
     email: string;
     password?: string;
-    role: 'superAdmin' | 'admin';
+    role: 'superadmin' | 'admin';
     category: [string] ;
     mediaType: [string] ;
     resetPasswordToken?: string | undefined;
@@ -21,10 +21,14 @@ export type TCustomer = Document & {
     name: string; // Customer's full name
     password: string;
     isDeleted: boolean;
-    credits: number;
-    creditsValidity: string ;
+    purchasedProducts:mongoose.Types.ObjectId[];
     cart: mongoose.Types.ObjectId[]; // References to products in the cart
-    subscription: mongoose.Types.ObjectId; // References to subscription
+    subscription: {
+        subscriptionId:string;
+        PlanId: string;
+        credits: number;
+        planValidity: Date;
+    } // References to subscription
     purchaseHistory?: mongoose.Types.ObjectId[]; // References to orders
     subscriptionHistory?: mongoose.Types.ObjectId[]; // References to subscriptions
     phone?: string;

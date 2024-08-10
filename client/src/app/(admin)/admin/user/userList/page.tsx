@@ -67,7 +67,7 @@ export default function UserList ()
     return (
         <div className="flex flex-col min-h-screen min-w-md">
             <div className="flex-grow p-6 md:p-0">
-                <h1 className="text-3xl font-bold mb-6 text-gray-800">User List</h1>
+                <h1 className="text-3xl font-bold mb-6 text-gray-800">Staff List</h1>
                  <div className="flex justify-between items-center gap-4 flex-wrap my-6">
                     <input
                     type="text"
@@ -80,8 +80,8 @@ export default function UserList ()
                     <div className="flex items-center flex-wrap gap-4 ">
                     <div>
                     <select className="border rounded px-4 py-2" onChange={( e ) => handleRoleSearch( e )} value={roleSearch} >
-                        <option value="all">All Admin</option>
-                        <option value="admin" >Admin</option>
+                        <option value="all">All Staff</option>
+                        <option value="admin" >Admin / Staff</option>
                         <option value="superadmin">SuperAdmin</option>
                     </select>
                     </div>
@@ -131,8 +131,8 @@ export default function UserList ()
                                             <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
                                                 { capitalizeFirstLetter( user.name ) }
                                             </th>
-                                            <td className="px-6 py-4">{ capitalizeFirstLetter( user.username ) }</td>
-                                            <td className="px-6 py-4">{ capitalizeFirstLetter( user.email ) }</td>
+                                            <td className="px-6 py-4">{ user.username }</td>
+                                            <td className="px-6 py-4">{ user.email }</td>
                                             <td className="px-6 py-4">{ capitalizeFirstLetter(user.role) }</td>
                                             <td className="px-6 py-4 hidden md:table-cell">{(user.mediaType && user.mediaType.length>0)
                                                 ? user.mediaType.map((mediaType, index) => (

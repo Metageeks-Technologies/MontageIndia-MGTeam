@@ -3,6 +3,7 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import * as validator from 'validator';
 import type { TCustomer } from "../../types/user";
+import config from '@src/utils/config';
 
 const customerSchema = new mongoose.Schema<TCustomer>({
   name: {
@@ -43,12 +44,16 @@ const customerSchema = new mongoose.Schema<TCustomer>({
   isDeleted: { type: Boolean, default: false },
   resetPasswordToken:{ type: String,default:undefined,},
   resetPasswordExpires:{ type: Number,default: undefined,},
-  credits: { type: Number, default: 0 },
-  creditsValidity: { type: String, default: '0'},
-  cart: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' ,unique:true}],
-  subscription: { type: mongoose.Schema.Types.ObjectId, ref: 'SubscriptionPlan' },
+  purchasedProducts: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' }],
+  cart: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' }],
+  subscription: { 
+      subscriptionId: {type:String ,default:''},
+      PlanId: { type:String, default:'' },
+      credits: { type: Number, default: 0 },
+      planValidity: { type: Date, default: Date.now() },
+      status: { type: String, default: 'inactive' }
+   },
   purchaseHistory: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Order' }],
-  subscriptionHistory: [{ type: mongoose.Schema.Types.ObjectId, ref: 'SubscriptionPlan' }],
 },{
   timestamps: true
 });
@@ -75,10 +80,10 @@ customerSchema.pre<TCustomer>('save', async function (next) {
 
 // Create JWT token
 customerSchema.methods.createJWT = function (this: TCustomer) {
-    if (!process.env.JWT_SECRET_CUSTOMER) {
+    if (!config.customerJwtSecret) {
         throw new Error("JWT_SECRET is not defined in the environment.");
     }
-    return jwt.sign({ id: this._id }, process.env.JWT_SECRET_CUSTOMER, { expiresIn: process.env.JWT_LIFETIME });
+    return jwt.sign({ id: this._id }, config.customerJwtSecret, { expiresIn: config.jwtLifetime });
 };
 
 // Compare password

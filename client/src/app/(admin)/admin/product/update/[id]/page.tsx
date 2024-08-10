@@ -444,8 +444,8 @@ const Form4 = () => {
                 className="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none"
               >
                 <option value="published">Available</option>
-                <option value="archived">Archived</option>
-                <option value="unavailable">Unavailable</option>
+                <option value="draft">Draft</option>
+                <option value="archived">Delete</option>
               </select>
             </div>
           <div className='text-xl flex flex-row gap-7 w-32 font-semibold'>Tags

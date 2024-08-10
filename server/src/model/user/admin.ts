@@ -3,6 +3,7 @@ import jwt from "jsonwebtoken";
 import mongoose, { Model } from "mongoose";
 import * as validator from 'validator';
 import type { TAdmin } from "../../types/user";
+import config from "@src/utils/config";
 // Define the schema
 
 const adminsSchema = new mongoose.Schema<TAdmin>({
@@ -87,10 +88,10 @@ adminsSchema.pre<TAdmin>('save', async function (next) {
 });
 // Create JWT token
 adminsSchema.methods.createJWT = function (this: TAdmin) {
-    if (!process.env.JWT_SECRET) {
+    if (!config.jwtSecret) {
         throw new Error("JWT_SECRET is not defined in the environment.");
     }
-    return jwt.sign({ id: this._id }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_LIFETIME });
+    return jwt.sign({ id: this._id }, config.jwtSecret, { expiresIn: config.jwtLifetime });
 };
 
 // Compare password

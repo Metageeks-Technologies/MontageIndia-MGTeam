@@ -4,11 +4,14 @@ import { checkProductAccess, isAuthenticatedAdmin, isAuthenticatedCustomer } fro
 import { addProductToCart, removeProductFromCart } from '@src/controller/user/customer';
 
 const productRouter = express.Router(); 
-productRouter.route("/").post(isAuthenticatedAdmin,checkProductAccess,createProduct).get(getProducts);
+
+
+// Admin 
+productRouter.route("/").post(isAuthenticatedAdmin,createProduct).get(isAuthenticatedAdmin,getProducts);
 productRouter.route("/video").patch(isAuthenticatedAdmin,addSizeAndKeysToVideo)
 productRouter.route("/:id").patch(isAuthenticatedAdmin,updateProduct).get(getProduct);
 productRouter.route( "/variant/:id" ).patch( isAuthenticatedAdmin, addPriceToVariant );
 productRouter.route("/cart").post(isAuthenticatedCustomer,getProductsByIds)
-productRouter.route( '/addToCart' ).post(isAuthenticatedCustomer, addProductToCart );
+productRouter.route( '/addToCart').post(isAuthenticatedCustomer, addProductToCart );
 productRouter.route( '/removeFromCart' ).post(isAuthenticatedCustomer, removeProductFromCart );
 export default productRouter;   
