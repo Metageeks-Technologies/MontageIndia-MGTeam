@@ -1,3 +1,4 @@
+import { TProduct } from "@/types/product";
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
@@ -5,7 +6,7 @@ export interface InitialState {
   user?: null;
   loading?: boolean;
   error?: string;
-  cartData: any[];
+  cartData: TProduct[];
 }
 
 const initialState: InitialState = {
@@ -30,19 +31,21 @@ export const userSlice = createSlice({
       state.loading = false;
       state.error = action.payload;
     },
-    setCartData: (state, action: PayloadAction<any[]>) => {
-      state.cartData.push(action.payload);
+    setCartData: (state, action: PayloadAction<TProduct[]>) => {
+      state.cartData = state.cartData.concat(action.payload); // This merges the new products into the existing array
       state.loading = false;
       state.error = " ";
     },
-    getCardData: (state, action: PayloadAction<any[]>) => {
-      state.cartData = action.payload;
+    // getCartData: (state, action: PayloadAction<TProduct>) => {
+    //   state.cartData = action.payload;
+    //   state.loading = false;
+    //   state.error = "";
+    // },
+    removeCartItem: (state, action: PayloadAction<string>) => {
+      const productId = action.payload;
+      state.cartData = state.cartData.filter(product => product._id !== productId); // Remove the product by filtering out the ID
       state.loading = false;
-      state.error = "";
-    },
-    removeCardIem: (state, action: PayloadAction<any[]>) => {
-      state.cartData.push(action.payload);
-      state.loading = false;
+      state.error = " ";
     },
   },
 });
@@ -52,8 +55,8 @@ export const {
   requestStart,
   requestFail,
   setCartData,
-  getCardData,
-  removeCardIem,
+  // getCartData,
+  removeCartItem,
 } = userSlice.actions;
 
 export default userSlice.reducer;

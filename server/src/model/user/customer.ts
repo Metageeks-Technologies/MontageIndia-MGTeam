@@ -45,7 +45,7 @@ const customerSchema = new mongoose.Schema<TCustomer>({
   resetPasswordExpires:{ type: Number,default: undefined,},
   credits: { type: Number, default: 0 },
   creditsValidity: { type: String, default: '0'},
-  cart: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' }],
+  cart: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' ,unique:true}],
   subscription: { type: mongoose.Schema.Types.ObjectId, ref: 'SubscriptionPlan' },
   purchaseHistory: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Order' }],
   subscriptionHistory: [{ type: mongoose.Schema.Types.ObjectId, ref: 'SubscriptionPlan' }],

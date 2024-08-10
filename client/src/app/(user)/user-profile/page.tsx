@@ -4,6 +4,8 @@ import instance from "@/utils/axios";
 import { notifyError, notifySuccess } from "@/utils/toast";
 import { useRouter } from "next/navigation";
 import { RxCross2 } from "react-icons/rx";
+import { useAppDispatch } from "@/app/redux/hooks";
+import { getCurrCustomer } from "@/app/redux/feature/user/api";
 
 interface User {
   id: string;
@@ -71,8 +73,10 @@ const Home: FC = () => {
   //       notifyError("Failed to delete account");
   //     }
   //   };
+  const dispatch=useAppDispatch()
 
   useEffect(() => {
+    getCurrCustomer(dispatch)
     fetchUser();
   }, []);
 

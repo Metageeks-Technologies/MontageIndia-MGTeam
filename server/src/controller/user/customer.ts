@@ -4,6 +4,7 @@ import sendToken from '@src/utils/sendToken.js';
 import Customer from '@src/model/user/customer.js';
 import { sendEmail } from '@src/utils/nodemailer/mailer/mailer.js';
 import crypto from "crypto";
+import Product from '@src/model/product/product';
 
 
 /* 
@@ -100,7 +101,7 @@ export const getCustomerById= catchAsyncError(async (req, res, next) => {
 export const getCurrentCustomer = catchAsyncError(async (req:any, res, next) => {
 
     const { id } = req.user;
-    console.log(id)
+    console.log("sdsd",id)
     const user = await Customer.findOne({ _id: id });
     console.log(user)
     res.status(200).json({
@@ -290,33 +291,61 @@ export const resetPassword = catchAsyncError(async (req, res, next) => {
 export const addProductToCart = catchAsyncError( async ( req:any, res, next ) => {
     const { productId } = req.body;
     const { id } = req.user;
-    
+
+    console.log("productId",productId)
     if ( !id )   {
         console.log('user dpes not exists')
         next(new ErrorHandler("user does not exit", 404));
     }
     const customer = await Customer.findById( id );
-    customer?.cart.push( productId )
-    console.log("added new prosuct:",customer)
+    if (!customer) {
+        return next(new ErrorHandler("Customer not found", 404));
+    }
+    console.log("customer",customer)
+    const productExists = customer.cart.some((item: any) => item.toString() === productId);
+    console.log("sas",productExists)
+    if (productExists) {
+        return next(new ErrorHandler("Product already exists in the cart", 304));
+    }
+    
+    customer.cart.push( productId )
+    console.log("added new product:",customer)
     await customer?.save();
-    res.status(200).json({ message: 'Product added to cart successfully' });
+    
+    const product=await Product.findById(productId)
+    res.status(200).json({ message: 'Product added to cart successfully', cart: [product] });
 } )
 
-export const removeProductFromCart = catchAsyncError(async (req:any, res, next) => {
-  const { productId } = req.body;
+export const removeProductFromCart = catchAsyncError(async (req: any, res, next) => {
+    const { productId, removeAll } = req.body;  
     const { id } = req.user;
-    
-    if ( !id )    {
-        console.log('user dpes not exists')
-        next(new ErrorHandler("user does not exit", 404));
+  
+    if (!id) {
+      console.log('User does not exist');
+      return next(new ErrorHandler("User does not exist", 404));
     }
-  const customer = await Customer.findById(id);
-  if (customer) {
-    customer.cart = customer.cart.filter((id) => id.toString() !== productId.toString());
-    await customer.save();
-    res.status(200).json({ message: 'Product removed from cart successfully' });
-  } else {
-    res.status(404).json({ message: 'Customer not found' });
-  }
-});
+  
+    const customer = await Customer.findById(id);
+    if (customer) {
+      if (removeAll) {
+        // Remove all instances of the productId
+        customer.cart = customer.cart.filter((cartItemId) => cartItemId.toString() !== productId.toString());
+      } else {
+        // Remove only the first occurrence of the productId
+        const index = customer.cart.findIndex((cartItemId) => cartItemId.toString() === productId.toString());
+        if (index > -1) {
+          customer.cart.splice(index, 1);
+        } else {
+          return res.status(404).json({ message: 'Product not found in cart' });
+        }
+      }
+  
+      await customer.save();
+      console.log("Updated cart:", customer.cart);
+      res.status(200).json({ message: `Product ${removeAll ? 'removed entirely' : 'removed'} from cart successfully` });
+    } else {
+      res.status(404).json({ message: 'Customer not found' });
+    }
+  });
+  
 
