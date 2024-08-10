@@ -7,6 +7,6 @@ productRouter.route("/").post(isAuthenticatedAdmin,createProduct).get(isAuthenti
 productRouter.route("/video").patch(isAuthenticatedAdmin,addSizeAndKeysToVideo)
 productRouter.route("/:id").patch(isAuthenticatedAdmin,updateProduct).get(getProduct);
 productRouter.route( "/variant/:id" ).patch( isAuthenticatedAdmin, addPriceToVariant );
-productRouter.route("/cart").post(isAuthenticatedCustomer,getProductsByIds)
+productRouter.route("/cart").post(isAuthenticatedCustomer,getProductsByIds);
 
 export default productRouter;   

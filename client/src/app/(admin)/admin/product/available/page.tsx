@@ -204,7 +204,7 @@ const Home: React.FC = () => {
               </div>
           </div>
         <h1 className="bg-webgreen text-white px-4 py-2 rounded ml-2">
-          Available Product
+          Published Product
         </h1>
       </div>
       <div className="flex justify-between items-center flex-wrap gap-4 mb-4">

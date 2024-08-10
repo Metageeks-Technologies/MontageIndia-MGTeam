@@ -5,7 +5,7 @@ export type TAdmin = Document & {
     username:string;
     email: string;
     password?: string;
-    role: 'superAdmin' | 'admin';
+    role: 'superadmin' | 'admin';
     category: [string] ;
     mediaType: [string] ;
     resetPasswordToken?: string | undefined;

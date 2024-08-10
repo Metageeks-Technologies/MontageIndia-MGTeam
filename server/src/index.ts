@@ -16,48 +16,14 @@ import cookieParser from 'cookie-parser';
 import paymentRouter from '@src/routes/payment/payment';
 import userRouter from './routes/user/customer';
 import router from './routes/product/order';
-const {mongoUrl,nodeEnv}=config;
+
+const {mongoUrl,nodeEnv,clientUrl}=config;
  
 const app: Express = express();
-// app.use(cors({
-//   origin:nodeEnv==="production"?"https://montage-india-mg-team.vercel.app":"http://localhost:3000", 
-//   credentials: true 
-// }));
-// const allowedOrigins = ['https://montage-india-mg-team.vercel.app'];
-
-// app.use(cors({
-//   origin: function (origin, callback) {
-//     if (!origin || allowedOrigins.indexOf(origin) !== -1) {
-//       console.log(origin)
-//       callback(null, true);
-//     } else {
-//       callback(new Error('Not allowed by CORS'));
-//     }
-//   },
-//   credentials: true
-// }));
-// temp
-const allowedOrigins = ['http://localhost:3000'];
-
-const corsOptions = {
-  origin: function (origin:any, callback:any) {
-    if (!origin || allowedOrigins.includes(origin) || (nodeEnv !== 'production' && origin === 'http://localhost:3000')) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS','PATCH'],
-  allowedHeaders: ['Content-Type', 'Authorization']
-};
 
 
-
-app.use(cors(corsOptions));
-
-// Handle preflight requests
-app.options('*', cors(corsOptions));
+console.log(nodeEnv);
+app.use(cors({ origin:clientUrl , credentials: true }));
 
 
 app.enable("trust proxy");
