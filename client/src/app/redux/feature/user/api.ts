@@ -42,6 +42,7 @@ export const addCartItem = async (
       console.log( "response after adding product to cart", response )
       if(response.status===200){
       notifySuccess(`${response.data.message}`)
+      getCurrCustomer(dispatch)
       dispatch(setCartData(response.data.cart));
       }
     
@@ -71,10 +72,12 @@ export const removeCartItem =  async (
     if(response.status===200){
       Swal.fire({
         icon: 'success',
-        title: 'delted',
-        text: "Item Removed",
+        title: 'Deleted',
+        text: "Item Removed from cart",
       });
     dispatch(removeCart(productId));
+    getCurrCustomer(dispatch)
+
   }
     return response.data;
   } catch (error:any) {
