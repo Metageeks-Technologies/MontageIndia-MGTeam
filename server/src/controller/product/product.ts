@@ -3,6 +3,7 @@ import ErrorHandler from '@src/utils/errorHandler.js';
 import Product from '@src/model/product/product';
 import Activity from '@src/model/activity/activity';
 import type { TAdmin, TCustomer } from '@src/types/user';
+import Customer from '@src/model/user/customer.js';
 
 export const createProduct = catchAsyncError(async (req: any, res, next) => {
     
@@ -235,10 +236,18 @@ export const addPriceToVariant = catchAsyncError(async (req:any, res, next) => {
 })
 
 // get products by ids, for cart
-export const getProductsByIds = catchAsyncError( async ( req: any, res, next ) => {
-    const productIds = req.body;
-    const products = await Product.find( { _id: { $in: productIds } } );
-    res.status( 200 ).json( products );
-} )
+export const getProductsByIds = catchAsyncError(async (req: any, res, next) => {
+    try {
+        const id = req.user;
+        const user = await Customer.findById(id).populate('cart');
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+        res.status(200).json(user.cart);
+    } catch (error) {
+        console.error("Error fetching cart:", error);
+        res.status(404).json({ message: "Not Authenticated" });
+    }
+});
 
     

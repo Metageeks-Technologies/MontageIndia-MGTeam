@@ -8,40 +8,24 @@ import { MdDeleteForever } from 'react-icons/md';
 
 const PlaceOrder = () => {
     const dispatch = useAppDispatch();
-    const [cartProduct, setCartProduct] = useState([]);
-    const productIds = useAppSelector((state: any) => state.user?.user?.cart);
-    const user = useAppSelector((state: any) => state.user?.user?._id);
-
-    const getData = async () => {
-        try {
-            const response = await instance.post("/product/cart", { productIds });
-            console.log("response in getting cartitems:", response);
-            setCartProduct(response.data);
-        } catch (error) {
-            console.log("error fetching", error);
-        }
-    }
 
     const handleRemoveCart = (id: string) => {
         removeCartItem(dispatch, id);
     }
 
-    useEffect(() => {
-        const fetchData = async () => {
-            await getCurrCustomer(dispatch);
-            if (user) {
-                getData();
-            }
-        }
-        fetchData();
-    }, [user, productIds]);
+    const cartProduct = useAppSelector((state) => state.user.cartData);
 
-    // const calculateTotalPrice = () => {
-    //     return cartProduct.reduce((total, item) => {
-    //         const price = item.variants && item.variants.length > 0 ? item.variants[0].price : 0;
-    //         return total + price;
-    //     }, 0);
-    // }
+    useEffect( () =>
+      {
+        getCartData(dispatch)
+      }, [] );
+
+    const calculateTotalPrice = () => {
+        return cartProduct.reduce((total, item) => {
+            const price = item.variants && item.variants.length > 0 ? item.variants[0].price : 0;
+            return total + price;
+        }, 0);
+    }
 
     return (
         <div className='max-w-5xl flex justify-center flex-col m-auto w-full'>
@@ -79,7 +63,7 @@ const PlaceOrder = () => {
             ))}
             <div>
                 <span className='font-semibold'>Total Price: </span>
-                {/* <span>{calculateTotalPrice()}</span> */}
+                <span>{calculateTotalPrice()}</span>
             </div>
         </div>
     )

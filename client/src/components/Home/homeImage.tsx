@@ -14,7 +14,7 @@ const ImageGallery = ({ data }: { data: any }) => {
     }
     return text;
   }
-
+ 
   const router = useRouter();
   const dispatch = useAppDispatch();
   const cartData = useAppSelector((state: any) => state.user.user?.cart);

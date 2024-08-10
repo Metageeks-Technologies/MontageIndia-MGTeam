@@ -36,11 +36,11 @@ export const userSlice = createSlice({
       state.loading = false;
       state.error = " ";
     },
-    // getCartData: (state, action: PayloadAction<TProduct>) => {
-    //   state.cartData = action.payload;
-    //   state.loading = false;
-    //   state.error = "";
-    // },
+    getCart: (state, action: PayloadAction<TProduct[]>) => {
+      state.cartData = action.payload;
+      state.loading = false;
+      state.error = "";
+    },
     removeCart: (state, action: PayloadAction<string>) => {
       const productId = action.payload;
       console.log("remove item:",productId)
@@ -56,7 +56,7 @@ export const {
   requestStart,
   requestFail,
   setCartData,
-  // getCartData,
+  getCart,
   removeCart,
 } = userSlice.actions;
 

@@ -1,5 +1,5 @@
 import instance from "@/utils/axios";
-import { setCurrUser, requestStart, requestFail,  setCartData, removeCart } from "./slice";
+import { setCurrUser, requestStart, requestFail,  setCartData, removeCart, getCart } from "./slice";
 import type { AppDispatch } from "@/app/redux/store";
 import type { AxiosError } from "axios";
 import { notifySuccess } from "@/utils/toast";
@@ -18,13 +18,13 @@ export const getCurrCustomer = async (dispatch: AppDispatch) => {
 
 export const getCartData = async (
   dispatch: AppDispatch,
-  productIds: string[]
+  // productIds: string[]
 ) => {
   dispatch(requestStart());
   try {
-    const response = await instance.post("/product/cart", productIds);
+    const response = await instance("/product/cart/data");
     console.log("response in getting cartitems:-", response);
-    dispatch(setCartData(response.data));
+    dispatch(getCart(response.data));
     return response.data;
   } catch (error) {
     const e = error as AxiosError;

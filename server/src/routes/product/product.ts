@@ -12,7 +12,7 @@ productRouter.route("/get").get(isAuthenticatedCustomer,getProductData);
 productRouter.route("/video").patch(isAuthenticatedAdmin,addSizeAndKeysToVideo)
 productRouter.route("/:id").patch(isAuthenticatedAdmin,updateProduct).get(getProduct);
 productRouter.route( "/variant/:id" ).patch( isAuthenticatedAdmin, addPriceToVariant );
-productRouter.route("/cart").post(isAuthenticatedCustomer,getProductsByIds)
+productRouter.route("/cart/data").get(isAuthenticatedCustomer,getProductsByIds)
 productRouter.route( '/addToCart').post(isAuthenticatedCustomer, addProductToCart );
 productRouter.route( '/removeFromCart' ).post(isAuthenticatedCustomer, removeProductFromCart );
 export default productRouter;   

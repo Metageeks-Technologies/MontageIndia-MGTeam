@@ -253,10 +253,10 @@ export default function Home ()
     {
       getCurrCustomer(dispatch)
       if(user){
-      getCartData(dispatch, productIds)
+      getCartData(dispatch)
       getProduct();
       }
-    }, [] );
+    }, [user] );
 
 
   return (

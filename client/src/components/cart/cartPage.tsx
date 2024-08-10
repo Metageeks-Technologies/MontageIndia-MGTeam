@@ -66,7 +66,9 @@ function CartPopup() {
               ))}
             </div>
             <div className="mt-6 flex justify-center items-center">
-              <Link href="/order" className="p-3 py-2 font-semibold rounded-lg bg-blue-400" >Place your Order</Link>
+              <Link href="/order" 
+               onClick={() => setIsOpen(false)}
+               className="p-3 py-2 font-semibold rounded-lg bg-blue-400" >Place your Order</Link>
             </div>
           </div>
         </div>
