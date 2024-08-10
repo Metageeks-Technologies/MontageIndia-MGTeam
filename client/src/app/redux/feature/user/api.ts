@@ -1,8 +1,9 @@
 import instance from "@/utils/axios";
-import { setCurrUser, requestStart, requestFail,  setCartData } from "./slice";
+import { setCurrUser, requestStart, requestFail,  setCartData, removeCart } from "./slice";
 import type { AppDispatch } from "@/app/redux/store";
 import type { AxiosError } from "axios";
 import { notifySuccess } from "@/utils/toast";
+import Swal from "sweetalert2";
 
 export const getCurrCustomer = async (dispatch: AppDispatch) => {
   dispatch(requestStart());
@@ -39,14 +40,21 @@ export const addCartItem = async (
   try {
       const response = await instance.post( `/product/addToCart`, { productId } );
       console.log( "response after adding product to cart", response )
+      if(response.status===200){
       notifySuccess(`${response.data.message}`)
       dispatch(setCartData(response.data.cart));
-
+      }
+    
 
     return response.data;
-  } catch (error) {
+  } catch (error:any) {
       const e = error as AxiosError;
-      console.log("error in creatin:-",error)
+      const errorMessage = error.response?.data?.message || 'An error occurred while sending data';
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: errorMessage,
+      });
     dispatch(requestFail(e.message));
   }
 };
@@ -60,14 +68,23 @@ export const removeCartItem =  async (
   try {
     const response =  await instance.post(`/product/removeFromCart`, { productId });
     console.log("response in getting cartitems:-", response);
-    dispatch({
-      type: 'cart/removeCartItem', // Ensure this matches the action type in your slice
-      payload: productId,
-    });
-
+    if(response.status===200){
+      Swal.fire({
+        icon: 'success',
+        title: 'delted',
+        text: "Item Removed",
+      });
+    dispatch(removeCart(productId));
+  }
     return response.data;
-  } catch (error) {
+  } catch (error:any) {
     const e = error as AxiosError;
+    const errorMessage = error.response?.data?.message || 'An error occurred while sending data';
+    Swal.fire({
+      icon: 'error',
+      title: 'Oops...',
+      text: errorMessage,
+    });
     dispatch(requestFail(e.message));
   }
 };

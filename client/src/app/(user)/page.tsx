@@ -248,9 +248,7 @@ export default function Home ()
   const dispatch=useAppDispatch()
   const productIds = useAppSelector((state:any) => state.user?.user?.cart);
   const user = useAppSelector((state:any) => state.user?.user?._id);
-  const data = useAppSelector((state:any) => state.user?.user);
 
-  console.log("first",data)
   useEffect( () =>
     {
       getCurrCustomer(dispatch)
