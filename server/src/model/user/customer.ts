@@ -44,7 +44,13 @@ const customerSchema = new mongoose.Schema<TCustomer>({
   isDeleted: { type: Boolean, default: false },
   resetPasswordToken:{ type: String,default:undefined,},
   resetPasswordExpires:{ type: Number,default: undefined,},
-  purchasedProducts: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' }],
+  purchasedProducts: [{
+    productId: { 
+        type: mongoose.Schema.Types.ObjectId, 
+        ref: 'Product' 
+    },
+    variantId:[ {type:String,required:true}],
+  }],
   cart: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' }],
   subscription: { 
       subscriptionId: {type:String ,default:''},
