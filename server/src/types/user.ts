@@ -21,6 +21,7 @@ export type TCustomer = Document & {
     name: string; // Customer's full name
     password: string;
     isDeleted: boolean;
+    purchasedProducts:mongoose.Types.ObjectId[];
     cart: mongoose.Types.ObjectId[]; // References to products in the cart
     subscription: {
         subscriptionId:string;
