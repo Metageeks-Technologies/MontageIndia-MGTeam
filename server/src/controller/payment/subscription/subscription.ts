@@ -10,10 +10,11 @@ import customer from "@src/model/user/customer";
 index
 
 1. createSubscription
-2. getSubscription
-3. getSubscriptionById
-4. updateSubscription
-5. deleteSubscription
+2. createPlan
+3. updatePlan
+4. fetchAllPlans
+5. fetchPlanById
+6. verifyPayment
  */
 
 const razorpayInstance=()=>{
@@ -196,25 +197,18 @@ export const createSubscription= catchAsyncError(async (req:any, res, next) => {
 export const verifyPayment=catchAsyncError(async (req, res, next) => {
         
         console.log("step1",req.body);
-     
-        const {razorpay_payment_id,razorpay_subscription_id,razorpay_signature,subscriptionCreationId}=req.body;
         
-        let hmac = crypto.createHmac('sha256', config.razorpayKey); 
-
-        hmac.update(subscriptionCreationId + "|" + razorpay_payment_id);
+        const {razorpay_payment_id,razorpay_signature,subscriptionCreationId}=req.body;
         
-        const generated_signature = hmac.digest('hex');
+        const generated_signature=crypto.createHmac('sha256', config.razorpaySecret).update( subscriptionCreationId+ "|" + razorpay_payment_id).digest('hex');
 
         // // comaparing our digest with the actual signature
-        if (generated_signature !== razorpay_signature)
-           {
-            console.log("Transaction not legit!");
-           }
-
-           else{
+        if (generated_signature == razorpay_signature) {
             console.log("Transaction legit!");
-           }
-
+        }
+        else{
+            console.log("Transaction NOT legit!");
+        }
 
         // THE PAYMENT IS LEGIT & VERIFIED
         // YOU CAN SAVE THE DETAILS IN YOUR DATABASE IF YOU WANT

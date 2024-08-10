@@ -7,8 +7,8 @@ import { isAuthenticatedCustomer } from "@src/middleware/auth";
 const paymentRouter = express.Router();
 
 // order routes
-paymentRouter.route('/createOrder').post(createOrder);
-paymentRouter.route('/paymentCapture').post(paymentCapture);
+paymentRouter.route('/order').post(isAuthenticatedCustomer,createOrder);
+paymentRouter.route('/capture').post(isAuthenticatedCustomer,paymentCapture);
 
 // subscription routes
 paymentRouter.route('/createPlan').post(createPlan);
