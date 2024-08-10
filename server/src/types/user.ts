@@ -25,6 +25,7 @@ export type TCustomer = Document & {
     isDeleted: boolean;
     purchasedProducts:ProductItem[];
     cart: mongoose.Types.ObjectId[]; // References to products in the cart
+    wishlist: mongoose.Types.ObjectId[]; // References to products in the wishlist
     subscription: {
         subscriptionId:string;
         PlanId: string;

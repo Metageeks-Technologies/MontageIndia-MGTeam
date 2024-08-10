@@ -1,5 +1,6 @@
 import mongoose, { Document } from "mongoose";
 export type TProduct = Document & {
+    _id: mongoose.Types.ObjectId;
     uuid:string;
     slug:string;
     title: string;
