@@ -1,13 +1,11 @@
-import { createOrder, fetchOrdersByCustomerId } from '@src/controller/product/order';
+import { createOrder, fetchOrdersByCustomerId,getOrders,getOrder } from '@src/controller/product/order';
 import express from 'express';
 
 const router = express.Router();
 
 // Route to create a new order
-router.post('/orders', createOrder);
-router.get('/orders/:id', fetchOrdersByCustomerId);
-
-
-
+router.route('/').get(getOrders).post(createOrder);
+router.get('/:id', getOrder);
+router.get('/customer/:id', fetchOrdersByCustomerId);
 
 export default router;

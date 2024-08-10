@@ -1,13 +1,9 @@
 import { Request, Response, NextFunction } from 'express';
-
 import catchAsyncError from '@src/middleware/catchAsyncError';
 import Order from '@src/model/product/order';
 import ErrorHandler from '@src/utils/errorHandler';
 import Customer from "@src/model/user/customer";
 
-
-
-// Create Order API
 export const createOrder = catchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
     const {
         userId,
@@ -63,8 +59,6 @@ export const createOrder = catchAsyncError(async (req: Request, res: Response, n
     });
 });
 
-
-
 export const fetchOrdersByCustomerId = catchAsyncError(async (req, res, next) => {
   const { id } = req.params; 
 
@@ -89,4 +83,28 @@ export const fetchOrdersByCustomerId = catchAsyncError(async (req, res, next) =>
   }
 });
 
+export const getOrders = catchAsyncError(async (req: any, res, next) => {
+    
+    const orders = await Order.find();
+ 
+    res.status(201).json({
+     success: true,
+     orders:orders,
+    });
+});
+ 
+export const getOrder = catchAsyncError(async (req: any, res, next) => {
+ 
+     const { id:orderId } = req.params;
+ 
+     const order = await Order.findById(orderId);
+     if(!order){
+         return next(new ErrorHandler('Order not found',404));
+     }
+     
+     res.status(201).json({
+      success: true,
+      order,
+     });
+});
 

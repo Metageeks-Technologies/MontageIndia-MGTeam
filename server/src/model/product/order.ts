@@ -1,9 +1,13 @@
 import mongoose, { Schema, Document } from 'mongoose';
 
+export interface ProductItem {
+  productId: mongoose.Schema.Types.ObjectId;
+  variantId: string;
+}
 interface IOrder extends Document {
   userId: string;
   razorpayOrderId?: string;
-  productIds: mongoose.Schema.Types.ObjectId[];
+  products: ProductItem[];
   currency: string;
   totalAmount: number;
   status: string;
@@ -13,7 +17,13 @@ interface IOrder extends Document {
 const OrderSchema: Schema = new Schema({
   userId: { type: String, required: true },
   razorpayOrderId: { type: String },
-  productIds: [{type:mongoose.Schema.Types.ObjectId,ref:'Product'}],
+  products: [{
+    productId: { 
+        type: mongoose.Schema.Types.ObjectId, 
+        ref: 'Product' 
+    },
+    variantId: {type:String,required:true},
+  }],
   totalAmount: { type: Number, required: true },
   currency: { type: String, required: true },
   status: { type: String, enum: ['pending', 'paid',"completed", 'cancelled'], required: true },
