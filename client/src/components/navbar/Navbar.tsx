@@ -15,7 +15,7 @@ import CartPopup from '../cart/cartPage';
 // import CartPopup from './cart/cartPage';
 
 
-const Navbar = () =>
+const Sidebar = () =>
 {
   const router = useRouter();
   const [ menuOpen, setMenuOpen ] = useState( false );
@@ -115,7 +115,7 @@ const Navbar = () =>
   );
 };
 
-export default Navbar;
+export default Sidebar ;
 
 
 

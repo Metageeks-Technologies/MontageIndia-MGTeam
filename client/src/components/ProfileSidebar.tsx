@@ -10,7 +10,7 @@ import { FiSettings } from 'react-icons/fi';
 const ProfileSidebar = () => {
   const router = useRouter();
   return (
-    <div className="w-80  p-4 py-12 border-r ">
+    
         <div>
           <h1 className="text-md text-gray-700 font-medium">My Account</h1>
           <div className="mt-4">
@@ -37,7 +37,7 @@ const ProfileSidebar = () => {
             </div>
           </div>
         </div>
-      </div>
+      
   )
 }
 

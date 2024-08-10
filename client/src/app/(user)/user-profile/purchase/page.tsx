@@ -1,6 +1,8 @@
 "use client";
-import instance from "@/utils/axios";
 import React, { useEffect, useState } from "react";
+import { useAppDispatch, useAppSelector } from "@/app/redux/hooks";
+import { getCurrCustomer } from "@/app/redux/feature/user/api";
+import instance from "@/utils/axios";
 
 interface Product {
   _id: string;
@@ -22,31 +24,34 @@ interface Order {
 
 const ProductList: React.FC = () => {
   const [orders, setOrders] = useState<Order[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
+  const dispatch = useAppDispatch();
+  const user = useAppSelector((state: any) => state.user?.user);
 
   const fetchOrder = async (_id: string) => {
     try {
-      const response = await instance.get(`orders/${_id}`);
-      console.log("Response data:", response.data); 
+      const response = await instance.get(`/orders/${_id}`);
       setOrders(response.data.purchaseHistory);
-      setLoading(false);
     } catch (error) {
       console.error("Error fetching order by ID:", error);
-      setLoading(false);
-    }
+    } 
   };
 
   useEffect(() => {
-    const orderId = "66b5a9c768118940533dc1df"; 
-    fetchOrder(orderId);
-  }, []);
+    const fetchData = async () => {
+      await getCurrCustomer(dispatch);
+    };
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
+    fetchData();
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (user?._id) {
+      fetchOrder(user._id);
+    }
+  }, [user]);
 
   return (
-    <div className="w-full px-4 py-8">
+    <div className="w-full px-4 h-screen">
       <h1 className="text-3xl font-semibold mb-6 text-gray-800">Purchase History</h1>
       <div className="overflow-x-auto shadow-md rounded-lg">
         <table className="w-full text-left border-collapse">
@@ -60,7 +65,7 @@ const ProductList: React.FC = () => {
             </tr>
           </thead>
           <tbody className="bg-white">
-            {orders.map((order) => 
+            {orders.map((order) =>
               order.items.map((product) => (
                 <tr
                   key={product._id}
@@ -69,7 +74,11 @@ const ProductList: React.FC = () => {
                   <td className="px-6 py-4 text-gray-700 font-medium">{product.name}</td>
                   <td className="px-6 py-4 text-gray-700">{product.mediaType}</td>
                   <td className="px-6 py-4 text-gray-700">${product.amount}</td>
-                  <td className={`px-6 py-4 font-semibold ${order.status === "completed" ? "text-green-600" : "text-red-600"}`}>
+                  <td
+                    className={`px-6 py-4 font-semibold ${
+                      order.status === "completed" ? "text-green-600" : "text-red-600"
+                    }`}
+                  >
                     {order.status}
                   </td>
                   <td className="px-6 py-4 text-gray-600">

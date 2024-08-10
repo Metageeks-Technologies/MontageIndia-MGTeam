@@ -4,6 +4,8 @@ import instance from "@/utils/axios";
 import { notifyError, notifySuccess } from "@/utils/toast";
 import { useRouter } from "next/navigation";
 import { RxCross2 } from "react-icons/rx";
+import { useAppDispatch, useAppSelector } from "@/app/redux/hooks";
+import { getCurrCustomer } from "@/app/redux/feature/user/api";
 
 interface Subscription {
   PlanId: string;
@@ -32,6 +34,9 @@ const Home: FC = () => {
   const [updatedEmail, setUpdatedEmail] = useState("");
   const [currentField, setCurrentField] = useState<"Name" | "Email" | "">("");
   const [isInputChanged, setIsInputChanged] = useState(false);
+  const dispatch=useAppDispatch()
+  const users = useAppSelector((state: any) => state.user);
+  console.log("cuurent",users)
 
   const fetchUser = async () => {
     try {
@@ -84,6 +89,7 @@ const Home: FC = () => {
 
   useEffect(() => {
     fetchUser();
+    getCurrCustomer(dispatch)
   }, []);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -96,7 +102,7 @@ const Home: FC = () => {
   };
 
   return (
-    <div className="  w-full px-4 py-8">
+    <>
       <div>
       {isPopupOpen && (
         <div className="fixed inset-0 bg-gray-900 bg-opacity-85 flex justify-center items-center">
@@ -229,7 +235,8 @@ const Home: FC = () => {
             </p>
           </div>
         </div>
-      </div>
+        
+        </>
   
   );
 };
