@@ -11,8 +11,8 @@ interface ISubscriptionHistory extends Document {
 const SubscriptionHistorySchema: Schema = new Schema({
   userId: { type: String, required: true },
   planId: { type: String, required: true },
-  startDate: { type: Date, required: true },
-  endDate: { type: Date, required: true },
+  startDate: { type: Date, default: Date.now() },
+  endDate: { type: Date, default: Date.now() },
   status: { type: String, required: true },
 }, {
   timestamps: true,

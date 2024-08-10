@@ -31,7 +31,6 @@ export const createOrder= catchAsyncError(async (req:any, res, next) => {
         receipt: req.body.receipt || "any unique id for every order",
         notes:req.body.notes,
     };
-   
 
     const response = await razorpay.orders.create(options);
     console.log("step2:",response);
@@ -43,10 +42,11 @@ export const createOrder= catchAsyncError(async (req:any, res, next) => {
     const newOrder = await Order.create({
         userId: req.user._id,
         razorpayOrderId: response.id,
-        productIds: req.body.notes,
+        productIds: req.body.notes.productIds,
         totalAmount: req.body.amount,
         currency: req.body.currency,
         status: "pending",
+        method: "razorpay",
     });
 
     const order = await newOrder.save();

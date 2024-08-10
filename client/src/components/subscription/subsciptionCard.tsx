@@ -77,6 +77,7 @@ const SubscriptionCard: React.FC<Props> = ({ plan }) => {
           customer_notify:plan.customer_notify?1:0,
           notes:{
             credits:plan.notes.credits,
+            userId:'66b4c6e5a43931d14b07821b',
           }
       }
       console.log("subsciptionOption",subsciptionOption);

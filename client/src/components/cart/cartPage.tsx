@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 // import { useDispatch, useSelector } from "react-redux";
 import { useAppDispatch,useAppSelector } from "@/app/redux/hooks";
 import { AiOutlineShoppingCart, AiOutlineClose } from "react-icons/ai";
-import { Button } from "@nextui-org/react";
+import { Button,Badge } from "@nextui-org/react";
 import { removeCartItem } from "@/app/redux/feature/user/api";
 
 function CartPopup() {
@@ -28,10 +28,12 @@ function CartPopup() {
 
   return (
     <>
-      <AiOutlineShoppingCart 
-        className="text-gray-700 w-6 h-6 cursor-pointer" 
-        onClick={() => setIsOpen(true)}
-      />
+      <Badge color="danger" content={50} shape="circle">
+            <AiOutlineShoppingCart 
+          className="text-gray-700 w-6 h-6 cursor-pointer" 
+          onClick={() => setIsOpen(true)}
+        />
+      </Badge>
       {isOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-start overflow-y-auto">
           <div className="bg-white p-6 rounded-lg shadow-xl my-3 justify-self-end w-full max-w-2xl">

@@ -3,7 +3,6 @@ import React,{useState,useEffect} from 'react';
 import { loadScript } from '../../utils/loadScript';
 import instance from '@/utils/axios';
 
-
 declare global {
   interface Window {
     Razorpay: any; 
@@ -42,7 +41,9 @@ const PayButton: React.FC = () => {
     const OrderOption={
       amount:"49900",
       currency:"INR",
-      notes:[]
+      notes:{
+        productIds:['66b4c6e5a43931d14b07821b','66b4c6e5a43931d14b07821b'],
+      },
     }
     const response:any= await instance.post('/payment/order',OrderOption,{
         withCredentials: true
