@@ -86,8 +86,10 @@ const Home: FC = () => {
   //       notifyError("Failed to delete account");
   //     }
   //   };
+  const dispatch=useAppDispatch()
 
   useEffect(() => {
+    getCurrCustomer(dispatch)
     fetchUser();
     getCurrCustomer(dispatch)
   }, []);

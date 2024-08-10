@@ -229,7 +229,23 @@ export const getProductsByIds = catchAsyncError( async ( req: any, res, next ) =
     const productIds = req.body;
     // console.log("product its:",req)
     const products = await Product.find( { _id: { $in: productIds } } );
-    // console.log(products)
+    console.log("dsd",products)
     res.status( 200 ).json( products );
 } )
+    
+export const getAllProduct = catchAsyncError(async (req: any, res, next) => {
+    console.log("this mesg print")
+    try {
+      const { cart } = req.user;
+      console.log("User's cart:", cart);
+  
+      const products = await Product.find({ _id: { $in: cart } });
+      console.log("Products in cart:", products);
+  
+      res.status(200).json(products);
+    } catch (error) {
+      console.error("Error in getting products:", error);
+      next(error); // Pass the error to the global error handler
+    }
+  });
     

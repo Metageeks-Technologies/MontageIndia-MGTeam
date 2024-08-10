@@ -4,13 +4,18 @@ import React, { useState, useEffect } from "react";
 import { useAppDispatch,useAppSelector } from "@/app/redux/hooks";
 import { AiOutlineShoppingCart, AiOutlineClose } from "react-icons/ai";
 import { Button } from "@nextui-org/react";
-import { getCartData } from "@/app/redux/feature/user/api";
+import { removeCartItem } from "@/app/redux/feature/user/api";
 
 function CartPopup() {
   const [isOpen, setIsOpen] = useState(false);
-  // const productIds=user.cart
-
+  const dispatch=useAppDispatch()
+  const cartProduct = useAppSelector((state) => state.user.cartData);
+  console.log("item",cartProduct)
+  const handleRemoveCart=(id:string)=>{
+    removeCartItem(dispatch,id)
+  }
   useEffect(() => {
+    
     if (isOpen) {
       document.body.style.overflow = 'hidden';
     } else {
@@ -39,15 +44,17 @@ function CartPopup() {
             </div>
             <div className="max-h-[calc(100vh-200px)] overflow-y-auto">
               {/* Cart items */}
-              {[1, 2, 3, 4, 5,6,7,8,9,10].map((item) => (
-                <div key={item} className="flex justify-between items-center py-4 px-6 border-b">
+              {cartProduct.flat().map((item,index) => (
+                <div key={index} className="flex justify-between items-center py-4 px-6 border-b">
                   <div className="flex items-center">
                     <img src="path_to_image" alt="Item" className="w-16 h-12 object-cover mr-4" />
-                    <span>MOV</span>
+                    <span>{item.title}</span>
                   </div>
                   <div className="flex items-center">
-                    <span className="mr-4">$79</span>
-                    <Button size="sm">Remove</Button>
+                    <span className="mr-4">
+                    {item.variants && item.variants.length > 0 ? item.variants[0].price : 'No price available'}
+                    </span>
+                    <Button onClick={()=>{handleRemoveCart(item._id)}} size="sm">Remove</Button>
                   </div>
                 </div>
               ))}

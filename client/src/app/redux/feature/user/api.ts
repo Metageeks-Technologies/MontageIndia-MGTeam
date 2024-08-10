@@ -1,5 +1,5 @@
 import instance from "@/utils/axios";
-import { setCurrUser, requestStart, requestFail, getCardData } from "./slice";
+import { setCurrUser, requestStart, requestFail,  setCartData } from "./slice";
 import type { AppDispatch } from "@/app/redux/store";
 import type { AxiosError } from "axios";
 import { notifySuccess } from "@/utils/toast";
@@ -21,9 +21,9 @@ export const getCartData = async (
 ) => {
   dispatch(requestStart());
   try {
-    console.log("Ss",productIds)
     const response = await instance.post("/product/cart", productIds);
     console.log("response in getting cartitems:-", response);
+    dispatch(setCartData(response.data));
     return response.data;
   } catch (error) {
     const e = error as AxiosError;
@@ -37,9 +37,12 @@ export const addCartItem = async (
 ) => {
   dispatch(requestStart());
   try {
-      const response = await instance.post( `/user/addToCart`, { productId } );
+      const response = await instance.post( `/product/addToCart`, { productId } );
       console.log( "response after adding product to cart", response )
       notifySuccess(`${response.data.message}`)
+      dispatch(setCartData(response.data.cart));
+
+
     return response.data;
   } catch (error) {
       const e = error as AxiosError;
@@ -55,8 +58,13 @@ export const removeCartItem =  async (
 ) => {
   dispatch(requestStart());
   try {
-    const response =  await instance.post(`/user/removeFromCart`, { productId });
+    const response =  await instance.post(`/product/removeFromCart`, { productId });
     console.log("response in getting cartitems:-", response);
+    dispatch({
+      type: 'cart/removeCartItem', // Ensure this matches the action type in your slice
+      payload: productId,
+    });
+
     return response.data;
   } catch (error) {
     const e = error as AxiosError;
