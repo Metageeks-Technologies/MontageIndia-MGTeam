@@ -4,6 +4,7 @@ import { createPlan, createSubscription, fetchAllPlans, fetchPlanById, updatePla
 import { paymentWebHook } from "@src/controller/payment/webhook";
 import { isAuthenticatedCustomer } from "@src/middleware/auth";
 import { getTransactions } from "@src/controller/payment/transaction/transaction";
+import { getSubscriptionHistory } from "@src/controller/payment/subscription/subscriptionHistory";
 
 const paymentRouter = express.Router();
 
@@ -18,6 +19,9 @@ paymentRouter.route('/plan/:id').get(fetchPlanById);
 paymentRouter.route('/createSubscription').post(isAuthenticatedCustomer,createSubscription);
 paymentRouter.route('/plan/:id').patch(updatePlan);
 paymentRouter.route('/verifySubscription').post(verifyPayment);
+
+// subscriptionHistory
+paymentRouter.get('/subscription-history', getSubscriptionHistory);
 
 //transaction
 paymentRouter.get('/transactions', getTransactions);
