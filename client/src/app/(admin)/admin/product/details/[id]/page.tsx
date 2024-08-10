@@ -235,7 +235,7 @@ const ProductDetail: React.FC = () =>
                 <div key={ variant._id } className="mb-2">
                   <div className="flex justify-between items-center">
                     <div>
-                      <strong>{ variant.label }</strong> ({ variant.size })
+                      <strong>{ variant.size }</strong> 
                     </div>
                     <div>${ variant.price }</div>
                   </div>

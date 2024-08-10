@@ -4,6 +4,17 @@ import instance from "@/utils/axios";
 import { notifyError, notifySuccess } from "@/utils/toast";
 import { useRouter } from "next/navigation";
 import { RxCross2 } from "react-icons/rx";
+import { useAppDispatch, useAppSelector } from "@/app/redux/hooks";
+import { getCurrCustomer } from "@/app/redux/feature/user/api";
+
+interface Subscription {
+  PlanId: string;
+  credits: number;
+  planValidity: string;
+  status: string;
+  subscriptionId: string;
+}
+
 
 interface User {
   id: string;
@@ -12,6 +23,7 @@ interface User {
   phone: string;
   username: string;
   _id: string;
+  subscription: Subscription;
 }
 
 const Home: FC = () => {
@@ -22,6 +34,9 @@ const Home: FC = () => {
   const [updatedEmail, setUpdatedEmail] = useState("");
   const [currentField, setCurrentField] = useState<"Name" | "Email" | "">("");
   const [isInputChanged, setIsInputChanged] = useState(false);
+  const dispatch=useAppDispatch()
+  const users = useAppSelector((state: any) => state.user);
+  console.log("cuurent",users)
 
   const fetchUser = async () => {
     try {
@@ -74,6 +89,7 @@ const Home: FC = () => {
 
   useEffect(() => {
     fetchUser();
+    getCurrCustomer(dispatch)
   }, []);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -86,7 +102,8 @@ const Home: FC = () => {
   };
 
   return (
-    <div className="  w-full px-4 py-8">
+    <>
+      <div>
       {isPopupOpen && (
         <div className="fixed inset-0 bg-gray-900 bg-opacity-85 flex justify-center items-center">
           <div className="bg-white p-8 rounded-2xl shadow-lg w-[25rem] relative">
@@ -181,8 +198,33 @@ const Home: FC = () => {
             </>
           )}
         </div>
+        </div>
 
-        <div className="mt-10">
+        <div className="mt-8">
+        <h2 className="text-2xl font-bold">Subscription plan</h2>
+        <div className="border border-gray-200 mt-2">
+        {user && (
+          <>
+            {/* User Details */}
+            <div className="flex justify-between items-center mx-6 py-3 border-b">
+              <div className="text-gray-700">Credits</div>
+              <div className="text-gray-700">{user.subscription.credits}</div>
+            </div>
+            <div className="flex justify-between items-center mx-6 py-3 border-b">
+              <div className="text-gray-700">Plan Validity</div>
+              <div className="text-gray-700">  {new Date(user.subscription.planValidity).toLocaleDateString()}</div>
+            </div>
+            <div className="flex justify-between items-center mx-6 py-3 border-b">
+              <div className="text-gray-700">Status</div>
+              <div className="text-gray-700">{user.subscription.status}</div>
+            </div>
+          </>
+        )}
+      </div>
+      </div>
+
+
+        <div className="mt-10 pb-2">
           <h1 className="text-lg font-bold">Delete my Account</h1>
           <div className="border w-full mt-2 p-6 flex flex-col gap-2">
             <p className="text-sm text-gray-700">
@@ -193,7 +235,8 @@ const Home: FC = () => {
             </p>
           </div>
         </div>
-      </div>
+        
+        </>
   
   );
 };

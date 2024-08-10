@@ -42,6 +42,7 @@ const Home: React.FC = () => {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [selectedMediaTypes, setSelectedMediaTypes] = useState<string[]>([]);
   const [shouldFetch, setShouldFetch] = useState(true);
+  const [ availableCategories, setAvailableCategories ] = useState<any[]>( [] );
 
   const onSelectCategory = ( selectedList: string[] ) =>
   {
@@ -69,6 +70,21 @@ const Home: React.FC = () => {
     setCurrentPage(1);
     setShouldFetch(true);
   }
+  const getCategories = async () =>
+    {
+      try
+      {
+        const response = await instance.get( '/field/category' );
+        const formattedCategories = response.data.categories.map( ( category: any ) => ( {
+          name: category.name ? category.name : 'Unknown' // Handle undefined names
+        } ) );
+        setAvailableCategories( formattedCategories );
+        console.log("sdsd",response)
+      } catch ( error )
+      {
+        console.log( "error in getting the category:-", error );
+      }
+    };
   const capitalizeFirstLetter = (str: string): string => {
         return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
     };
@@ -93,6 +109,7 @@ const Home: React.FC = () => {
     }
   };
   useEffect(() => {
+    getCategories()
     if (shouldFetch) {
       fetchProduct();
       setShouldFetch(false);
@@ -126,40 +143,40 @@ const Home: React.FC = () => {
   return (
     <div className="container p-4  ">
       <div className="flex justify-between items-center my-6">
-        <input
+        <div className="flex flex-col items-center  md:flex-row ">
+        <div>
+          <input
           type="text"
           placeholder="Search products"
           value={ SearchTerm }
           onChange={ ( e ) => setSearchTerm( e.target.value ) }
           className="border rounded px-4 py-2 w-full max-w-sm"
         />
-        <h1 className="bg-webgreen text-white px-4 py-2 rounded ml-2">
-          Archive Product
-        </h1>
-      </div>
-      <div className="flex justify-between items-center gap-4 flex-wrap mb-4">
-        <div className="flex justify-start items-center flex-wrap gap-4">
-          <Multiselect
-            avoidHighlightFirstOption
-            showArrow
-            placeholder="category"
-            style={ {
-              chips: {
-                background: '#BEF264'
-              },
-              searchBox: {
-                background: 'white',
-                border: '1px solid #e5e7eb',
-              },
-            }}
-            options={categoriesOptions.map((option) => ({ name: option.name ,value: option.value }))} 
-            selectedValues={selectedCategories.map((category) => ({ name: category }))}
-            onSelect={(selectedList) => onSelectCategory(selectedList.map((item:any) => item.name))} 
-            onRemove={(selectedList) => onRemoveCategory(selectedList.map((item:any) => item.name))} 
-            showCheckbox
-            displayValue="name"
-          />
-          <Multiselect
+        </div>
+        <div className="w-48 p-1">
+        <Multiselect
+                avoidHighlightFirstOption
+                showArrow
+                placeholder="category"
+                style={{
+                  chips: {
+                    background: '#BEF264'
+                  },
+                  searchBox: {
+                    background: 'white',
+                    border: '1px solid #e5e7eb',
+                  },
+                }}
+                options={availableCategories} 
+                selectedValues={selectedCategories.map((category) => ({ name: category }))}
+                onSelect={(selectedList) => onSelectCategory(selectedList.map((item:any) => item.name))} 
+                onRemove={(selectedList) => onRemoveCategory(selectedList.map((item:any) => item.name))} 
+                showCheckbox
+                displayValue="name" 
+              />
+              </div>
+              <div className="w-48 p-1">
+              <Multiselect
             avoidHighlightFirstOption
             showArrow
             placeholder="media type"
@@ -179,13 +196,23 @@ const Home: React.FC = () => {
               }
             } }
           />
-          <button className="bg-webgreen text-white px-4 py-2 rounded" onClick={ fetchProduct }>
-            Search
-          </button>
-          <button type="button" className="px-4 py-2 rounded bg-gray-200" onClick={showAllProducts}>
-            Show All
-          </button>
-        </div>
+              </div>
+              <div>
+            <button className="bg-webgreen text-white m-2 px-4 py-2 rounded" onClick={fetchProduct}>
+              Search
+            </button>
+            </div>
+              <div>
+            <button type="button" className="px-4 py-2 rounded bg-gray-200" onClick={showAllProducts}>
+              Clear
+              </button>
+              </div>
+              </div>
+        <h1 className="bg-webgreen text-white px-4 py-2 rounded ml-2">
+          Archive Product
+        </h1>
+      </div>
+      <div className="flex  items-center gap-4 flex-wrap mb-4">
         <div>
           <select className="border rounded px-4 py-2" value={productsPerPage} onChange={(e)=>handleproductPerPage(e)}>
             <option value="6" >6 Data per page</option>
