@@ -6,7 +6,7 @@ const userRouter = express.Router();
 userRouter.route('/signup').post(signupCustomer);
 userRouter.route('/login').post(loginCustomer);
 userRouter.route('/logout').get(logoutCustomer);
-userRouter.route('/getAll').get(isAuthenticatedCustomer,getAllCustomer);
+userRouter.route('/getAll').get(getAllCustomer);
 userRouter.route('/getCurrent').get(isAuthenticatedCustomer,getCurrentCustomer);
 userRouter.route('/delete/:id').delete(isAuthenticatedCustomer,deleteCustomer);
 userRouter.route('/update').patch(isAuthenticatedCustomer,updateCustomerDetails);
