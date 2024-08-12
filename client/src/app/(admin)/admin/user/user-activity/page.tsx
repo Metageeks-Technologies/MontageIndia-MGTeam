@@ -10,7 +10,7 @@ interface UserActivity
   productId: string;
   username: string;
   email: string;
-  category: string;
+  category: string[];
   action: string;
   timestamp: string;
 }
@@ -138,15 +138,25 @@ const UserActivityPage = () =>
                     </td>
                   </tr>
                   ):
-                  data && data.length>0 && data.map( ( user ) => (
-                    <tr key={ user._id } className="border-b hover:bg-gray-100 text-black">
-                      <td className="px-4 py-4 sm:px-6">{ user.username }</td>
-                      <th scope="row" className="px-4 py-4 sm:px-6 font-medium whitespace-nowrap">{ user.name }</th>
-                      <td className="px-4 py-4 sm:px-6">{ user.email }</td>
-                      <td className="px-4 py-4 sm:px-6">{ user.category }</td>
-                      <td className="px-4 py-4 sm:px-6">{ user.productId }</td>
-                      <td className="px-4 py-4 sm:px-6">{ formatDate( user.timestamp ) }</td>
-                      <td className="px-4 py-4 sm:px-6 text-center">{ user.action }</td>
+                  data && data.length>0 && data.map( ( item ) => (
+                    <tr key={ item._id } className="border-b hover:bg-gray-100 text-black">
+                      <td className="px-4 py-4 sm:px-6">{ item.username }</td>
+                      <th scope="row" className="px-4 py-4 sm:px-6 font-medium whitespace-nowrap">{ capitalizeFirstLetter(item.name) }</th>
+                      <td className="px-4 py-4 sm:px-6">{ item.email }</td>
+                      <td className="px-4 py-4 sm:px-6"> 
+                      { 
+                          (item.category && item.category.length>0)?
+                          item.category.map((category, index) => (
+                              <span key={index}>
+                                  {capitalizeFirstLetter(category)}
+                                              {index < item.category.length - 1 ? ', ' : ''}
+                              </span>
+                          ))
+                          : ''
+                      } </td>
+                      <td className="px-4 py-4 sm:px-6">{ item.productId }</td>
+                      <td className="px-4 py-4 sm:px-6">{ formatDate( item.timestamp ) }</td>
+                      <td className="px-4 py-4 sm:px-6 text-center">{ capitalizeFirstLetter(item.action) }</td>
                     </tr>
                   ) )
                 ) }

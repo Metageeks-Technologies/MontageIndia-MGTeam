@@ -2,8 +2,6 @@
 import config from "@src/utils/config.js"
 const {nodeEnv}=config;
 import { Response } from "express";
-
-
 export default (user:any, statusCode:number, res:Response) => {
   const token = user.createJWT();
   // one day=24*60*60*1000

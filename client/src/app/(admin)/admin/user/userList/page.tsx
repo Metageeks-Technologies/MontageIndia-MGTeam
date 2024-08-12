@@ -131,8 +131,8 @@ export default function UserList ()
                                             <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
                                                 { capitalizeFirstLetter( user.name ) }
                                             </th>
-                                            <td className="px-6 py-4">{ capitalizeFirstLetter( user.username ) }</td>
-                                            <td className="px-6 py-4">{ capitalizeFirstLetter( user.email ) }</td>
+                                            <td className="px-6 py-4">{ user.username }</td>
+                                            <td className="px-6 py-4">{ user.email }</td>
                                             <td className="px-6 py-4">{ capitalizeFirstLetter(user.role) }</td>
                                             <td className="px-6 py-4 hidden md:table-cell">{(user.mediaType && user.mediaType.length>0)
                                                 ? user.mediaType.map((mediaType, index) => (

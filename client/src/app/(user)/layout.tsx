@@ -4,7 +4,11 @@ import "../globals.css";
 const inter = Inter( { subsets: [ "latin" ] } );
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import Sidebar from "@/components/Sidebar";
+import {ReduxProvider} from "@/app/redux/provider";
+import Script from 'next/script'
+import Sidebar from "@/components/navbar/Navbar";
+
+// import { Navbar } from "@nextui-org/react";
 
 export const metadata: Metadata = {
   title: "Montage India",
@@ -20,12 +24,15 @@ export default function RootLayout ( {
   return (
     <html lang="en">
       <body className={ inter.className }>
-        <ToastContainer />
-        {/* <div className="flex  ">
-        <div className="w-20"> <Sidebar/></div>
-       <div >{ children }</div>
-       </div> */}
-       { children }
+      <ToastContainer />
+        <ReduxProvider>        
+         <Sidebar/>
+          { children }
+        </ReduxProvider>
+         <Script
+          src="https://checkout.razorpay.com/v1/checkout.js"
+          strategy="beforeInteractive"
+        />
       </body>
     </html>
   );

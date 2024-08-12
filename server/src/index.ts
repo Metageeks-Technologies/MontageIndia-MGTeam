@@ -14,8 +14,9 @@ import productRouter from "@src/routes/product/product"
 import fieldRouter from '@src/routes/field/field';
 import cookieParser from 'cookie-parser';
 import paymentRouter from '@src/routes/payment/payment';
-import subscriptionRouter from '@src/routes/subscription/subscription';
 import userRouter from './routes/user/customer';
+import oderRouter from './routes/product/order';
+
 const {mongoUrl,nodeEnv,clientUrl}=config;
  
 const app: Express = express();
@@ -38,8 +39,8 @@ app.use("/api/v1/media/video", videoRouter);
 app.use("/api/v1/media/audio", audioRouter);
 app.use("/api/v1/product", productRouter);
 app.use("/api/v1/payment", paymentRouter);
-app.use("/api/v1/subscription", subscriptionRouter);
 app.use("/api/v1/field", fieldRouter);
+app.use("/api/v1/order", oderRouter);
 
 
 app.get("/api/greet", (req,res,next)=>{
@@ -50,7 +51,7 @@ app.get("/api/greet", (req,res,next)=>{
 app.use(errorMiddleware);
 processSQSMessages();
 
-const port = process.env.PORT || 5000;
+const port = config.port || 5000;
 const start = async () => {
   try {
     await connectDB(mongoUrl);

@@ -9,7 +9,9 @@ import instance from "@/utils/axios";
 import { Navbar } from "@nextui-org/react";
 import { useEffect, useState } from "react";
 import { IoIosSearch } from "react-icons/io";
-
+import CartPopup from '@/components/cart/cartPage';
+import { getCartData, getCurrCustomer } from "../redux/feature/user/api";
+import { useAppDispatch, useAppSelector } from "../redux/hooks";
 
 // Collection data
 interface Card
@@ -204,52 +206,57 @@ const companies: Company[] = [
   },
 ];
 
-export default function Home() {
-// const [imageProducts, setImageProducts] = useState([]);
-
-
-//   const getProduct = async ()  => {
-//    try {
-//     const res = await instance.get('/product');
-//     const imageProducts = res.data.products.filter((product:any) => product.mediaType === 'image');
-//     setImageProducts(imageProducts);
-//     console.log(res)
-
-//    } catch (error) {
-//     console.log(error)
-//    }
-//   }
-
-//   useEffect (()=>{
-//  getProduct()
-//   },[])
-
-
-const [ imageProducts, setImageProducts ] = useState( [] );
-
-
-const getProduct = async () =>
+export default function Home ()
 {
-  try
+  // const [imageProducts, setImageProducts] = useState([]);
+
+
+  //   const getProduct = async ()  => {
+  //    try {
+  //     const res = await instance.get('/product');
+  //     const imageProducts = res.data.products.filter((product:any) => product.mediaType === 'image');
+  //     setImageProducts(imageProducts);
+  //     console.log(res)
+
+  //    } catch (error) {
+  //     console.log(error)
+  //    }
+  //   }
+
+  //   useEffect (()=>{
+  //  getProduct()
+  //   },[])
+
+
+  const [ imageProducts, setImageProducts ] = useState( [] );
+
+
+  const getProduct = async () =>
   {
-    const res = await instance.get( '/product' );
-    const imageProducts = res.data.products.filter( ( product: any ) => product.mediaType === 'image' );
-    setImageProducts( imageProducts );
-    console.log( res );
+    try
+    {
+      const res = await instance.get( '/product/get' );
+      const imageProducts = res.data.products.filter( ( product: any ) => product.mediaType === 'image' );
+      setImageProducts( imageProducts );
+      console.log( res );
 
-  } catch ( error )
-  {
-    console.log( error );
-  }
-};
+    } catch ( error )
+    {
+      console.log( error );
+    }
+  };
+  const dispatch=useAppDispatch()
+  const productIds = useAppSelector((state:any) => state.user?.user?.cart);
+  const user = useAppSelector((state:any) => state.user?.user?._id);
 
-useEffect( () =>
-{
-  getProduct();
-}, [] );
-
-  
-
+  useEffect( () =>
+    {
+      getCurrCustomer(dispatch)
+      if(user){
+      getCartData(dispatch)
+      getProduct();
+      }
+    }, [user] );
 
 
   return (
@@ -382,7 +389,7 @@ useEffect( () =>
             </div>
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 mt-5">
             { imageProducts.map( ( data: any, index: number ) => (
-                <ImageGallery key={ index } { ...data } />
+                <ImageGallery key={ index } data={ data } />
               ) ) }
             </div>
           </div>
@@ -503,5 +510,6 @@ useEffect( () =>
 
       <Footer />
     </div>
+  
   );
 }

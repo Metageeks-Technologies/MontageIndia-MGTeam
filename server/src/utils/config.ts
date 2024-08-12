@@ -25,8 +25,13 @@ const config: TConfig = {
   awsMediaConvertQueue: getEnvVariable('AWS_MEDIA_CONVERT_QUEUE'),
   awsSqsQueueUrl: getEnvVariable('AWS_SQS_QUEUE_URL'),
   awsTempBucketName:getEnvVariable('AWS_TEMP_BUCKET_NAME'),
+  emailUser: getEnvVariable('EMAIL_USER'),
+  emailPass: getEnvVariable('EMAIL_PASS'),
   clientUrl:getEnvVariable('CLIENT_URL'),
-
+  razorpayKey:getEnvVariable('RAZORPAY_KEY'),
+  razorpaySecret:getEnvVariable('RAZORPAY_SECRET'),
+  customerJwtSecret:getEnvVariable('JWT_SECRET_CUSTOMER'),
+  razorpayWebhookSecret:getEnvVariable('RAZORPAY_WEBHOOK_SECRET'),
 };
 
 export default config;

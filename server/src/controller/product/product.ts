@@ -2,12 +2,13 @@ import catchAsyncError from '@src/middleware/catchAsyncError.js';
 import ErrorHandler from '@src/utils/errorHandler.js';
 import Product from '@src/model/product/product';
 import Activity from '@src/model/activity/activity';
-import type { TAdmin } from '@src/types/user';
+import type { TAdmin, TCustomer } from '@src/types/user';
+import Customer from '@src/model/user/customer.js';
 
 export const createProduct = catchAsyncError(async (req: any, res, next) => {
     
-    // console.log("create product",req.body);
-    const {category} = req.body;
+    req.body.createdBy = req.user._id;
+
     const product= await Product.create(req.body);
     
     const activity={
@@ -16,7 +17,7 @@ export const createProduct = catchAsyncError(async (req: any, res, next) => {
         email: req.user.email,
         username: req.user.username,
         action: 'create',
-        category: category[0],
+        category: req.body.category,
         productId: product._id,
         timestamp: Date.now()
     }
@@ -42,7 +43,7 @@ export const getProduct = catchAsyncError(async (req, res, next) => {
     })
 })
 
-export const getProducts = catchAsyncError(async (req, res, next) => {
+export const getProducts = catchAsyncError(async (req:any, res, next) => {
     
    const {productsPerPage='20', page = '1', status = 'published', category = [], mediaType = [], searchTerm = '',tags } = req.query;
 
@@ -85,6 +86,10 @@ export const getProducts = catchAsyncError(async (req, res, next) => {
         queryObject.tags = { $all: tagsArray };
     }
 
+    if (req.user.role !== 'superadmin') {
+        queryObject.createdBy = req.user._id;
+    }
+
     console.log("queryObject",queryObject);
     
     const p = Number(page) || 1;
@@ -103,6 +108,16 @@ export const getProducts = catchAsyncError(async (req, res, next) => {
     })
 })
 
+export const getProductData = catchAsyncError(async (req:any, res, next) => {
+    
+     
+   let products = await Product.find()
+     
+     res.status(200).json({
+         success: true,
+         products,
+     })
+ })
 export const updateProduct = catchAsyncError(async (req: any, res, next) => {
     
     const {id:uuid}= req.params;
@@ -219,3 +234,75 @@ export const addPriceToVariant = catchAsyncError(async (req:any, res, next) => {
         product :updatedProduct   
     });
 })
+
+// get products by ids, for cart
+export const getProductsByIds = catchAsyncError(async (req: any, res, next) => {
+    try {
+        const id = req.user;
+        const user = await Customer.findById(id).populate('cart');
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+        res.status(200).json(user.cart);
+    } catch (error) {
+        console.error("Error fetching cart:", error);
+        res.status(404).json({ message: "Not Authenticated" });
+    }
+});
+
+
+export const buyWithCredits=catchAsyncError(async(req:any,res,next)=>{
+    
+    const {id}=req.user;
+    const {productId}=req.params;
+    const user = await Customer.findById(id);
+    const product = await Product.findById(productId);
+
+
+    if(!user){
+        return next(new ErrorHandler("User not found", 404));
+    }
+    if(!product){
+        return next(new ErrorHandler("Product not found", 404));
+    }
+
+    console.log("user",user);
+    console.log("product",product);
+
+    const variantIndex='0';
+    const userCredits=user.subscription.credits;
+    const productCredit=product.variants[variantIndex].credit || 10;
+    if(!productCredit || productCredit<=0){
+        return next(new ErrorHandler("Product credit not found", 404));
+    }
+    if(userCredits<productCredit){
+        return next(new ErrorHandler("Insufficient credits", 400)); 
+    }
+    user.subscription.credits=userCredits-productCredit;
+    user.purchasedProducts.push({productId,variantId:variantIndex});
+    console.log("updated user",user);
+    await user.save();
+    res.send({success:true,user,message:"purchased successfully"});
+});
+    
+export const getPurchasedProducts = catchAsyncError(async (req: any, res, next) => {
+   try
+   {
+        const {id}=req.user;
+        const customer = await Customer.findById(id).populate("purchasedProducts.productId");
+
+    if (!customer) {
+      return res.status(404).json({ message: 'Customer not found' });
+    }
+
+    // Return the list of purchased products
+    res.send({
+      success: true,
+      purchasedProducts: customer.purchasedProducts
+    });
+   }
+   catch(err){
+    console.log(err);
+   }
+   
+});

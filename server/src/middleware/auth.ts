@@ -1,7 +1,9 @@
 import ErrorHandler from "../utils/errorHandler.js";
 import catchAsyncError from "./catchAsyncError.js";
-import Admin from "../model/user/admin.js";
+import Admin from "@src/model/user/admin.js";
 import jwt, { JwtPayload } from "jsonwebtoken";
+import config from "@src/utils/config.js";
+import Customer from "@src/model/user/customer.js";
 
 export const isAuthenticatedAdmin = catchAsyncError(async (req: any, res, next) => {
     // console.log("auth",req);
@@ -11,7 +13,7 @@ export const isAuthenticatedAdmin = catchAsyncError(async (req: any, res, next) 
         return next(new ErrorHandler("Please Login to access this resource", 401));
     }
 
-    const decodedData = jwt.verify(token, process.env.JWT_SECRET || "");
+    const decodedData = jwt.verify(token,config.jwtSecret|| "");
     const requestedUser = await Admin.findById((decodedData as JwtPayload).id);
     if (!requestedUser) {
         return next(new ErrorHandler("User not found", 404));
@@ -37,8 +39,8 @@ export const isAuthenticatedCustomer = catchAsyncError(async (req: any, res, nex
         return next(new ErrorHandler("Please Login to access this resource", 401));
     }
     
-    const decodedData = jwt.verify(token, process.env.JWT_SECRET_CUSTOMER || "");
-    const requestedUser = await Admin.findById((decodedData as JwtPayload).id);
+    const decodedData = jwt.verify(token, config.customerJwtSecret || "");
+    const requestedUser = await Customer.findById((decodedData as JwtPayload).id);
     if (!requestedUser) {
         return next(new ErrorHandler("User not found", 404));
     }
@@ -86,4 +88,21 @@ export const checkProductAccess = catchAsyncError(async (req: any, res: any, nex
 
     next();
 
+});
+
+
+const processedEventIds = new Set();
+
+export const checkDuplicateEvent =catchAsyncError(async (req:any, res:any, next:any) => {
+  const eventId = req.headers["x-razorpay-event-id"];
+
+  if (processedEventIds.has(eventId)) {
+    // Duplicate event, skip processing
+    console.log(`Duplicate event with ID ${eventId}. Skipping processing.`);
+    res.status(200).send();
+  } else {
+    // Not a duplicate, continue with the next middleware or route handler
+    processedEventIds.add(eventId);
+    next();
+  }
 });

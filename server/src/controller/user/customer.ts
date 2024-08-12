@@ -4,6 +4,8 @@ import sendToken from '@src/utils/sendToken.js';
 import Customer from '@src/model/user/customer.js';
 import { sendEmail } from '@src/utils/nodemailer/mailer/mailer.js';
 import crypto from "crypto";
+import config from '@src/utils/config';
+import Product from '@src/model/product/product';
 
 
 /* 
@@ -20,7 +22,8 @@ index
 9.forget password
 10.reset password
 11.getCustomerById
-
+12.add product id to user cart
+13. remove the product id from user cart
 */
 
 
@@ -99,7 +102,7 @@ export const getCustomerById= catchAsyncError(async (req, res, next) => {
 export const getCurrentCustomer = catchAsyncError(async (req:any, res, next) => {
 
     const { id } = req.user;
-    const user = await Customer.findOne({ "_id": id });
+    const user = await Customer.findOne({ _id: id });
     res.status(200).json({
         success: true,
         user
@@ -239,7 +242,7 @@ export const forgetPassword = catchAsyncError(async (req, res, next) => {
     await customer.save();
 
     const mailOptions = {
-        from: process.env.EMAIL_USER as string,
+        from: config.emailUser as string,
         to: email as string,
         subject: 'Password Reset' as string,
         text: `You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n
@@ -282,4 +285,61 @@ export const resetPassword = catchAsyncError(async (req, res, next) => {
 
     res.status(200).json({ message: 'Password has been reset suscessfully.now you can close this tab or window'});
 
+} );
+
+export const addProductToCart = catchAsyncError( async ( req:any, res, next ) => {
+    const { productId } = req.body;
+    const { id } = req.user;
+
+    if ( !id )   {
+        console.log('user dpes not exists')
+        next(new ErrorHandler("user does not exit", 404));
+    }
+    const customer = await Customer.findById( id );
+    if (!customer) {
+        return next(new ErrorHandler("Customer not found", 404));
+    }
+    const productExists = customer.cart.some((item: any) => item.toString() === productId);
+    if (productExists) {
+        return next(new ErrorHandler("Product already exists in the cart", 400));
+    }
+    
+    customer.cart.push( productId )
+    await customer?.save();
+    
+    const product=await Product.findById(productId)
+    res.status(200).json({ message: 'Product added to cart successfully', cart: [product] });
+} )
+
+export const removeProductFromCart = catchAsyncError(async (req: any, res, next) => {
+    const { productId } = req.body;
+    const { id } = req.user;
+
+    if (!id) {
+        console.log('User does not exist');
+        return next(new ErrorHandler("User does not exist", 404));
+    }
+
+    const customer = await Customer.findById(id);
+    if (!customer) {
+        return next(new ErrorHandler("Customer not found", 404));
+    }
+
+    // Find the index of the product in the cart
+    const productIndex = customer.cart.findIndex((item: any) => item.toString() === productId);
+    if (productIndex === -1) {
+        return next(new ErrorHandler("Product not found in the cart", 404));
+    }
+
+    // Remove the product from the cart
+    customer.cart.splice(productIndex, 1);
+    await customer.save();
+
+    // Optionally, fetch the removed product details
+    const removedProduct = await Product.findById(productId);
+
+    res.status(200).json({ message: 'Product removed from cart successfully', removedProduct });
 });
+
+  
+
