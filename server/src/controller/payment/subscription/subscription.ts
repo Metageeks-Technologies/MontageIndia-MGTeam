@@ -27,7 +27,7 @@ const razorpayInstance=()=>{
 export const createPlan= catchAsyncError(async (req, res, next) => {
     const razorpay = razorpayInstance();
     const options :any = {
-        period: req.body.period,
+        period: "yearly",
         interval: req.body.interval,
         item:req.body.item,
         notes:req.body.notes
