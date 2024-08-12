@@ -1,5 +1,5 @@
 import express from 'express';
-import {createProduct,addPriceToVariant ,getProducts,updateProduct,getProduct ,addSizeAndKeysToVideo, getProductsByIds} from '../../controller/product/product';
+import {createProduct,addPriceToVariant ,getProducts,updateProduct,getProduct ,addSizeAndKeysToVideo, getProductsByIds, getProductData, buyWithCredits, getPurchasedProducts} from '../../controller/product/product';
 import { checkProductAccess, isAuthenticatedAdmin, isAuthenticatedCustomer } from '@src/middleware/auth';
 import { addProductToCart, removeProductFromCart } from '@src/controller/user/customer';
 
@@ -8,10 +8,16 @@ const productRouter = express.Router();
 
 // Admin 
 productRouter.route("/").post(isAuthenticatedAdmin,createProduct).get(isAuthenticatedAdmin,getProducts);
+productRouter.route("/get").get(isAuthenticatedCustomer,getProductData);
 productRouter.route("/video").patch(isAuthenticatedAdmin,addSizeAndKeysToVideo)
 productRouter.route("/:id").patch(isAuthenticatedAdmin,updateProduct).get(getProduct);
 productRouter.route( "/variant/:id" ).patch( isAuthenticatedAdmin, addPriceToVariant );
-productRouter.route("/cart").post(isAuthenticatedCustomer,getProductsByIds)
-productRouter.route( '/addToCart').post(isAuthenticatedCustomer, addProductToCart );
-productRouter.route( '/removeFromCart' ).post(isAuthenticatedCustomer, removeProductFromCart );
+
+//Customer
+productRouter.route("/cart/data").get(isAuthenticatedCustomer,getProductsByIds)
+productRouter.route("/addToCart").post(isAuthenticatedCustomer, addProductToCart );
+productRouter.route("/removeFromCart").post(isAuthenticatedCustomer, removeProductFromCart );
+productRouter.route("/buyWithCredits/:productId").post(isAuthenticatedCustomer, buyWithCredits );
+productRouter.route("/purchased").get( isAuthenticatedCustomer, getPurchasedProducts );
+
 export default productRouter;   

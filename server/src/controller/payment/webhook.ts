@@ -4,74 +4,59 @@ import order from '@src/model/product/order';
 import config from "@src/utils/config";
 import { validateWebhookSignature } from "razorpay/dist/utils/razorpay-utils";
 import Transaction from "@src/model/transaction/transaction";
-
-const subscriptionActivated= async(payload:any)=>{
-  try {
-    console.log("subscription activated",payload);
-    const planId=payload.subscription.entity.id;
-
-    await customer.findOneAndUpdate(
-      { 'subscription.subscriptionId': planId },
-      { 'subscription.status': 'active' },
-      { new: true } // Return the updated document
-    );
-    } catch (error) {
-      console.log(error);
-    }
-}
+import SubscriptionHistory from "@src/model/subscriptions/subscriptionHistory";
 
 const subscriptionCharged= async(payload:any)=>{
   try {
-    const planId=payload.subscription.entity.id;
+    console.log("subscription charged",payload);
+    const {start_at,end_at,status,expire_by,plan_id,id,notes}=payload.subscription.entity;
 
-    await customer.findOneAndUpdate(
-      { 'subscription.subscriptionId': planId },
-      { 'subscription.status': 'active' },
+    const user = await customer.findOneAndUpdate(
+      { 'subscription.subscriptionId': id },
+      {
+        $set: { 
+          'subscription.status': status,
+          'subscription.PlanId': plan_id 
+        },
+        $inc: { 'subscription.credits': notes.credits}
+      },
       { new: true } // Return the updated document
     );
-  } catch (error) {
+    if(!user) return;
+    console.log("user",user);
+    await SubscriptionHistory.create(
+      {
+        userId: user?._id,
+        planId:plan_id,
+        startDate:start_at,
+        endDate:end_at,
+        status: status,
+      });
+  }
+  catch (error) {
     console.log(error);
   }
 }
-
-const subscriptionAuthorized= async(payload:any)=>{
+const subscriptionHandler= async(payload:any)=>{
   try {
-    const planId=payload.subscription.entity.id;
-    console.log("subscription authorized",payload);
-    await customer.findOneAndUpdate(
-      { 'subscription.subscriptionId': planId },
-      { 'subscription.status': 'active' },
+    console.log("subscription handler",payload);
+    const {start_at,end_at,status,expire_by,plan_id,id}=payload.subscription.entity;
+
+    const user=await customer.findOneAndUpdate(
+      { 'subscription.subscriptionId': id },
+      { 'subscription.status': status },
       { new: true } // Return the updated document
     );
-  }catch (error) {
-      console.log(error);
-  }
-};
-
-const subscriptionCompleted= async(payload:any)=>{
-  try {
-    const planId=payload.subscription.entity.id;
-    console.log("subscription completed",payload);
-    await customer.findOneAndUpdate(
-    { 'subscription.subscriptionId': planId },
-    { 'subscription.status': 'expired' },
-    { new: true } // Return the updated document
-  );
-
-  } catch (error) {
-    console.log(error);
-  }
-}
-
-const subscriptionCancelled= async(payload:any)=>{
-  try {
-    const planId=payload.subscription.entity.id;
-    console.log("subscription cancelled",payload);
-    await customer.findOneAndUpdate(
-    { 'subscription.subscriptionId': planId },
-    { 'subscription.status': 'cancelled' },
-    { new: true } // Return the updated document
-  );
+    if(!user) return;
+    console.log("user",user);
+    await SubscriptionHistory.create(
+      {
+        userId: user?._id,
+        planId:plan_id,
+        startDate:start_at,
+        endDate:end_at,
+        status: status,
+      });
   } catch (error) {
     console.log(error);
   }
@@ -82,19 +67,21 @@ const orderPaid= async(payload:any)=>{
     console.log("order paid",payload);
     const orderId=payload.order.entity.id;
 
-    await order.findOneAndUpdate(
+    const Order=await order.findOneAndUpdate(
       { 'razorpayOrderId': orderId },
       { 'status': 'paid' },
       { new: true } // Return the updated document
     );
+    console.log(Order);
+
   } catch (error) {
     console.log(error);
   }
 }
 
-const paymentCaptured= async(payload:any)=>{
+const paymentHandler= async(payload:any)=>{
   try {
-    console.log("payment captured",payload);
+    console.log("payment handler",payload);
     const {amount,contact,email,id,order_id,method,currency,status}=payload.payment.entity;
 
     const newPayment = {
@@ -115,19 +102,18 @@ const paymentCaptured= async(payload:any)=>{
   }
 }
 
-
 export const paymentWebHook= catchAsyncError(async (req, res, next) => {
   
   try{
     const signature = req.headers["x-razorpay-signature"] as string;
     const secret=config.razorpayWebhookSecret;
-
+    console.log(secret);
     const isValid = validateWebhookSignature(
         JSON.stringify(req.body),
         signature,
         secret
     );
-    // console.log(isValid);
+    console.log(isValid);
     if (isValid) {
       const { event, payload } = req.body;
 
@@ -135,59 +121,28 @@ export const paymentWebHook= catchAsyncError(async (req, res, next) => {
 
       switch (event) {
         case "payment.authorized":
-          {
-            console.log("payment authorized");
-            break;
-          }
         case "payment.captured":
+        case "payment.failed":
           {
-            console.log("payment captured");
-            paymentCaptured(payload);
+            console.log("payment");
+            paymentHandler(payload);
             break;
           }
-        case "payment.failed":
-         {
-            console.log("payment failed");
-            break;
-         }
-         case "order.paid":
+        case "order.paid":
          {
             console.log("order paid");
             orderPaid(payload);
             break;
          }
-         case "payment_link.paid":
-         {
-            console.log("payment link paid");
-            break;
+         case "subscription.charged":{
+          subscriptionCharged(payload);
+          break;
          }
-        case "subscription.authenticated":{
-            // console.log("subscription authenticated");
-            subscriptionAuthorized(payload);
-            break;
-        }
-        case "subscription.charged":{
-            // console.log("subscription charged",event);
-            subscriptionCharged(payload);
-            break;
-        }
-        case "subscription.activated":{
-            // console.log("subscription activated",event);
-            subscriptionActivated(payload);
-            break;
-        }
-        case "subscription.halted":{
-            console.log("subscription halted");
-            break;
-        }
-        case "subscription.cancelled":{
-            // console.log("subscription cancelled");
-            subscriptionCancelled(payload);
-            break;
-        }
-        case "subscription.completed":{
-            // console.log("subscription completed");
-            subscriptionCompleted(payload);
+        case "subscription.authenticated":
+        case "subscription.cancelled":
+        case "subscription.completed": 
+        {
+            subscriptionHandler(payload);
             break;
         }
         default:

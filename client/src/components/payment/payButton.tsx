@@ -2,7 +2,7 @@
 import React,{useState,useEffect} from 'react';
 import { loadScript } from '../../utils/loadScript';
 import instance from '@/utils/axios';
-
+import {OrderOption} from '@/types/order';
 
 declare global {
   interface Window {
@@ -10,7 +10,11 @@ declare global {
   }
 }
 
-const PayButton: React.FC = () => {
+interface props{
+  orderOption:OrderOption;
+}
+
+const PayButton: React.FC<props> = ({orderOption}) => {
     const [loading, setLoading] = useState(false);
     const [loaded, setLoaded] = useState(false);
   
@@ -21,30 +25,24 @@ const PayButton: React.FC = () => {
       console.log("step2:",response);
       
         alert(response.data.message);
-     
     }
-  const handlePayment = (options: any) => {
-   
-    if (!loaded || typeof window.Razorpay === 'undefined') {
-      alert('Razorpay SDK not loaded. Please try again later.');
-      return;
-    }
-    const razorpayObject = new window.Razorpay(options);
-    razorpayObject.on('payment.failed', (response: any) => {
-      console.log("payment failed",response);
-      alert('This step of Payment Failed');
-    });
-    razorpayObject.open();
-  };
+    const handlePayment = (options: any) => {
+    
+      if (!loaded || typeof window.Razorpay === 'undefined') {
+        alert('Razorpay SDK not loaded. Please try again later.');
+        return;
+      }
+      const razorpayObject = new window.Razorpay(options);
+      razorpayObject.on('payment.failed', (response: any) => {
+        console.log("payment failed",response);
+        alert('This step of Payment Failed');
+      });
+      razorpayObject.open();
+    };
 
-//this function creates a order in razorpay and store order information in Montage India database
+  //this function creates a order in razorpay and store order information in Montage India database
   const handleOrderPlace= async() => {
-    const OrderOption={
-      amount:"49900",
-      currency:"INR",
-      notes:[]
-    }
-    const response:any= await instance.post('/payment/order',OrderOption,{
+    const response:any= await instance.post('/payment/order',orderOption,{
         withCredentials: true
     });
 
@@ -57,8 +55,8 @@ const PayButton: React.FC = () => {
 
     const paymentOptions = {
         key: process.env.NEXT_PUBLIC_RAZORPAY_KEY, 
-        amount: OrderOption.amount, 
-        currency: OrderOption.currency,
+        amount: orderOption.amount, 
+        currency: orderOption.currency,
         name: "montageIndia",
         description: "Complete your purchase securely with Montage India’s trusted payment gateway. Choose from multiple payment options and gain instant access to premium images, videos, and audio content. Enjoy a seamless checkout experience with 24/7 customer support.",
         image: "https://cdn.dribbble.com/users/111709/screenshots/3969111/media/8b3190c331faa522644c6b6a5432ccf1.jpg",
@@ -77,9 +75,7 @@ const PayButton: React.FC = () => {
          email: "shivamsisodia8656816@gmail.com"
        },
       notes: {
-         description:"Best Course for SDE placements",
-         language:"Available in 4 major Languages JAVA,C/C++, Python, Javascript",
-         access:"This course have Lifetime Access"
+         Db_order_id: response.data.mi_order_id,
        }, 
        theme: {
            color: "#2300a3"
@@ -98,8 +94,8 @@ const PayButton: React.FC = () => {
   }, []);
 
     return (
-        <button onClick={handleOrderPlace} className="text-white p-5 rounded-3xl bg-var1 text-xl max-sm:text-lg hover:bg-var1-light transition-all">
-            Pay Now
+        <button onClick={handleOrderPlace} className="text-white px-4 py-2 rounded-3xl bg-webgreen text-md max-sm:text-lg hover:bg-webgreen-light transition-all">
+            Place Order
         </button>
        
     );

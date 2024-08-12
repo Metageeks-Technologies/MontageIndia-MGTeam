@@ -1,3 +1,4 @@
+import { PiImageBrokenLight } from "react-icons/pi";
 import type { Config } from "tailwindcss";
 const { nextui } = require("@nextui-org/react");
 
@@ -35,6 +36,11 @@ const config: Config = {
           light: '#BEF264',
           DEFAULT: '#BEF264',
           dark: '#BEF264',
+        },
+        pageBg: {
+          light: '#f5f5f5',
+          DEFAULT: '#f5f5f5',
+          dark: '#f5f5f5',
         },
       },
     },

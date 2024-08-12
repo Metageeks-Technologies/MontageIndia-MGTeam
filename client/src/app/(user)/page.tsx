@@ -235,7 +235,7 @@ export default function Home ()
   {
     try
     {
-      const res = await instance.get( '/product' );
+      const res = await instance.get( '/product/get' );
       const imageProducts = res.data.products.filter( ( product: any ) => product.mediaType === 'image' );
       setImageProducts( imageProducts );
       console.log( res );
@@ -248,16 +248,14 @@ export default function Home ()
   const dispatch=useAppDispatch()
   const productIds = useAppSelector((state:any) => state.user?.user?.cart);
   const user = useAppSelector((state:any) => state.user?.user?._id);
-  const data = useAppSelector((state:any) => state.user?.user);
 
-  console.log("first",data)
   useEffect( () =>
     {
       getCurrCustomer(dispatch)
       if(user){
-      getCartData(dispatch, productIds)
-      }
+      getCartData(dispatch)
       getProduct();
+      }
     }, [user] );
 
 
@@ -391,7 +389,7 @@ export default function Home ()
             </div>
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 mt-5">
             { imageProducts.map( ( data: any, index: number ) => (
-                <ImageGallery key={ index } { ...data } />
+                <ImageGallery key={ index } data={ data } />
               ) ) }
             </div>
           </div>

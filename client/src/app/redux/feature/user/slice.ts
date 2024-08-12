@@ -36,14 +36,15 @@ export const userSlice = createSlice({
       state.loading = false;
       state.error = " ";
     },
-    // getCartData: (state, action: PayloadAction<TProduct>) => {
-    //   state.cartData = action.payload;
-    //   state.loading = false;
-    //   state.error = "";
-    // },
-    removeCartItem: (state, action: PayloadAction<string>) => {
+    getCart: (state, action: PayloadAction<TProduct[]>) => {
+      state.cartData = action.payload;
+      state.loading = false;
+      state.error = "";
+    },
+    removeCart: (state, action: PayloadAction<string>) => {
       const productId = action.payload;
-      state.cartData = state.cartData.filter(product => product._id !== productId); // Remove the product by filtering out the ID
+      console.log("remove item:",productId)
+      state.cartData = state.cartData.filter(product => product._id !== action.payload);
       state.loading = false;
       state.error = " ";
     },
@@ -55,8 +56,8 @@ export const {
   requestStart,
   requestFail,
   setCartData,
-  // getCartData,
-  removeCartItem,
+  getCart,
+  removeCart,
 } = userSlice.actions;
 
 export default userSlice.reducer;

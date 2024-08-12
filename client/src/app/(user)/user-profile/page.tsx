@@ -202,7 +202,11 @@ const Home: FC = () => {
         </div>
 
         <div className="mt-8">
-        <h2 className="text-2xl font-bold">Subscription plan</h2>
+        <div className="flex justify-between items-center">
+        <div className="text-2xl font-bold">Subscription plan</div>
+        <div onClick={() => router.push(`/subscription`)} className="text-md cursor-pointer px-4 py-2 bg-var1 text-white rounded-3xl hover:bg-var1-light">Buy More credits</div>
+        </div>
+        
         <div className="border border-gray-200 mt-2">
         {user && (
           <>
