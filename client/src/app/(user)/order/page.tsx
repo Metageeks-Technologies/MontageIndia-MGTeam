@@ -70,18 +70,18 @@ const PlaceOrder = () => {
                         <div className='flex justify-start gap-4 flex-wrap w-2/3'>
                             <div className='w-80 h-40'>
                                 <img 
-                                    src={`https://mi2-public.s3.ap-southeast-1.amazonaws.com/${item.thumbnailKey}`}
+                                    src={`https://mi2-public.s3.ap-southeast-1.amazonaws.com/${item?.thumbnailKey}`}
                                     alt="Item" className="w-full h-full object-cover" 
                                 />
                             </div>
                             <div className='flex flex-col justify-between items-start py-2'>
                             <div className='flex flex-col justify-start items-start '>
-                                <div className='text-xl font-bold'>  {item.title.toUpperCase()}</div>
-                                <div className='text-lg text-gray-600 mb-2 truncate'>{item.description}</div>
+                                <div className='text-xl font-bold'>  {item?.title?.toUpperCase()}</div>
+                                <div className='text-lg text-gray-600 mb-2 truncate'>{item?.description}</div>
                           </div>
                           <div> 
-                          {item.tags && item.tags.length > 0 &&
-                          item.tags.map((tag: string) => (
+                          {item?.tags && item?.tags?.length > 0 &&
+                          item?.tags?.map((tag: string) => (
                               <span className='text-white rounded-full mr-2 px-4 py-1 bg-webgreen '>{tag}</span>
                           ))}
                           </div>
@@ -89,13 +89,13 @@ const PlaceOrder = () => {
                         </div>
                     <div className='flex items-center justify-start gap-1'>
                         <span className="text-gray-600 text-start">
-                            {item.variants && item.variants.length > 0 ? item.variants[0].price : 'No price available'}
+                            {item?.variants && item?.variants?.length > 0 ? item?.variants[0]?.price : 'No price available'}
                         </span>
                         <span className='font-bold'><MdCurrencyRupee/></span>
                     </div>
                     <div className="flex items-center gap-4 jutify-center">   
-                        <span onClick={() => handleBuyWithCredits(item._id)} className='bg-var1-light text-white rounded-full px-4 py-1'>Buy with credits</span>
-                        <span onClick={() => handleRemoveCart(item._id)} className="text-red-500 cursor-pointer" >
+                        <span onClick={() => handleBuyWithCredits(item?._id)} className='bg-var1-light text-white rounded-full px-4 py-1'>Buy with credits</span>
+                        <span onClick={() => handleRemoveCart(item?._id)} className="text-red-500 cursor-pointer" >
                             <MdDeleteForever size={25} />
                         </span>
                     </div>
