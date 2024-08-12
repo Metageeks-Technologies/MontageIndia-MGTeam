@@ -3,7 +3,7 @@ import instance from '@/utils/axios';
 import { Pagination, Button, Spinner } from '@nextui-org/react';
 import React, { useEffect, useState } from 'react';
 
-interface CustomerActivity {
+interface CustomerList {
   _id: string;
   name: string;
   phone: string;
@@ -14,10 +14,10 @@ interface CustomerActivity {
 }
 
 const Page = () => {
-  const [data, setData] = useState<CustomerActivity[] | null>(null);
+  const [data, setData] = useState<CustomerList[] | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const [dataPerPage, setDataPerPage] = useState<number>(10);
+  const [dataPerPage, setDataPerPage] = useState<number>(6);
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [totalPages, setTotalPages] = useState<number>(1);
 

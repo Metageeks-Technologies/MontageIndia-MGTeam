@@ -289,10 +289,7 @@ export const getPurchasedProducts = catchAsyncError(async (req: any, res, next) 
    try
    {
         const {id}=req.user;
-        const customer = await Customer.findById(id).populate({
-        path: 'purchasedProducts.productId', // Populating the productId field in purchasedProducts
-        select: 'name price description' // Select specific fields from the Product model (optional)
-        });
+        const customer = await Customer.findById(id).populate("purchasedProducts.productId");
 
     if (!customer) {
       return res.status(404).json({ message: 'Customer not found' });
