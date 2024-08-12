@@ -20,6 +20,7 @@ import {
   getCustomerById,
   addProductToCart,
   removeProductFromCart,
+  getPurchasedProduct,
 } from "@src/controller/user/customer";
 const userRouter = express.Router();
 
@@ -49,5 +50,7 @@ userRouter
   .get(isAuthenticatedCustomer, getWishlist)
   .patch(isAuthenticatedCustomer, addToWishlist)
   .delete(isAuthenticatedCustomer, removeFromWishlist);
+
+userRouter.route("/product/purchased/:id").get(getPurchasedProduct);
 
 export default userRouter;
