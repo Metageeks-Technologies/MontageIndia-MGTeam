@@ -297,18 +297,20 @@ const Sidebar = () => {
                             Transaction History
                           </Link>
                         </li>
+                       
                         <li>
                           <Link
-                            href="#"
+                            href="/admin/customer-list"
                             className={`flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 cursor-pointer ${
-                              isActiveLink("/admin/customer/customer-activity")
+                              isActiveLink("/admin/customer/customer-create")
                                 ? "bg-white"
                                 : ""
                             }`}
                           >
-                            Customer Activity
+                            Customer List
                           </Link>
                         </li>
+
                       </ul>
                     )}
                   </li>

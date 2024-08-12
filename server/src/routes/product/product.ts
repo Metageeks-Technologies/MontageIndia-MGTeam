@@ -10,7 +10,7 @@ const productRouter = express.Router();
 productRouter.route("/").post(isAuthenticatedAdmin,createProduct).get(isAuthenticatedAdmin,getProducts);
 productRouter.route("/get").get(isAuthenticatedCustomer,getProductData);
 productRouter.route("/video").patch(isAuthenticatedAdmin,addSizeAndKeysToVideo)
-productRouter.route("/:id").patch(isAuthenticatedAdmin,updateProduct).get(getProduct);
+
 productRouter.route( "/variant/:id" ).patch( isAuthenticatedAdmin, addPriceToVariant );
 
 //Customer
@@ -19,5 +19,6 @@ productRouter.route("/addToCart").post(isAuthenticatedCustomer, addProductToCart
 productRouter.route("/removeFromCart").post(isAuthenticatedCustomer, removeProductFromCart );
 productRouter.route("/buyWithCredits/:productId").post(isAuthenticatedCustomer, buyWithCredits );
 productRouter.route("/purchased").get( isAuthenticatedCustomer, getPurchasedProducts );
+productRouter.route("/:id").patch(isAuthenticatedAdmin,updateProduct).get(getProduct);
 
 export default productRouter;   
