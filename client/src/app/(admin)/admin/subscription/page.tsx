@@ -47,11 +47,6 @@ interface CardProps {
   handleOpen: (plan: SubscriptionPlan) => void;
 }
 
-
-export const periods = [
-  {label: "Monthly", value: "monthly", description: "user will be charged monthly"},
-  {label: "Yearly", value: "yearly", description: "user will be charged yearly"},
-]
 const SubscriptionPage = () => {
     const {isOpen, onOpen, onClose} = useDisclosure();
     const [plans, setPlans] = useState<SubscriptionPlan[]>([]);
@@ -169,17 +164,6 @@ const SubscriptionPage = () => {
                         </div>
                     </div>
                     </div>
-                     {/* <div className="w-full">
-                      <Autocomplete
-                        label="Period"
-                        variant="bordered"
-                        defaultItems={periods}
-                        selectedKey={selectedPlan?.period}
-                        onSelectionChange={(periodValue) => setSelectedPlan({ ...selectedPlan, period: periodValue })}
-                      >
-                      {(item) => <AutocompleteItem key={item.value}>{item.label}</AutocompleteItem>}
-                      </Autocomplete>
-                  </div> */}
                     <Input type="text" variant="bordered" label="Credits" value={selectedPlan?.credits.toString()} onChange={(e) => setSelectedPlan({...selectedPlan,credits: Number(e.target.value)} )} />
                 </div>
                </form>
