@@ -42,7 +42,7 @@ export const createOrder= catchAsyncError(async (req:any, res, next) => {
     const newOrder = await Order.create({
         userId: req.user._id,
         razorpayOrderId: response.id,
-        productIds: req.body.notes.productIds,
+        products: req.body.notes.products,
         totalAmount: req.body.amount,
         currency: req.body.currency,
         status: "pending",

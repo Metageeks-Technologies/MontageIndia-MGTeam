@@ -6,6 +6,37 @@ import { validateWebhookSignature } from "razorpay/dist/utils/razorpay-utils";
 import Transaction from "@src/model/transaction/transaction";
 import SubscriptionHistory from "@src/model/subscriptions/subscriptionHistory";
 
+const subscriptionCharged= async(payload:any)=>{
+  try {
+    console.log("subscription charged",payload);
+    const {start_at,end_at,status,expire_by,plan_id,id,notes}=payload.subscription.entity;
+
+    const user = await customer.findOneAndUpdate(
+      { 'subscription.subscriptionId': id },
+      {
+        $set: { 
+          'subscription.status': status,
+          'subscription.PlanId': plan_id 
+        },
+        $inc: { 'subscription.credits': notes.credits}
+      },
+      { new: true } // Return the updated document
+    );
+    if(!user) return;
+    console.log("user",user);
+    await SubscriptionHistory.create(
+      {
+        userId: user?._id,
+        planId:plan_id,
+        startDate:start_at,
+        endDate:end_at,
+        status: status,
+      });
+  }
+  catch (error) {
+    console.log(error);
+  }
+}
 const subscriptionHandler= async(payload:any)=>{
   try {
     console.log("subscription handler",payload);
@@ -103,8 +134,11 @@ export const paymentWebHook= catchAsyncError(async (req, res, next) => {
             orderPaid(payload);
             break;
          }
+         case "subscription.charged":{
+          subscriptionCharged(payload);
+          break;
+         }
         case "subscription.authenticated":
-        case "subscription.charged":
         case "subscription.cancelled":
         case "subscription.completed": 
         {

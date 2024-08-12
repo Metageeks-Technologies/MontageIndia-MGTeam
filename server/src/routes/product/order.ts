@@ -1,4 +1,5 @@
 import { createOrder, fetchOrdersByCustomerId,getOrders,getOrder } from '@src/controller/product/order';
+import { isAuthenticatedCustomer } from '@src/middleware/auth';
 import express from 'express';
 
 const router = express.Router();

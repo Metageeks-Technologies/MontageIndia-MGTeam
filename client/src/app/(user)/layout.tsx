@@ -5,8 +5,7 @@ const inter = Inter( { subsets: [ "latin" ] } );
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import {ReduxProvider} from "@/app/redux/provider";
-
-import Head from "next/head";
+import Script from 'next/script'
 import Sidebar from "@/components/navbar/Navbar";
 
 // import { Navbar } from "@nextui-org/react";
@@ -24,20 +23,16 @@ export default function RootLayout ( {
 {
   return (
     <html lang="en">
-     <Head>
-          <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-        </Head>
       <body className={ inter.className }>
       <ToastContainer />
         <ReduxProvider>        
-        {/* <div className="flex  ">
-        <div className="w-20"> <Sidebar/></div>
-       <div >{ children }</div>
-       </div> */}
-
          <Sidebar/>
           { children }
         </ReduxProvider>
+         <Script
+          src="https://checkout.razorpay.com/v1/checkout.js"
+          strategy="beforeInteractive"
+        />
       </body>
     </html>
   );

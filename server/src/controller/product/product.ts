@@ -250,4 +250,62 @@ export const getProductsByIds = catchAsyncError(async (req: any, res, next) => {
     }
 });
 
+
+export const buyWithCredits=catchAsyncError(async(req:any,res,next)=>{
     
+    const {id}=req.user;
+    const {productId}=req.params;
+    const user = await Customer.findById(id);
+    const product = await Product.findById(productId);
+
+
+    if(!user){
+        return next(new ErrorHandler("User not found", 404));
+    }
+    if(!product){
+        return next(new ErrorHandler("Product not found", 404));
+    }
+
+    console.log("user",user);
+    console.log("product",product);
+
+    const variantIndex='0';
+    const userCredits=user.subscription.credits;
+    const productCredit=product.variants[variantIndex].credit || 10;
+    if(!productCredit || productCredit<=0){
+        return next(new ErrorHandler("Product credit not found", 404));
+    }
+    if(userCredits<productCredit){
+        return next(new ErrorHandler("Insufficient credits", 400)); 
+    }
+    user.subscription.credits=userCredits-productCredit;
+    user.purchasedProducts.push({productId,variantId:variantIndex});
+    console.log("updated user",user);
+    await user.save();
+    res.send({success:true,user,message:"purchased successfully"});
+});
+    
+export const getPurchasedProducts = catchAsyncError(async (req: any, res, next) => {
+   try
+   {
+        const {id}=req.user;
+        const customer = await Customer.findById(id).populate({
+        path: 'purchasedProducts.productId', // Populating the productId field in purchasedProducts
+        select: 'name price description' // Select specific fields from the Product model (optional)
+        });
+
+    if (!customer) {
+      return res.status(404).json({ message: 'Customer not found' });
+    }
+
+    // Return the list of purchased products
+    res.send({
+      success: true,
+      purchasedProducts: customer.purchasedProducts
+    });
+   }
+   catch(err){
+    console.log(err);
+   }
+   
+});

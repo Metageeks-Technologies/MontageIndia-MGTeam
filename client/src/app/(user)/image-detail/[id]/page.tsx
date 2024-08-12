@@ -4,6 +4,9 @@ import instance from "@/utils/axios";
 import { useParams} from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { MdOutlineAddAPhoto } from "react-icons/md";
+import { addCartItem } from "@/app/redux/feature/user/api";
+import { useAppDispatch, useAppSelector } from "@/app/redux/hooks";
+import {notifySuccess} from "@/utils/toast";
 
 export interface Variant {
   label: string;
@@ -32,8 +35,15 @@ const Home = () => {
   const [imageDetail, setImageDetail] = useState<ImageDetail | null>(null);
   const [loading, setLoading] = useState(false);
   const params = useParams();
+  const dispatch = useAppDispatch();
 
   const id = params.id as string | undefined;
+
+  const handleAddToCart = (id: string) => {
+    addCartItem(dispatch, id);
+    console.log("Add to cart");
+    notifySuccess("Added to cart");
+  }
   const fetchImageDetail = async (id: string) => {
     setLoading(true);
 
@@ -125,7 +135,7 @@ const Home = () => {
                     <span className="block text-gray-600">{license.size}</span>
                   </div>
                 ))}
-                <button className="bg-red-500 text-white p-2 rounded mt-4">
+                <button onClick={()=>handleAddToCart(imageDetail._id)} className="bg-red-500 text-white p-2 rounded mt-4">
                   Add to cart
                 </button>
               </div>

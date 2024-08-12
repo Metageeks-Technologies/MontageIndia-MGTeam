@@ -171,10 +171,7 @@ export const createSubscription= catchAsyncError(async (req:any, res, next) => {
     req.user._id,
     {
       'subscription.subscriptionId': response.id,
-      'subscription.PlanId': req.body.plan_id,
-      'subscription.credits': req.body.notes.credits,
-      'subscription.planValidity': req.body.expire_by, // Assuming response.current_end is in Unix timestamp
-      'subscription.status': 'initiated',
+      'subscription.status': 'Active',
     },
     { new: true } // Return the updated document
   );

@@ -70,14 +70,9 @@ export const removeCartItem =  async (
     const response =  await instance.post(`/product/removeFromCart`, { productId });
     console.log("response in getting cartitems:-", response);
     if(response.status===200){
-      Swal.fire({
-        icon: 'success',
-        title: 'Deleted',
-        text: "Item Removed from cart",
-      });
-    dispatch(removeCart(productId));
-    getCurrCustomer(dispatch)
-
+      notifySuccess(`${response.data.message}`)
+      dispatch(removeCart(productId));
+      getCurrCustomer(dispatch)
   }
     return response.data;
   } catch (error:any) {

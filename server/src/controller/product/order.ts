@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import catchAsyncError from '@src/middleware/catchAsyncError';
+import ErrorHandler from '@src/utils/errorHandler';
 import Order from '@src/model/product/order';
 
 
