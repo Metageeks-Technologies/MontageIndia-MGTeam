@@ -2,7 +2,8 @@ import catchAsyncError from '@src/middleware/catchAsyncError.js';
 import ErrorHandler from '@src/utils/errorHandler.js';
 import Product from '@src/model/product/product';
 import Activity from '@src/model/activity/activity';
-import type { TAdmin } from '@src/types/user';
+import type { TAdmin, TCustomer } from '@src/types/user';
+import Customer from '@src/model/user/customer.js';
 
 export const createProduct = catchAsyncError(async (req: any, res, next) => {
     
@@ -107,6 +108,16 @@ export const getProducts = catchAsyncError(async (req:any, res, next) => {
     })
 })
 
+export const getProductData = catchAsyncError(async (req:any, res, next) => {
+    
+     
+   let products = await Product.find()
+     
+     res.status(200).json({
+         success: true,
+         products,
+     })
+ })
 export const updateProduct = catchAsyncError(async (req: any, res, next) => {
     
     const {id:uuid}= req.params;
@@ -225,27 +236,18 @@ export const addPriceToVariant = catchAsyncError(async (req:any, res, next) => {
 })
 
 // get products by ids, for cart
-export const getProductsByIds = catchAsyncError( async ( req: any, res, next ) => {
-    const productIds = req.body;
-    // console.log("product its:",req)
-    const products = await Product.find( { _id: { $in: productIds } } );
-    console.log("dsd",products)
-    res.status( 200 ).json( products );
-} )
-    
-export const getAllProduct = catchAsyncError(async (req: any, res, next) => {
-    console.log("this mesg print")
+export const getProductsByIds = catchAsyncError(async (req: any, res, next) => {
     try {
-      const { cart } = req.user;
-      console.log("User's cart:", cart);
-  
-      const products = await Product.find({ _id: { $in: cart } });
-      console.log("Products in cart:", products);
-  
-      res.status(200).json(products);
+        const id = req.user;
+        const user = await Customer.findById(id).populate('cart');
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+        res.status(200).json(user.cart);
     } catch (error) {
-      console.error("Error in getting products:", error);
-      next(error); // Pass the error to the global error handler
+        console.error("Error fetching cart:", error);
+        res.status(404).json({ message: "Not Authenticated" });
     }
-  });
+});
+
     
