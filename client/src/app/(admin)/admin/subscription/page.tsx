@@ -54,7 +54,7 @@ interface Form {
   amount: number;
   currency: string;
   credits: number;
-  // period: string;
+  period: string;
   interval: number;
 }
 
@@ -63,18 +63,6 @@ interface CardProps {
   handleOpen: (plan: SubscriptionPlan) => void;
 }
 
-// export const periods = [
-//   {
-//     label: "Monthly",
-//     value: "monthly",
-//     description: "user will be charged monthly",
-//   },
-//   {
-//     label: "Yearly",
-//     value: "yearly",
-//     description: "user will be charged yearly",
-//   },
-// ];
 const SubscriptionPage = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [plans, setPlans] = useState<SubscriptionPlan[]>([]);
@@ -87,7 +75,7 @@ const SubscriptionPage = () => {
     amount: 0.0,
     currency: "",
     credits: 0,
-    // period: "",
+    period: "",
     interval: 0,
   });
   const [selected, setSelected] = useState<Key | null | undefined>("monthly");
@@ -111,7 +99,7 @@ const SubscriptionPage = () => {
       description: plan.item.description,
       amount: plan.item.amount,
       currency: plan.item.currency,
-      // period: plan.period,
+      period: plan.period,
       id: plan._id,
       credits: plan.notes.credits,
       interval: plan.interval,
