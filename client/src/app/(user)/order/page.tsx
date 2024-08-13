@@ -10,7 +10,9 @@ import { notifyError, notifySuccess } from '@/utils/toast';
 
 const PlaceOrder = () => {
     const dispatch = useAppDispatch();
-
+    const [amount, setAmount] = useState(0);
+    const cartProduct = useAppSelector((state) => state.user.cartData);
+    console.log("cartProduct:", cartProduct)
     // const OrderOption:OrderOption={
     //   amount:"59900",
     //   currency:"INR",
@@ -26,7 +28,7 @@ const PlaceOrder = () => {
     //    ]
     //   },
     // }
-
+ 
     const handleBuyWithCredits = async (id: string) => {
       
         try{
@@ -46,24 +48,45 @@ const PlaceOrder = () => {
     const handleRemoveCart = (id: string,variantId:string) => {
         removeCartItem(dispatch, id,variantId);
     }
-
-    const cartProduct = useAppSelector((state) => state.user.cartData);
-    console.log("cartProduct:", cartProduct)
-
-    useEffect( () =>
-      {
-        getCartData(dispatch);
-      }, [] );
-
-      const calculateTotalPrice = () => {
-        return cartProduct.reduce((total, item) => {
+    
+    const calculateTotalPrice = () => {
+        const total = cartProduct.reduce((total: number, item: any) => {
             const matchingVariant = item.product?.variants?.find((variant: any) =>
                 item.variantId.includes(variant._id)
             );
             const price = matchingVariant ? matchingVariant.price : 0;
             return total + price;
         }, 0);
-    }
+    
+        return total; // Return total as a number
+    };
+    
+
+    useEffect(() => {
+        setAmount(calculateTotalPrice());
+    }, [cartProduct]);
+    
+    useEffect(() => {
+        getCartData(dispatch);
+    }, [dispatch]);
+
+    const createOrderOption = (): OrderOption => {
+        const products = cartProduct.map((item: any) => ({
+            productId: item.product._id,
+            variantId: item.variantId[0] // Assuming the first variant ID is needed
+        }));
+        console.log("razor data",amount)
+
+        return {
+            
+            amount: amount.toString().concat("00"), // Convert the amount to a string
+            currency: "INR",
+            notes: {
+                products
+            }
+        };
+    };
+    const orderOption = createOrderOption();
 
     return (
         <div className='w-[90%] flex justify-center flex-col m-auto py-6'>
@@ -79,9 +102,21 @@ const PlaceOrder = () => {
                             </div>
                             <div className='flex flex-col justify-between items-start py-2'>
                             <div className='flex flex-col justify-start items-start '>
-                                <div className='text-xl font-bold'>  {item?.product.title?.toUpperCase()}</div>
+                                <div className='text-xl font-bold'> {item?.product.title?.toUpperCase()}</div>
                                 <div className='text-lg text-gray-600 mb-2 truncate'>{item?.product.description}</div>
                                 <div className='text-lg text-gray-600 mb-2 truncate'>
+                                {/* <select
+                            className='text-gray-700 outline-none font-semibold py-3 select-none p-2 bg-gray-100 rounded-lg'
+                            value={ mediaType }
+                            onChange={ ( e ) => setMediaType( e.target.value ) }
+                        >
+                            <option className='font-semibold hover:text-gray-800' value="" disabled>Select Media</option>
+                            { item.product?.variants.map( (option:any) => (
+                            <option key={ option.value } className='font-semibold text-cyan-800' value={ option.value }>
+                                { option.size }
+                            </option>
+                            ) ) }
+                        </select> */}
                                 {
                                     item.product?.variants.find((variant: any) => 
                                         item.variantId.includes(variant._id)
@@ -122,11 +157,11 @@ const PlaceOrder = () => {
             <div className='flex justify-end items-center gap-4 px-4 '>
             <div className='flex justify-center items-center gap-2 '>
                 <span className='font-semibold'>Total Price: </span>
-                <span>{calculateTotalPrice()}</span>
                 <span className='font-bold'><MdCurrencyRupee/></span>
+                <span>{amount}</span>
             </div>
                 
-                 {/* <PayButton orderOption={OrderOption}/> */}
+                 <PayButton orderOption={orderOption}/>
             </div>
         </div>
     )

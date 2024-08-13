@@ -123,7 +123,7 @@ const Home = () => {
                 {imageDetail.variants.map((license, index) => (
                   <div key={index} className="border p-4 mt-2 w-96">
                     <div className="flex justify-between">
-                      <div>
+                      <div>                        
                         <input
                           type="radio"
                           name="license"

@@ -311,17 +311,17 @@ export const addProductToCart = catchAsyncError(
         variantId = product.variants[0]._id;
       }
   
-      const productExists = customer.cart.some(
-        (item: any) => item.product.toString() === productId && item.variantId.includes(variantId)
+      const productIndex = customer.cart.findIndex(
+        (item: any) => item.product.toString() === productId
       );
   
-      if (productExists) {
-        return next(new ErrorHandler("Product with this variant already exists in the cart", 400));
+      if (productIndex !== -1) {
+        customer.cart[productIndex].variantId = variantId;
+      } else {
+        customer.cart.push({ product: productId, variantId });
       }
   
-      customer.cart.push({ product:productId, variantId });
       await customer.save();
-      console.log("first",customer)
 
       res.status(200).json({ message: 'Product add to cart successfully', cart: customer.cart });
     }
