@@ -65,7 +65,7 @@ const SubscriptionPage = () => {
     const [selected, setSelected] = useState<Key | null | undefined>("monthly");
   const fetchPlans = async () => {
     try {
-      const response = await instance.get("/payment/fetchAllPlans");
+      const response = await instance.get("/subscription/fetchAllPlans");
       setPlans(response.data.response);
     } catch (error) {
       console.error("Error fetching plans:", error);
@@ -94,7 +94,7 @@ const SubscriptionPage = () => {
   }
 
     const updatePlan = async () => {
-        const response=await instance.patch(`/payment/plan/${selectedPlan.id}`,selectedPlan);
+        const response=await instance.patch(`/subscription/plan/${selectedPlan.id}`,selectedPlan);
         if(response.data.success){
           onClose();
           fetchPlans();
@@ -155,7 +155,7 @@ const SubscriptionPage = () => {
                     <Textarea maxRows={3} label="Description" variant="bordered" value={selectedPlan?.description} onChange={(e) => setSelectedPlan({...selectedPlan, description: e.target.value})}/>
                     <div className="w-full">
                     <div className="relative mt-2 rounded-md shadow-sm">
-                        <Input type="text" variant="bordered" label="Price"  value={selectedPlan?.amount.toString() } onChange={(e) => setSelectedPlan({ ...selectedPlan, amount: Number(e.target.value) })} />
+                        <Input type="text" variant="bordered" label="Price"  value={(selectedPlan?.amount/100).toString() } onChange={(e) => setSelectedPlan({ ...selectedPlan, amount: Number(e.target.value)*100 })} />
                         <div className="absolute inset-y-0 right-0 flex items-center">
                         <select id="currency" name="currency" className="h-full border-l rounded-lg bg-transparent px-2 text-gray-500" value={selectedPlan.currency} onChange={(e) => setSelectedPlan({ ...selectedPlan, currency: e.target.value })}>
                             {/* <option selected className="px-4 py-2 text-center" value="USD">USD</option> */}

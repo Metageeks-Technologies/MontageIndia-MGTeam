@@ -1,10 +1,10 @@
 import catchAsyncError from "@src/middleware/catchAsyncError";
 import SubscriptionPlan from "@src/model/subscriptions/subscriptionPlan";
+import SubscriptionHistory from "@src/model/subscriptions/subscriptionHistory";
 import Razorpay from "razorpay";
 import config from "@src/utils/config";
 import ErrorHandler from "@src/utils/errorHandler";
 import crypto from "crypto";
-import { response } from "express";
 import customer from "@src/model/user/customer";
 /*
 index
@@ -15,6 +15,7 @@ index
 4. fetchAllPlans
 5. fetchPlanById
 6. verifyPayment
+7. subscriptionHistory
  */
 
 const razorpayInstance=()=>{
@@ -211,4 +212,38 @@ export const verifyPayment=catchAsyncError(async (req, res, next) => {
         // YOU CAN SAVE THE DETAILS IN YOUR DATABASE IF YOU WANT
 
        res.send({ status:true, response: "Transaction legit!" });
+});
+
+export const getSubscriptionHistory = catchAsyncError(async (req, res, next) => {
+    const { currentPage = 1, dataPerPage = 10, searchTerm } = req.body;
+    const queryObject:any = {};
+
+    if (searchTerm) {
+        queryObject.$or = [
+            { 'userId.name': { $regex: searchTerm, $options: 'i' } },
+            { 'userId.username': { $regex: searchTerm, $options: 'i' } },
+            { 'userId.email': { $regex: searchTerm, $options: 'i' } },
+        ];
+    }
+
+    const limit = parseInt(dataPerPage as string, 10) || 10;
+    const skip = (parseInt(currentPage as string, 10) - 1) * limit;
+
+    const totalCount = await SubscriptionHistory.countDocuments(queryObject);
+    const totalPages = Math.ceil(totalCount / limit);
+
+    const subscriptionHistory = await SubscriptionHistory.find(queryObject)
+        .sort({ createdAt: -1 })
+        .populate('userId', 'name username email')
+        .skip(skip)
+        .limit(limit);
+
+    res.status(200).json({
+        success: true,
+        subscriptionHistory,
+        totalCount,
+        totalPages,
+        currentPage: parseInt(currentPage as string),
+        message: "Subscription history fetched successfully",
+    });
 });
