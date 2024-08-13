@@ -287,34 +287,51 @@ export const resetPassword = catchAsyncError(async (req, res, next) => {
 
 } );
 
-export const addProductToCart = catchAsyncError( async ( req:any, res, next ) => {
-    const { productId } = req.body;
-    const { id } = req.user;
-
-    if ( !id )   {
-        console.log('user dpes not exists')
-        next(new ErrorHandler("user does not exit", 404));
-    }
-    const customer = await Customer.findById( id );
-    if (!customer) {
+export const addProductToCart = catchAsyncError(
+    async (req:any, res, next) => {
+      let { productId, variantId } = req.body;
+      const { id } = req.user;
+        console.log("sd",variantId)
+      if (!id) {
+        console.log('User does not exist');
+        return next(new ErrorHandler("User does not exist", 404));
+      }
+  
+      const customer = await Customer.findById(id);
+      if (!customer) {
         return next(new ErrorHandler("Customer not found", 404));
-    }
-    const productExists = customer.cart.some((item: any) => item.toString() === productId);
-    if (productExists) {
-        return next(new ErrorHandler("Product already exists in the cart", 400));
-    }
-    
-    customer.cart.push( productId )
-    await customer?.save();
-    
-    const product=await Product.findById(productId)
-    res.status(200).json({ message: 'Product added to cart successfully', cart: [product] });
-} )
+      }
+  
+      const product = await Product.findById(productId);
+      if (!product) {
+        return next(new ErrorHandler("Product not found", 404));
+      }
+  
+      if (!variantId && product.variants && product.variants.length > 0) {
+        variantId = product.variants[0]._id;
+      }
+  
+      const productExists = customer.cart.some(
+        (item: any) => item.product.toString() === productId && item.variantId.includes(variantId)
+      );
+  
+      if (productExists) {
+        return next(new ErrorHandler("Product with this variant already exists in the cart", 400));
+      }
+  
+      customer.cart.push({ product:productId, variantId });
+      await customer.save();
+      console.log("first",customer)
 
-export const removeProductFromCart = catchAsyncError(async (req: any, res, next) => {
-    const { productId } = req.body;
+      res.status(200).json({ message: 'Product add to cart successfully', cart: customer.cart });
+    }
+  );
+  
+
+  export const removeProductFromCart = catchAsyncError(async (req: any, res, next) => {
+    const { productId, variantId } = req.body;
     const { id } = req.user;
-
+    console.log("first",productId,variantId)
     if (!id) {
         console.log('User does not exist');
         return next(new ErrorHandler("User does not exist", 404));
@@ -325,21 +342,28 @@ export const removeProductFromCart = catchAsyncError(async (req: any, res, next)
         return next(new ErrorHandler("Customer not found", 404));
     }
 
-    // Find the index of the product in the cart
-    const productIndex = customer.cart.findIndex((item: any) => item.toString() === productId);
+    const product = await Product.findById(productId);
+    if (!product) {
+        return next(new ErrorHandler("Product not found", 404));
+    }
+    console.log(customer)
+    // Check if the product and variant exist in the cart
+    const productIndex = customer.cart.findIndex(item =>
+        item.product.toString() === productId && item.variantId.includes(variantId)
+    );
+
+    console.log(productIndex)
     if (productIndex === -1) {
-        return next(new ErrorHandler("Product not found in the cart", 404));
+        return next(new ErrorHandler("Product with this variant not found in the cart", 404));
     }
 
-    // Remove the product from the cart
+    // Remove the product and variant from the cart
     customer.cart.splice(productIndex, 1);
     await customer.save();
+    console.log("Updated customer cart:", customer.cart);
 
-    // Optionally, fetch the removed product details
-    const removedProduct = await Product.findById(productId);
-
-    res.status(200).json({ message: 'Product removed from cart successfully', removedProduct });
+    res.status(200).json({ message: 'Product removed from cart successfully', cart: customer.cart });
 });
 
-  
+
 

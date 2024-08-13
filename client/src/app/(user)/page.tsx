@@ -245,15 +245,11 @@ export default function Home ()
       console.log( error );
     }
   };
-  const dispatch=useAppDispatch()
-  const productIds = useAppSelector((state:any) => state.user?.user?.cart);
   const user = useAppSelector((state:any) => state.user?.user?._id);
 
   useEffect( () =>
     {
-      getCurrCustomer(dispatch)
       if(user){
-      getCartData(dispatch)
       getProduct();
       }
     }, [user] );

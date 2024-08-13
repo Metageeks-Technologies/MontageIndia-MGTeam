@@ -34,15 +34,15 @@ export interface ImageDetail {
 const Home = () => {
   const [imageDetail, setImageDetail] = useState<ImageDetail | null>(null);
   const [loading, setLoading] = useState(false);
+  const [selectedVariantId, setSelectedVariantId] = useState('');
+
   const params = useParams();
   const dispatch = useAppDispatch();
 
   const id = params.id as string | undefined;
 
   const handleAddToCart = (id: string) => {
-    addCartItem(dispatch, id);
-    console.log("Add to cart");
-    notifySuccess("Added to cart");
+    addCartItem(dispatch, id,selectedVariantId);
   }
   const fetchImageDetail = async (id: string) => {
     setLoading(true);
@@ -59,6 +59,10 @@ const Home = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleVariantChange = (variantId:string) => {
+    setSelectedVariantId(variantId);
   };
 
   useEffect(() => {
@@ -123,6 +127,8 @@ const Home = () => {
                         <input
                           type="radio"
                           name="license"
+                          onChange={() => handleVariantChange(license._id)}
+                          checked={selectedVariantId === license._id}
                           id={`license-${index}`}
                           className="mr-2"
                         />

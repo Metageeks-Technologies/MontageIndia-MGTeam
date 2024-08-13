@@ -1,5 +1,5 @@
 "use client";
-import React from 'react';
+import React, { useEffect } from 'react';
 import { LiaHomeSolid } from "react-icons/lia";
 import { MdHelpOutline, MdOutlineGeneratingTokens } from 'react-icons/md';
 import { GrCatalogOption } from "react-icons/gr";
@@ -11,6 +11,8 @@ import { MdLanguage } from 'react-icons/md';
 import { IoMdArrowDropdown } from 'react-icons/io';
 import { useRouter } from 'next/navigation';
 import CartPopup from '../cart/cartPage';
+import { useAppDispatch, useAppSelector } from '@/app/redux/hooks';
+import { getCartData, getCurrCustomer } from '@/app/redux/feature/user/api';
 // import CartPopup from './cart/cartPage';
 // import CartPopup from './cart/cartPage';
 
@@ -18,6 +20,16 @@ import CartPopup from '../cart/cartPage';
 const Sidebar = () =>
 {
   const router = useRouter();
+  const dispatch=useAppDispatch()
+  const user = useAppSelector((state:any) => state.user?.user?._id);
+  useEffect( () =>
+    {
+      getCurrCustomer(dispatch)
+      if(user){
+      getCartData(dispatch)
+      }
+    }, [user] );
+
   const [ menuOpen, setMenuOpen ] = useState( false );
 
 
