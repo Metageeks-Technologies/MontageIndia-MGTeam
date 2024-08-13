@@ -18,7 +18,7 @@ const Page = () => {
 
   const fetchSubscription = async () => {
     try {
-      const response = await instance.get(`payment/subscription-history`);
+      const response = await instance.get(`/subscription/history`);
       setSubscription(response.data.subscriptionHistory);
       console.log("subscription", response);
     } catch (error) {
