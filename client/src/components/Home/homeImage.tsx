@@ -17,10 +17,9 @@ const ImageGallery = ({ data }: { data: any }) => {
  
   const router = useRouter();
   const dispatch = useAppDispatch();
-  const cartData = useAppSelector((state: any) => state.user.user?.cart);
-  const isInCart = cartData.some((productId: string) => productId === data?._id);
+  const cartData = useAppSelector((state) => state.user.cartData); 
+  const isInCart = Array.isArray(cartData) && cartData.some((item: any) => item?.product._id === data._id);
 
-  
   return (
     <div className="relative rounded-md overflow-hidden group cursor-pointer">
       <div className="aspect-w-1 aspect-h-1" onClick={() => router.push(`/image-detail/${data?.uuid}`)}>
@@ -59,7 +58,7 @@ const ImageGallery = ({ data }: { data: any }) => {
       </div>
       <div className="absolute bottom-0 right-0 m-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
         {!isInCart && (
-          <div className="text-white bg-red-500 p-2 rounded-full" onClick={() => addCartItem(dispatch, data?._id)}>
+          <div className="text-white bg-red-500 p-2 rounded-full" onClick={() => addCartItem(dispatch, data?._id,data.variants[0]._id)}>
             <PiShoppingCartThin />
           </div>
         )} 

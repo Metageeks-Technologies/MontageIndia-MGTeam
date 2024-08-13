@@ -16,6 +16,10 @@ export type TAdmin = Document & {
     createJWT(): string;
     comparePassword(givenPassword: string): Promise<boolean>;
 }
+interface IProductItem {
+    product: mongoose.Types.ObjectId;
+    variantId: string[];
+  }
 
 export type TCustomer = Document & {
     username: string;
@@ -24,7 +28,7 @@ export type TCustomer = Document & {
     password: string;
     isDeleted: boolean;
     purchasedProducts:ProductItem[];
-    cart: mongoose.Types.ObjectId[]; // References to products in the cart
+    cart: IProductItem[]; // References to products in the cart
     subscription: {
         subscriptionId:string;
         PlanId: string;

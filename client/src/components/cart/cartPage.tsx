@@ -12,9 +12,11 @@ function CartPopup() {
   const [isOpen, setIsOpen] = useState(false);
   const dispatch=useAppDispatch()
   const cartProduct = useAppSelector((state) => state.user.cartData);
-  const handleRemoveCart=(id:string)=>{
-    removeCartItem(dispatch,id)
+  console.log("first",cartProduct)
+  const handleRemoveCart=(id:string,variantId:string)=>{
+    removeCartItem(dispatch,id,variantId)
   }
+  
   useEffect(() => {
     
     if (isOpen) {
@@ -31,7 +33,7 @@ function CartPopup() {
     <>
       
       {!isOpen?
-       <Badge color="danger" content={50} shape="circle">
+       <Badge color="danger" content={cartProduct.length} shape="circle">
       <AiOutlineShoppingCart 
         className="text-gray-700 w-6 h-6 cursor-pointer" 
         onClick={() => setIsOpen(true)}
@@ -47,20 +49,29 @@ function CartPopup() {
               />
             </div>
             <div className="max-h-[calc(100vh-200px)] overflow-y-auto">
-              {/* Cart items */}
               {cartProduct.flat().map((item:any,index:number) => (
                 <div key={index} className="flex justify-between items-center py-4 px-6 border-b">
                   <div className="flex items-center">
                     <img 
-                    src={ `https://mi2-public.s3.ap-southeast-1.amazonaws.com/${ item.thumbnailKey}`}
+                    src={ `https://mi2-public.s3.ap-southeast-1.amazonaws.com/${ item.product?.thumbnailKey}`}
                     alt="Item" className="w-16 h-12 object-cover mr-4" />
-                    <span>{item.title}</span>
+                    <span>{item.product?.title}</span>
                   </div>
                   <div className="flex items-center">
+                    <span className="px-2">
+                  {
+                      item.product?.variants?.find((variant: any) => 
+                        item.variantId.includes(variant._id)
+                      )?.size
+                    }   
+                    </span>   
                     <span className="mr-4">
-                    {item.variants && item.variants.length > 0 ? item.variants[0].price : 'No price available'}
-                    </span>
-                    <span className="text-red-500 cursor-pointer" onClick={()=>{handleRemoveCart(item._id)}} >
+                    {
+                      item.product?.variants?.find((variant: any) => 
+                        item.variantId.includes(variant._id)
+                      )?.price 
+                    }                     </span>
+                    <span className="text-red-500 cursor-pointer" onClick={()=>{handleRemoveCart(item.product?._id,item.variantId[0])}} >
                     <MdDeleteForever size={25} />
                     </span>
                   </div>

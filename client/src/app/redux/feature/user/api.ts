@@ -34,19 +34,19 @@ export const getCartData = async (
 
 export const addCartItem = async (
   dispatch: AppDispatch,
-   productId: string
+   productId: string,
+   variantId:string
 ) => {
   dispatch(requestStart());
+  console.log("first",productId,variantId)
   try {
-      const response = await instance.post( `/product/addToCart`, { productId } );
+      const response = await instance.post( `/product/addToCart`, { productId,variantId } );
       console.log( "response after adding product to cart", response )
       if(response.status===200){
       notifySuccess(`${response.data.message}`)
       getCurrCustomer(dispatch)
-      dispatch(setCartData(response.data.cart));
-      }
-    
-
+      getCartData(dispatch)
+    }
     return response.data;
   } catch (error:any) {
       const e = error as AxiosError;
@@ -63,21 +63,24 @@ export const addCartItem = async (
 
 export const removeCartItem =  async (
   dispatch: AppDispatch,
-   productId: string
+   productId: string,
+   variantId:string
 ) => {
   dispatch(requestStart());
   try {
-    const response =  await instance.post(`/product/removeFromCart`, { productId });
+    console.log("foid",productId,variantId)
+    const response =  await instance.post(`/product/removeFromCart`, { productId,variantId });
     console.log("response in getting cartitems:-", response);
     if(response.status===200){
       notifySuccess(`${response.data.message}`)
-      dispatch(removeCart(productId));
-      getCurrCustomer(dispatch)
-  }
+      dispatch(removeCart({ productId, variantId }));
+      dispatch(setCurrUser(response.data));
+
+    }
     return response.data;
   } catch (error:any) {
     const e = error as AxiosError;
-    const errorMessage = error.response?.data?.message || 'An error occurred while sending data';
+    const errorMessage = error.response?.data?.message ;
     Swal.fire({
       icon: 'error',
       title: 'Oops...',

@@ -20,3 +20,8 @@ export type TProduct =  {
     createdBy:string;
 
 }
+export type Tcart={
+    _id:string
+    product:TProduct
+    variantId:string
+}

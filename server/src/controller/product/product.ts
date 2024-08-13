@@ -239,7 +239,7 @@ export const addPriceToVariant = catchAsyncError(async (req:any, res, next) => {
 export const getProductsByIds = catchAsyncError(async (req: any, res, next) => {
     try {
         const id = req.user;
-        const user = await Customer.findById(id).populate('cart');
+        const user = await Customer.findById(id).populate('cart.product');
         if (!user) {
             return res.status(404).json({ message: "User not found" });
         }

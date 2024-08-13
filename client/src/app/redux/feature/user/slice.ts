@@ -1,4 +1,4 @@
-import { TProduct } from "@/types/product";
+import { Tcart } from "@/types/product";
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
@@ -6,7 +6,7 @@ export interface InitialState {
   user?: null;
   loading?: boolean;
   error?: string;
-  cartData: TProduct[];
+  cartData: Tcart[];
 }
 
 const initialState: InitialState = {
@@ -31,21 +31,22 @@ export const userSlice = createSlice({
       state.loading = false;
       state.error = action.payload;
     },
-    setCartData: (state, action: PayloadAction<TProduct[]>) => {
+    setCartData: (state, action: PayloadAction<Tcart[]>) => {
       state.cartData = state.cartData.concat(action.payload); // This merges the new products into the existing array
       state.loading = false;
       state.error = " ";
     },
-    getCart: (state, action: PayloadAction<TProduct[]>) => {
+    getCart: (state, action: PayloadAction<Tcart[]>) => {
       state.cartData = action.payload;
       state.loading = false;
       state.error = "";
     },
-    removeCart: (state, action: PayloadAction<string>) => {
-      const productId = action.payload;
-      console.log("remove item:",productId)
-      state.cartData = state.cartData.filter(product => product._id !== action.payload);
-      state.loading = false;
+    removeCart: (state, action: PayloadAction<{ productId: string; variantId: string }>) => {
+      const { productId, variantId } = action.payload;
+      state.cartData = state.cartData.filter((item:any) =>
+        item.product !== productId || item.variantId !== variantId
+    );   
+       state.loading = false;
       state.error = " ";
     },
   },
