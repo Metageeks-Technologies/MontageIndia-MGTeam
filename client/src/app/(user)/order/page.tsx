@@ -1,6 +1,6 @@
 "use client"
 import React, { useEffect, useState } from 'react'
-import { getCartData, getCurrCustomer, removeCartItem } from '@/app/redux/feature/user/api';
+import { addCartItem, getCartData, getCurrCustomer, removeCartItem } from '@/app/redux/feature/user/api';
 import { useAppDispatch, useAppSelector } from '@/app/redux/hooks';
 import {OrderOption} from '@/types/order';
 import PayButton from "@/components/payment/payButton";
@@ -12,22 +12,8 @@ const PlaceOrder = () => {
     const dispatch = useAppDispatch();
     const [amount, setAmount] = useState(0);
     const cartProduct = useAppSelector((state) => state.user.cartData);
-    console.log("cartProduct:", cartProduct)
-    // const OrderOption:OrderOption={
-    //   amount:"59900",
-    //   currency:"INR",
-    //   notes:{
-    //    products:[
-    //        {
-    //         product: "66b60e93be93bd1343a014d2",
-    //         variantId: "66b60f49be93bd1343a014d9",
-    //        },{
-    //         product: "66b60d23be93bd1343a01421",
-    //         variantId: "66b60d2dbe93bd1343a01427",
-    //        }
-    //    ]
-    //   },
-    // }
+    const [selectedSizes, setSelectedSizes] = useState<{ [key: string]: string }>({});
+ 
  
     const handleBuyWithCredits = async (id: string) => {
       
@@ -75,7 +61,6 @@ const PlaceOrder = () => {
             productId: item.product._id,
             variantId: item.variantId[0] // Assuming the first variant ID is needed
         }));
-        console.log("razor data",amount)
 
         return {
             
@@ -86,6 +71,15 @@ const PlaceOrder = () => {
             }
         };
     };
+    const handleSizeChange = (productId: string, variantId: string) => {
+        setSelectedSizes(prevSizes => ({
+            ...prevSizes,
+            [productId]: variantId
+        }));
+        console.log(`Selected size for product ${productId}: ${variantId}`);
+        addCartItem(dispatch,productId,variantId)
+    };
+
     const orderOption = createOrderOption();
 
     return (
@@ -105,18 +99,17 @@ const PlaceOrder = () => {
                                 <div className='text-xl font-bold'> {item?.product.title?.toUpperCase()}</div>
                                 <div className='text-lg text-gray-600 mb-2 truncate'>{item?.product.description}</div>
                                 <div className='text-lg text-gray-600 mb-2 truncate'>
-                                {/* <select
-                            className='text-gray-700 outline-none font-semibold py-3 select-none p-2 bg-gray-100 rounded-lg'
-                            value={ mediaType }
-                            onChange={ ( e ) => setMediaType( e.target.value ) }
-                        >
-                            <option className='font-semibold hover:text-gray-800' value="" disabled>Select Media</option>
-                            { item.product?.variants.map( (option:any) => (
-                            <option key={ option.value } className='font-semibold text-cyan-800' value={ option.value }>
-                                { option.size }
-                            </option>
-                            ) ) }
-                        </select> */}
+                                <select
+                                    className='text-gray-700 outline-none font-semibold py-3 select-none p-2 bg-gray-100 rounded-lg'
+                                    value={selectedSizes[item.product._id] || item.variantId[0]}
+                                    onChange={(e) => handleSizeChange(item.product._id, e.target.value)}
+                                >
+                                    {item.product.variants.map((variant: any) => (
+                                        <option key={variant._id} value={variant._id}>
+                                            {variant.size}
+                                        </option>
+                                    ))}
+                                </select>
                                 {
                                     item.product?.variants.find((variant: any) => 
                                         item.variantId.includes(variant._id)
