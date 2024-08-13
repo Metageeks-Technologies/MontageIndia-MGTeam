@@ -222,3 +222,25 @@ export const getSubscriptionHistory = catchAsyncError(async (req, res, next) => 
         message: "Subscription history fetched successfully",
     });
 });
+
+export const verifyPayment=catchAsyncError(async (req, res, next) => {
+        
+        console.log("step1",req.body);
+        
+        const {razorpay_payment_id,razorpay_signature,subscriptionCreationId}=req.body;
+        
+        const generated_signature=crypto.createHmac('sha256', config.razorpaySecret).update( subscriptionCreationId+ "|" + razorpay_payment_id).digest('hex');
+
+        // // comaparing our digest with the actual signature
+        if (generated_signature == razorpay_signature) {
+            console.log("Transaction legit!");
+        }
+        else{
+            console.log("Transaction NOT legit!");
+        }
+
+        // THE PAYMENT IS LEGIT & VERIFIED
+        // YOU CAN SAVE THE DETAILS IN YOUR DATABASE IF YOU WANT
+
+       res.send({ status:true, response: "Transaction legit!" });
+});
