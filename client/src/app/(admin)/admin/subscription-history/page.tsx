@@ -1,11 +1,16 @@
 "use client";
 import instance from "@/utils/axios";
-import { Pagination, Button, Spinner } from '@nextui-org/react';
+import { Pagination, Button } from '@nextui-org/react';
 import React, { useEffect, useState } from "react";
 
 interface Subscription {
   _id: string;
-  userId: string;
+  userId: {
+    _id: string;
+    name: string;
+    username: string;
+    email: string;
+  };
   planId: string;
   startDate: string;
   endDate: string | null;
@@ -23,8 +28,15 @@ const Page = () => {
 
   const fetchSubscription = async () => {
     try {
-      const response = await instance.get(`/subscription/history`);
+      const response = await instance.get(`/subscription/history`, {
+        params: {
+          searchTerm,
+          currentPage,
+          dataPerPage,
+        },
+      });
       setSubscription(response.data.subscriptionHistory);
+      setTotalPages(response.data.totalPages);
       console.log("subscription", response);
     } catch (error) {
       console.error("Error fetching subscriptions:", error);
@@ -47,7 +59,7 @@ const Page = () => {
 
   useEffect(() => {
     fetchSubscription();
-  }, []);
+  }, [currentPage, dataPerPage, searchTerm]);
 
   return (
     <div className="container">
@@ -57,12 +69,12 @@ const Page = () => {
           type="text"
           placeholder="Search"
           className="border rounded px-4 py-2 w-full max-w-sm"
-          // value={searchTerm}
-          // onChange={handleSearch}
+          value={searchTerm}
+          onChange={handleSearch}
         />
         <div className="flex items-center flex-wrap gap-4">
           <div>
-            <select className="border rounded px-4 py-2" >
+            <select className="border rounded px-4 py-2" onChange={handleDataPerPageChange} value={dataPerPage}>
               <option value={6}>6 Data per page</option>
               <option value={12}>12 Data per page</option>
               <option value={24}>24 Data per page</option>
@@ -75,7 +87,9 @@ const Page = () => {
           <table className="min-w-full text-sm text-left text-gray-900">
             <thead className="text-xs text-gray-700 uppercase bg-gray-200">
               <tr>
-                <th scope="col" className="px-6 py-3">User ID</th>
+                <th scope="col" className="px-6 py-3"> Name</th>
+                <th scope="col" className="px-6 py-3"> Email</th>
+                <th scope="col" className="px-6 py-3">User Name</th>
                 <th scope="col" className="px-6 py-3">Plan ID</th>
                 <th scope="col" className="px-6 py-3">Start Date</th>
                 <th scope="col" className="px-6 py-3">End Date</th>
@@ -85,7 +99,9 @@ const Page = () => {
             <tbody>
               {subscription.map((sub) => (
                 <tr key={sub._id} className="bg-white border-b hover:bg-gray-50">
-                  <td className="px-6 py-4">{sub.userId}</td>
+                  <td className="px-6 py-4">{sub.userId.name}</td>
+                  <td className="px-6 py-4">{sub.userId.email}</td>
+                  <td className="px-6 py-4">{sub.userId.username}</td>
                   <td className="px-6 py-4">{sub.planId}</td>
                   <td className="px-6 py-4">{new Date(sub.startDate).toLocaleDateString()}</td>
                   <td className="px-6 py-4">{sub.endDate ? new Date(sub.endDate).toLocaleDateString() : 'N/A'}</td>
@@ -96,8 +112,10 @@ const Page = () => {
           </table>
         </div>
 
-        {totalPages > 1 && (
-          <div className="flex justify-center items-center gap-4 my-4 ">
+      
+      </div>
+      {totalPages > 1 && (
+          <div className="flex justify-center items-center gap-4 my-4">
             <Button
               size="sm"
               disabled={currentPage === 1}
@@ -133,9 +151,6 @@ const Page = () => {
             </Button>
           </div>
         )}
-
-
-      </div>
     </div>
   );
 };
