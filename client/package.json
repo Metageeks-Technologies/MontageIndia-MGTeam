@@ -37,7 +37,7 @@
     "sweetalert2": "^11.12.3",
     "swiper": "^11.1.9",
     "uuid": "^10.0.0",
-    "wavesurfer.js": "^7.8.2"
+    "wavesurfer.js": "^7.8.3"
   },
   "devDependencies": {
     "@types/crypto-js": "^4.2.2",

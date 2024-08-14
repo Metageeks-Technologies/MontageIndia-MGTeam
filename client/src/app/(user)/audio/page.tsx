@@ -4,6 +4,7 @@ import BlogCard from "@/components/Home/blogCard";
 import CardSlider from "@/components/Home/collectionCard";
 import React, { useEffect } from "react";
 import { IoIosSearch } from "react-icons/io";
+import Waveform from "@/components/Home/AudioWaveForm";
 
 export interface BlogPost {
   imageUrl: string;
@@ -62,8 +63,6 @@ const cards: Card[] = [
   },
 ];
 
-
-
 // Define the type for the data
 interface DataItem {
   src: string;
@@ -74,48 +73,46 @@ interface DataItem {
 // Create the data array with the defined type
 const data: DataItem[] = [
   {
-    src: 'https://images.ctfassets.net/hrltx12pl8hq/21pSdbbGTESmLbPW0eY5Dm/54941e9127b6d071dc5c725eebbc713c/PB_thumbnail_Music_HP.jpg?fit=fill&w=120&h=120&fm=webp',
-    alt: 'photo',
-    title: 'PremiumBeat',
+    src: "https://images.ctfassets.net/hrltx12pl8hq/21pSdbbGTESmLbPW0eY5Dm/54941e9127b6d071dc5c725eebbc713c/PB_thumbnail_Music_HP.jpg?fit=fill&w=120&h=120&fm=webp",
+    alt: "photo",
+    title: "PremiumBeat",
   },
   {
-    src: 'https://images.ctfassets.net/hrltx12pl8hq/YfNwagJs5Ompmwp6RVlWU/645e5e4e3d817bc7b3feac650fe6dcdf/Shutterstock_Aerial_Footage.png?fit=fill&w=120&h=120&fm=webp',
-    alt: 'photo',
-    title: 'Epic',
+    src: "https://images.ctfassets.net/hrltx12pl8hq/YfNwagJs5Ompmwp6RVlWU/645e5e4e3d817bc7b3feac650fe6dcdf/Shutterstock_Aerial_Footage.png?fit=fill&w=120&h=120&fm=webp",
+    alt: "photo",
+    title: "Epic",
   },
   {
-    src: 'https://images.ctfassets.net/hrltx12pl8hq/37pGUfTPts5F547VIWRJVb/a1b5e67a81ad746af7635c71f4dd30e3/Pop_Music.jpg?fit=fill&w=120&h=120&fm=webp',
-    alt: 'People',
-    title: 'Pop',
+    src: "https://images.ctfassets.net/hrltx12pl8hq/37pGUfTPts5F547VIWRJVb/a1b5e67a81ad746af7635c71f4dd30e3/Pop_Music.jpg?fit=fill&w=120&h=120&fm=webp",
+    alt: "People",
+    title: "Pop",
   },
   {
-    src: 'https://images.ctfassets.net/hrltx12pl8hq/4HlVPZbyyoFqQAU6lD9coj/e17e08159732a9a83fce87b8507c923e/Funk_Music.jpg?fit=fill&w=120&h=120&fm=webp',
-    alt: 'photo',
-    title: 'Funk',
+    src: "https://images.ctfassets.net/hrltx12pl8hq/4HlVPZbyyoFqQAU6lD9coj/e17e08159732a9a83fce87b8507c923e/Funk_Music.jpg?fit=fill&w=120&h=120&fm=webp",
+    alt: "photo",
+    title: "Funk",
   },
   {
-    src: 'https://images.ctfassets.net/hrltx12pl8hq/7cMmrZnkRKwLN90I21chlH/d1b6bdf3ea6413ea98b2260a632a1d85/Jazz_Music.jpg?fit=fill&w=120&h=120&fm=webp',
-    alt: 'photo',
-    title: 'Jazz',
+    src: "https://images.ctfassets.net/hrltx12pl8hq/7cMmrZnkRKwLN90I21chlH/d1b6bdf3ea6413ea98b2260a632a1d85/Jazz_Music.jpg?fit=fill&w=120&h=120&fm=webp",
+    alt: "photo",
+    title: "Jazz",
   },
   {
-    src: 'https://images.ctfassets.net/hrltx12pl8hq/2lPVM5oa6oLw0UDKJrcQzk/c0a48027b7419910a21b1d37de388a17/Cinematic_Music.jpg?fit=fill&w=120&h=120&fm=webp',
-    alt: 'photo',
-    title: 'Cinematic',
+    src: "https://images.ctfassets.net/hrltx12pl8hq/2lPVM5oa6oLw0UDKJrcQzk/c0a48027b7419910a21b1d37de388a17/Cinematic_Music.jpg?fit=fill&w=120&h=120&fm=webp",
+    alt: "photo",
+    title: "Cinematic",
   },
   {
-    src: 'https://images.ctfassets.net/hrltx12pl8hq/3NTNrsyJU2dDvvhVYvyFHU/7819207afdca3e8a0517f51a78198255/Hip_Hop_Music.jpg?fit=fill&w=120&h=120&fm=webp',
-    alt: 'photo',
-    title: 'Hip Hop',
+    src: "https://images.ctfassets.net/hrltx12pl8hq/3NTNrsyJU2dDvvhVYvyFHU/7819207afdca3e8a0517f51a78198255/Hip_Hop_Music.jpg?fit=fill&w=120&h=120&fm=webp",
+    alt: "photo",
+    title: "Hip Hop",
   },
   {
-    src: 'https://images.ctfassets.net/hrltx12pl8hq/2WmFwfghFNdoxPWx5ibG93/00e2a9f8a01897b8a1289234ae6f4d6a/Trailer_Music.jpg?fit=fill&w=120&h=120&fm=webp',
-    alt: 'photo',
-    title: 'Trailer',
+    src: "https://images.ctfassets.net/hrltx12pl8hq/2WmFwfghFNdoxPWx5ibG93/00e2a9f8a01897b8a1289234ae6f4d6a/Trailer_Music.jpg?fit=fill&w=120&h=120&fm=webp",
+    alt: "photo",
+    title: "Trailer",
   },
 ];
-
-
 
 const Page = () => {
   const audioClips = [
@@ -223,17 +220,17 @@ const Page = () => {
                 </button>
               </div>
               <div className="lg:block md:block hidden">
-              <button className=" flex items-center px-4 py-2 mr-2  gap-2 border border-gray-300 rounded-md text-black hover:bg-gray-100 transition-colors">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                >
-                  <path d="M18 3a1 1 0 00-1.196-.98l-10 2A1 1 0 006 5v9.114A4.369 4.369 0 005 14c-1.657 0-3 .895-3 2s1.343 2 3 2 3-.895 3-2V7.82l8-1.6v5.894A4.37 4.37 0 0015 12c-1.657 0-3 .895-3 2s1.343 2 3 2 3-.895 3-2V3z" />
-                </svg>
-                Search by audio
-              </button>
+                <button className=" flex items-center px-4 py-2 mr-2  gap-2 border border-gray-300 rounded-md text-black hover:bg-gray-100 transition-colors">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-5 w-5"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
+                    <path d="M18 3a1 1 0 00-1.196-.98l-10 2A1 1 0 006 5v9.114A4.369 4.369 0 005 14c-1.657 0-3 .895-3 2s1.343 2 3 2 3-.895 3-2V7.82l8-1.6v5.894A4.37 4.37 0 0015 12c-1.657 0-3 .895-3 2s1.343 2 3 2 3-.895 3-2V3z" />
+                  </svg>
+                  Search by audio
+                </button>
               </div>
             </div>
           </div>
@@ -259,38 +256,42 @@ const Page = () => {
         </div>
       </div>
 
+      <Waveform />
+
       <div className="lg:mx-24 md:mx-4 mx-4">
         <div className="mb-8 ">
-          <h1 className="lg:text-5xl sm:text-3xl text-2xl font-semibold lg:text-start md:text-center text-center">See what’s trending now</h1>
+          <h1 className="lg:text-5xl sm:text-3xl text-2xl font-semibold lg:text-start md:text-center text-center">
+            See what’s trending now
+          </h1>
           <div className="mx-auto mt-4">
-          <div className="flex flex-col md:flex-col md:gap-4 lg:flex-row justify-between items-center space-y-4 md:space-y-0">
-            <div className="flex flex-wrap justify-center  md:space-y-1 space-y-1  space-x-2 sm:space-x-2">
-              {[
-                "News",
-                "Christmas",
-                "Nature",
-                "Fashion",
-                "Ambient",
-                "Documentary",
-                "Trap",
-                "Fun",
-              ].map((category) => (
-                <button
-                  key={category}
-                  className=" bg-opacity-50 text-black rounded-full px-4 m-1 flex items-center font-light bg-transparent backdrop-blur-sm hover:bg-opacity-30 transition duration-300 border border-black"
-                >
-                  <IoIosSearch className="h-5 w-5 mr-1" />
-                  {category}
+            <div className="flex flex-col md:flex-col md:gap-4 lg:flex-row justify-between items-center space-y-4 md:space-y-0">
+              <div className="flex flex-wrap justify-center  md:space-y-1 space-y-1  space-x-2 sm:space-x-2">
+                {[
+                  "News",
+                  "Christmas",
+                  "Nature",
+                  "Fashion",
+                  "Ambient",
+                  "Documentary",
+                  "Trap",
+                  "Fun",
+                ].map((category) => (
+                  <button
+                    key={category}
+                    className=" bg-opacity-50 text-black rounded-full px-4 m-1 flex items-center font-light bg-transparent backdrop-blur-sm hover:bg-opacity-30 transition duration-300 border border-black"
+                  >
+                    <IoIosSearch className="h-5 w-5 mr-1" />
+                    {category}
+                  </button>
+                ))}
+              </div>
+              <div className="flex flex-wrap px-5 gap-5 item-end">
+                <button className="border-black  border-b-3 px-3 font-bold">
+                  The Latest
                 </button>
-              ))}
+                <button>Most popular</button>
+              </div>
             </div>
-            <div className="flex flex-wrap px-5 gap-5 item-end">
-              <button className="border-black  border-b-3 px-3 font-bold">
-                The Latest
-              </button>
-              <button>Most popular</button>
-            </div>
-          </div>
           </div>
         </div>
 
@@ -336,21 +337,26 @@ const Page = () => {
       </div>
 
       <div className="bg-gray-200">
-      <div className="py-10 lg:mx-24 md:mx-4 mx-4  ">
-        <h1 className="lg:text-3xl text-2xl font-bold lg:text-start md:text-start text-center">Browse by genre and mood</h1>
-        <div className="grid lg:grid-cols-4 md:grid-cols-3 grid-cols-2">
-        {data.map((item, index) => (
-          <div key={index} className="flex gap-3 mt-5 items-center lg:flex-row md:flex-row flex-col">
-            <img
-              src={item.src}
-              alt={item.alt}
-              className="object-cover rounded-md h-24 w-24"
-            />
-            <h1 className="font-semibold">{item.title}</h1>
+        <div className="py-10 lg:mx-24 md:mx-4 mx-4  ">
+          <h1 className="lg:text-3xl text-2xl font-bold lg:text-start md:text-start text-center">
+            Browse by genre and mood
+          </h1>
+          <div className="grid lg:grid-cols-4 md:grid-cols-3 grid-cols-2">
+            {data.map((item, index) => (
+              <div
+                key={index}
+                className="flex gap-3 mt-5 items-center lg:flex-row md:flex-row flex-col"
+              >
+                <img
+                  src={item.src}
+                  alt={item.alt}
+                  className="object-cover rounded-md h-24 w-24"
+                />
+                <h1 className="font-semibold">{item.title}</h1>
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
-      </div>
+        </div>
       </div>
 
       <div className="lg:mx-24 md:mx-4 mx-4 py-12 ">
@@ -363,9 +369,9 @@ const Page = () => {
           </button>
         </div>
         <div className="container mx-auto gap-4 grid lg:grid-cols-4 md:grid-cols-2 grid-cols-1 lg:mt-3">
-          { cards.map( ( card, index ) => (
-            <CardSlider key={ index } { ...card } />
-          ) ) }
+          {cards.map((card, index) => (
+            <CardSlider key={index} {...card} />
+          ))}
         </div>
       </div>
 
@@ -392,9 +398,9 @@ const Page = () => {
             </div>
           </div>
           <div className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 mt-4 gap-4">
-            { posts.map( ( data, index ) => (
-              <BlogCard key={ index } { ...data } />
-            ) ) }
+            {posts.map((data, index) => (
+              <BlogCard key={index} {...data} />
+            ))}
           </div>
         </div>
       </div>
