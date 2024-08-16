@@ -21,7 +21,7 @@ export const getCartData = async (
 ) => {
   dispatch(requestStart());
   try {
-    console.log("Ss",productIds)
+    console.log("product ids in api", productIds);
     const response = await instance.post("/product/cart", productIds);
     console.log("response in getting cartitems:-", response);
     return response.data;
@@ -31,31 +31,27 @@ export const getCartData = async (
   }
 };
 
-export const addCartItem = async (
-  dispatch: AppDispatch,
-   productId: string
-) => {
+export const addCartItem = async (dispatch: AppDispatch, productId: string) => {
   dispatch(requestStart());
   try {
-      const response = await instance.post( `/user/addToCart`, { productId } );
-      console.log( "response after adding product to cart", response )
-      notifySuccess(`${response.data.message}`)
-    return response.data;
+    const response = await instance.post(`/user/addToCart`, { productId });
+    console.log("response after adding product to cart", response);
+    notifySuccess(`${response.data.message}`);
+    return;
   } catch (error) {
-      const e = error as AxiosError;
-      console.log("error in creatin:-",error)
+    const e = error as AxiosError;
+    console.log("error in creatin:-", error);
     dispatch(requestFail(e.message));
   }
 };
 
-
-export const removeCartItem =  async (
+export const removeCartItem = async (
   dispatch: AppDispatch,
-   productId: string
+  productId: string
 ) => {
   dispatch(requestStart());
   try {
-    const response =  await instance.post(`/user/removeFromCart`, { productId });
+    const response = await instance.post(`/user/removeFromCart`, { productId });
     console.log("response in getting cartitems:-", response);
     return response.data;
   } catch (error) {
@@ -63,4 +59,3 @@ export const removeCartItem =  async (
     dispatch(requestFail(e.message));
   }
 };
-

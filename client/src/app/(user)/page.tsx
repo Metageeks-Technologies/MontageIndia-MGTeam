@@ -238,25 +238,30 @@ export default function Home ()
       const res = await instance.get( '/product' );
       const imageProducts = res.data.products.filter( ( product: any ) => product.mediaType === 'image' );
       setImageProducts( imageProducts );
-      console.log( res );
+      // console.log( res );
 
     } catch ( error )
     {
       console.log( error );
     }
   };
-  const dispatch=useAppDispatch()
-  const productIds = useAppSelector((state:any) => state.user?.user?.cart);
+  const dispatch = useAppDispatch();
+  const productIds = useAppSelector( ( state: any ) => state.user?.user?.cart );
 
+  console.log( 'product ids from home page:-', productIds );
   useEffect( () =>
   {
-    getCurrCustomer(dispatch)
-    getCartData(dispatch, productIds)
+    getCurrCustomer( dispatch );
     getProduct();
   }, [] );
+  useEffect( () =>
+  {
 
-  const cartProduct = useAppSelector((state) => state.user.cartData);
-  console.log("cartProduct",cartProduct)
+    getCartData( dispatch, productIds );
+  }, [] );
+
+  const cartProduct = useAppSelector( ( state ) => state.user );
+  console.log( "cartProduct", cartProduct );
 
   return (
     <div className="main  ">
@@ -380,14 +385,14 @@ export default function Home ()
                 </button>
               </div>
               <div className="flex flex-wrap px-5 gap-5 item-end">
-              <button className="border-black  border-b-3 px-3 font-bold">
-                Handpicked 
-              </button>
-              <button>Most popular</button>
-            </div>
+                <button className="border-black  border-b-3 px-3 font-bold">
+                  Handpicked
+                </button>
+                <button>Most popular</button>
+              </div>
             </div>
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 mt-5">
-            { imageProducts.map( ( data: any, index: number ) => (
+              { imageProducts.map( ( data: any, index: number ) => (
                 <ImageGallery key={ index } { ...data } />
               ) ) }
             </div>
@@ -509,6 +514,6 @@ export default function Home ()
 
       <Footer />
     </div>
-  
+
   );
 }

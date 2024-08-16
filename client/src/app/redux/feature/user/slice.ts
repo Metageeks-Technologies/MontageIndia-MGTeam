@@ -30,8 +30,9 @@ export const userSlice = createSlice({
       state.loading = false;
       state.error = action.payload;
     },
-    setCartData: (state, action: PayloadAction<any[]>) => {
-      state.cartData.push(action.payload);
+    setCartData: ( state, action: PayloadAction<any[]> ) =>
+    {
+      // state.cartData.push(action.payload);
       state.loading = false;
       state.error = " ";
     },
