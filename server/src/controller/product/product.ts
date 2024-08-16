@@ -314,7 +314,7 @@ export const getPurchasedProducts = catchAsyncError(
 export const getProductForCustomer = catchAsyncError(
   async (req: any, res, next) => {
     const {
-      productsPerPage = "20",
+      productsPerPage = "3",
       page = "1",
       status = "published",
       category = [],
@@ -374,7 +374,7 @@ export const getProductForCustomer = catchAsyncError(
     const skip = (p - 1) * Number(limit);
 
     let products = await Product.find(queryObject)
-      // .sort({ createdAt: -1 })
+      .sort({ createdAt: -1 })
       .skip(skip)
       .limit(Number(limit));
     const totalData = await Product.countDocuments(queryObject);
@@ -432,6 +432,7 @@ export const addToWishlist = catchAsyncError(async (req: any, res, next) => {
 export const removeFromWishlist = catchAsyncError(
   async (req: any, res, next) => {
     const { productId } = req.body;
+    console.log("productId", productId);
     const customerId = req.user._id;
 
     const customer = await Customer.findById(customerId);
@@ -441,7 +442,9 @@ export const removeFromWishlist = catchAsyncError(
     if (!customer.wishlist.includes(productId)) {
       return next(new ErrorHandler(`product not in wishlist`, 400));
     }
-    customer.wishlist = customer.wishlist.filter((id) => id !== productId);
+    customer.wishlist = customer.wishlist.filter(
+      (id) => id.toString() !== productId.toString()
+    );
     await customer.save();
 
     res.status(200).json({
