@@ -296,9 +296,9 @@ export default function Home() {
         </div>
       </div>
       {/* <div>"hello"</div> */}
-      <div className="w-full h-full">
+      {/* <div className="w-full h-full">
         <Hero />
-      </div>
+      </div> */}
       {/* <div className="p-10 px-24">
         <h1 className="text-3xl font-bold">
           Explore images that ignite your creativity

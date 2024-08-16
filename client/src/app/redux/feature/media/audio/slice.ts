@@ -43,9 +43,20 @@ export const audioSlice = createSlice({
       state.totalNumOfPage = action.payload.totalNumOfPage;
       state.totalAudioData = action.payload.totalAudioData;
     },
+    addToWishlist: (state, action: PayloadAction<string>) => {
+      const productId = action.payload;
+      state.audioData = state.audioData.map((product) =>
+        product._id === productId
+          ? { ...product, isWhitelisted: !product.isWhitelisted }
+          : product
+      );
+      state.loading = false;
+      state.error = " ";
+    },
   },
 });
 
-export const { requestStart, requestFail, setAudioData } = audioSlice.actions;
+export const { requestStart, requestFail, setAudioData, addToWishlist } =
+  audioSlice.actions;
 
 export default audioSlice.reducer;

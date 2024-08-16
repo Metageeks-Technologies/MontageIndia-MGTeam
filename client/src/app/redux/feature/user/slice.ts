@@ -43,8 +43,10 @@ export const userSlice = createSlice({
     },
     removeCart: (state, action: PayloadAction<string>) => {
       const productId = action.payload;
-      console.log("remove item:",productId)
-      state.cartData = state.cartData.filter(product => product._id !== action.payload);
+      console.log("remove item:", productId);
+      state.cartData = state.cartData.filter(
+        (product) => product._id !== action.payload
+      );
       state.loading = false;
       state.error = " ";
     },

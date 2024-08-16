@@ -2,7 +2,7 @@
 import Footer from "@/components/Footer";
 import BlogCard from "@/components/Home/blogCard";
 import CardSlider from "@/components/Home/collectionCard";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { IoIosSearch } from "react-icons/io";
 import Waveform from "@/components/Home/AudioWaveForm";
 import { useAppDispatch, useAppSelector } from "@/app/redux/hooks";
@@ -14,7 +14,7 @@ const Page = () => {
     getAudio(dispatch);
   }, []);
   const { audioData } = useAppSelector((state) => state.audio);
-
+  const [currentPlayingId, setCurrentPlayingId] = useState<string | null>(null);
   return (
     <div className="main">
       <div className="relative h-[600px] w-full overflow-hidden">
