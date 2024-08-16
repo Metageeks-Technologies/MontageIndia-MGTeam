@@ -86,5 +86,40 @@ export const paymentCapture= catchAsyncError(async (req:any, res, next) => {
    
 });
 
+export const fetchOrdersByCustomerId = catchAsyncError(async (req, res, next) => {
+  const { id } = req.params; 
+  
+  const orders = await Order.find({ userId:id });
 
+  if (!orders ) {
+    return res.status(404).json({ message: 'No orders found for this user.' });
+  }
+
+  res.status(200).json({ orders });
+});
+
+export const getOrders = catchAsyncError(async (req: any, res, next) => {
+    
+    const orders = await Order.find();
+ 
+    res.status(201).json({
+     success: true,
+     orders:orders,
+    });
+});
+ 
+export const getOrder = catchAsyncError(async (req: any, res, next) => {
+ 
+     const { id:orderId } = req.params;
+ 
+     const order = await Order.findById(orderId);
+     if(!order){
+         return next(new ErrorHandler('Order not found',404));
+     }
+     
+     res.status(201).json({
+      success: true,
+      order,
+     });
+});
 

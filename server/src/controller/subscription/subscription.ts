@@ -1,10 +1,10 @@
 import catchAsyncError from "@src/middleware/catchAsyncError";
 import SubscriptionPlan from "@src/model/subscriptions/subscriptionPlan";
+import SubscriptionHistory from "@src/model/subscriptions/subscriptionHistory";
 import Razorpay from "razorpay";
 import config from "@src/utils/config";
 import ErrorHandler from "@src/utils/errorHandler";
 import crypto from "crypto";
-import { response } from "express";
 import customer from "@src/model/user/customer";
 /*
 index
@@ -15,6 +15,7 @@ index
 4. fetchAllPlans
 5. fetchPlanById
 6. verifyPayment
+7. subscriptionHistory
  */
 
 const razorpayInstance = () => {
@@ -185,40 +186,65 @@ export const createSubscription = catchAsyncError(
       { new: true } // Return the updated document
     );
 
-    console.log("step4", updatedCustomer);
+       res.send({ status:true, response: "Transaction legit!" });
+});
 
-    if (!updatedCustomer) {
-      return next(new ErrorHandler("Customer not found", 404));
-    }
+export const getSubscriptionHistory = catchAsyncError(async (req, res, next) => {
+  const { searchTerm, currentPage = 1, dataPerPage = 10 } = req.query;
 
-    res.send({
-      success: true,
-      message: "Subscription created successfully",
-      response,
-    });
+  const queryObject: any = {};
+  if (searchTerm) {
+    queryObject.$or = [
+      { 'userId.name': { $regex: searchTerm, $options: 'i' } },
+      { 'userId.username': { $regex: searchTerm, $options: 'i' } },
+      { 'userId.email': { $regex: searchTerm, $options: 'i' } },
+    ];
   }
-);
 
-export const verifyPayment = catchAsyncError(async (req, res, next) => {
-  console.log("step1", req.body);
+  const limit = parseInt(dataPerPage as string, 10) || 10;
+  const skip = (parseInt(currentPage as string, 10) - 1) * limit;
 
-  const { razorpay_payment_id, razorpay_signature, subscriptionCreationId } =
-    req.body;
+  const subscriptionHistory = await SubscriptionHistory.find(queryObject)
+    .sort({ createdAt: -1 })
+    .populate({
+      path: 'userId',
+      select: 'name username email'
+    })
+    .skip(skip)
+    .limit(limit);
 
-  const generated_signature = crypto
-    .createHmac("sha256", config.razorpaySecret)
-    .update(subscriptionCreationId + "|" + razorpay_payment_id)
-    .digest("hex");
+  const totalSubscriptions = await SubscriptionHistory.countDocuments(queryObject);
+  const totalPages = Math.ceil(totalSubscriptions / limit);
+
+  res.status(200).json({
+    success: true,
+    subscriptionHistory,
+    totalSubscriptions,
+    totalPages,
+    currentPage: parseInt(currentPage as string),
+    message: "Subscription history fetched successfully",
+  });
+});
+
+
+export const verifyPayment=catchAsyncError(async (req, res, next) => {
+        
+  console.log("step1",req.body);
+  
+  const {razorpay_payment_id,razorpay_signature,subscriptionCreationId}=req.body;
+  
+  const generated_signature=crypto.createHmac('sha256', config.razorpaySecret).update( subscriptionCreationId+ "|" + razorpay_payment_id).digest('hex');
 
   // // comaparing our digest with the actual signature
   if (generated_signature == razorpay_signature) {
-    console.log("Transaction legit!");
-  } else {
-    console.log("Transaction NOT legit!");
+      console.log("Transaction legit!");
+  }
+  else{
+      console.log("Transaction NOT legit!");
   }
 
   // THE PAYMENT IS LEGIT & VERIFIED
   // YOU CAN SAVE THE DETAILS IN YOUR DATABASE IF YOU WANT
 
-  res.send({ status: true, response: "Transaction legit!" });
+ res.send({ status:true, response: "Transaction legit!" });
 });

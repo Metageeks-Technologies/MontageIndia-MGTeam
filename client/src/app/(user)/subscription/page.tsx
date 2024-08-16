@@ -35,7 +35,7 @@ const SubscriptionTable=()=>{
   const [selected, setSelected] = useState<Key | null | undefined>("login");
   const fetchPlans = async () => {
     try {
-      const response = await instance.get('/payment/fetchAllPlans', {
+      const response = await instance.get('/subscription/fetchAllPlans', {
         headers: {
           'ngrok-skip-browser-warning': true
         }

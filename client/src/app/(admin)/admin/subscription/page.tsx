@@ -81,7 +81,7 @@ const SubscriptionPage = () => {
   const [selected, setSelected] = useState<Key | null | undefined>("monthly");
   const fetchPlans = async () => {
     try {
-      const response = await instance.get("/payment/fetchAllPlans");
+      const response = await instance.get("/subscription/fetchAllPlans");
       setPlans(response.data.response);
     } catch (error) {
       console.error("Error fetching plans:", error);
@@ -108,16 +108,14 @@ const SubscriptionPage = () => {
     onOpen();
   };
 
-  const updatePlan = async () => {
-    const response = await instance.patch(
-      `/payment/plan/${selectedPlan.id}`,
-      selectedPlan
-    );
-    if (response.data.success) {
-      onClose();
-      fetchPlans();
-      notifySuccess("Plan updated successfully");
-    }
+    const updatePlan = async () => {
+        const response=await instance.patch(`/subscription/plan/${selectedPlan.id}`,selectedPlan);
+        if(response.data.success){
+          onClose();
+          fetchPlans();
+          notifySuccess("Plan updated successfully");
+        }
+    
   };
 
   return (
@@ -139,6 +137,7 @@ const SubscriptionPage = () => {
               >
                 <Tab key="Monthly" title="Monthly Plans">
                   <div className="flex flex-wrap justify-center items-start gap-4">
+                    
                     {plans.map(
                       (plan) =>
                         plan.period === "monthly" && (
@@ -206,25 +205,16 @@ const SubscriptionPage = () => {
                       }
                     />
                     <div className="w-full">
-                      <div className="relative mt-2 rounded-md shadow-sm">
-                        <Input
-                          type="text"
-                          variant="bordered"
-                          label="Price"
-                          value={selectedPlan?.amount.toString()}
-                          onChange={(e) =>
-                            setSelectedPlan({
-                              ...selectedPlan,
-                              amount: Number(e.target.value),
-                            })
-                          }
-                        />
+                    <div className="relative mt-2 rounded-md shadow-sm">
+
+                        <Input type="text" variant="bordered" label="Price"  value= {(selectedPlan?.amount/100).toString() } onChange={(e) => setSelectedPlan({ ...selectedPlan, amount: Number(e.target.value)*100 })} />
                         <div className="absolute inset-y-0 right-0 flex items-center">
                           <select
                             id="currency"
                             name="currency"
                             className="h-full border-l rounded-lg bg-transparent px-2 text-gray-500"
-                            value={selectedPlan.currency}
+
+                            value= {selectedPlan.currency}
                             onChange={(e) =>
                               setSelectedPlan({
                                 ...selectedPlan,

@@ -41,8 +41,7 @@ const SubscriptionCard: React.FC<Props> = ({ plan }) => {
     const [loaded, setLoaded] = useState(false);
   
     const handlePaymentSuccess= async(res:any) => {
-      const response:any= await instance.post('/payment/verifySubscription',res);
-      
+      const response:any= await instance.post('/subscription/verify',res);
       if(response.data.status){
         console.log("payment success");
         alert("payment success");
@@ -81,7 +80,7 @@ const SubscriptionCard: React.FC<Props> = ({ plan }) => {
       }
       console.log("subsciptionOption",subsciptionOption);
     const response: any = await instance.post(
-  '/payment/createSubscription',
+  '/subscription/createSubscription',
   subsciptionOption, // This is the request body
   {
     headers: {
