@@ -1,7 +1,7 @@
-import mongoose, { Schema, Document } from 'mongoose';
+import mongoose, { Schema, Document, Mongoose } from 'mongoose';
 
 interface ISubscriptionHistory extends Document {
-  userId: string;
+  userId: mongoose.Types.ObjectId;
   planId: string;
   startDate: Date;
   endDate: Date;
@@ -9,7 +9,7 @@ interface ISubscriptionHistory extends Document {
 }
 
 const SubscriptionHistorySchema: Schema = new Schema({
-  userId: { type: String, required: true },
+  userId: { type: mongoose.Types.ObjectId,ref:'Customer', required: true },
   planId: { type: String, required: true },
   startDate: { type: Date, default: Date.now() },
   endDate: { type: Date, default: Date.now() },
