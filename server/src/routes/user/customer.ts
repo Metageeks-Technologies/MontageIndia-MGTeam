@@ -38,11 +38,11 @@ userRouter
   .patch(isAuthenticatedCustomer, changePassword);
 userRouter.route("/forgetPassword").post(forgetPassword);
 userRouter.route("/resetPassword").post(resetPassword);
-userRouter.route("/:id").get(isAuthenticatedCustomer, getCustomerById);
 
 userRouter
   .route("/wishlist")
   .get(isAuthenticatedCustomer, getWishlist)
   .patch(isAuthenticatedCustomer, addToWishlist)
   .delete(isAuthenticatedCustomer, removeFromWishlist);
+  userRouter.route("/:id").get(isAuthenticatedCustomer, getCustomerById);
 export default userRouter;

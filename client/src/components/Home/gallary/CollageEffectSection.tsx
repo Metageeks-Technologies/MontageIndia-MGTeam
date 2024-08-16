@@ -9,9 +9,9 @@ const CollageEffectSection = ({
   data?: any;
 }) => {
   return (
-    <div id="testting" className="w-full pt-[35%] relative">
-      <div className="absolute top-0 left-0 w-full h-full">
-        <div className=" h-full w-full relative overflow-hidden">
+    <div id="testting" className="w-full ">
+      <div className="w-full h-full">
+        <div className=" flex items-center ">
           <div className="w-[33%] h-full">
             <div className="flex flex-col h-full items-center justify-center text-center">
               <h4 className="text-3xl font-medium mb-6">SHOP FOR</h4>
@@ -37,7 +37,10 @@ const CollageEffectSection = ({
               </div>
             </div>
           </div>
+          <div className="w-[66%] ">
           <CollageEffect elementsData={elementsData} />
+          </div>
+        
         </div>
       </div>
     </div>

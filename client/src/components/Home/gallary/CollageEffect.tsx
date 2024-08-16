@@ -80,7 +80,7 @@ const CollageEffect = ({elementsData}:{elementsData:{front:ReactNode,back:ReactN
       }, []);
   return (
 
-<div id="animationProductDiv">
+<div  id="animationProductDiv">
    {elementsData.map((ele,i)=>{
     return <Cube key={i} data={ele} orientation={orientations[i]} onHover={()=>{setOrientations(prev=>{
       prev[i] =  1-prev[1]
@@ -95,7 +95,7 @@ const Cube = ({ data, onHover, orientation, index }:{ data:any, onHover:any, ori
     return (
       <div
         id=""
-        className="cube"
+        className="cube "
         data-orientation={orientation}
         onMouseEnter={onHover}
       >
