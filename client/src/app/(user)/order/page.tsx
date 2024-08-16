@@ -13,8 +13,7 @@ const PlaceOrder = () => {
     const [amount, setAmount] = useState(0);
     const cartProduct = useAppSelector((state) => state.user.cartData);
     const [selectedSizes, setSelectedSizes] = useState<{ [key: string]: string }>({});
- 
- 
+
     const handleBuyWithCredits = async (id: string) => {
       
         try{
@@ -22,7 +21,7 @@ const PlaceOrder = () => {
             console.log(response);
             if(response.data.success){
                 notifySuccess(response.data.message);
-                // handleRemoveCart(id);
+
             }
         }
         catch(error:any){
@@ -54,7 +53,7 @@ const PlaceOrder = () => {
     
     useEffect(() => {
         getCartData(dispatch);
-    }, [dispatch]);
+    }, []);
 
     const createOrderOption = (): OrderOption => {
         const products = cartProduct.map((item: any) => ({
@@ -63,12 +62,11 @@ const PlaceOrder = () => {
         }));
 
         return {
-            
             amount: amount.toString().concat("00"), // Convert the amount to a string
             currency: "INR",
             notes: {
                 products
-            }
+            },
         };
     };
     const handleSizeChange = (productId: string, variantId: string) => {
@@ -139,7 +137,6 @@ const PlaceOrder = () => {
                     <div className="flex items-center gap-4 jutify-center">   
                         <span onClick={() => handleBuyWithCredits(item?.product._id)} className='bg-var1-light text-white rounded-full px-4 py-1'>Buy with credits</span>
                         <span className="text-red-500 cursor-pointer" onClick={()=>{handleRemoveCart(item.product?._id,item.variantId[0])}} >
-
                             <MdDeleteForever size={25} />
                         </span>
                     </div>

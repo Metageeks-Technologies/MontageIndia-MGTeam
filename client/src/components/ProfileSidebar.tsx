@@ -18,11 +18,11 @@ const ProfileSidebar = () => {
               <AiOutlineUser className="mr-3 h-6 w-6" />
               <span>Profile</span>
             </div>
-            <div onClick={() => router.push(`/user-profile/plan`)} className="flex items-center text-gray-700 px-4 py-2 hover:bg-gray-200 cursor-pointer">
+            <div onClick={() => router.push(`/user-profile/purchased-product`)} className="flex items-center text-gray-700 px-4 py-2 hover:bg-gray-200 cursor-pointer">
               <FiSettings className="mr-3 h-6 w-6" />
-              <span>Purchase Product</span>
+              <span>Purchased Product</span>
             </div>
-            <div onClick={() => router.push(`/user-profile/purchase`)}  className="flex items-center text-gray-700 px-4 py-2 hover:bg-gray-200 cursor-pointer">
+            <div onClick={() => router.push(`/user-profile/purchase-history`)}  className="flex items-center text-gray-700 px-4 py-2 hover:bg-gray-200 cursor-pointer">
               <AiOutlineShoppingCart className="mr-3 h-6 w-6" />
               <span>Purchase History</span>
             </div>

@@ -69,30 +69,6 @@ const Home: FC = () => {
     }
   };
 
-  //   const deleteUser = async () => {
-  //     if (!user) return;
-
-  //     const confirmed = confirm("Are you sure you want to delete your account? This action cannot be undone.");
-  //     if (!confirmed) return;
-
-  //     try {
-  //       const response = await instance.delete(`/user/delete/${user._id}`);
-  //       if (response.data && response.data.success) {
-  //         notifySuccess("Account deleted successfully");
-  //         router.push("/");
-  //       }
-  //     } catch (error) {
-  //       console.error("Error deleting account:", error);
-  //       notifyError("Failed to delete account");
-  //     }
-  //   };
-
-  useEffect(() => {
-    getCurrCustomer(dispatch)
-    fetchUser();
-    getCurrCustomer(dispatch)
-  }, []);
-
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setIsInputChanged(true);
     if (currentField === "Name") {
@@ -101,6 +77,12 @@ const Home: FC = () => {
       setUpdatedEmail(e.target.value);
     }
   };
+
+   useEffect(() => {
+    fetchUser();
+    getCurrCustomer(dispatch);
+    
+  }, []);
 
   return (
     <>

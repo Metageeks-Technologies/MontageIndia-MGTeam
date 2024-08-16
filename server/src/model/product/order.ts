@@ -21,9 +21,8 @@ const OrderSchema: Schema = new Schema({
     productId: { 
         type: mongoose.Schema.Types.ObjectId, 
         ref: 'Product' ,
-        required:true
     },
-    variantId: {type:String,required:true},
+    variantId: {type:String},
   }],
   totalAmount: { type: Number, required: true },
   currency: { type: String, required: true },

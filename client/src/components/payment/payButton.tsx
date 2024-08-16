@@ -3,6 +3,7 @@ import React,{useState,useEffect} from 'react';
 import { loadScript } from '../../utils/loadScript';
 import instance from '@/utils/axios';
 import {OrderOption} from '@/types/order';
+import {useRouter} from 'next/navigation';
 
 declare global {
   interface Window {
@@ -17,14 +18,24 @@ interface props{
 const PayButton: React.FC<props> = ({orderOption}) => {
     const [loading, setLoading] = useState(false);
     const [loaded, setLoaded] = useState(false);
+    const router = useRouter();
   
     const handlePaymentSuccess= async(res:any) => {
-      const response:any= await instance.post('/payment/capture',res,{
-          withCredentials: true
-      });
-      console.log("step2:",response);
+      try {
+        const response:any= await instance.post('/payment/verify',res);
+        console.log("step 2:",response);
+        if(response.data.success){
+            alert(response.data.message);
+            
+            router.push('/user-profile/purchased-product');
+        }else{
+          alert("payment failed");
+        }
+      }
+      catch (error) {
+        console.log(error);
+      }
       
-        alert(response.data.message);
     }
     const handlePayment = (options: any) => {
     
@@ -42,51 +53,39 @@ const PayButton: React.FC<props> = ({orderOption}) => {
 
   //this function creates a order in razorpay and store order information in Montage India database
   const handleOrderPlace= async() => {
-    const response:any= await instance.post('/payment/order',orderOption,{
-        withCredentials: true
+    console.log(orderOption);
+    const response:any= await instance.post('/order/',orderOption,{
+      headers: {
+        'ngrok-skip-browser-warning': true,
+      }
     });
 
-    console.log("step 1:",response)
+    console.log("step 1:",response);
 
     if(!response.data.success){
       alert("Something went wrong. Please try again later");
       return;
     }
-
     const paymentOptions = {
-        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY, 
-        amount: orderOption.amount, 
-        currency: orderOption.currency,
-        name: "montageIndia",
-        description: "Complete your purchase securely with Montage India’s trusted payment gateway. Choose from multiple payment options and gain instant access to premium images, videos, and audio content. Enjoy a seamless checkout experience with 24/7 customer support.",
+        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY as string, 
+        name: "MontageIndia",
+        amount: orderOption.amount,
+        currency: "INR",
+        description: "Pay & Checkout this product",
         image: "https://cdn.dribbble.com/users/111709/screenshots/3969111/media/8b3190c331faa522644c6b6a5432ccf1.jpg",
-        order_id: response.data.rp_order_id,  
-        handler: function (res: any) {
+        order_id:response.data.order_id,  
+        handler:(res: any)=> {
             console.log("step3:",res);
-            res.rp_order_id=response.data.rp_order_id;
-            res.mi_order_id=response.data.mi_order_id;
+            res.order_id=response.data.order_id;
             handlePaymentSuccess(res);
        },
-       prefill: {
-          //Here we are prefilling random contact
-         contact:"7011420877", 
-           //name and email id, so while checkout
-         name: "shivam",  
-         email: "shivamsisodia8656816@gmail.com"
-       },
-      notes: {
-         Db_order_id: response.data.mi_order_id,
-       }, 
        theme: {
            color: "#2300a3"
        }
    };
 
-   handlePayment(paymentOptions);
-
+  handlePayment(paymentOptions);
   }
-
-
   useEffect(() => {
     loadScript('https://checkout.razorpay.com/v1/checkout.js')
       .then(() => setLoaded(true))

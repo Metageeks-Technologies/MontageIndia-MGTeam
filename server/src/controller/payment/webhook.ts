@@ -1,10 +1,12 @@
 import catchAsyncError from "@src/middleware/catchAsyncError.js";
 import customer from "@src/model/user/customer";
 import order from '@src/model/product/order';
+import crypto from "crypto";
 import config from "@src/utils/config";
 import { validateWebhookSignature } from "razorpay/dist/utils/razorpay-utils";
 import Transaction from "@src/model/transaction/transaction";
 import SubscriptionHistory from "@src/model/subscriptions/subscriptionHistory";
+import mongoose from "mongoose";
 
 const subscriptionCharged= async(payload:any)=>{
   try {
@@ -74,24 +76,130 @@ const orderPaid= async(payload:any)=>{
     );
     console.log(Order);
 
+    if(!Order) return;
+
+    const userId=Order?.userId;
+    const products=Order?.products;
+
+    const user = await customer.findById(userId);
+    if(!user) return;
+
+    console.log("user",user);
+
+    for (const product of products) {
+      const { productId, variantId } = product;
+
+      const productIdString = productId.toString();
+      const existingProductIndex = user.purchasedProducts.findIndex(p => p.productId.toString() === productIdString);
+
+      if (existingProductIndex > -1) {
+          if (!user.purchasedProducts[existingProductIndex].variantId.includes(variantId)) {
+              user.purchasedProducts[existingProductIndex].variantId.push(variantId);
+          }
+      } else {
+          const productId=new mongoose.Types.ObjectId(productIdString);
+          user.purchasedProducts.push({
+              productId: productId,
+              variantId: [variantId],
+          });
+            }
+    }
+
+    await user.save();
+    
   } catch (error) {
     console.log(error);
   }
 }
 
-const paymentHandler= async(payload:any)=>{
+const invoicePaid= async(payload:any)=>{
   try {
-    console.log("payment handler",payload);
+    console.log("invoice paid",payload);
+  }
+  catch(error){
+    
+  }
+}
+
+const paymentAuthorized=async(payload:any)=>{
+  try {
+     console.log("payment handler",payload);
     const {amount,contact,email,id,order_id,method,currency,status}=payload.payment.entity;
 
+    const Order=await order.findOne(
+      { 'razorpayOrderId': order_id },
+    );
+    if(!Order) return;
+    console.log(Order);
+    const userId=Order?.userId;
+    
     const newPayment = {
+      userId:userId?userId:"",
       amount,
       email,
       method,
       currency,
       status,
       rp_payment_id:id,
-      rp_order_id:order_id,
+      rp_order_id:order_id?order_id:"",
+      phone:contact,
+    };
+    
+    await Transaction.create(newPayment);
+
+    const products=Order?.products;
+
+    const user = await customer.findById(userId);
+    if(!user) return;
+
+    console.log("user",user);
+
+    for (const product of products) {
+      const { productId, variantId } = product;
+
+      const productIdString = productId.toString();
+      const existingProductIndex = user.purchasedProducts.findIndex(p => p.productId.toString() === productIdString);
+
+      if (existingProductIndex > -1) {
+          if (!user.purchasedProducts[existingProductIndex].variantId.includes(variantId)) {
+              user.purchasedProducts[existingProductIndex].variantId.push(variantId);
+          }
+      } else {
+          const productId=new mongoose.Types.ObjectId(productIdString);
+          user.purchasedProducts.push({
+              productId: productId,
+              variantId: [variantId],
+          });
+            }
+    }
+
+    await user.save();
+
+  } catch (error) {
+    console.log(error);
+  }
+}
+const paymentHandler= async(payload:any)=>{
+  try {
+    console.log("payment handler",payload);
+    const {amount,contact,email,id,order_id,method,currency,status}=payload.payment.entity;
+
+    const Order=await order.findOne(
+      { 'razorpayOrderId': order_id },
+    );
+    if(!Order) return;
+    console.log(Order);
+    const userId=Order?.userId;
+    
+    const newPayment = {
+      userId:userId?userId:"",
+      amount,
+      email,
+      method,
+      currency,
+      status,
+      rp_payment_id:id,
+      rp_order_id:order_id?order_id:"",
       phone:contact,
     };
     
@@ -104,16 +212,13 @@ const paymentHandler= async(payload:any)=>{
 
 export const paymentWebHook= catchAsyncError(async (req, res, next) => {
   
-  try{
-    const signature = req.headers["x-razorpay-signature"] as string;
     const secret=config.razorpayWebhookSecret;
-    console.log(secret);
-    const isValid = validateWebhookSignature(
-        JSON.stringify(req.body),
-        signature,
-        secret
-    );
-    console.log(isValid);
+
+    const signature = req.headers['x-razorpay-signature'] as string;
+    const body=JSON.stringify(req.body);
+    
+    const isValid = validateWebhookSignature(body, signature, secret);
+    
     if (isValid) {
       const { event, payload } = req.body;
 
@@ -134,6 +239,11 @@ export const paymentWebHook= catchAsyncError(async (req, res, next) => {
             orderPaid(payload);
             break;
          }
+         case "invoice.paid":{
+            console.log("invoice paid");
+            invoicePaid(payload);
+            break;
+         }
          case "subscription.charged":{
           subscriptionCharged(payload);
           break;
@@ -149,12 +259,10 @@ export const paymentWebHook= catchAsyncError(async (req, res, next) => {
           console.log(`Unhandled event: ${event}`);
           break;
       }
+      res.status(200).send("webhook success");
     }
-    res.status(200).send("webhook success");
-  }
-  catch (error) {
-    console.log(error);
-    res.status(500).send("webhook failed");
-  }
+    else{
+      res.status(400).send('Invalid signature');
+    }
 });
 

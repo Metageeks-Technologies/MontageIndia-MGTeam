@@ -177,16 +177,15 @@ export const createSubscription = catchAsyncError(
         new ErrorHandler("Error occured while creating Subscription", 404)
       );
     }
-    const updatedCustomer = await customer.findByIdAndUpdate(
+    await customer.findByIdAndUpdate(
       req.user._id,
       {
         "subscription.subscriptionId": response.id,
-        "subscription.status": "Active",
       },
       { new: true } // Return the updated document
     );
 
-       res.send({ status:true, response: "Transaction legit!" });
+       res.send({ success:true,message: "Subscription created successfully",subcriptionId:response.id });
 });
 
 export const getSubscriptionHistory = catchAsyncError(async (req, res, next) => {

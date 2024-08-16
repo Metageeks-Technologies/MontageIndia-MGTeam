@@ -1,6 +1,4 @@
 import mongoose,{ Document } from "mongoose";
-import type { ProductItem } from "@src/model/product/order";
-
 
 export type TAdmin = Document & {
     name: string;
@@ -19,7 +17,12 @@ export type TAdmin = Document & {
 interface IProductItem {
     product: mongoose.Types.ObjectId;
     variantId: string[];
-  }
+}
+
+interface purchasedProducts {
+    productId: mongoose.Types.ObjectId;
+    variantId: string[];
+}
 
 export type TCustomer = Document & {
     username: string;
@@ -27,7 +30,7 @@ export type TCustomer = Document & {
     name: string; // Customer's full name
     password: string;
     isDeleted: boolean;
-    purchasedProducts:ProductItem[];
+    purchasedProducts: purchasedProducts[];
     cart: IProductItem[]; // References to products in the cart
     subscription: {
         subscriptionId:string;

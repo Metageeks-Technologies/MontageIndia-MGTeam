@@ -49,7 +49,7 @@ const customerSchema = new mongoose.Schema<TCustomer>({
         type: mongoose.Schema.Types.ObjectId, 
         ref: 'Product' 
     },
-    variantId:[ {type:String,required:true}],
+    variantId:[ {type:String}],
   }],
   cart:[{
     product: { 
