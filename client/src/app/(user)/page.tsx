@@ -12,7 +12,7 @@ import { IoIosSearch } from "react-icons/io";
 import CartPopup from "@/components/cart/cartPage";
 import { getCartData, getCurrCustomer } from "../redux/feature/user/api";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
-import Hero from "@/utils/Hero";
+import Hero from "@/components/Home/gallary/Hero";
 
 // Collection data
 interface Card {
@@ -295,10 +295,10 @@ export default function Home() {
           </div>
         </div>
       </div>
-      {/* <div>"hello"</div>
+      {/* <div>"hello"</div> */}
       <div className="w-full h-full">
         <Hero />
-      </div> */}
+      </div>
       {/* <div className="p-10 px-24">
         <h1 className="text-3xl font-bold">
           Explore images that ignite your creativity
