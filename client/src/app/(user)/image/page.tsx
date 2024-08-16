@@ -10,7 +10,8 @@ import React, { useEffect, useState } from "react";
 import FAQ from "@/components/Video/fag";
 import instance from "@/utils/axios";
 import { Product } from "@/types/order";
-import { Button, Pagination } from "@nextui-org/react";
+import ImageGallery from "@/components/Home/homeImage";
+import { Button, Pagination, Spinner } from "@nextui-org/react";
 
 // videos data
 type Video = {
@@ -135,30 +136,28 @@ const Page = () => {
   const [SearchTerm, setSearchTerm] = useState("");
   const [shouldFetch, setShouldFetch] = useState(true); 
   const [loading,setloading]=useState(false)
-
   const getProduct = async () =>
+  {
+    setloading(true)
+    try
     {
-      setloading(true)
-      try
-      {
-        const response = await instance.get(`/product/customer`,{
-          params: { status: 'published',productsPerPage, page: currentPage,category: selectedCategories, searchTerm: SearchTerm   },
-        }
-         );
-         if(response.status===200){
-        setloading(false)
-        const Products = response.data.products.filter( ( product: any ) => product.mediaType === 'video' );
-        console.log(Products)
-        setProductData(Products);
-        setTotalPages(response.data.numOfPages);
-         }
-      } catch ( error )
-      {    
-      setloading(false)
-      console.log( error );
+      const response = await instance.get(`/product/customer`,{
+        params: { status: 'published',productsPerPage, page: currentPage,category: selectedCategories, searchTerm: SearchTerm   },
       }
-    };
-
+       );
+       if(response.status===200){
+      setloading(false)
+      const Products = response.data.products.filter( ( product: any ) => product.mediaType === 'image' );
+      console.log(response.data)
+      setProductData(Products);
+      setTotalPages(response.data.numOfPages);
+       }
+    } catch ( error )
+    {    
+    setloading(false)
+    console.log( error );
+    }
+  };
   const handlePageChange = ( page: number ) =>
     {
       setShouldFetch(true);
@@ -175,8 +174,10 @@ const Page = () => {
       
 
 
+
+
   return (
-    <div className="main  ">
+      <div className="main  ">
       <div className="relative h-[550px] w-full overflow-hidden">
         <video
           className="absolute h-full w-full object-cover"
@@ -195,6 +196,41 @@ const Page = () => {
             Add wonder to your stories with 450M+ photos, vectors,
             illustrations, and editorial images.
           </p>
+          <div className="w-full max-w-7xl bg-white  rounded-lg shadow-lg">
+            <div className="flex lg:flex-wrap flex-row items-center gap-4">
+              <div className="flex-grow relative">
+                <input
+                  type="text"
+                  placeholder="Search for image"
+                  onChange={( e ) => setSearchTerm( e.target.value )}
+                  value={SearchTerm}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault(); // Prevents the default action of the Enter key (like submitting a form)
+                      getProduct();
+                    }
+                  }}
+                  className="w-full px-4 outline-none py-2 border border-gray-400 rounded-md text-black"
+                />
+                <button onClick={getProduct} className="absolute right-2 top-1/2 transform -translate-y-1/2  text-gray-600 p-2 rounded-md  transition-colors">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-5 w-5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                    />
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
           <div className="mt-6 flex flex-wrap justify-center space-x-2 space-y-2 md:space-y-2 sm:space-x-4">
             <button className="flex items-center px-3 py-2 sm:px-4 sm:py-2 border border-white rounded-full text-white bg-transparent backdrop-blur-sm bg-opacity-20 hover:bg-opacity-30 transition duration-300">
               <IoIosSearch className="h-5 w-5 mr-2" />
@@ -269,16 +305,23 @@ const Page = () => {
             </div>
             </div>
 
+            {loading?            
+            <div className="h-screen justify-center flex">   
+            <Spinner color="success"/>
+            </div>:
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 mt-5">
             { productData.map( ( data: any, index: number ) => (
-                <Trending key={ index } { ...data } />
-              ) ) }
-            </div>
-
+                <ImageGallery key={ index } data={ data } />
+              ) ) }  
+            </div>}
           </div>
+          {/* <div className="mt-8 flex justify-center ">
+            <button className="flex items-center text-lg px-6 font-semibold py-2 border border-gray-700  rounded-full text-black bg-transparent backdrop-blur-sm bg-opacity-20 hover:bg-opacity-40 transition duration-300">
+              See more Image
+            </button>
+          </div> */}
         </div>
       </div>
-
       {totalPages>0 && <div className="flex justify-center items-center gap-4 my-4">
                 <Button
                     size="sm"
@@ -313,17 +356,9 @@ const Page = () => {
                 </Button>
         </div>
       }
-      <div className=" my-8 bg-gray-100 ">
-        <div className=" lg:mx-24 md:mx-4 mx-4 flex  lg:flex-row md:flex-col flex-col">
-          <h2 className="text-2xl font-bold mt-5 basis-[25%]">
-            Stock Footage FAQs
-          </h2>
-          <FAQ />
-        </div>
-      </div>
-
       <Footer />
     </div>
+
   );
 };
 

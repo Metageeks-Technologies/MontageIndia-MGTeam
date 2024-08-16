@@ -25,6 +25,7 @@ interface FormData
 {
   id: string;
   slug: string;
+  uuid:string;
   title: string;
   description: string;
   tags: string[];
@@ -41,6 +42,8 @@ const Form4 = ( { formData }: any ) =>
   const { user } = useAdminAuth();
   const initialData = formData.product || {};
   const [ data, setFormData ] = useState<FormData>( initialData );
+  const[selected,setSelectedcheck]=useState(false)
+
   const [ newTag, setNewTag ] = useState<string>( '' ); // State for the new tag input
   const [ editMode, setEditMode ] = useState<{ [ key: string ]: boolean; }>( {
     title: false,
@@ -54,11 +57,13 @@ const Form4 = ( { formData }: any ) =>
   });
   const [editingVariantIndex, setEditingVariantIndex] = useState<number | null>(null);
   const[loading,setloader]=useState(false)
-  const [selectedCategories, setSelectedCategories] =  useState<MultiValue<{ label: string; value: string }>>([]);
+  const [selectedCategories, setSelectedCategories] = useState<any[]>([]);
   const [ availableCategories, setAvailableCategories ] = useState<any[]>( [] );
   const BucketName=process.env.NEXT_PUBLIC_AWS_BUCKET;
   const [isPublishButtonDisabled, setIsPublishButtonDisabled] = useState(false);
   const AwsRegiosn=process.env.NEXT_PUBLIC_AWS_REIGION;
+  const updatedField = {};
+  const editorChoiceCategory="editor choice"
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>| string, field: string) => {
     if (typeof e === 'string') {
@@ -272,6 +277,50 @@ const Form4 = ( { formData }: any ) =>
       } );
     }
   };
+  useEffect(() => {
+    if (data?.category?.includes(editorChoiceCategory)) {
+      setSelectedcheck(true);
+    } else {
+      setSelectedcheck(false);
+    }
+    setSelectedCategories(data?.category || []);
+  }, [data, editorChoiceCategory]);
+  const handleCheck = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const isChecked = event.target.checked;
+    setSelectedcheck(isChecked);
+
+    const categoryExists = selectedCategories.includes(editorChoiceCategory);
+
+    try {
+      let newCategories = [...selectedCategories];
+
+      if (isChecked && !categoryExists) {
+        newCategories.push(editorChoiceCategory);
+      } else if (!isChecked && categoryExists) {
+        newCategories = newCategories.filter(
+          (category) => category !== editorChoiceCategory
+        );
+      }
+
+      // Update the selected categories state
+      setSelectedCategories(newCategories);
+
+      // Update the server with new categories
+      const response = await instance.patch(`/product/${data?.uuid}`, {
+        ...updatedField,
+        category: newCategories,
+      });
+
+      if (response.status === 201) {
+        setloader(false);
+        notifySuccess("Updated successfully");
+      }
+    } catch (error) {
+      console.error("Error updating category:", error);
+    } finally {
+      setloader(false);
+    }
+  };
   const handleCategoryChange = ( newValue: MultiValue<any>, actionMeta: ActionMeta<any> ) =>
   {
     setSelectedCategories( newValue as any[] );
@@ -425,6 +474,7 @@ const Form4 = ( { formData }: any ) =>
                 </React.Fragment> ) ) }
             </div>
           </div>
+
           <div className="flex flex-col bg-gray-50 p-6">
             <div className='text-xl flex flex-row gap-7 w-32 font-semibold'>Tags
               <span className='flex items-center '>
@@ -440,6 +490,7 @@ const Form4 = ( { formData }: any ) =>
                 
               </span>
             </div>
+            
             <div className='flex py-2 flex-wrap w-full'>
             {data.tags.map((tag, index) => (
                   tag.trim() !== '' && ( // Filter out empty tags
@@ -481,6 +532,14 @@ const Form4 = ( { formData }: any ) =>
                 </div>
               ) }
             </div>
+            <div className='py-8'>
+              <input 
+              type='checkbox'
+              checked={selected}
+              onChange={handleCheck}
+              />
+              <span className='text-base mb-3 font-semibold px-3'>Editor choice</span>
+            </div>
             <div className="mb-4">
               <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="mediaType">
                 Media Type
@@ -513,8 +572,12 @@ const Form4 = ( { formData }: any ) =>
                </div>
               </> : <>
                 <div className='flex flex-wrap'>
-                  {data.category.map((cat, index) => (
-                    <span key={index} className='p-2 rounded-md m-2 font-semibold bg-gray-200  text-gray-600'>{cat}</span>
+                {data.category
+                  .filter(cat => cat !== "editor choice")
+                  .map((cat, index) => (
+                    <span key={index} className='p-2 rounded-md m-2 font-semibold bg-gray-200 text-gray-600'>
+                      {cat}
+                    </span>
                   ))}
               </div>
               </> }

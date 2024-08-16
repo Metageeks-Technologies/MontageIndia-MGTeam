@@ -12,11 +12,9 @@ function CartPopup() {
   const [isOpen, setIsOpen] = useState(false);
   const dispatch=useAppDispatch()
   const cartProduct = useAppSelector((state) => state.user.cartData);
-  console.log("first",cartProduct)
   const handleRemoveCart=(id:string,variantId:string)=>{
     removeCartItem(dispatch,id,variantId)
   }
-  
   useEffect(() => {
     
     if (isOpen) {
@@ -49,13 +47,13 @@ function CartPopup() {
               />
             </div>
             <div className="max-h-[calc(100vh-200px)] overflow-y-auto">
-              {cartProduct.flat().map((item:any,index:number) => (
+              {cartProduct.map((item:any,index:number) => (
                 <div key={index} className="flex justify-between items-center py-4 px-6 border-b">
                   <div className="flex items-center">
                     <img 
                     src={ `https://mi2-public.s3.ap-southeast-1.amazonaws.com/${ item.product?.thumbnailKey}`}
                     alt="Item" className="w-16 h-12 object-cover mr-4" />
-                    <span>{item.product?.title}</span>
+                    <span>{item.title}</span>
                   </div>
                   <div className="flex items-center">
                     <span className="px-2">

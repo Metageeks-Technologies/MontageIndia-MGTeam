@@ -23,7 +23,7 @@ const Sidebar = () =>
   const dispatch=useAppDispatch()
   const user = useAppSelector((state:any) => state.user?.user?._id);
   useEffect( () =>
-    {
+    { 
       getCurrCustomer(dispatch)
       if(user){
       getCartData(dispatch)
@@ -72,7 +72,7 @@ const Sidebar = () =>
         <div className="hidden lg:flex items-center space-x-4 ">
 
           <ul className="flex items-center space-x-4 cursor-pointer">
-            <li className="text-gray-700 hover:text-black" onClick={ () => router.push( '/' ) }>Images</li>
+            <li className="text-gray-700 hover:text-black" onClick={ () => router.push( '/image' ) }>Images</li>
             <li className="text-gray-700 hover:text-black" onClick={ () => router.push( '/video' ) }>Video</li>
             <li className="text-gray-700 hover:text-black" onClick={ () => router.push( '/audio' ) }>Audio</li>
             <li className="text-gray-700 hover:text-black">AI Generator</li>

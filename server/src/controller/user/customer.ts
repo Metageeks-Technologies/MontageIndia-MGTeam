@@ -103,6 +103,7 @@ export const getCurrentCustomer = catchAsyncError(async (req:any, res, next) => 
 
     const { id } = req.user;
     const user = await Customer.findOne({ _id: id });
+    console.log(user)
     res.status(200).json({
         success: true,
         user
@@ -291,7 +292,7 @@ export const addProductToCart = catchAsyncError(
     async (req:any, res, next) => {
       let { productId, variantId } = req.body;
       const { id } = req.user;
-        console.log("sd",variantId)
+        console.log("sd",variantId,productId,id)
       if (!id) {
         console.log('User does not exist');
         return next(new ErrorHandler("User does not exist", 404));
@@ -310,11 +311,11 @@ export const addProductToCart = catchAsyncError(
       if (!variantId && product.variants && product.variants.length > 0) {
         variantId = product.variants[0]._id;
       }
-  
-      const productIndex = customer.cart.findIndex(
+      console.log(customer._id)
+      const productIndex = customer.cart?.findIndex(
         (item: any) => item.product.toString() === productId
       );
-  
+      console.log(productIndex)
       if (productIndex !== -1) {
         customer.cart[productIndex].variantId = variantId;
       } else {

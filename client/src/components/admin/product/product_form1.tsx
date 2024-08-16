@@ -32,7 +32,7 @@ const Form1 = ( { onNext }: any ) =>
   const [ selectedCategories, setSelectedCategories ] = useState<any[]>( [] );
   const [ availableCategories, setAvailableCategories ] = useState<any[]>( [] );
   const [ availableMediaOptions, setAvailableMediaOptions ] = useState<any[]>( [] );
-
+  const[selected,setSelectedcheck]=useState(false)
   const CustomMenu = React.memo( ( props: any ) =>
   {
     const { selectProps, options, getValue } = props;
@@ -110,15 +110,20 @@ const Form1 = ( { onNext }: any ) =>
     }
   }, [ user ] );
 
+  const handleCheck = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSelectedcheck(event.target.checked);
+  };
   const getCategories = async () =>
   {
     try
     {
       const response = await instance.get( '/field/category' );
-      const formattedCategories = response.data.categories.map( ( category: any ) => ( {
+      const formattedCategories = response.data.categories
+      .filter((category: any) => category.name !== "editor choice")
+      .map((category: any) => ({
         value: category._id,
         label: category.name
-      } ) );
+      }));
       setAvailableCategories( formattedCategories );
     } catch ( error )
     {
@@ -128,6 +133,16 @@ const Form1 = ( { onNext }: any ) =>
   const handleChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
     setDescription(event.target.value);
   };
+  const getCategoriesWithEditorChoice = (categories: { label: string }[], isSelected: boolean) => {
+    const editorChoiceCategory = "editor choice";
+    const categoriesLabels = categories.map(c => c.label);
+  
+    if (isSelected && !categoriesLabels.includes(editorChoiceCategory)) {
+      return [...categoriesLabels, editorChoiceCategory];
+    }
+  
+    return categoriesLabels;
+  };
   const handleNext = async () =>
   {
     if(!user){
@@ -136,10 +151,11 @@ const Form1 = ( { onNext }: any ) =>
     }
     const uuid = uuidv4();
     const slug = slugify( title, { lower: true } );
-    const data = { uuid, slug,createdBy:user._id, title, description, mediaType, category: selectedCategories.map( c => c.label ), tags };
+    const data = { uuid, slug,createdBy:user._id, title, description, mediaType, category: getCategoriesWithEditorChoice(selectedCategories, selected), tags };
     setloader( true );
     try
     {
+      console.log(data)
       const response = await instance.post( `/product/`, data, {
         headers: { 'Content-Type': 'application/json' }
       } );
@@ -176,7 +192,7 @@ const Form1 = ( { onNext }: any ) =>
       }
     }
   };
-
+console.log("first",selected)
   const isFormValid = () =>
   {
     return title && description && mediaType && tags[ 0 ] && selectedCategories.length > 0;
@@ -219,16 +235,16 @@ const Form1 = ( { onNext }: any ) =>
           </select>
         </div>
         <div>
+          <input 
+          type='checkbox'
+          checked={selected}
+          onChange={handleCheck}
+          />
+          <span className='text-base mb-3 font-semibold px-3'>Editor choice</span>
+
+        </div>
+        <div>
           <span className='text-xl mb-3 font-semibold mr-4'>Category</span>
-          {/* <Select
-            isMulti
-            name="categories"
-            options={availableCategories}
-            className='basic-multi-select'
-            classNamePrefix="select"
-            value={selectedCategories}
-            onChange={handleCategoryChange}
-          /> */}
           <Select
             isMulti
             name="categories"
@@ -237,9 +253,7 @@ const Form1 = ( { onNext }: any ) =>
             classNamePrefix="select"
             value={ selectedCategories }
             onChange={ handleCategoryChange }
-            
-          // onAddCategory={ handleAddCategory }  
-          />
+            />
         </div>
         <div className='flex gap-3 flex-col'>
           <span className='text-xl font-semibold'>Title</span>

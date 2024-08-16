@@ -54,7 +54,13 @@ const customerSchema = new mongoose.Schema<TCustomer>(
         variantId: [{ type: String, required: true }],
       },
     ],
-    cart: [{ type: mongoose.Schema.Types.ObjectId, ref: "Product" }],
+    cart:[{
+      product: { 
+          type: mongoose.Schema.Types.ObjectId, 
+          ref: 'Product' 
+      },
+      variantId:[ {type:String,required:true}],
+    }],
     wishlist: [{ type: mongoose.Schema.Types.ObjectId, ref: "Product" }],
     subscription: {
       subscriptionId: { type: String, default: "" },

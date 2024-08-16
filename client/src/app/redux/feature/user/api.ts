@@ -9,6 +9,7 @@ export const getCurrCustomer = async (dispatch: AppDispatch) => {
   dispatch(requestStart());
   try {
     const response = await instance.get(`/user/getCurrent`);
+    console.log("user",response.data)
     dispatch(setCurrUser(response.data));
   } catch (error) {
     const e = error as AxiosError;
@@ -41,7 +42,6 @@ export const addCartItem = async (
   console.log("first",productId,variantId)
   try {
       const response = await instance.post( `/product/addToCart`, { productId,variantId } );
-      console.log( "response after adding product to cart", response )
       if(response.status===200){
       notifySuccess(`${response.data.message}`)
       getCurrCustomer(dispatch)
