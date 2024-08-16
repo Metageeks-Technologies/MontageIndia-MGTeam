@@ -7,6 +7,7 @@ export interface InitialState {
   loading?: boolean;
   error?: string;
   cartData: TProduct[];
+  wishlistData: TProduct[];
 }
 
 const initialState: InitialState = {
@@ -14,6 +15,7 @@ const initialState: InitialState = {
   loading: false,
   error: "",
   cartData: [],
+  wishlistData:[],
 };
 
 export const userSlice = createSlice({
@@ -48,6 +50,11 @@ export const userSlice = createSlice({
       state.loading = false;
       state.error = " ";
     },
+    getWishlist: (state, action: PayloadAction<TProduct[]>) => {
+      state.wishlistData = action.payload;
+      state.loading = false;
+      state.error = "";
+    },
   },
 });
 
@@ -58,6 +65,7 @@ export const {
   setCartData,
   getCart,
   removeCart,
+  getWishlist,
 } = userSlice.actions;
 
 export default userSlice.reducer;

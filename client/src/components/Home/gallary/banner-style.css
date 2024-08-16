@@ -222,7 +222,7 @@ body {
 
     .cube:nth-child(2)
     {
-        width: calc(var(--productWidth)*0.5);
+        width: calc(var(--productWidth)*0.9);
         padding-bottom: calc(var(--productWidth) * 1.20);
     }
     

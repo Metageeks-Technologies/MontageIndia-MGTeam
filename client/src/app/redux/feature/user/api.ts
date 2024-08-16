@@ -1,5 +1,5 @@
 import instance from "@/utils/axios";
-import { setCurrUser, requestStart, requestFail,  setCartData, removeCart, getCart } from "./slice";
+import { setCurrUser, requestStart, requestFail,  setCartData, removeCart, getCart, getWishlist } from "./slice";
 import type { AppDispatch } from "@/app/redux/store";
 import type { AxiosError } from "axios";
 import { notifySuccess } from "@/utils/toast";
@@ -87,3 +87,18 @@ export const removeCartItem =  async (
   }
 };
 
+export const getWishlistData = async (
+  dispatch: AppDispatch,
+  // productIds: string[]
+) => {
+  dispatch(requestStart());
+  try {
+    const response = await instance("user/wishlist");
+    console.log("response in getting wishlisttitems:-", response);
+    dispatch(getWishlist(response.data));
+    return response.data;
+  } catch (error) {
+    const e = error as AxiosError;
+    dispatch(requestFail(e.message));
+  }
+};
