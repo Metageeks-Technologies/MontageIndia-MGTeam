@@ -10,3 +10,4 @@ productRouter.route( "/variant/:id" ).patch( isAuthenticatedAdmin, addPriceToVar
 productRouter.route("/cart").post(getProductsByIds)
 
 export default productRouter;   
+

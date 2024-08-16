@@ -261,6 +261,7 @@ export default function Home ()
   }, [] );
 
   const cartProduct = useAppSelector( ( state ) => state.user );
+  
   console.log( "cartProduct", cartProduct );
 
   return (
