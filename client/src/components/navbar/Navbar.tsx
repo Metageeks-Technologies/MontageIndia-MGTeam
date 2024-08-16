@@ -57,7 +57,7 @@ const Sidebar = () => {
             <span>0 Credits Available</span>
             <IoMdArrowDropdown className="ml-1" />
           </div>
-          <AiOutlineHeart className="text-gray-700 w-7 h-7 transition-transform duration-200 ease-in-out hover:scale-110" />
+          <AiOutlineHeart  onClick={() => router.push('/wishlist')} className="text-gray-700 cursor-pointer w-7 h-7 transition-transform duration-200 ease-in-out hover:scale-110" />
           <CartPopup />
           <div className="relative">
             <FaUserCircle onClick={handleUserIconClick} className="text-gray-700 w-10 h-10 cursor-pointer hover:text-black transition duration-300 ease-in-out" />
