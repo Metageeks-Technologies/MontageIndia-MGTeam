@@ -374,7 +374,7 @@ export const getProductForCustomer = catchAsyncError(
     const skip = (p - 1) * Number(limit);
 
     let products = await Product.find(queryObject)
-      .sort({ createdAt: -1 })
+      // .sort({ createdAt: -1 })
       .skip(skip)
       .limit(Number(limit));
     const totalData = await Product.countDocuments(queryObject);

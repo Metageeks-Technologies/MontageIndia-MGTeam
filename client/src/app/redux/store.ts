@@ -1,9 +1,11 @@
-import { configureStore } from '@reduxjs/toolkit';
-import userReducer from './feature/user/slice';
+import { configureStore } from "@reduxjs/toolkit";
+import userReducer from "./feature/user/slice";
+import audioSlice from "./feature/media/audio/slice";
 
 export const store = configureStore({
   reducer: {
     user: userReducer,
+    audio: audioSlice,
   },
 });
 
