@@ -3,7 +3,6 @@ import ErrorHandler from "@src/utils/errorHandler";
 import Razorpay from "razorpay";
 import config from "@src/utils/config";
 import Order from "@src/model/product/order";
-import nodeify from "razorpay/dist/utils/nodeify";
 
 /*
 index
@@ -30,6 +29,7 @@ export const createOrder= catchAsyncError(async (req:any, res, next) => {
         amount: req.body.amount,
         currency: req.body.currency || "INR",
         receipt: req.body.receipt || "any unique id for every order",
+        payment_capture: '1'
     };
 
     const response = await razorpay.orders.create(options);
@@ -63,10 +63,11 @@ export const createOrder= catchAsyncError(async (req:any, res, next) => {
     });
 });
 
-export const fetchOrdersByCustomerId = catchAsyncError(async (req, res, next) => {
+export const fetchOrdersByCustomerId = catchAsyncError(async (req:any, res, next) => {
   const { id } = req.params; 
   
-  const orders = await Order.find({ userId:id });
+  const orders = await Order.find({ userId:id })
+    .populate('products.productId', 'title'); 
 
   if (!orders ) {
     return res.status(404).json({ message: 'No orders found for this user.' });
@@ -85,7 +86,7 @@ export const getOrders = catchAsyncError(async (req: any, res, next) => {
     });
 });
  
-export const getOrder = catchAsyncError(async (req: any, res, next) => {
+export const getOrderById = catchAsyncError(async (req: any, res, next) => {
  
      const { id:orderId } = req.params;
  

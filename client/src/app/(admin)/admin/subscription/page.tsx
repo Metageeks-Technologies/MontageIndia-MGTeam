@@ -116,8 +116,6 @@ const SubscriptionPage = () => {
           notifySuccess("Plan updated successfully");
         }
     }
-  };
-
   return (
     <>
       <div className="container mx-auto px-4 py-8 max-w-7xl">
@@ -231,17 +229,6 @@ const SubscriptionPage = () => {
                         </div>
                       </div>
                     </div>
-                    {/* <div className="w-full">
-                      <Autocomplete
-                        label="Period"
-                        variant="bordered"
-                        defaultItems={periods}
-                        selectedKey={selectedPlan?.period}
-                        onSelectionChange={(periodValue) => setSelectedPlan({ ...selectedPlan, period: periodValue })}
-                      >
-                      {(item) => <AutocompleteItem key={item.value}>{item.label}</AutocompleteItem>}
-                      </Autocomplete>
-                  </div> */}
                     <Input
                       type="text"
                       variant="bordered"

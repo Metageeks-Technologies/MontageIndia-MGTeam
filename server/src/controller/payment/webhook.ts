@@ -6,7 +6,103 @@ import config from "@src/utils/config";
 import { validateWebhookSignature } from "razorpay/dist/utils/razorpay-utils";
 import Transaction from "@src/model/transaction/transaction";
 import SubscriptionHistory from "@src/model/subscriptions/subscriptionHistory";
+import { sendEmail } from "@src/utils/nodemailer/mailer/mailer";
 import mongoose from "mongoose";
+
+const sendNotification = async (payload: any) => {
+  console.log("for email",payload);
+  const {email,order_id,amount,currency,created_at} =payload.payment.entity;
+  const date = new Date(created_at * 1000); 
+  const formatedDate = date.toISOString().slice(0, 19).replace('T', ' ');
+
+  const mailOptions = {
+        from: config.emailUser as string,
+        to: email as string,
+        subject: 'Payment Confirmation' as string,
+        html: `
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <style>
+          body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333333;
+            margin: 0;
+            padding: 0;
+          }
+          .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+          }
+          h1 {
+            color: #4CAF50;
+          }
+          p {
+            font-size: 16px;
+            line-height: 1.6;
+          }
+          .order-details {
+            background-color: #f9f9f9;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+          }
+          .order-details h2 {
+            margin: 0 0 10px;
+          }
+          .order-details p {
+            margin: 5px 0;
+          }
+          .footer {
+            text-align: center;
+            margin-top: 30px;
+            font-size: 14px;
+            color: #777777;
+          }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <h1>Payment Confirmation</h1>
+          <p>Dear ${email},</p>
+          <p>Thank you for your order! We are pleased to confirm that your payment has been successfully processed. Your order details are as follows:</p>
+          
+          <div class="order-details">
+            <h2>Order Details</h2>
+            <p><strong>Order Number:</strong> ${order_id}</p>
+            <p><strong>Order Date:</strong> ${formatedDate}</p>
+            <p><strong>Total Amount:</strong> ${amount/100 } ${currency}</p>
+          </div>
+          
+          <p>Thank you for shopping with us!</p>
+          
+          <p>Best regards,<br>Montage India</p>
+          
+          <div class="footer">
+            <p>&copy; ${new Date().getFullYear()} Montage India. All rights reserved.</p>
+            <p>India</p>
+          </div>
+        </div>
+      </body>
+      </html>
+    ` as string
+    };
+
+    sendEmail(mailOptions)
+    .then(() => {
+        console.log('Email sent successfully');
+    })
+    .catch((error) => {
+        console.error('Failed to send email:', error);
+    });
+};
 
 const subscriptionCharged= async(payload:any)=>{
   try {
@@ -39,6 +135,7 @@ const subscriptionCharged= async(payload:any)=>{
     console.log(error);
   }
 }
+
 const subscriptionHandler= async(payload:any)=>{
   try {
     console.log("subscription handler",payload);
@@ -105,7 +202,12 @@ const orderPaid= async(payload:any)=>{
             }
     }
 
+    user.cart=[];
+
     await user.save();
+
+
+    await sendNotification(payload);
     
   } catch (error) {
     console.log(error);

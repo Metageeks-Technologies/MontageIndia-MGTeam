@@ -7,10 +7,8 @@ interface Subscription {
   userId: string;
   planId: string;
   startDate: string;
-  endDate: string | null;
+  endDate: string ;
   status: string;
-  createdAt: string;
-  updatedAt: string;
 }
 
 const Page = () => {
@@ -46,8 +44,8 @@ const Page = () => {
               </tr>
             </thead>
             <tbody>
-              {subscription.map((sub) => (
-                <tr key={sub._id} className="bg-white border-b hover:bg-gray-50">
+              {subscription.map((sub, index) => (
+                <tr key={index} className="bg-white border-b hover:bg-gray-50">
                   <td className="px-6 py-4">{sub.userId}</td>
                   <td className="px-6 py-4">{sub.planId}</td>
                   <td className="px-6 py-4">{new Date(sub.startDate).toLocaleDateString()}</td>

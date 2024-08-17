@@ -5,7 +5,7 @@ export interface ProductItem {
   variantId: string;
 }
 interface IOrder extends Document {
-  userId: string;
+  userId: mongoose.Schema.Types.ObjectId;
   razorpayOrderId?: string;
   products: ProductItem[];
   currency: string;
@@ -15,7 +15,7 @@ interface IOrder extends Document {
 }
 
 const OrderSchema: Schema = new Schema({
-  userId: { type: String, required: true },
+  userId: { type: mongoose.Schema.Types.ObjectId, required: true },
   razorpayOrderId: { type: String },
   products: [{
     productId: { 
