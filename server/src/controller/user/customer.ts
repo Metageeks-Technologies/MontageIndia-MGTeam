@@ -102,6 +102,7 @@ export const getCurrentCustomer = catchAsyncError(
   async (req: any, res, next) => {
     const { id } = req.user;
     const user = await Customer.findOne({ _id: id });
+    console.log(user);
     res.status(200).json({
       success: true,
       user,
@@ -290,12 +291,10 @@ export const resetPassword = catchAsyncError(async (req, res, next) => {
 
   await customerToUpdate.save();
 
-  res
-    .status(200)
-    .json({
-      message:
-        "Password has been reset suscessfully.now you can close this tab or window",
-    });
+  res.status(200).json({
+    message:
+      "Password has been reset suscessfully.now you can close this tab or window",
+  });
 });
 
 export const addProductToCart = catchAsyncError(async (req: any, res, next) => {
@@ -330,7 +329,7 @@ export const removeProductFromCart = catchAsyncError(
   async (req: any, res, next) => {
     const { productId } = req.body;
     const { id } = req.user;
-
+    console.log("first", productId, variantId);
     if (!id) {
       console.log("User does not exist");
       return next(new ErrorHandler("User does not exist", 404));
@@ -349,18 +348,17 @@ export const removeProductFromCart = catchAsyncError(
       return next(new ErrorHandler("Product not found in the cart", 404));
     }
 
-    // Remove the product from the cart
+    // Remove the product and variant from the cart
     customer.cart.splice(productIndex, 1);
     await customer.save();
+    console.log("Updated customer cart:", customer.cart);
 
     // Optionally, fetch the removed product details
     const removedProduct = await Product.findById(productId);
 
-    res
-      .status(200)
-      .json({
-        message: "Product removed from cart successfully",
-        removedProduct,
-      });
+    res.status(200).json({
+      message: "Product removed from cart successfully",
+      removedProduct,
+    });
   }
 );

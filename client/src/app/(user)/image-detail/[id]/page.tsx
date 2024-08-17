@@ -34,15 +34,16 @@ export interface ImageDetail {
 const Home = () => {
   const [imageDetail, setImageDetail] = useState<ImageDetail | null>(null);
   const [loading, setLoading] = useState(false);
+  const [selectedVariantId, setSelectedVariantId] = useState('');
+
   const params = useParams();
   const dispatch = useAppDispatch();
-
-  const id = params.id as string | undefined;
+  const cartProduct = useAppSelector((state) => state.user.cartData);
+  const existId = cartProduct.filter((item) => item.product._id === imageDetail?._id);
+   const id = params.id as string | undefined;
 
   const handleAddToCart = (id: string) => {
-    addCartItem(dispatch, id);
-    console.log("Add to cart");
-    notifySuccess("Added to cart");
+    addCartItem(dispatch, id,selectedVariantId);
   }
   const fetchImageDetail = async (id: string) => {
     setLoading(true);
@@ -53,7 +54,7 @@ const Home = () => {
         setImageDetail(response.data.product);
         setLoading(false);
       }
-      console.log(response.data.product);
+      console.log(response.data.product)
     } catch (error) {
       console.error("Error fetching product:", error);
     } finally {
@@ -61,11 +62,16 @@ const Home = () => {
     }
   };
 
+  const handleVariantChange = (variantId:string) => {
+    setSelectedVariantId(variantId);
+  };
+
   useEffect(() => {
     if (id) {
       fetchImageDetail(id);
     }
   }, [id]);
+ 
 
   return (
     <div className="main">
@@ -117,20 +123,41 @@ const Home = () => {
               <div className="mt-4">
                 <h3 className="font-bold text-lg">Premium Content by Shutterstock</h3>
                 {imageDetail.variants.map((license, index) => (
-                  <div key={index} className="border p-4 mt-2 w-96">
+                  <div   key={index} className="border p-4 mt-2 w-96">
                     <div className="flex justify-between">
-                      <div>
+                      <div>   
+                      {existId && existId.length > 0 ? (
                         <input
                           type="radio"
-                          name="license"
+                          name={`license-${index}`}
+                          onChange={() => handleVariantChange(license._id)}
+                          checked={
+                            selectedVariantId === license._id ||
+                            (!selectedVariantId && existId.some(item => item.variantId.includes(license._id)))
+                          }
                           id={`license-${index}`}
                           className="mr-2"
                         />
+                      ) : (
+                        <input
+                          type="radio"
+                          name={`license-${index}`}
+                          onChange={() => handleVariantChange(license._id)}
+                          checked={
+                            selectedVariantId === license._id ||
+                            (index === 0 && !selectedVariantId)
+                          }
+                          id={`license-${index}`}
+                          className="mr-2"
+                        />
+                      )}
+          
+                        
                         <label htmlFor={`license-${index}`} className="font-bold">
                           {license.label}
                         </label>
                       </div>
-                      <span className="block text-gray-600">${license.price}</span>
+                      <label htmlFor={`license-${index}`} className="block text-gray-600">${license.price}</label>
                     </div>
                     <span className="block text-gray-600">{license.size}</span>
                   </div>

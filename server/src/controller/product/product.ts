@@ -244,7 +244,7 @@ export const addPriceToVariant = catchAsyncError(
 export const getProductsByIds = catchAsyncError(async (req: any, res, next) => {
   try {
     const id = req.user;
-    const user = await Customer.findById(id).populate("cart");
+    const user = await Customer.findById(id).populate("cart.product");
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
@@ -363,7 +363,6 @@ export const getProductForCustomer = catchAsyncError(
       if (!customer) {
         return next(new ErrorHandler(`customer not found`, 404));
       }
-
       wishlist = customer.wishlist;
       cart = customer.cart;
       purchasedProducts = customer.purchasedProducts;
@@ -379,12 +378,13 @@ export const getProductForCustomer = catchAsyncError(
       .limit(Number(limit));
     const totalData = await Product.countDocuments(queryObject);
     const numOfPages = Math.ceil(totalData / limit);
-
     let result = products.map((product) => {
       if (req.user) {
         isWhitelisted = wishlist.includes(product._id);
-        isInCart = cart.includes(product._id);
-        isPurchased = purchasedProducts.some((p: any) =>
+        isInCart = cart?.some((p: any) =>
+          p.product.equals(product._id)
+        );
+        isPurchased = purchasedProducts?.some((p: any) =>
           p.productId.equals(product._id)
         );
       }
@@ -397,6 +397,7 @@ export const getProductForCustomer = catchAsyncError(
         isPurchased,
       };
     });
+    console.log("ggf",result)
 
     res.status(200).json({
       success: true,
