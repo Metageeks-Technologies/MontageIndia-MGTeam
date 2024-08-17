@@ -2,6 +2,14 @@ import { TCustomerProduct } from "@/types/product";
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
+type CartItem = {
+  product: TCustomerProduct;
+  variantId: string;
+};
+type Payload = {
+  productId: string;
+  variantId: string;
+};
 type InitialState = {
   audioData: TCustomerProduct[];
   loading: boolean;
@@ -9,6 +17,7 @@ type InitialState = {
   page: number;
   totalNumOfPage: number;
   totalAudioData: number;
+  cart: CartItem[];
 };
 
 type AudioPayload = {
@@ -24,6 +33,7 @@ const initialState: InitialState = {
   page: 1,
   totalNumOfPage: 1,
   totalAudioData: 0,
+  cart: [],
 };
 
 export const audioSlice = createSlice({
@@ -53,10 +63,41 @@ export const audioSlice = createSlice({
       state.loading = false;
       state.error = " ";
     },
+    addToCart: (state, action: PayloadAction<Payload>) => {
+      const productId = action.payload.productId;
+      state.audioData = state.audioData.map((product) =>
+        product._id === productId ? { ...product, isInCart: true } : product
+      );
+      const product = state.audioData.find(
+        (product) => product._id === productId
+      );
+      if (product) {
+        state.cart.push({ product, variantId: action.payload.variantId });
+      }
+      state.loading = false;
+      state.error = " ";
+    },
+    removeFromCart: (state, action: PayloadAction<string>) => {
+      const productId = action.payload;
+      state.cart = state.cart.filter(
+        (product) => product.product._id !== productId
+      );
+      state.audioData = state.audioData.map((product) =>
+        product._id === productId ? { ...product, isInCart: false } : product
+      );
+      state.loading = false;
+      state.error = " ";
+    },
   },
 });
 
-export const { requestStart, requestFail, setAudioData, addToWishlist } =
-  audioSlice.actions;
+export const {
+  requestStart,
+  requestFail,
+  setAudioData,
+  addToWishlist,
+  addToCart,
+  removeFromCart,
+} = audioSlice.actions;
 
 export default audioSlice.reducer;

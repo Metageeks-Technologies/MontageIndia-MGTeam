@@ -4,6 +4,9 @@ import {
   addToWishlist,
   removeFromWishlist,
   getWishlist,
+  getCart,
+  addToCart,
+  removeFromCart,
 } from "@src/controller/product/product";
 import {
   getAllCustomer,
@@ -38,11 +41,18 @@ userRouter
   .patch(isAuthenticatedCustomer, changePassword);
 userRouter.route("/forgetPassword").post(forgetPassword);
 userRouter.route("/resetPassword").post(resetPassword);
-userRouter.route("/:id").get(isAuthenticatedCustomer, getCustomerById);
 
 userRouter
   .route("/wishlist")
   .get(isAuthenticatedCustomer, getWishlist)
   .patch(isAuthenticatedCustomer, addToWishlist)
   .delete(isAuthenticatedCustomer, removeFromWishlist);
+
+userRouter
+  .route("/cart")
+  .get(isAuthenticatedCustomer, getCart)
+  .patch(isAuthenticatedCustomer, addToCart)
+  .delete(isAuthenticatedCustomer, removeFromCart);
+
+userRouter.route("/:id").get(isAuthenticatedCustomer, getCustomerById);
 export default userRouter;

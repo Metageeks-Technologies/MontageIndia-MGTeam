@@ -4,6 +4,8 @@ import {
   requestFail,
   setAudioData,
   addToWishlist,
+  addToCart,
+  removeFromCart,
 } from "./slice";
 import type { AppDispatch } from "@/app/redux/store";
 import type { AxiosError } from "axios";
@@ -33,12 +35,14 @@ export const getAudio = async (dispatch: AppDispatch) => {
 
 export const addAudioToWishlist = async (
   dispatch: AppDispatch,
-  productId: string
+  productId: string,
+  variantId: string
 ) => {
   dispatch(requestStart());
   try {
     const { data } = await instance.patch(`/user/wishlist`, {
       productId,
+      variantId,
     });
     dispatch(addToWishlist(productId));
   } catch (error: any) {
@@ -65,11 +69,32 @@ export const removeAudioFromWishlist = async (
 
 export const addAudioToCart = async (
   dispatch: AppDispatch,
+  productId: string,
+  variantId: string
+) => {
+  dispatch(requestStart());
+  try {
+    const { data } = await instance.patch(`/user/cart`, {
+      productId,
+      variantId,
+    });
+    dispatch(addToCart({ productId, variantId }));
+  } catch (error: any) {
+    const e = error as AxiosError;
+    dispatch(requestFail(e.message));
+  }
+};
+
+export const removeAudioFromCart = async (
+  dispatch: AppDispatch,
   productId: string
 ) => {
   dispatch(requestStart());
   try {
-    const { data } = await instance.post(`/product/addToCart`, { productId });
+    const { data } = await instance.delete(`/user/cart`, {
+      data: { productId },
+    });
+    dispatch(removeFromCart(productId));
   } catch (error: any) {
     const e = error as AxiosError;
     dispatch(requestFail(e.message));

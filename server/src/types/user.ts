@@ -1,6 +1,11 @@
 import mongoose, { Document } from "mongoose";
 import type { ProductItem } from "@src/model/product/order";
 
+export interface purchasedProductItem {
+  productId: mongoose.Schema.Types.ObjectId;
+  variantId: string[];
+}
+
 export type TAdmin = Document & {
   name: string;
   username: string;
@@ -22,9 +27,9 @@ export type TCustomer = Document & {
   name: string; // Customer's full name
   password: string;
   isDeleted: boolean;
-  purchasedProducts: ProductItem[];
-  cart: mongoose.Types.ObjectId[]; // References to products in the cart
-  wishlist: mongoose.Types.ObjectId[]; // References to products in the wishlist
+  purchasedProducts: purchasedProductItem[];
+  cart: ProductItem[]; // References to products in the cart
+  wishlist: ProductItem[]; // References to products in the wishlist
   subscription: {
     subscriptionId: string;
     PlanId: string;

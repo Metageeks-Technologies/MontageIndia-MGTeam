@@ -6,15 +6,15 @@ import React, { useEffect, useState } from "react";
 import { IoIosSearch } from "react-icons/io";
 import Waveform from "@/components/Home/AudioWaveForm";
 import { useAppDispatch, useAppSelector } from "@/app/redux/hooks";
-import { getAudio } from "@/app/redux/feature/media/audio/api";
+import { getAudio } from "@/app/redux/feature/product/api";
 
 const Page = () => {
   const dispatch = useAppDispatch();
   useEffect(() => {
     getAudio(dispatch);
   }, []);
-  const { audioData } = useAppSelector((state) => state.audio);
-  const [currentPlayingId, setCurrentPlayingId] = useState<string | null>(null);
+  const { audioData } = useAppSelector((state) => state.product);
+
   return (
     <div className="main">
       <div className="relative h-[600px] w-full overflow-hidden">

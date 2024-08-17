@@ -4,7 +4,9 @@ import type { TCustomerProduct } from "@/types/product";
 import {
   addAudioToWishlist,
   removeAudioFromWishlist,
-} from "@/app/redux/feature/media/audio/api";
+  addAudioToCart,
+  removeAudioFromCart,
+} from "@/app/redux/feature/product/api";
 import { useAppDispatch } from "@/app/redux/hooks";
 
 let currentPlayingWaveform: WaveSurfer | null = null;
@@ -95,7 +97,15 @@ const Waveform = ({ product }: { product: TCustomerProduct }) => {
     if (product.isWhitelisted) {
       removeAudioFromWishlist(dispatch, product._id);
     } else {
-      addAudioToWishlist(dispatch, product._id);
+      addAudioToWishlist(dispatch, product._id, product.variants[0]._id);
+    }
+  };
+
+  const handleAddToCart = () => {
+    if (product.isInCart) {
+      removeAudioFromCart(dispatch, product._id);
+    } else {
+      addAudioToCart(dispatch, product._id, product.variants[0]._id);
     }
   };
 
@@ -122,7 +132,7 @@ const Waveform = ({ product }: { product: TCustomerProduct }) => {
               />
             </svg>
           </button>
-          <button>
+          <button onClick={handleAddToCart}>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill={product.isInCart ? "currentColor" : "none"}

@@ -281,7 +281,7 @@ export const buyWithCredits = catchAsyncError(async (req: any, res, next) => {
     return next(new ErrorHandler("Insufficient credits", 400));
   }
   user.subscription.credits = userCredits - productCredit;
-  user.purchasedProducts.push({ productId, variantId: variantIndex });
+  user.purchasedProducts.push({ productId, variantId: [variantIndex] });
   console.log("updated user", user);
   await user.save();
   res.send({ success: true, user, message: "purchased successfully" });
@@ -408,20 +408,36 @@ export const getProductForCustomer = catchAsyncError(
 );
 
 export const addToWishlist = catchAsyncError(async (req: any, res, next) => {
-  const { productId } = req.body;
+  const { productId, variantId } = req.body;
   const customerId = req.user._id;
 
-  console.log("customerId", customerId, productId);
+  // Check if variantId is provided
+  if (!variantId) {
+    return next(new ErrorHandler(`variantId is required`, 400));
+  }
 
   const customer = await Customer.findById(customerId);
   if (!customer) {
-    return next(new ErrorHandler(`customer not found`, 404));
+    return next(new ErrorHandler(`Customer not found`, 404));
   }
-  if (customer.wishlist.includes(productId)) {
-    return next(new ErrorHandler(`product already in wishlist`, 400));
+
+  // Check if the product is already in the wishlist
+  const productInWishlist = customer.wishlist.find(
+    (item) => item.productId.toString() === productId.toString()
+  );
+
+  if (productInWishlist) {
+    return next(new ErrorHandler(`Product already in wishlist`, 400));
   }
-  customer.wishlist.push(productId);
-  await customer.save();
+
+  // Add the product to the wishlist
+
+  const newWishlistItem = { productId, variantId };
+  await Customer.findOneAndUpdate(
+    { _id: customer._id },
+    { $push: { wishlist: newWishlistItem } },
+    { new: true }
+  );
 
   res.status(200).json({
     success: true,
@@ -439,13 +455,21 @@ export const removeFromWishlist = catchAsyncError(
     if (!customer) {
       return next(new ErrorHandler(`customer not found`, 404));
     }
-    if (!customer.wishlist.includes(productId)) {
-      return next(new ErrorHandler(`product not in wishlist`, 400));
-    }
-    customer.wishlist = customer.wishlist.filter(
-      (id) => id.toString() !== productId.toString()
+
+    const productIndex = customer.wishlist.findIndex(
+      (item) => item.productId.toString() === productId.toString()
     );
-    await customer.save();
+
+    if (productIndex === -1) {
+      return next(new ErrorHandler(`Product not in wishlist`, 400));
+    }
+
+    // Remove the product from the wishlist
+    await Customer.findOneAndUpdate(
+      { _id: customer._id },
+      { $pull: { wishlist: { productId } } },
+      { new: true }
+    );
 
     res.status(200).json({
       success: true,
@@ -457,15 +481,93 @@ export const removeFromWishlist = catchAsyncError(
 export const getWishlist = catchAsyncError(async (req: any, res, next) => {
   const customerId = req.user._id;
 
+  const customer = await Customer.findById(customerId).populate(
+    "wishlist.productId"
+  );
+  if (!customer) {
+    return next(new ErrorHandler(`customer not found`, 404));
+  }
+
+  res.status(200).json({
+    success: true,
+    products: customer.wishlist,
+  });
+});
+
+export const addToCart = catchAsyncError(async (req: any, res, next) => {
+  const { productId, variantId } = req.body;
+  const customerId = req.user._id;
+
+  if (!variantId) {
+    return next(new ErrorHandler(`variantId is required`, 400));
+  }
+
+  const customer = await Customer.findById(customerId);
+  if (!customer) {
+    return next(new ErrorHandler(`customer not found`, 404));
+  }
+  const productInCart = customer.cart.find(
+    (item) => item.productId.toString() === productId.toString()
+  );
+
+  if (productInCart) {
+    return next(new ErrorHandler(`Product already in cart`, 400));
+  }
+
+  const newCartItem = { productId, variantId };
+  await Customer.findOneAndUpdate(
+    { _id: customer._id },
+    { $push: { cart: newCartItem } },
+    { new: true }
+  );
+
+  res.status(200).json({
+    success: true,
+    message: "Product added to cart",
+  });
+});
+
+export const removeFromCart = catchAsyncError(async (req: any, res, next) => {
+  const { productId } = req.body;
+  const customerId = req.user._id;
+
   const customer = await Customer.findById(customerId);
   if (!customer) {
     return next(new ErrorHandler(`customer not found`, 404));
   }
 
-  const products = await Product.find({ _id: { $in: customer.wishlist } });
+  const productIndex = customer.cart.findIndex(
+    (item) => item.productId.toString() === productId.toString()
+  );
+
+  if (productIndex === -1) {
+    return next(new ErrorHandler(`Product not in cart`, 400));
+  }
+
+  await Customer.findOneAndUpdate(
+    { _id: customer._id },
+    { $pull: { cart: { productId } } },
+    { new: true }
+  );
 
   res.status(200).json({
     success: true,
-    products,
+    message: "Product removed from cart",
+  });
+});
+
+export const getCart = catchAsyncError(async (req: any, res, next) => {
+  const customerId = req.user._id;
+
+  const customer = await Customer.findById(customerId).populate(
+    "cart.productId"
+  );
+  if (!customer) {
+    return next(new ErrorHandler(`customer not found`, 404));
+  }
+
+  res.status(200).json({
+    success: true,
+    products: customer.cart,
   });
 });
