@@ -20,10 +20,7 @@ export type TAdmin = Document & {
   createJWT(): string;
   comparePassword(givenPassword: string): Promise<boolean>;
 };
-interface IProductItem {
-  product: mongoose.Types.ObjectId;
-  variantId: string[];
-}
+
 export type TCustomer = Document & {
   username: string;
   email: string;

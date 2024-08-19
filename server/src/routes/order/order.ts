@@ -1,11 +1,12 @@
 import express from 'express';
-import { createOrder, fetchOrdersByCustomerId, getOrders, getOrder } from '@src/controller/orders/order';
+import { createOrder, fetchOrdersByCustomerId, getOrders, getOrderById } from '@src/controller/orders/order';
+import { isAuthenticatedCustomer } from '@src/middleware/auth';
 
 const orderRouter = express.Router();
 
-
-orderRouter.route('/').get(getOrders).post(createOrder);
-orderRouter.get('/:id', getOrder);
-orderRouter.get('/customer/:id', fetchOrdersByCustomerId);
+orderRouter.route('/').post(isAuthenticatedCustomer,createOrder);
+orderRouter.route('/').get(isAuthenticatedCustomer,getOrders)
+orderRouter.route('/:id').get(isAuthenticatedCustomer,getOrderById);
+orderRouter.route('/customer/:id').get(isAuthenticatedCustomer,fetchOrdersByCustomerId);
 
 export default orderRouter;

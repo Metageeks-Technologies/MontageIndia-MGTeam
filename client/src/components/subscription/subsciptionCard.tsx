@@ -2,7 +2,7 @@ import React,{useState,useEffect} from 'react';
 import { loadScript } from '../../utils/loadScript';
 import instance from '@/utils/axios';
 import {ScrollShadow} from '@nextui-org/react'
-
+import { useRouter } from 'next/navigation';
 interface SubscriptionPlan {
     planId: string;
     entity: string;
@@ -39,13 +39,9 @@ interface Props {
 const SubscriptionCard: React.FC<Props> = ({ plan }) => {
     const [loading, setLoading] = useState(false);
     const [loaded, setLoaded] = useState(false);
-  
+    const router = useRouter();
     const handlePaymentSuccess= async(res:any) => {
-      const response:any= await instance.post('/subscription/verify',res);
-      if(response.data.status){
-        console.log("payment success");
-        alert("payment success");
-      }
+      router.push('/user-profile')
     }
   const handlePayment = (options: any) => {
     console.log("payment called",options);
@@ -80,15 +76,15 @@ const SubscriptionCard: React.FC<Props> = ({ plan }) => {
       }
       console.log("subsciptionOption",subsciptionOption);
     const response: any = await instance.post(
-  '/subscription/createSubscription',
-  subsciptionOption, // This is the request body
-  {
-    headers: {
-      'ngrok-skip-browser-warning': true,
-    },
-    withCredentials: true,
-  }
-);
+      '/subscription/create',
+      subsciptionOption, // This is the request body
+      {
+        headers: {
+          'ngrok-skip-browser-warning': true,
+        },
+        withCredentials: true,
+      }
+    );
 
      console.log("subscription response",response);
 
@@ -96,10 +92,10 @@ const SubscriptionCard: React.FC<Props> = ({ plan }) => {
       key: process.env.NEXT_PUBLIC_RAZORPAY_KEY as string,
       name: 'MontageIndia',
       description: 'Pay & Checkout this product',
-      image: 'https://logowik.com/content/uploads/images/mumbai-indians-mi-emblem1608.logowik.com.webp',
-      subscription_id: response.data.response.id,
+      image: 'https://cdn.dribbble.com/users/111709/screenshots/3969111/media/8b3190c331faa522644c6b6a5432ccf1.jpg',
+      subscription_id: response.data.subcriptionId,
       handler: (res: any) => {
-        res.subscriptionCreationId = response.data.response.id;
+        res.subscriptionCreationId = response.data.subcriptionId;
         handlePaymentSuccess(res);
       },
       theme: {

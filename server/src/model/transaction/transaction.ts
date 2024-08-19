@@ -2,6 +2,7 @@ import mongoose, { Document, Schema } from 'mongoose';
 
 interface ITransaction extends Document
 {
+    userId: mongoose.Types.ObjectId;
     name: string;   
     email: string;
     phone: string;
@@ -15,6 +16,7 @@ interface ITransaction extends Document
 
 const transactionSchema:Schema = new Schema(
 {
+    userId:{type: Schema.Types.ObjectId,ref:'Customer'},
     email: {
         type: String,
         required: true
@@ -25,7 +27,7 @@ const transactionSchema:Schema = new Schema(
     },
     rp_order_id: {
         type: String,
-        required: true
+        // required: true
     },
     rp_payment_id: {
         type: String,

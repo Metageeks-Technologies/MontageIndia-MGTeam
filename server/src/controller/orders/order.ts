@@ -1,7 +1,6 @@
 import catchAsyncError from "@src/middleware/catchAsyncError";
 import ErrorHandler from "@src/utils/errorHandler";
 import Razorpay from "razorpay";
-import crypto from "crypto";
 import config from "@src/utils/config";
 import Order from "@src/model/product/order";
 
@@ -24,12 +23,13 @@ const razorpayInstance=()=>{
 export const createOrder= catchAsyncError(async (req:any, res, next) => {
 
     const razorpay = razorpayInstance();
-    console.log("step1:",req.body)
+    console.log("step1:",req.body);
+
     const options = {
         amount: req.body.amount,
-        currency: req.body.currency,
+        currency: req.body.currency || "INR",
         receipt: req.body.receipt || "any unique id for every order",
-        notes:req.body.notes,
+        payment_capture: '1'
     };
 
     const response = await razorpay.orders.create(options);
@@ -38,12 +38,15 @@ export const createOrder= catchAsyncError(async (req:any, res, next) => {
     if(!response){
         return next(new ErrorHandler("Error occured while creating Order", 404));
     }
+    const amountString = req.body.amount.toString(); 
+    const trimmedAmount = parseInt(amountString.slice(0, -2)); 
+    const totalAmount = trimmedAmount; 
 
     const newOrder = await Order.create({
         userId: req.user._id,
         razorpayOrderId: response.id,
         products: req.body.notes.products,
-        totalAmount: req.body.amount,
+        totalAmount: totalAmount,
         currency: req.body.currency,
         status: "pending",
         method: "razorpay",
@@ -53,43 +56,18 @@ export const createOrder= catchAsyncError(async (req:any, res, next) => {
 
     res.send({
         success: true,
-        rp_order_id: response.id,
+        order_id: response.id,
         mi_order_id: order._id,
         currency: response.currency,
         amount: response.amount,
     });
 });
 
-export const paymentCapture= catchAsyncError(async (req:any, res, next) => {
-    
-    const {mi_order_id,rp_order_id,razorpay_payment_id,razorpay_signature}=req.body;
-
-    if(!mi_order_id || !rp_order_id || !razorpay_payment_id || !razorpay_signature) return res.send({status: 'false', message: 'Invalid request'});
-    const HMAC = crypto.createHmac('sha256', config.razorpaySecret as string);
-
-    HMAC.update(rp_order_id + "|" + razorpay_payment_id);
-    const generated_signature = HMAC.digest('hex');
-    
-
-    if (generated_signature !== razorpay_signature) {
-         res.send({status: 'false', message: 'Bad request'});
-    }
-    //We can send the response and store information in a database.
-    // const order = await Order.findOneAndUpdate(
-    //     { _id: mi_order_id },
-    //     { status: 'paid' }
-    // )    
-    res.json({
-        status: 'ok',
-        message: 'Payment successful',
-    })
-   
-});
-
-export const fetchOrdersByCustomerId = catchAsyncError(async (req, res, next) => {
+export const fetchOrdersByCustomerId = catchAsyncError(async (req:any, res, next) => {
   const { id } = req.params; 
   
-  const orders = await Order.find({ userId:id });
+  const orders = await Order.find({ userId:id })
+    .populate('products.productId', 'title'); 
 
   if (!orders ) {
     return res.status(404).json({ message: 'No orders found for this user.' });
@@ -108,7 +86,7 @@ export const getOrders = catchAsyncError(async (req: any, res, next) => {
     });
 });
  
-export const getOrder = catchAsyncError(async (req: any, res, next) => {
+export const getOrderById = catchAsyncError(async (req: any, res, next) => {
  
      const { id:orderId } = req.params;
  
