@@ -11,6 +11,7 @@ import {
   buyWithCredits,
   getPurchasedProducts,
   getProductForCustomer,
+  getSingleProductForCustomer,
 } from "../../controller/product/product";
 import {
   isAuthorizedCustomer,
@@ -57,6 +58,10 @@ productRouter
 productRouter
   .route("/customer")
   .get(isAuthorizedCustomer, getProductForCustomer);
+productRouter
+  .route("/customer/:id")
+  .get(isAuthorizedCustomer, getSingleProductForCustomer);
+
 productRouter
   .route("/:id")
   .patch(isAuthenticatedAdmin, updateProduct)

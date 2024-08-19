@@ -16,6 +16,7 @@ const Sidebar = () => {
 
   const [isUserOpen, setIsUserOpen] = useState(false);
   const user = useAppSelector((state: any) => state.user?.user?._id);
+  const cart = useAppSelector((state) => state.product.cart);
 
   const handleLogout = async () => {
     try {
@@ -49,7 +50,7 @@ const Sidebar = () => {
           <ul className="flex items-center space-x-4 cursor-pointer">
             <li
               className="text-gray-700 hover:text-black transition duration-300 ease-in-out"
-              onClick={() => router.push("/")}
+              onClick={() => router.push("/image")}
             >
               Images
             </li>
@@ -140,7 +141,7 @@ const Sidebar = () => {
           <ul className="mt-4 space-y-3">
             <li
               className="block text-gray-700 hover:text-black py-2 transition-colors duration-300 ease-in-out"
-              onClick={() => router.push("/")}
+              onClick={() => router.push("/image")}
             >
               Images
             </li>

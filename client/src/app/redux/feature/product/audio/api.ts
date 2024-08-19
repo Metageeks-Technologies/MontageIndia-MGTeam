@@ -3,22 +3,28 @@ import instance from "@/utils/axios";
 import { notifyError } from "@/utils/toast";
 import type { AxiosError } from "axios";
 import {
+  addToCart,
+  addToWishlist,
+  removeFromCart,
   requestFail,
   requestStart,
-  setSingleProduct,
-  clearSingleProduct,
-  addSingleProductToCart,
-  addSingleProductToWishlist,
-  removeSingleProductFromCart,
-  setCart,
-  removeCartProduct,
-} from "./slice";
+  setAudioData,
+} from "../slice";
 
-export const getSingleProduct = async (dispatch: AppDispatch, uuid: string) => {
+export const getAudio = async (dispatch: AppDispatch) => {
   dispatch(requestStart());
   try {
-    const { data } = await instance(`/product/customer/${uuid}`);
-    dispatch(setSingleProduct(data.product));
+    const { data } = await instance.get(`product/customer`, {
+      params: { mediaType: ["audio"] },
+    });
+    console.log(data);
+    dispatch(
+      setAudioData({
+        data: data.products,
+        totalNumOfPage: data.numOfPages,
+        totalData: data.totalData,
+      })
+    );
   } catch (error) {
     const e = error as AxiosError;
     notifyError(e.message);
@@ -27,7 +33,7 @@ export const getSingleProduct = async (dispatch: AppDispatch, uuid: string) => {
   }
 };
 
-export const addProductToWishlist = async (
+export const addAudioToWishlist = async (
   dispatch: AppDispatch,
   productId: string,
   variantId: string
@@ -38,14 +44,14 @@ export const addProductToWishlist = async (
       productId,
       variantId,
     });
-    dispatch(addSingleProductToWishlist());
+    dispatch(addToWishlist(productId));
   } catch (error: any) {
     const e = error as AxiosError;
     dispatch(requestFail(e.message));
   }
 };
 
-export const removeProductFromWishlist = async (
+export const removeAudioFromWishlist = async (
   dispatch: AppDispatch,
   productId: string
 ) => {
@@ -54,14 +60,14 @@ export const removeProductFromWishlist = async (
     const { data } = await instance.delete(`/user/wishlist`, {
       data: { productId },
     });
-    dispatch(addSingleProductToWishlist());
+    dispatch(addToWishlist(productId));
   } catch (error: any) {
     const e = error as AxiosError;
     dispatch(requestFail(e.message));
   }
 };
 
-export const addProductToCart = async (
+export const addAudioToCart = async (
   dispatch: AppDispatch,
   productId: string,
   variantId: string
@@ -72,14 +78,14 @@ export const addProductToCart = async (
       productId,
       variantId,
     });
-    dispatch(addSingleProductToCart({ productId, variantId }));
+    dispatch(addToCart({ productId, variantId }));
   } catch (error: any) {
     const e = error as AxiosError;
     dispatch(requestFail(e.message));
   }
 };
 
-export const removeProductFromCart = async (
+export const removeAudioFromCart = async (
   dispatch: AppDispatch,
   productId: string
 ) => {
@@ -88,39 +94,7 @@ export const removeProductFromCart = async (
     const { data } = await instance.delete(`/user/cart`, {
       data: { productId },
     });
-    dispatch(removeSingleProductFromCart());
-  } catch (error: any) {
-    const e = error as AxiosError;
-    dispatch(requestFail(e.message));
-  }
-};
-
-export const clearSingleProductData = (dispatch: AppDispatch) => {
-  dispatch(clearSingleProduct());
-};
-
-export const getCartData = async (dispatch: AppDispatch) => {
-  dispatch(requestStart());
-  try {
-    const { data } = await instance.get(`/user/cart`);
-    console.log(data, "data");
-    dispatch(setCart(data.products));
-  } catch (error: any) {
-    const e = error as AxiosError;
-    dispatch(requestFail(e.message));
-  }
-};
-
-export const removeItemFromCart = async (
-  dispatch: AppDispatch,
-  productId: string
-) => {
-  dispatch(requestStart());
-  try {
-    const { data } = await instance.delete(`/user/cart`, {
-      data: { productId },
-    });
-    dispatch(removeCartProduct(productId));
+    dispatch(removeFromCart(productId));
   } catch (error: any) {
     const e = error as AxiosError;
     dispatch(requestFail(e.message));

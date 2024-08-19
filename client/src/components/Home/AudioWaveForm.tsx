@@ -6,7 +6,7 @@ import {
   removeAudioFromWishlist,
   addAudioToCart,
   removeAudioFromCart,
-} from "@/app/redux/feature/product/api";
+} from "@/app/redux/feature/product/audio/api";
 import { useAppDispatch } from "@/app/redux/hooks";
 
 let currentPlayingWaveform: WaveSurfer | null = null;

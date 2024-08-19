@@ -314,7 +314,7 @@ export const getPurchasedProducts = catchAsyncError(
 export const getProductForCustomer = catchAsyncError(
   async (req: any, res, next) => {
     const {
-      productsPerPage = "3",
+      productsPerPage = "2",
       page = "1",
       status = "published",
       category = [],
@@ -380,12 +380,14 @@ export const getProductForCustomer = catchAsyncError(
     const numOfPages = Math.ceil(totalData / limit);
     let result = products.map((product) => {
       if (req.user) {
-        isWhitelisted = wishlist.includes(product._id);
-        isInCart = cart?.some((p: any) =>
-          p.product.equals(product._id)
+        isWhitelisted = wishlist?.some(
+          (p: any) => p.productId.toString() === product._id.toString()
         );
-        isPurchased = purchasedProducts?.some((p: any) =>
-          p.productId.equals(product._id)
+        isInCart = cart?.some(
+          (p: any) => p.productId.toString() === product._id.toString()
+        );
+        isPurchased = purchasedProducts?.some(
+          (p: any) => p.productId.toString() === product._id.toString()
         );
       }
 
@@ -397,7 +399,6 @@ export const getProductForCustomer = catchAsyncError(
         isPurchased,
       };
     });
-    console.log("ggf",result)
 
     res.status(200).json({
       success: true,
@@ -408,8 +409,68 @@ export const getProductForCustomer = catchAsyncError(
   }
 );
 
+export const getSingleProductForCustomer = catchAsyncError(
+  async (req: any, res, next) => {
+    const { id: uuid } = req.params;
+
+    if (!uuid) {
+      return next(new ErrorHandler(`Product ID is required`, 400));
+    }
+
+    const product = await Product.findOne({ uuid });
+
+    if (!product) {
+      return next(new ErrorHandler(`Product not found`, 404));
+    }
+
+    let isWhitelisted = false;
+    let isInCart = false;
+    let isPurchased = false;
+    let wishlist: any = [];
+    let cart: any = [];
+    let purchasedProducts: any = [];
+
+    if (req.user) {
+      const customerId = req.user._id;
+      const customer = await Customer.findById(customerId);
+      if (!customer) {
+        return next(new ErrorHandler(`Customer not found`, 404));
+      }
+      wishlist = customer.wishlist;
+      cart = customer.cart;
+      purchasedProducts = customer.purchasedProducts;
+
+      isWhitelisted = wishlist?.some(
+        (p: any) => p.productId.toString() === product._id.toString()
+      );
+      isInCart = cart?.some(
+        (p: any) => p.productId.toString() === product._id.toString()
+      );
+      isPurchased = purchasedProducts?.some(
+        (p: any) => p.productId.toString() === product._id.toString()
+      );
+    }
+
+    const productObject = product.toObject();
+    const result = {
+      ...productObject,
+      isWhitelisted,
+      isInCart,
+      isPurchased,
+    };
+
+    res.status(200).json({
+      success: true,
+      product: result,
+    });
+  }
+);
+
 export const addToWishlist = catchAsyncError(async (req: any, res, next) => {
   const { productId, variantId } = req.body;
+
+  console.log("productId", productId);
+  console.log("variantId", variantId);
   const customerId = req.user._id;
 
   // Check if variantId is provided

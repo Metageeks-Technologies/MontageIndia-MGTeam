@@ -6,7 +6,7 @@ import React, { useEffect, useState } from "react";
 import { IoIosSearch } from "react-icons/io";
 import Waveform from "@/components/Home/AudioWaveForm";
 import { useAppDispatch, useAppSelector } from "@/app/redux/hooks";
-import { getAudio } from "@/app/redux/feature/product/api";
+import { getAudio } from "@/app/redux/feature/product/audio/api";
 
 const Page = () => {
   const dispatch = useAppDispatch();
