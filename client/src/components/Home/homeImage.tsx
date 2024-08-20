@@ -13,6 +13,7 @@ import {
   removeAudioFromWishlist,
 } from "@/app/redux/feature/product/image/api";
 import { downloadProduct } from "@/app/redux/feature/product/api";
+import { BiSolidPurchaseTagAlt } from "react-icons/bi";
 
 const ImageGallery = ({ data }: { data: TCustomerProduct }) => {
   function truncateText(text: string, wordLimit: number): string {
@@ -78,22 +79,33 @@ const ImageGallery = ({ data }: { data: TCustomerProduct }) => {
           <TfiDownload className="font-semibold" />
           <p
             className="text-small"
-            onClick={() => downloadProduct(dispatch, data.publicKey,data.title)}
+            onClick={() =>
+              downloadProduct(dispatch, data.publicKey, data.title)
+            }
           >
             Try
           </p>
         </div>
       </div>
       <div className="absolute bottom-0 right-0 m-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-        <div
-          title={data.isInCart ? "Remove from cart" : "Add to cart"}
-          className={` p-2 ${
-            data.isInCart ? "bg-red-500 text-white" : "bg-white text-black"
-          } rounded-full`}
-          onClick={handleCart}
-        >
-          {data.isInCart ? <BsCartCheckFill /> : <BsCart2 />}
-        </div>
+        {!data.isPurchased ? (
+          <div
+            title={data.isInCart ? "Remove from cart" : "Add to cart"}
+            className={` p-2 ${
+              data.isInCart ? "bg-red-500 text-white" : "bg-white text-black"
+            } rounded-full`}
+            onClick={handleCart}
+          >
+            {data.isInCart ? <BsCartCheckFill /> : <BsCart2 />}
+          </div>
+        ) : (
+          <div
+            title={"Purchased Product"}
+            className={` p-2 bg-red-500 text-white rounded-full`}
+          >
+            <BiSolidPurchaseTagAlt />
+          </div>
+        )}
       </div>
     </div>
   );
