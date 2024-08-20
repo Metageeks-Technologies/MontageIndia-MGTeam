@@ -4,6 +4,7 @@ import Product from "@src/model/product/product";
 import Activity from "@src/model/activity/activity";
 import type { TAdmin, TCustomer } from "@src/types/user";
 import Customer from "@src/model/user/customer.js";
+import { getObject } from "@src/lib/uploadToS3";
 
 export const createProduct = catchAsyncError(async (req: any, res, next) => {
   req.body.createdBy = req.user._id;
@@ -633,3 +634,16 @@ export const getCart = catchAsyncError(async (req: any, res, next) => {
     products: customer.cart,
   });
 });
+
+export const getProductFromAws = catchAsyncError(
+  async (req: any, res, next) => {
+    const { key } = req.query;
+
+    const url = await getObject(key);
+
+    res.status(200).json({
+      success: true,
+      url,
+    });
+  }
+);

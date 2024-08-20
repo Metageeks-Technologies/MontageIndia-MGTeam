@@ -12,6 +12,7 @@ import {
   getPurchasedProducts,
   getProductForCustomer,
   getSingleProductForCustomer,
+  getProductFromAws,
 } from "../../controller/product/product";
 import {
   isAuthorizedCustomer,
@@ -58,6 +59,9 @@ productRouter
 productRouter
   .route("/customer")
   .get(isAuthorizedCustomer, getProductForCustomer);
+
+productRouter.route("/download").get(isAuthorizedCustomer, getProductFromAws);
+
 productRouter
   .route("/customer/:id")
   .get(isAuthorizedCustomer, getSingleProductForCustomer);

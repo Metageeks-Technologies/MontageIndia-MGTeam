@@ -13,6 +13,7 @@ import {
   setCart,
   removeCartProduct,
 } from "./slice";
+import axios from "axios";
 
 export const getSingleProduct = async (dispatch: AppDispatch, uuid: string) => {
   dispatch(requestStart());
@@ -121,6 +122,22 @@ export const removeItemFromCart = async (
       data: { productId },
     });
     dispatch(removeCartProduct(productId));
+  } catch (error: any) {
+    const e = error as AxiosError;
+    dispatch(requestFail(e.message));
+  }
+};
+
+export const downloadProduct = async (dispatch: AppDispatch, key: string) => {
+  dispatch(requestStart());
+  try {
+    const { data } = await instance.get(`/product/download`, {
+      params: { key },
+    });
+    const url = data.url;
+    await axios.get(url, {
+      responseType: "blob",
+    });
   } catch (error: any) {
     const e = error as AxiosError;
     dispatch(requestFail(e.message));
