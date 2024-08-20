@@ -108,14 +108,17 @@ const SubscriptionPage = () => {
     onOpen();
   };
 
-    const updatePlan = async () => {
-        const response=await instance.patch(`/subscription/plan/${selectedPlan.id}`,selectedPlan);
-        if(response.data.success){
-          onClose();
-          fetchPlans();
-          notifySuccess("Plan updated successfully");
-        }
+  const updatePlan = async () => {
+    const response = await instance.patch(
+      `/subscription/plan/${selectedPlan.id}`,
+      selectedPlan
+    );
+    if (response.data.success) {
+      onClose();
+      fetchPlans();
+      notifySuccess("Plan updated successfully");
     }
+  };
   return (
     <>
       <div className="container mx-auto px-4 py-8 max-w-7xl">
@@ -202,8 +205,19 @@ const SubscriptionPage = () => {
                       }
                     />
                     <div className="w-full">
-                    <div className="relative mt-2 rounded-md shadow-sm">
-                        <Input type="text" variant="bordered" label="Price"  value={(selectedPlan?.amount/100).toString() } onChange={(e) => setSelectedPlan({ ...selectedPlan, amount: Number(e.target.value)*100 })} />
+                      <div className="relative mt-2 rounded-md shadow-sm">
+                        <Input
+                          type="text"
+                          variant="bordered"
+                          label="Price"
+                          value={(selectedPlan?.amount / 100).toString()}
+                          onChange={(e) =>
+                            setSelectedPlan({
+                              ...selectedPlan,
+                              amount: Number(e.target.value) * 100,
+                            })
+                          }
+                        />
                         <div className="absolute inset-y-0 right-0 flex items-center">
                           <select
                             id="currency"

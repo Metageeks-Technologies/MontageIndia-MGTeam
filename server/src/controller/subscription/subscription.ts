@@ -185,19 +185,26 @@ export const createSubscription = catchAsyncError(
       { new: true } // Return the updated document
     );
 
-       res.send({ success:true,message: "Subscription created successfully",subcriptionId:response.id });
-});
+    res.send({
+      success: true,
+      message: "Subscription created successfully",
+      subcriptionId: response.id,
+    });
+  }
+);
 
-export const getSubscriptionHistory = catchAsyncError(async (req, res, next) => {
-    const { currentPage = 1, dataPerPage = 10, searchTerm } = req.body;
-    const queryObject:any = {};
+export const getSubscriptionHistory = catchAsyncError(
+  async (req, res, next) => {
+    const { searchTerm, currentPage = 1, dataPerPage = 10 } = req.query;
+
+    const queryObject: any = {};
 
     if (searchTerm) {
-        queryObject.$or = [
-            { 'userId.name': { $regex: searchTerm, $options: 'i' } },
-            { 'userId.username': { $regex: searchTerm, $options: 'i' } },
-            { 'userId.email': { $regex: searchTerm, $options: 'i' } },
-        ];
+      queryObject.$or = [
+        { "userId.name": { $regex: searchTerm, $options: "i" } },
+        { "userId.username": { $regex: searchTerm, $options: "i" } },
+        { "userId.email": { $regex: searchTerm, $options: "i" } },
+      ];
     }
 
     const limit = parseInt(dataPerPage as string, 10) || 10;
@@ -207,39 +214,42 @@ export const getSubscriptionHistory = catchAsyncError(async (req, res, next) => 
     const totalPages = Math.ceil(totalCount / limit);
 
     const subscriptionHistory = await SubscriptionHistory.find(queryObject)
-        .sort({ createdAt: -1 })
-        .populate('userId', 'name username email')
-        .skip(skip)
-        .limit(limit);
+      .sort({ createdAt: -1 })
+      .populate("userId", "name username email")
+      .skip(skip)
+      .limit(limit);
 
     res.status(200).json({
-        success: true,
-        subscriptionHistory,
-        totalCount,
-        totalPages,
-        currentPage: parseInt(currentPage as string),
-        message: "Subscription history fetched successfully",
+      success: true,
+      subscriptionHistory,
+      totalCount,
+      totalPages,
+      currentPage: parseInt(currentPage as string),
+      message: "Subscription history fetched successfully",
     });
-});
+  }
+);
 
-export const verifyPayment=catchAsyncError(async (req, res, next) => {
-        
-        console.log("step1",req.body);
-        
-        const {razorpay_payment_id,razorpay_signature,subscriptionCreationId}=req.body;
-        
-        const generated_signature=crypto.createHmac('sha256', config.razorpaySecret).update( subscriptionCreationId+ "|" + razorpay_payment_id).digest('hex');
+export const verifyPayment = catchAsyncError(async (req, res, next) => {
+  console.log("step1", req.body);
 
-        // // comaparing our digest with the actual signature
-        if (generated_signature == razorpay_signature) {
-            console.log("Transaction legit!");
-        }
-        else{
-            console.log("Transaction NOT legit!");
-        }
+  const { razorpay_payment_id, razorpay_signature, subscriptionCreationId } =
+    req.body;
 
-        // THE PAYMENT IS LEGIT & VERIFIED
-        // YOU CAN SAVE THE DETAILS IN YOUR DATABASE IF YOU WANT
+  const generated_signature = crypto
+    .createHmac("sha256", config.razorpaySecret)
+    .update(subscriptionCreationId + "|" + razorpay_payment_id)
+    .digest("hex");
 
-       res.send({ status:true, response: "Transaction legit!" });
+  // // comaparing our digest with the actual signature
+  if (generated_signature == razorpay_signature) {
+    console.log("Transaction legit!");
+  } else {
+    console.log("Transaction NOT legit!");
+  }
+
+  // THE PAYMENT IS LEGIT & VERIFIED
+  // YOU CAN SAVE THE DETAILS IN YOUR DATABASE IF YOU WANT
+
+  res.send({ status: true, response: "Transaction legit!" });
 });

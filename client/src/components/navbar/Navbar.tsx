@@ -1,133 +1,167 @@
 "use client";
-import React, { useEffect } from 'react';
-import { LiaHomeSolid } from "react-icons/lia";
-import { MdHelpOutline, MdOutlineGeneratingTokens } from 'react-icons/md';
-import { GrCatalogOption } from "react-icons/gr";
-import { RiPencilRuler2Line } from 'react-icons/ri';
+import React, { useState } from "react";
+import { AiOutlineHeart, AiOutlineMenu, AiOutlineClose } from "react-icons/ai";
+import { IoMdArrowDropdown } from "react-icons/io";
+import { useRouter } from "next/navigation";
+import CartPopup from "../cart/cartPage";
+import { FaUserCircle } from "react-icons/fa";
+import instance from "@/utils/axios";
+import { notifySuccess } from "@/utils/toast";
+import { BiLogInCircle, BiLogOutCircle } from "react-icons/bi";
+import { useAppSelector } from "@/app/redux/hooks";
 
-import { useState } from 'react';
-import { AiOutlineHeart, AiOutlineShoppingCart, AiOutlineUser, AiOutlineMenu, AiOutlineClose } from 'react-icons/ai';
-import { MdLanguage } from 'react-icons/md';
-import { IoMdArrowDropdown } from 'react-icons/io';
-import { useRouter } from 'next/navigation';
-import CartPopup from '../cart/cartPage';
-import { useAppDispatch, useAppSelector } from '@/app/redux/hooks';
-import { getCartData, getCurrCustomer } from '@/app/redux/feature/user/api';
-// import CartPopup from './cart/cartPage';
-// import CartPopup from './cart/cartPage';
-
-
-const Sidebar = () =>
-{
+const Sidebar = () => {
   const router = useRouter();
-  const dispatch=useAppDispatch()
-  const user = useAppSelector((state:any) => state.user?.user?._id);
-  useEffect( () =>
-    {
-      getCurrCustomer(dispatch)
-      if(user){
-      getCartData(dispatch)
-      }
-    }, [user] );
+  const [menuOpen, setMenuOpen] = useState(false);
 
-  const [ menuOpen, setMenuOpen ] = useState( false );
+  const [isUserOpen, setIsUserOpen] = useState(false);
+  const user = useAppSelector((state: any) => state.user?.user?._id);
+  const cart = useAppSelector((state) => state.product.cart);
 
+  const handleLogout = async () => {
+    try {
+      const response = await instance.get("/user/logout");
+      notifySuccess(response.data.message);
+      router.push("/auth/user/login");
+    } catch (error) {
+      console.error("Error in logout:", error);
+    }
+  };
+
+  const handleUserIconClick = () => {
+    setIsUserOpen(!isUserOpen);
+  };
+
+  const handleProfileClick = () => {
+    setIsUserOpen(false);
+    router.push("/user-profile");
+  };
 
   return (
-    // <div className="fixed top-0 left-0 h-full z-30 w-20 border flex flex-col items-center bg-gray-100 text-gray-700 shadow-md">
-    //   <div className="my-4">
-    //     <div className="flex flex-col items-center space-y-8">
-    //       <div className="flex flex-col items-center">
-    //         <LiaHomeSolid className="h-8 w-8" />
-    //         <p className="text-xs mt-2">Home</p>
-    //       </div>
-    //       <div className="flex flex-col items-center">
-    //         <MdOutlineGeneratingTokens className="h-8 w-8" />
-    //         <p className="text-xs mt-2">Generate</p>
-    //       </div>
-    //       <div className="flex flex-col items-center">
-    //         <GrCatalogOption className="h-8 w-8" />
-    //         <p className="text-xs mt-2">Catalog</p>
-    //       </div>
-    //       <div className="flex flex-col items-center">
-    //         <RiPencilRuler2Line className="h-8 w-8" />
-    //         <p className="text-xs mt-2">Create</p>
-    //       </div>
-    //     </div>
-    //   </div>
-    //   <div className="mt-auto mb-4">
-    //     <div className="flex flex-col items-center">
-    //       <MdHelpOutline className="h-8 w-8" />
-    //       <p className="text-xs mt-2">Help</p>
-    //     </div>
-    //   </div>
-    // </div>
-
     <div className="flex items-center justify-between bg-white px-6 py-4 shadow-md">
-      <div className=" flex items-center gap-5">
-        <img src={ '/images/logo.png' } alt="logo"
-          className='w-44 h-10 cursor-pointer'
-          onClick={ () => router.push( '/' ) }
+      <div className="flex items-center gap-5">
+        <img
+          src="/images/logo.png"
+          alt="logo"
+          className="w-44 h-10 cursor-pointer"
+          onClick={() => router.push("/")}
         />
-        <div className="hidden lg:flex items-center space-x-4 ">
-
+        <div className="hidden lg:flex items-center space-x-4">
           <ul className="flex items-center space-x-4 cursor-pointer">
-            <li className="text-gray-700 hover:text-black" onClick={ () => router.push( '/' ) }>Images</li>
-            <li className="text-gray-700 hover:text-black" onClick={ () => router.push( '/video' ) }>Video</li>
-            <li className="text-gray-700 hover:text-black" onClick={ () => router.push( '/audio' ) }>Audio</li>
-            <li className="text-gray-700 hover:text-black">AI Generator</li>
-            <li className="text-gray-700 hover:text-black">Enterprise</li>
+            <li
+              className="text-gray-700 hover:text-black transition duration-300 ease-in-out"
+              onClick={() => router.push("/image")}
+            >
+              Images
+            </li>
+            <li
+              className="text-gray-700 hover:text-black transition duration-300 ease-in-out"
+              onClick={() => router.push("/video")}
+            >
+              Video
+            </li>
+            <li
+              className="text-gray-700 hover:text-black transition duration-300 ease-in-out"
+              onClick={() => router.push("/audio")}
+            >
+              Audio
+            </li>
           </ul>
         </div>
       </div>
 
-      <div className='lg:block md:hidden hidden'>
-        <div className="flex  items-center space-x-4">
+      <div className="lg:block md:hidden hidden">
+        <div className="flex items-center space-x-6">
           <div className="flex items-center text-gray-700">
             <span>0 Credits Available</span>
             <IoMdArrowDropdown className="ml-1" />
           </div>
-          <a href="#" className="text-gray-700 hover:text-black">Pricing</a>
-          <MdLanguage className="text-gray-700 w-6 h-6" />
-          <AiOutlineHeart className="text-gray-700 w-6 h-6" />
-          {/* <AiOutlineShoppingCart className="text-gray-700 w-6 h-6" /> */ }
-          {/* this is cart */ }
+          <AiOutlineHeart
+            onClick={() => router.push("/wishlist")}
+            className="text-gray-700 cursor-pointer w-7 h-7 transition-transform duration-200 ease-in-out hover:scale-110"
+          />
           <CartPopup />
-          <AiOutlineUser onClick={ () => router.push( '/user-profile' ) } className="text-gray-700 w-6 h-6 cursor-pointer" />
+          <div className="relative">
+            <FaUserCircle
+              onClick={handleUserIconClick}
+              className="text-gray-700 w-10 h-10 cursor-pointer hover:text-black transition duration-300 ease-in-out"
+            />
+            {isUserOpen && (
+              <div className="absolute right-0 z-30 mt-2 w-48 bg-white shadow-lg rounded-lg py-2 transition-all duration-200 ease-in-out transform origin-top-right">
+                {user ? (
+                  <>
+                    <a
+                      onClick={handleLogout}
+                      className="flex items-center text-gray-800 hover:bg-gray-100 px-3 py-2 cursor-pointer transition-colors duration-200"
+                    >
+                      <BiLogOutCircle className="w-6 h-6 mr-3" />
+                      Logout
+                    </a>
+
+                    <a
+                      onClick={handleProfileClick}
+                      className="flex items-center text-gray-800 hover:bg-gray-100 px-3 py-2 cursor-pointer transition-colors duration-200"
+                    >
+                      <FaUserCircle className="w-6 h-6 mr-3" />
+                      User Profile
+                    </a>
+                  </>
+                ) : (
+                  <a
+                    onClick={() => router.push("/auth/user/login")}
+                    className="flex items-center text-gray-800 hover:bg-gray-100 cursor-pointer px-3 py-2 transition-colors duration-200"
+                  >
+                    <BiLogInCircle className="w-6 h-6 mr-3" />
+                    Log In
+                  </a>
+                )}
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
       <div className="flex lg:hidden items-center space-x-4">
-        <AiOutlineHeart className="text-gray-700 w-6 h-6" />
-        {/* here also cart */ }
+        <AiOutlineHeart className="text-gray-700 w-6 h-6 hover:text-black transition-transform duration-200 ease-in-out hover:scale-110" />
         <CartPopup />
-        <AiOutlineUser className="text-gray-700 w-6 h-6" />
-        <AiOutlineMenu className="text-gray-700 w-6 h-6 cursor-pointer" onClick={ () => setMenuOpen( true ) } />
+        <AiOutlineMenu
+          className="text-gray-700 w-6 h-6 cursor-pointer hover:text-black transition-transform duration-200 ease-in-out hover:scale-110"
+          onClick={() => setMenuOpen(true)}
+        />
       </div>
 
-      { menuOpen && (
+      {menuOpen && (
         <div className="fixed inset-0 bg-white z-50 flex flex-col p-4">
           <div className="flex justify-between items-center">
-
-            <AiOutlineClose className="text-gray-700 w-6 h-6 cursor-pointer" onClick={ () => setMenuOpen( false ) } />
+            <AiOutlineClose
+              className="text-gray-700 w-6 h-6 cursor-pointer hover:text-black transition-transform duration-200 ease-in-out hover:scale-110"
+              onClick={() => setMenuOpen(false)}
+            />
           </div>
-          <ul className="mt-4 space-y-3 ">
-            <li className="block text-gray-700 hover:text-black py-2" onClick={ () => router.push( '/' ) }>Images</li>
-            <li className="block text-gray-700 hover:text-black py-2" onClick={ () => router.push( '/video' ) }>Video</li>
-            <li className="block text-gray-700 hover:text-black py-2" onClick={ () => router.push( '/audio' ) }>Music</li>
-            <li className="block text-gray-700 hover:text-black py-2">Templates</li>
-            <li className="block text-gray-700 hover:text-black py-2">Blog</li>
-            <li className="block text-gray-700 hover:text-black py-2">Enterprise</li>
-            <li className="block text-gray-700 hover:text-black py-2">Pricing</li>
+          <ul className="mt-4 space-y-3">
+            <li
+              className="block text-gray-700 hover:text-black py-2 transition-colors duration-300 ease-in-out"
+              onClick={() => router.push("/image")}
+            >
+              Images
+            </li>
+            <li
+              className="block text-gray-700 hover:text-black py-2 transition-colors duration-300 ease-in-out"
+              onClick={() => router.push("/video")}
+            >
+              Video
+            </li>
+            <li
+              className="block text-gray-700 hover:text-black py-2 transition-colors duration-300 ease-in-out"
+              onClick={() => router.push("/audio")}
+            >
+              Music
+            </li>
           </ul>
         </div>
-      ) }
+      )}
     </div>
-
   );
 };
 
-export default Sidebar ;
-
-
-
+export default Sidebar;

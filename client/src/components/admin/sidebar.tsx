@@ -160,6 +160,18 @@ const Sidebar = () => {
                   </Link>
                   {isProductOpen && (
                     <ul className="py-2 space-y-2">
+                       <li>
+                        <Link
+                          href="/admin/product/create"
+                          className={`flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 ${
+                            isActiveLink("/admin/product/create")
+                              ? "bg-white"
+                              : ""
+                          }`}
+                        >
+                          Create
+                        </Link>
+                      </li>
                       <li>
                         <Link href="/admin/product/available" className={ `flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 cursor-pointer ${ isActiveLink( '/admin/product/available' ) ? 'bg-white' : '' }` }>Published</Link>
 
@@ -182,18 +194,7 @@ const Sidebar = () => {
                       <li>
                         {/* <Link href="/admin/product/unavailable" className={ `flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 cursor-pointer ${ isActiveLink( '/admin/product/unavailable' ) ? 'bg-white' : '' }` }>Unavailable</Link> */}
                       </li>
-                      <li>
-                        <Link
-                          href="/admin/product/create"
-                          className={`flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 ${
-                            isActiveLink("/admin/product/create")
-                              ? "bg-white"
-                              : ""
-                          }`}
-                        >
-                          Create
-                        </Link>
-                      </li>
+                     
                     </ul>
                   )}
                 </li>

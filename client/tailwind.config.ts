@@ -18,29 +18,29 @@ const config: Config = {
       },
       colors: {
         webgreen: {
-          light: '#BEF264',
-          DEFAULT: '#BEF264',
-          dark: '#BEF264',
+          light: "#BEF264",
+          DEFAULT: "#BEF264",
+          dark: "#BEF264",
         },
-        webgreenHover:{
-          light:'#a8f521',
-          DEFAULT:'#a8f521',
-          dark:'#a8f521'
+        webgreenHover: {
+          light: "#a8f521",
+          DEFAULT: "#a8f521",
+          dark: "#a8f521",
         },
         var1: {
-          light: '#f31260d6',
-          DEFAULT: '#f31260',
-          dark: '#f70459',
+          light: "#f31260d6",
+          DEFAULT: "#f31260",
+          dark: "#f70459",
         },
         var2: {
-          light: '#BEF264',
-          DEFAULT: '#BEF264',
-          dark: '#BEF264',
+          light: "#BEF264",
+          DEFAULT: "#BEF264",
+          dark: "#BEF264",
         },
         pageBg: {
-          light: '#f5f5f5',
-          DEFAULT: '#f5f5f5',
-          dark: '#f5f5f5',
+          light: "#f5f5f5",
+          DEFAULT: "#f5f5f5",
+          dark: "#f5f5f5",
         },
       },
     },
