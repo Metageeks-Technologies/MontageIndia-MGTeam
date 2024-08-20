@@ -128,16 +128,35 @@ export const removeItemFromCart = async (
   }
 };
 
-export const downloadProduct = async (dispatch: AppDispatch, key: string) => {
+export const downloadProduct = async (
+  dispatch: AppDispatch,
+  key: string,
+  title: string
+) => {
   dispatch(requestStart());
   try {
     const { data } = await instance.get(`/product/download`, {
       params: { key },
     });
+
     const url = data.url;
-    await axios.get(url, {
+
+    const res = await axios.get(url, {
       responseType: "blob",
     });
+
+    const downloadUrl = window.URL.createObjectURL(res.data);
+    const link = document.createElement("a");
+    link.href = downloadUrl;
+
+    link.setAttribute("download", title);
+
+    document.body.appendChild(link);
+
+    link.click();
+
+    link.remove();
+    setTimeout(() => window.URL.revokeObjectURL(downloadUrl), 100);
   } catch (error: any) {
     const e = error as AxiosError;
     dispatch(requestFail(e.message));

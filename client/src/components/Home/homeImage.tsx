@@ -12,6 +12,7 @@ import {
   removeAudioFromCart,
   removeAudioFromWishlist,
 } from "@/app/redux/feature/product/image/api";
+import { downloadProduct } from "@/app/redux/feature/product/api";
 
 const ImageGallery = ({ data }: { data: TCustomerProduct }) => {
   function truncateText(text: string, wordLimit: number): string {
@@ -75,7 +76,12 @@ const ImageGallery = ({ data }: { data: TCustomerProduct }) => {
       <div className="absolute bottom-0 left-0 m-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
         <div className="text-white bg-black bg-opacity-50 px-2 py-2 flex items-center gap-1 rounded-3xl">
           <TfiDownload className="font-semibold" />
-          <p className="text-small">Try</p>
+          <p
+            className="text-small"
+            onClick={() => downloadProduct(dispatch, data.publicKey,data.title)}
+          >
+            Try
+          </p>
         </div>
       </div>
       <div className="absolute bottom-0 right-0 m-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">

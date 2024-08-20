@@ -54,7 +54,7 @@ const getUrl = async (name: string) => {
   });
 
   const signedUrl = await getSignedUrl(s3Client, command, { expiresIn: 3600 });
-  console.log(signedUrl);
+  // console.log(signedUrl);
   return signedUrl;
 };
 
@@ -64,7 +64,7 @@ const getObject = async (key: string) => {
     Key: key,
   });
   const signedUrl = await getSignedUrl(s3Client, command, { expiresIn: 3600 });
-  console.log(signedUrl);
+  // console.log(signedUrl);
   return signedUrl;
 };
 

@@ -1,6 +1,6 @@
 import catchAsyncError from "@src/middleware/catchAsyncError.js";
 import customer from "@src/model/user/customer";
-import order from '@src/model/product/order';
+import order from "@src/model/product/order";
 import crypto from "crypto";
 import config from "@src/utils/config";
 import { validateWebhookSignature } from "razorpay/dist/utils/razorpay-utils";
@@ -10,16 +10,17 @@ import { sendEmail } from "@src/utils/nodemailer/mailer/mailer";
 import mongoose from "mongoose";
 
 const sendNotification = async (payload: any) => {
-  console.log("for email",payload);
-  const {email,order_id,amount,currency,created_at} =payload.payment.entity;
-  const date = new Date(created_at * 1000); 
-  const formatedDate = date.toISOString().slice(0, 19).replace('T', ' ');
+  console.log("for email", payload);
+  const { email, order_id, amount, currency, created_at } =
+    payload.payment.entity;
+  const date = new Date(created_at * 1000);
+  const formatedDate = date.toISOString().slice(0, 19).replace("T", " ");
 
   const mailOptions = {
-        from: config.emailUser as string,
-        to: email as string,
-        subject: 'Payment Confirmation' as string,
-        html: `
+    from: config.emailUser as string,
+    to: email as string,
+    subject: "Payment Confirmation" as string,
+    html: `
       <!DOCTYPE html>
       <html lang="en">
       <head>
@@ -78,7 +79,7 @@ const sendNotification = async (payload: any) => {
             <h2>Order Details</h2>
             <p><strong>Order Number:</strong> ${order_id}</p>
             <p><strong>Order Date:</strong> ${formatedDate}</p>
-            <p><strong>Total Amount:</strong> ${amount/100 } ${currency}</p>
+            <p><strong>Total Amount:</strong> ${amount / 100} ${currency}</p>
           </div>
           
           <p>Thank you for shopping with us!</p>
@@ -92,279 +93,279 @@ const sendNotification = async (payload: any) => {
         </div>
       </body>
       </html>
-    ` as string
-    };
+    ` as string,
+  };
 
-    sendEmail(mailOptions)
+  sendEmail(mailOptions)
     .then(() => {
-        console.log('Email sent successfully');
+      console.log("Email sent successfully");
     })
     .catch((error) => {
-        console.error('Failed to send email:', error);
+      console.error("Failed to send email:", error);
     });
 };
 
-const subscriptionCharged= async(payload:any)=>{
+const subscriptionCharged = async (payload: any) => {
   try {
-    console.log("subscription charged",payload);
-    const {start_at,end_at,status,expire_by,plan_id,id,notes}=payload.subscription.entity;
+    console.log("subscription charged", payload);
+    const { start_at, end_at, status, expire_by, plan_id, id, notes } =
+      payload.subscription.entity;
 
     const user = await customer.findOneAndUpdate(
-      { 'subscription.subscriptionId': id },
+      { "subscription.subscriptionId": id },
       {
-        $set: { 
-          'subscription.status': status,
-          'subscription.PlanId': plan_id 
+        $set: {
+          "subscription.status": status,
+          "subscription.PlanId": plan_id,
         },
-        $inc: { 'subscription.credits': notes.credits}
+        $inc: { "subscription.credits": notes.credits },
       },
       { new: true } // Return the updated document
     );
-    if(!user) return;
-    console.log("user",user);
-    await SubscriptionHistory.create(
-      {
-        userId: user?._id,
-        planId:plan_id,
-        startDate:start_at,
-        endDate:end_at,
-        status: status,
-      });
-  }
-  catch (error) {
-    console.log(error);
-  }
-}
-
-const subscriptionHandler= async(payload:any)=>{
-  try {
-    console.log("subscription handler",payload);
-    const {start_at,end_at,status,expire_by,plan_id,id}=payload.subscription.entity;
-
-    const user=await customer.findOneAndUpdate(
-      { 'subscription.subscriptionId': id },
-      { 'subscription.status': status },
-      { new: true } // Return the updated document
-    );
-    if(!user) return;
-    console.log("user",user);
-    await SubscriptionHistory.create(
-      {
-        userId: user?._id,
-        planId:plan_id,
-        startDate:start_at,
-        endDate:end_at,
-        status: status,
-      });
+    if (!user) return;
+    console.log("user", user);
+    await SubscriptionHistory.create({
+      userId: user?._id,
+      planId: plan_id,
+      startDate: start_at,
+      endDate: end_at,
+      status: status,
+    });
   } catch (error) {
     console.log(error);
   }
-}
+};
 
-const orderPaid= async(payload:any)=>{
+const subscriptionHandler = async (payload: any) => {
   try {
-    console.log("order paid",payload);
-    const orderId=payload.order.entity.id;
+    console.log("subscription handler", payload);
+    const { start_at, end_at, status, expire_by, plan_id, id } =
+      payload.subscription.entity;
 
-    const Order=await order.findOneAndUpdate(
-      { 'razorpayOrderId': orderId },
-      { 'status': 'paid' },
+    const user = await customer.findOneAndUpdate(
+      { "subscription.subscriptionId": id },
+      { "subscription.status": status },
+      { new: true } // Return the updated document
+    );
+    if (!user) return;
+    console.log("user", user);
+    await SubscriptionHistory.create({
+      userId: user?._id,
+      planId: plan_id,
+      startDate: start_at,
+      endDate: end_at,
+      status: status,
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const orderPaid = async (payload: any) => {
+  try {
+    console.log("order paid", payload);
+    const orderId = payload.order.entity.id;
+
+    const Order = await order.findOneAndUpdate(
+      { razorpayOrderId: orderId },
+      { status: "paid" },
       { new: true } // Return the updated document
     );
     console.log(Order);
 
-    if(!Order) return;
+    if (!Order) return;
 
-    const userId=Order?.userId;
-    const products=Order?.products;
+    const userId = Order?.userId;
+    const products = Order?.products;
 
     const user = await customer.findById(userId);
-    if(!user) return;
+    if (!user) return;
 
-    console.log("user",user);
+    console.log("user", user);
 
     for (const product of products) {
       const { productId, variantId } = product;
 
       const productIdString = productId.toString();
-      const existingProductIndex = user.purchasedProducts.findIndex(p => p.productId.toString() === productIdString);
+      const existingProductIndex = user.purchasedProducts.findIndex(
+        (p) => p.productId.toString() === productIdString
+      );
 
       if (existingProductIndex > -1) {
-          if (!user.purchasedProducts[existingProductIndex].variantId.includes(variantId)) {
-              user.purchasedProducts[existingProductIndex].variantId.push(variantId);
-          }
+        if (
+          !user.purchasedProducts[existingProductIndex].variantId.includes(
+            variantId
+          )
+        ) {
+          user.purchasedProducts[existingProductIndex].variantId.push(
+            variantId
+          );
+        }
       } else {
-          const productId=new mongoose.Types.ObjectId(productIdString);
-          user.purchasedProducts.push({
-              productId: productId,
-              variantId: [variantId],
-          });
-            }
+        // const productIdAsObject = new mongoose.Types.ObjectId(productIdString);
+        user.purchasedProducts.push({
+          productId: productId,
+          variantId: [variantId],
+        });
+      }
     }
 
-    user.cart=[];
+    user.cart = [];
 
     await user.save();
-
 
     await sendNotification(payload);
-    
   } catch (error) {
     console.log(error);
   }
-}
+};
 
-const invoicePaid= async(payload:any)=>{
+const invoicePaid = async (payload: any) => {
   try {
-    console.log("invoice paid",payload);
-  }
-  catch(error){
-    
-  }
-}
+    console.log("invoice paid", payload);
+  } catch (error) {}
+};
 
-const paymentAuthorized=async(payload:any)=>{
+const paymentAuthorized = async (payload: any) => {
   try {
-     console.log("payment handler",payload);
-    const {amount,contact,email,id,order_id,method,currency,status}=payload.payment.entity;
+    console.log("payment handler", payload);
+    const { amount, contact, email, id, order_id, method, currency, status } =
+      payload.payment.entity;
 
-    const Order=await order.findOne(
-      { 'razorpayOrderId': order_id },
-    );
-    if(!Order) return;
+    const Order = await order.findOne({ razorpayOrderId: order_id });
+    if (!Order) return;
     console.log(Order);
-    const userId=Order?.userId;
-    
+    const userId = Order?.userId;
+
     const newPayment = {
-      userId:userId?userId:"",
+      userId: userId ? userId : "",
       amount,
       email,
       method,
       currency,
       status,
-      rp_payment_id:id,
-      rp_order_id:order_id?order_id:"",
-      phone:contact,
+      rp_payment_id: id,
+      rp_order_id: order_id ? order_id : "",
+      phone: contact,
     };
-    
+
     await Transaction.create(newPayment);
 
-    const products=Order?.products;
+    const products = Order?.products;
 
     const user = await customer.findById(userId);
-    if(!user) return;
+    if (!user) return;
 
-    console.log("user",user);
+    console.log("user", user);
 
     for (const product of products) {
       const { productId, variantId } = product;
 
       const productIdString = productId.toString();
-      const existingProductIndex = user.purchasedProducts.findIndex(p => p.productId.toString() === productIdString);
+      const existingProductIndex = user.purchasedProducts.findIndex(
+        (p) => p.productId.toString() === productIdString
+      );
 
       if (existingProductIndex > -1) {
-          if (!user.purchasedProducts[existingProductIndex].variantId.includes(variantId)) {
-              user.purchasedProducts[existingProductIndex].variantId.push(variantId);
-          }
+        if (
+          !user.purchasedProducts[existingProductIndex].variantId.includes(
+            variantId
+          )
+        ) {
+          user.purchasedProducts[existingProductIndex].variantId.push(
+            variantId
+          );
+        }
       } else {
-          const productId=new mongoose.Types.ObjectId(productIdString);
-          user.purchasedProducts.push({
-              productId: productId,
-              variantId: [variantId],
-          });
-            }
+        // const productId = new mongoose.Types.ObjectId(productIdString);
+        user.purchasedProducts.push({
+          productId: productId,
+          variantId: [variantId],
+        });
+      }
     }
 
     await user.save();
-
   } catch (error) {
     console.log(error);
   }
-}
-const paymentHandler= async(payload:any)=>{
+};
+const paymentHandler = async (payload: any) => {
   try {
-    console.log("payment handler",payload);
-    const {amount,contact,email,id,order_id,method,currency,status}=payload.payment.entity;
+    console.log("payment handler", payload);
+    const { amount, contact, email, id, order_id, method, currency, status } =
+      payload.payment.entity;
 
-    const Order=await order.findOne(
-      { 'razorpayOrderId': order_id },
-    );
-    if(!Order) return;
+    const Order = await order.findOne({ razorpayOrderId: order_id });
+    if (!Order) return;
     console.log(Order);
-    const userId=Order?.userId;
-    
+    const userId = Order?.userId;
+
     const newPayment = {
-      userId:userId?userId:"",
+      userId: userId ? userId : "",
       amount,
       email,
       method,
       currency,
       status,
-      rp_payment_id:id,
-      rp_order_id:order_id?order_id:"",
-      phone:contact,
+      rp_payment_id: id,
+      rp_order_id: order_id ? order_id : "",
+      phone: contact,
     };
-    
+
     await Transaction.create(newPayment);
-  }
-  catch (error) {
+  } catch (error) {
     console.log(error);
   }
-}
+};
 
-export const paymentWebHook= catchAsyncError(async (req, res, next) => {
-  
-    const secret=config.razorpayWebhookSecret;
+export const paymentWebHook = catchAsyncError(async (req, res, next) => {
+  const secret = config.razorpayWebhookSecret;
 
-    const signature = req.headers['x-razorpay-signature'] as string;
-    const body=JSON.stringify(req.body);
-    
-    const isValid = validateWebhookSignature(body, signature, secret);
-    
-    if (isValid) {
-      const { event, payload } = req.body;
+  const signature = req.headers["x-razorpay-signature"] as string;
+  const body = JSON.stringify(req.body);
 
-      console.log(event, payload);
+  const isValid = validateWebhookSignature(body, signature, secret);
 
-      switch (event) {
-        case "payment.authorized":
-        case "payment.captured":
-        case "payment.failed":
-          {
-            console.log("payment");
-            paymentHandler(payload);
-            break;
-          }
-        case "order.paid":
-         {
-            console.log("order paid");
-            orderPaid(payload);
-            break;
-         }
-         case "invoice.paid":{
-            console.log("invoice paid");
-            invoicePaid(payload);
-            break;
-         }
-         case "subscription.charged":{
-          subscriptionCharged(payload);
-          break;
-         }
-        case "subscription.authenticated":
-        case "subscription.cancelled":
-        case "subscription.completed": 
-        {
-            subscriptionHandler(payload);
-            break;
-        }
-        default:
-          console.log(`Unhandled event: ${event}`);
-          break;
+  if (isValid) {
+    const { event, payload } = req.body;
+
+    console.log(event, payload);
+
+    switch (event) {
+      case "payment.authorized":
+      case "payment.captured":
+      case "payment.failed": {
+        console.log("payment");
+        paymentHandler(payload);
+        break;
       }
-      res.status(200).send("webhook success");
+      case "order.paid": {
+        console.log("order paid");
+        orderPaid(payload);
+        break;
+      }
+      case "invoice.paid": {
+        console.log("invoice paid");
+        invoicePaid(payload);
+        break;
+      }
+      case "subscription.charged": {
+        subscriptionCharged(payload);
+        break;
+      }
+      case "subscription.authenticated":
+      case "subscription.cancelled":
+      case "subscription.completed": {
+        subscriptionHandler(payload);
+        break;
+      }
+      default:
+        console.log(`Unhandled event: ${event}`);
+        break;
     }
-    else{
-      res.status(400).send('Invalid signature');
-    }
+    res.status(200).send("webhook success");
+  } else {
+    res.status(400).send("Invalid signature");
+  }
 });
-

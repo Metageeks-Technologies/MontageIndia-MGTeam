@@ -12,6 +12,7 @@ import PayButton from "@/components/payment/payButton";
 import { MdDeleteForever, MdCurrencyRupee } from "react-icons/md";
 import instance from "@/utils/axios";
 import { notifyError, notifySuccess } from "@/utils/toast";
+import { removeItemFromCart } from "@/app/redux/feature/product/api";
 
 const PlaceOrder = () => {
   const dispatch = useAppDispatch();
@@ -31,7 +32,7 @@ const PlaceOrder = () => {
       console.log(response);
       if (response.data.success) {
         notifySuccess(response.data.message);
-        // handleRemoveCart(id);
+        removeItemFromCart(dispatch, id);
       }
     } catch (error: any) {
       console.error(error);
@@ -42,8 +43,8 @@ const PlaceOrder = () => {
     }
   };
 
-  const handleRemoveCart = (id: string, variantId: string) => {
-    removeCartItem(dispatch, id);
+  const handleRemoveCart = (id: string) => {
+    removeItemFromCart(dispatch, id);
   };
 
   const calculateTotalPrice = () => {
@@ -62,14 +63,14 @@ const PlaceOrder = () => {
     setAmount(calculateTotalPrice());
   }, [cart]);
 
-  useEffect(() => {
-    getCartData(dispatch);
-  }, [dispatch]);
+  // useEffect(() => {
+  //   getCartData(dispatch);
+  // }, [dispatch]);
 
   const createOrderOption = (): OrderOption => {
     const products = cart.map((item) => ({
       productId: item.productId._id,
-      variantId: item.variantId[0], // Assuming the first variant ID is needed
+      variantId: item.variantId, // Assuming the first variant ID is needed
     }));
 
     return {
@@ -173,7 +174,7 @@ const PlaceOrder = () => {
               <span
                 className="text-red-500 cursor-pointer"
                 onClick={() => {
-                  handleRemoveCart(item.productId?._id, item.variantId[0]);
+                  handleRemoveCart(item.productId?._id);
                 }}
               >
                 <MdDeleteForever size={25} />
