@@ -37,11 +37,19 @@ const config: Config = {
           DEFAULT: "#BEF264",
           dark: "#BEF264",
         },
+        webred: {
+          light: "#FFECEC",
+          DEFAULT: "#FE423F",
+          dark: "#FE423F",
+        },
         pageBg: {
           light: "#f5f5f5",
           DEFAULT: "#f5f5f5",
           dark: "#f5f5f5",
         },
+      },
+      boxShadow: {
+        'custom': '0px 4px 4px 0px rgba(0, 0, 0, 0.25)',
       },
     },
   },

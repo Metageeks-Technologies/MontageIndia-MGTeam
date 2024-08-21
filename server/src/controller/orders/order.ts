@@ -65,19 +65,37 @@ export const createOrder = catchAsyncError(async (req: any, res, next) => {
 export const fetchOrdersByCustomerId = catchAsyncError(
   async (req: any, res, next) => {
     const { id } = req.params;
+    const {searchTerm,currentPage,dataPerPage}=req.query;
+    console.log("searchTerm",searchTerm,currentPage,dataPerPage);
 
-    const orders = await Order.find({ userId: id }).populate(
-      "products.productId",
-      "title"
-    );
-
-    if (!orders) {
-      return res
-        .status(404)
-        .json({ message: "No orders found for this user." });
+    const queryObject: any = { userId: id };
+    
+    if (searchTerm) {
+      queryObject["$or"] = [
+        { razorpayOrderId: { $regex: searchTerm, $options: "i" } },
+        { method: { $regex: searchTerm, $options: "i" } },
+      ];
     }
 
-    res.status(200).json({ orders });
+    const skip = (currentPage - 1) * (Number(dataPerPage)-1);
+
+     const orders = await Order.find(queryObject)
+      .populate("products.productId")
+      .sort({ createdAt: -1 })
+      .skip(skip).limit(Number(dataPerPage));
+
+    const totalOrders = await Order.countDocuments(queryObject);
+    const totalPages = Math.ceil(totalOrders / dataPerPage);
+
+    if (!orders || orders.length === 0) {
+      return res.status(404).json({ message: "No orders found for this user." });
+    }
+
+    res.status(200).json({ orders,
+      totalOrders,
+      currentPage: parseInt(currentPage),
+      totalPages,
+      dataPerPage: parseInt(dataPerPage), });
   }
 );
 
