@@ -65,7 +65,7 @@ const Trending = ({ data }: { data: TCustomerProduct }) => {
           <source
             src={`https://mi2-public.s3.ap-southeast-1.amazonaws.com/${data.thumbnailKey}`}
           />
-        </video>
+        </video> 
       </div>
       <div className="absolute m-2 top-0 left-0 flex gap-2 ">
         <GoVideo className="text-white h-6 w-6" />
@@ -86,7 +86,7 @@ const Trending = ({ data }: { data: TCustomerProduct }) => {
         </div>
       </div>
       <div className="absolute bottom-0 left-0 m-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-        <div className="text-white bg-black bg-opacity-50  px-2 py-2 flex items-center gap-1 rounded-3xl">
+        <div className="text-white  bg-opacity-50  px-2 py-2 flex items-center gap-1 rounded-3xl">
           <TfiDownload className="font-semibold" />
           <p className="text-small">Try</p>
         </div>  
