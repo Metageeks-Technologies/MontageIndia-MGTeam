@@ -572,17 +572,30 @@ export const addToCart = catchAsyncError(async (req: any, res, next) => {
   const productInCart = customer.cart.find(
     (item) => item.productId.toString() === productId.toString()
   );
+  const variantInCart = customer.cart.find(
+    (item) => item.variantId.toString() === variantId.toString()
+  );
 
-  if (productInCart) {
-    return next(new ErrorHandler(`Product already in cart`, 400));
+  if (productInCart && variantInCart) {
+    return next(
+      new ErrorHandler(`Product already in cart with given variant`, 400)
+    );
   }
 
   const newCartItem = { productId, variantId };
-  await Customer.findOneAndUpdate(
-    { _id: customer._id },
-    { $push: { cart: newCartItem } },
+  const updatedCustomer = await Customer.findOneAndUpdate(
+    { _id: customer._id, "cart.productId": productId },
+    { $set: { "cart.$.variantId": variantId } },
     { new: true }
   );
+
+  if (!updatedCustomer) {
+    await Customer.findOneAndUpdate(
+      { _id: customer._id },
+      { $push: { cart: newCartItem } },
+      { new: true }
+    );
+  }
 
   res.status(200).json({
     success: true,

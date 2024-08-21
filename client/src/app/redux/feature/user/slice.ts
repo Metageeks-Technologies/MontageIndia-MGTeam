@@ -1,9 +1,10 @@
 import { TCustomerProduct } from "@/types/product";
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
+import { TCustomer } from "@/types/customer";
 
 export interface InitialState {
-  user?: null;
+  user: null | TCustomer;
   loading?: boolean;
   error?: string;
   cartData: TCustomerProduct[];

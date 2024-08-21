@@ -15,6 +15,7 @@ import { useEffect, useState } from "react";
 import { BsCart2, BsCartCheckFill } from "react-icons/bs";
 import { IoMdHeart, IoMdHeartEmpty } from "react-icons/io";
 import { MdOutlineAddAPhoto } from "react-icons/md";
+import { BiSolidPurchaseTagAlt } from "react-icons/bi";
 
 const Home = () => {
   const [selectedVariantId, setSelectedVariantId] = useState("");
@@ -35,15 +36,10 @@ const Home = () => {
     loading,
     cart,
   } = useAppSelector((state) => state.product);
-
-  const existId = cart.filter((item) => item.productId._id === product?._id);
-
-  const handleVariantChange = (variantId: string) => {
-    setSelectedVariantId(variantId);
-  };
+  const { user } = useAppSelector((state) => state.user);
 
   const handleeWishlist = () => {
-    if (!product) return;
+    if (!product || loading) return;
 
     if (product.isWhitelisted) {
       removeProductFromWishlist(dispatch, product._id);
@@ -56,17 +52,23 @@ const Home = () => {
     }
   };
 
-  const handleCart = () => {
-    if (!product) return;
-    if (product.isInCart) {
+  const handleCart = (variant: string) => {
+    if (!product || loading) return;
+    if (product.isInCart && isVariantInCart(variant)) {
       removeProductFromCart(dispatch, product._id);
     } else {
-      addProductToCart(
-        dispatch,
-        product._id,
-        selectedVariantId ? selectedVariantId : product.variants[0]._id
-      );
+      addProductToCart(dispatch, product._id, variant);
     }
+  };
+
+  const isVariantInCart = (variantId: string) => {
+    return cart.some((item) => item.variantId.includes(variantId));
+  };
+
+  const isVariantPurchased = (variantId: string) => {
+    return user?.purchasedProducts.some((item) =>
+      item.variantId.includes(variantId)
+    );
   };
 
   return (
@@ -123,7 +125,7 @@ const Home = () => {
                 {product.variants.map((license, index) => (
                   <div key={index} className="border p-4 mt-2 w-96">
                     <div className="flex justify-between">
-                      <div>
+                      {/* <div>
                         {existId && existId.length > 0 ? (
                           <input
                             type="radio"
@@ -161,7 +163,7 @@ const Home = () => {
                         >
                           {license.label}
                         </label>
-                      </div>
+                      </div> */}
                       <label
                         htmlFor={`license-${index}`}
                         className="block text-gray-600"
@@ -169,11 +171,45 @@ const Home = () => {
                         ${license.price}
                       </label>
                     </div>
-                    <span className="block text-gray-600">{license.size}</span>
+                    <div className=" flex justify-between">
+                      <div>{license.size}</div>
+                      {isVariantPurchased(license._id) ? (
+                        <>
+                          <div
+                            title={"Purchased Product"}
+                            className={` p-2 bg-red-500 text-white rounded-full`}
+                          >
+                            <BiSolidPurchaseTagAlt />
+                          </div>
+                        </>
+                      ) : (
+                        <>
+                          <div
+                            title={
+                              isVariantInCart(license._id)
+                                ? "Remove from cart"
+                                : "Add to cart"
+                            }
+                            className={` p-2 ${
+                              isVariantInCart(license._id)
+                                ? "bg-red-500 text-white"
+                                : "bg-white text-black"
+                            } rounded-full`}
+                            onClick={() => handleCart(license._id)}
+                          >
+                            {product.isInCart ? (
+                              <BsCartCheckFill />
+                            ) : (
+                              <BsCart2 />
+                            )}
+                          </div>
+                        </>
+                      )}
+                    </div>
                   </div>
                 ))}
                 <div className="flex justify-between mt-3">
-                  <div
+                  {/* <div
                     title={
                       product.isInCart ? "Remove from cart" : "Add to cart"
                     }
@@ -185,7 +221,7 @@ const Home = () => {
                     onClick={handleCart}
                   >
                     {product.isInCart ? <BsCartCheckFill /> : <BsCart2 />}
-                  </div>
+                  </div> */}
                   <div
                     onClick={handleeWishlist}
                     title={
