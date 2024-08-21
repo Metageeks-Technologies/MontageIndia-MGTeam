@@ -9,13 +9,14 @@ import {
 import { useAppDispatch, useAppSelector } from "@/app/redux/hooks";
 import { OrderOption } from "@/types/order";
 import PayButton from "@/components/payment/payButton";
-import { MdDeleteForever, MdCurrencyRupee } from "react-icons/md";
+import { MdDeleteForever, MdCurrencyRupee,MdShoppingCart } from "react-icons/md";
 import instance from "@/utils/axios";
 import { notifyError, notifySuccess } from "@/utils/toast";
 
 const PlaceOrder = () => {
   const dispatch = useAppDispatch();
   const [amount, setAmount] = useState(0);
+  const [loader, setLoader] = useState(false);
   //   const cart = useAppSelector((state) => state.user.cartData);
   const cart = useAppSelector((state) => state.product.cart);
 
@@ -92,8 +93,15 @@ const PlaceOrder = () => {
   const orderOption = createOrderOption();
 
   return (
-    <div className="w-[90%] flex justify-center flex-col m-auto py-6">
-      <div className="mb-4">
+    <div className="w-[90%] flex justify-start min-h-screen flex-col m-auto py-6">
+    {
+      cart?.length === 0 ? (
+        <div className="flex justify-center items-center w-full h-full">
+          <div className="text-xl flex justify-center items-center gap-2"><span><MdShoppingCart /></span><span>Cart is empty</span></div>
+        </div>
+      ) : (
+        <>
+         <div className="mb-4">
         {cart?.map((item, index: number) => (
           <div
             key={index}
@@ -194,6 +202,10 @@ const PlaceOrder = () => {
 
         <PayButton orderOption={orderOption} />
       </div>
+      </>
+      )
+    }
+     
     </div>
   );
 };

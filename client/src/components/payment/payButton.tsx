@@ -4,6 +4,7 @@ import { loadScript } from '../../utils/loadScript';
 import instance from '@/utils/axios';
 import {OrderOption} from '@/types/order';
 import {useRouter} from 'next/navigation';
+import {Spinner} from '@nextui-org/react';
 
 declare global {
   interface Window {
@@ -26,7 +27,6 @@ const PayButton: React.FC<props> = ({orderOption}) => {
         console.log("step 2:",response);
         if(response.data.success){
             alert(response.data.message);
-            
             router.push('/user-profile/purchased-product');
         }else{
           alert("payment failed");
@@ -41,6 +41,7 @@ const PayButton: React.FC<props> = ({orderOption}) => {
     
       if (!loaded || typeof window.Razorpay === 'undefined') {
         alert('Razorpay SDK not loaded. Please try again later.');
+        setLoading(false);
         return;
       }
       const razorpayObject = new window.Razorpay(options);
@@ -49,11 +50,13 @@ const PayButton: React.FC<props> = ({orderOption}) => {
         alert('This step of Payment Failed');
       });
       razorpayObject.open();
+      setLoading(false);
     };
 
   //this function creates a order in razorpay and store order information in Montage India database
   const handleOrderPlace= async() => {
     console.log(orderOption);
+    setLoading(true);
     const response:any= await instance.post('/order/',orderOption,{
       headers: {
         'ngrok-skip-browser-warning': true,
@@ -64,6 +67,7 @@ const PayButton: React.FC<props> = ({orderOption}) => {
 
     if(!response.data.success){
       alert("Something went wrong. Please try again later");
+      setLoading(false);
       return;
     }
     const paymentOptions = {
@@ -94,7 +98,7 @@ const PayButton: React.FC<props> = ({orderOption}) => {
 
     return (
         <button onClick={handleOrderPlace} className="text-white px-4 py-2 rounded-3xl bg-webgreen text-md max-sm:text-lg hover:bg-webgreen-light transition-all">
-            Place Order
+           {loading?(<span className='mr-2'><Spinner color="white" size="sm" /></span>):(<span>Place Order</span>)}
         </button>
        
     );

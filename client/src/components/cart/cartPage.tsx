@@ -2,10 +2,10 @@
 import React, { useState, useEffect } from "react";
 // import { useDispatch, useSelector } from "react-redux";
 import { useAppDispatch, useAppSelector } from "@/app/redux/hooks";
+import { MdDeleteForever, MdCurrencyRupee,MdShoppingCart } from "react-icons/md";
 import { AiOutlineShoppingCart, AiOutlineClose } from "react-icons/ai";
 import { Button, Badge } from "@nextui-org/react";
 import { removeCartItem } from "@/app/redux/feature/user/api";
-import { MdDeleteForever } from "react-icons/md";
 import Link from "next/link";
 import { removeItemFromCart } from "@/app/redux/feature/product/api";
 function CartPopup() {
@@ -37,16 +37,23 @@ function CartPopup() {
           />
         </Badge>
       ) : (
-        <div className="fixed w-full h-full left-0 top-0 bg-black bg-opacity-50 z-50 flex justify-center items-start overflow-y-auto">
+        <div className="fixed w-full h-full right-0 top-0 bg-black bg-opacity-50 z-50 flex justify-center items-start overflow-y-auto">
           <div className="bg-white p-6 rounded-lg shadow-xl my-3 justify-self-end w-full max-w-2xl">
             <div className="flex justify-between items-center mb-4">
-              <h2 className="text-2xl font-bold">Your Cart</h2>
+              <h2 className="text-2xl font-bold">My Cart</h2>
               <AiOutlineClose
                 className="text-gray-700 w-6 h-6 cursor-pointer"
                 onClick={() => setIsOpen(false)}
               />
             </div>
-            <div className="max-h-[calc(100vh-200px)] overflow-y-auto">
+            {
+              cart.length === 0 ? (
+                 <div className="flex justify-center items-center w-full h-full">
+              <div className="text-xl flex justify-center items-center gap-2"><span><MdShoppingCart /></span><span>Cart is empty</span></div>
+        </div>
+              ) : (
+                <>
+                 <div className="max-h-[calc(100vh-200px)] overflow-y-auto">
               {cart.map((item, index: number) => (
                 <div
                   key={index}
@@ -67,6 +74,9 @@ function CartPopup() {
                           item.variantId.includes(variant._id)
                         )?.size
                       }
+                    </span>
+                    <span className="mr-1">
+                    <MdCurrencyRupee/>
                     </span>
                     <span className="mr-4">
                       {
@@ -90,15 +100,19 @@ function CartPopup() {
                 </div>
               ))}
             </div>
-            <div className="mt-6 flex justify-center items-center">
+            <div className="mt-6 flex justify-end items-center">
               <Link
                 href="/order"
                 onClick={() => setIsOpen(false)}
-                className="p-3 py-2 font-semibold rounded-lg bg-blue-400"
+                className="p-3 py-2 font-semibold rounded-lg bg-webgreen text-white"
               >
-                Place your Order
+                Checkout
               </Link>
             </div>
+                </>
+              )
+            }
+           
           </div>
         </div>
       )}
