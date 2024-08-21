@@ -5,122 +5,138 @@ import { FaRegEdit } from 'react-icons/fa';
 import { MdOutlineSave } from 'react-icons/md';
 import Swal from 'sweetalert2';
 
-interface Variant {
+interface Variant
+{
   label: string;
-  size:string;
+  size: string;
   price: number;
-  credit:number;
+  credit: number;
   key: string;
   _id: string;
 }
 
-interface Product {
+interface Product
+{
   uuid: string;
   title: string;
   variants: Variant[];
 }
 
-interface Form3Props {
-  onNext: (data: any) => void;
+interface Form3Props
+{
+  onNext: ( data: any ) => void;
   formData: {
     product: Product;
   };
 }
 
-const Form3: React.FC<Form3Props> = ({ onNext, formData }) => {
-  const [product, setProduct] = useState(formData.product);
+const Form3: React.FC<Form3Props> = ( { onNext, formData } ) =>
+{
+  const [ product, setProduct ] = useState( formData.product );
   const totalVariants = product?.variants?.length || 0;
-  const [activeVariant, setActiveVariant] = useState<Variant | null>(null);
-  const [editingVariantIndex, setEditingVariantIndex] = useState<number | null>(null);
-  const [label, setLabel] = useState('');
-  const [price, setPrice] = useState<number | ''>('');
-  const [updatedVariants, setUpdatedVariants] = useState<string[]>([]);
-  const [updateCount, setUpdateCount] = useState(0);
-  const [loading, setLoading] = useState(false);
+  const [ activeVariant, setActiveVariant ] = useState<Variant | null>( null );
+  const [ editingVariantIndex, setEditingVariantIndex ] = useState<number | null>( null );
+  const [ label, setLabel ] = useState( '' );
+  const [ price, setPrice ] = useState<number | ''>( '' );
+  const [ updatedVariants, setUpdatedVariants ] = useState<string[]>( [] );
+  const [ updateCount, setUpdateCount ] = useState( 0 );
+  const [ loading, setLoading ] = useState( false );
 
 
 
-  const handleSaveVariant = async (index: number) => {
-    const variant = product.variants[index];
+  const handleSaveVariant = async ( index: number ) =>
+  {
+    const variant = product.variants[ index ];
 
-    if (!variant.price || variant.price <= 0 ||!variant.credit || variant.credit <= 0 || !variant.label || variant.label.trim() === '') {
-      Swal.fire({
+    if ( !variant.price || variant.price <= 0 || !variant.credit || variant.credit <= 0 || !variant.label || variant.label.trim() === '' )
+    {
+      Swal.fire( {
         icon: 'error',
         title: 'Invalid input',
         text: 'Label, price and credit must be valid and not empty.',
-      });
+      } );
       // const allVariantsValid = pro.variants.every(variant =>
       //   variant.label?.trim() !== '' && variant.price > 0
       // );
       // setIsPublishButtonDisabled(allVariantsValid);
       return;
     }
-    try {
+    try
+    {
       const sendData = {
         uuid: product.uuid,
         price: variant.price,
         label: variant.label,
-        credit:variant.credit
+        credit: variant.credit
       };
 
-      const response = await instance.patch(`/product/variant/${variant._id}`, sendData);
-      if(response.status===201){
-      console.log('Saving variant data:', response.data);
-      setUpdatedVariants([...updatedVariants, variant._id]);
+      const response = await instance.patch( `/product/variant/${ variant._id }`, sendData );
+      if ( response.status === 201 )
+      {
+        console.log( 'Saving variant data:', response.data );
+        setUpdatedVariants( [ ...updatedVariants, variant._id ] );
 
       }
-    } catch (error: any) {
-      console.error('Error saving variant:', error);
+    } catch ( error: any )
+    {
+      console.error( 'Error saving variant:', error );
       const errorMessage = error.response?.data?.message || 'An error occurred while sending data';
-      Swal.fire({
+      Swal.fire( {
         icon: 'error',
         title: 'Oops...',
         text: errorMessage,
-      });
+      } );
     }
-    setEditingVariantIndex(null);
+    setEditingVariantIndex( null );
   };
 
-  const handleVariantChange = (index: number, key: keyof Variant, value: string | number) => {
-    console.log("first",value)
-    const newVariants = [...product.variants];
-    newVariants[index] = {
-      ...newVariants[index],
-      [key]: value
+  const handleVariantChange = ( index: number, key: keyof Variant, value: string | number ) =>
+  {
+    console.log( "first", value );
+    const newVariants = [ ...product.variants ];
+    newVariants[ index ] = {
+      ...newVariants[ index ],
+      [ key ]: value
     } as Variant;
     // formData.product.variants = newVariants;
     setProduct( { ...product, variants: newVariants } );
 
   };
 
-  const handleEditToggle = (field: string, index?: number) => {
-    if (index !== undefined) {
-      setEditingVariantIndex(prev => (prev === index ? null : index));
+  const handleEditToggle = ( field: string, index?: number ) =>
+  {
+    if ( index !== undefined )
+    {
+      setEditingVariantIndex( prev => ( prev === index ? null : index ) );
     }
   };
 
-  const handleSubmit = async () => {
-    setLoading(true);
-    try {
-      const response = await instance(`/product/${product.uuid}`);
-      if (response.status === 201) {
-        onNext(response.data);
+  const handleSubmit = async () =>
+  {
+    setLoading( true );
+    try
+    {
+      const response = await instance( `/product/${ product.uuid }` );
+      if ( response.status === 201 )
+      {
+        onNext( response.data );
       }
-    } catch (error: any) {
+    } catch ( error: any )
+    {
       const errorMessage = error.response?.data?.message || 'An error occurred while sending data';
-      Swal.fire({
+      Swal.fire( {
         icon: 'error',
         title: 'Oops...',
         text: errorMessage,
-      });
-      console.log("Error occurred", error);
+      } );
+      console.log( "Error occurred", error );
     }
-    setLoading(false);
+    setLoading( false );
   };
-  const allVariantsUpdated = product.variants.every((variant) =>
-    updatedVariants.includes(variant._id)
+  const allVariantsUpdated = product.variants.every( ( variant ) =>
+    updatedVariants.includes( variant._id )
   );
-  console.log("first",allVariantsUpdated)
+  console.log( "first", allVariantsUpdated );
   return (
     <>
       { loading ? (
@@ -135,62 +151,62 @@ const Form3: React.FC<Form3Props> = ({ onNext, formData }) => {
         </div>
       ) : (
         <div className="p-6 mx-auto bg-white shadow-lg rounded-lg">
-          <div className="mb-6">
+          {/* <div className="mb-6">
             <h1 className="text-3xl font-bold text-gray-800">
               { product.title }
             </h1>
-          </div>
+          </div> */}
 
           <div className="mb-6">
             <h2 className="text-2xl font-semibold text-gray-700 mb-2">Variations</h2>
             <p className="text-gray-600 italic">This product has different colors, sizes, etc.</p>
           </div>
 
-          <div className="justify-between flex flex-col md:flex-row my-16 ">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
             { product.variants.map( ( variant, index ) => (
-              <div key={ variant._id } className="bg-gray-50 p-4  rounded-lg shadow-sm">
+              <div key={ variant._id } className="bg-pageBg-light p-4 rounded-lg shadow-sm">
                 <div className="flex justify-between items-center mb-4">
-                  <h3 className="text-lg font-semibold text-gray-700">{variant.size}</h3>
+                  <h3 className="text-lg font-semibold text-gray-700">{ variant.size }</h3>
                   { editingVariantIndex === index ? (
-                    <button type="button" onClick={ () => handleSaveVariant( index ) } className="text-lime-600 hover:text-lime-700 transition-colors">
+                    <button type="button" onClick={ () => handleSaveVariant( index ) } className="text-gray-600 hover:text-gray-700 transition-colors">
                       <MdOutlineSave size={ 24 } />
                     </button>
                   ) : (
-                    <button type="button" onClick={ () => handleEditToggle( 'variants', index ) } className="text-gray-600 hover:text-gray-700 transition-colors">
+                      <button type="button" onClick={ () => handleEditToggle( 'variants', index ) } className="text-gray-600 hover:text-gray-700 transition-colors">
                       <FaRegEdit size={ 24 } />
                     </button>
                   ) }
                 </div>
                 <div className="grid grid-cols-1 gap-4">
                   <div className="flex flex-col">
-                    <label className="text-sm font-medium text-gray-600 mb-1">Label:</label>
+                    <label className="block text-sm font-medium text-gray-600 mb-1">Label:</label>
                     <input
                       type="text"
-                      className={ `text-gray-700 w-full py-2 px-3 rounded-md ${ editingVariantIndex === index ? 'border-2 border-lime-500' : 'bg-gray-100'
-                        }` }
-                      value={ variant.label }
+                      className="w-full p-2 border border-gray-300 rounded-md"
+                      placeholder="Enter label"
+                  value={ variant.label }
                       readOnly={ editingVariantIndex !== index }
                       onChange={ ( e ) => handleVariantChange( index, 'label', e.target.value ) }
                     />
                   </div>
-                  <div className="flex flex-col">
-                    <label className="text-sm font-medium text-gray-600 mb-1">Price:</label>
+                  <div className="">
+                    <label className="block text-sm font-medium text-gray-600 mb-1">Price:</label>
                     <input
                       type="number"
-                      className={ `text-gray-700 w-full py-2 px-3 rounded-md ${ editingVariantIndex === index ? 'border-2 border-lime-500' : 'bg-gray-100'
-                        }` }
+                      className="w-full p-2 border border-gray-300 rounded-md"
+                      placeholder="Enter price" 
                       value={ variant.price }
                       readOnly={ editingVariantIndex !== index }
                       onChange={ ( e ) => handleVariantChange( index, 'price', parseFloat( e.target.value ) ) }
                     />
                   </div>
-                  <div className="flex flex-col">
-                    <label className="text-sm font-medium text-gray-600 mb-1">Credit:</label>
+                  <div >
+                    <label className="block text-sm font-medium text-gray-600 mb-1">Credit:</label>
                     <input
                       type="number"
-                      className={ `text-gray-700 w-full py-2 px-3 rounded-md ${ editingVariantIndex === index ? 'border-2 border-lime-500' : 'bg-gray-100'
-                        }` }
-                      value={ variant.credit }
+                      className="w-full p-2 border border-gray-300 rounded-md"
+                      placeholder="Enter Credit"
+                  value={ variant.credit }
                       readOnly={ editingVariantIndex !== index }
                       onChange={ ( e ) => handleVariantChange( index, 'credit', parseFloat( e.target.value ) ) }
                     />
@@ -202,11 +218,10 @@ const Form3: React.FC<Form3Props> = ({ onNext, formData }) => {
 
           <div className="mt-8 flex justify-center my-12">
             <button
-            disabled={!allVariantsUpdated}
+              disabled={ !allVariantsUpdated }
               type="button"
-              className={`bg-lime-600 text-white px-4 py-2 rounded-lg font-semibold transition-colors ${
-                allVariantsUpdated ? 'hover:bg-lime-700' : 'opacity-50 cursor-not-allowed'
-              }`}
+              className={ `bg-safRed text-white px-4 py-2 rounded-lg font-semibold transition-colors ${ allVariantsUpdated ? 'hover:bg-safRed' : 'opacity-50 cursor-not-allowed'
+                }` }
               onClick={ handleSubmit }
             >
               Save and Continue

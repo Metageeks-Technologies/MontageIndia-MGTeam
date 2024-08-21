@@ -41,7 +41,7 @@ const Form2: React.FC<Form2Props> = ( { onPrev, onNext, formData } ) =>
     };
     return fileType.startsWith( mediaTypeMap[ data.mediaType ] || '' );
   }, [ data.mediaType ] );
-
+console.log(file)
   const onDrop = useCallback( ( acceptedFiles: File[] ) =>
   {
     const selectedFile = acceptedFiles[ 0 ];
@@ -275,42 +275,58 @@ const Form2: React.FC<Form2Props> = ( { onPrev, onNext, formData } ) =>
   };
   const displayPercentage = loadingPer >= 98 ? 98 : loadingPer;
   return (
-    <div className="flex flex-col items-center w-full max-w-md mx-auto mt-10">
-      { loading ? (
-        <div className='items-center flex justify-center h-screen'>
+    <div className="w-full mx-auto p-6">
+     
 
-        <Spinner label={ `Uploading...${ displayPercentage }%` } color="success" />
-        </div>
-      ) : (
-        <>
-          <h2 className="text-xl font-semibold mb-4">Upload { data.mediaType }</h2>
-          <div { ...getRootProps() } className="flex items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer hover:bg-gray-100 mb-4">
-            <input { ...getInputProps() } />
-            <div className="text-center">
-              <p className="mb-2">
-                <span className="font-semibold">Click to upload</span> or drag and drop
-              </p>
-              <p className="text-sm text-gray-500">
-                Accepted file types: { acceptedFileTypes[ data.mediaType ] || 'Any file' }
-              </p>
-              { file && <p className="mt-2 font-semibold">{ file.name }</p> }
-            </div>
+      <h3 className="text-lg font-medium mb-4">Upload { data.mediaType }</h3>
+
+      <div { ...getRootProps() } className="border-2 border-dashed bg-pageBg-light border-gray-300 rounded-lg p-12 text-center cursor-pointer hover:bg-pageBg">
+        <input { ...getInputProps() } />
+        <svg xmlns="http://www.w3.org/2000/svg" className="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={ 2 } d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+        </svg>
+        <p className="mt-2 text-sm text-gray-600">Choose a file or drag & drop it here</p>
+        <p className="mt-1 text-xs text-gray-500">{ acceptedFileTypes[ data.mediaType ] || 'Any file' } formats, up to 5MB</p>
+        <button className="mt-4 px-4 py-2 bg-safRed text-pureWhite-light rounded-md hover:bg-safRed focus:outline-none focus:ring-2 focus:ring-safRed focus:ring-opacity-50">
+          Browse File
+        </button>
+      </div>
+
+      { loading && (
+        <div className="mt-6">
+          <div className="mb-2 flex justify-between items-center">
+            <span>{ displayPercentage }% Uploading...</span>
+            <button className="text-red-500">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+              </svg>
+            </button>
           </div>
 
-          { error && <p className="text-red-500 mb-4">{ error }</p> }
-
-          <button
-            onClick={ handleSubmit }
-            className={ `p-2 px-4 font-semibold text-white rounded-lg ${ file ? 'bg-lime-500 hover:bg-lime-600' : 'bg-gray-400 cursor-not-allowed'
-              }` }
-            disabled={ !file || loading }
-          >
-            Upload and Continue
-          </button>
-        </>
+          {/* file name */ } 
+          <div className="text-sm text-gray-600 p-2">{ file?.name || "" }</div>
+          
+          <div className="w-full bg-gray-200 rounded-full h-2.5">
+            <div className="bg-purple-600 h-2.5 rounded-full" style={ { width: `${ displayPercentage }%` } }></div>
+          </div>
+        </div>  
       ) }
+
+      { error && <p className="text-red-500 mt-4">{ error }</p> }
+
+      <div className="mt-6">
+        <button
+          onClick={ handleSubmit }
+          className={ `w-full p-3 font-semibold text-white rounded-lg ${ file && !loading ? 'bg-safRed hover:bg-safRedHover' : 'bg-gray-400 cursor-not-allowed'
+            }` }
+          disabled={ !file || loading }
+        >
+          Upload and Continue
+        </button>
+      </div>
     </div>
   );
+
 };
 
 export default Form2;

@@ -295,6 +295,7 @@ const Form4 = () => {
     setStatus(newStatus);
     await handleStatusUpdate(newStatus);
   };
+  
   const handleCategoryChange = (newValue: MultiValue<any>, actionMeta: ActionMeta<any>) => {
     setSelectedCategories(newValue as any[]);
   };

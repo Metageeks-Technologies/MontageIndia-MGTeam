@@ -206,16 +206,17 @@ const CategoriesPage: React.FC = () =>
     console.log( "categoies:-", categories );
 
     return (
-        <div className="container mx-auto px-4 py-8 max-w-7xl">
-            <div className='flex flex-col sm:flex-row justify-between items-center mb-8'>
-                <h1 className="text-3xl font-bold text-gray-800 mb-4 sm:mb-0">Categories</h1>
-                <button
-                    onClick={ openModal }
-                    className="bg-webgreen text-white py-2 px-6 rounded-full hover:bg-webgreenHover transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-webgreen-dark focus:ring-opacity-50"
-                >
-                    Add New Category
-                </button>
+        <div className="container p-4 m-4 bg-pureWhite-light rounded-md">
+
+
+            <div className="flex justify-between items-center mb-4">
+                <h1 className="text-2xl font-bold">Categories</h1>
+                <button className="bg-red-500 text-white px-4 py-2 rounded" onClick={ openModal }>+  Add New Category</button>
             </div>
+
+            {/* one horixonal line */ }
+            <hr className="border-t border-gray-300 mb-4" />
+
 
             { isLoading && (
                 <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50">
@@ -302,48 +303,67 @@ const CategoriesPage: React.FC = () =>
             <div className="bg-white shadow-md rounded-lg overflow-hidden">
                 { categories.length === 0 && !isLoading ? (
                     <p className="text-center py-4 text-gray-500">No categories found. Add a new category to get started.</p>
-                ) : <div className="overflow-x-auto">
-                    <table className="w-full text-sm text-left text-gray-500">
-                        <thead className="text-xs text-gray-700 uppercase bg-gray-50">
-                            <tr>
-                                <th scope="col" className="px-6 py-3">Image</th>
-                                <th scope="col" className="px-6 py-3">Category name</th>
-                                <th scope="col" className="px-6 py-3">Description</th>
-                                <th scope="col" className="px-6 py-3">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            { categories.map( ( category ) => (
-                                <tr key={ category._id } className="bg-white border-b hover:bg-gray-50">
-                                    <td className="px-6 py-4">
-                                        <Image
-                                            src={ category?.image || '/placeholder-image.jpg' }
-                                            alt={ `${ category.name } image` }
-                                            width={ 50 }
-                                            height={ 50 }
-                                            className="rounded-full"
-                                        />
-                                    </td>
-                                    <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
-                                        { category.name }
+                ) :
+
+                    <div className="bg-white shadow-md rounded-lg relative overflow-x-auto ">
+                        <table className=" w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                            <thead>
+                                <tr>
+                                    <th className="px-5 py-3 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                        Image
                                     </th>
-                                    <td className="px-6 py-4 w-1/2">{ category.description }</td>
-                                    <td className="px-6 py-4 flex justify-around items-center ">
-                                        <button onClick={ () => handleEdit( category ) } className="font-medium text-blue-600 hover:underline">
-                                            Edit
-                                        </button>
-                                        <button
-                                            onClick={ () => handleDelete( category?._id ) }
-                                            className="font-medium text-red-600 hover:underline"
-                                        >
-                                            Delete
-                                        </button>
-                                    </td>
+
+                                    <th className="px-5 py-3 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                        Category Name
+                                    </th>
+                                    <th className="px-5 py-3 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                        Description
+                                    </th>
+
+
+                                    <th className="px-5 py-3 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                        Action
+                                    </th>
                                 </tr>
-                            ) ) }
-                        </tbody>
-                    </table>
-                </div>
+                            </thead>
+                            <tbody>
+                                {
+                                    categories?.map( ( category ) => (
+                                        <tr key={ category._id } className="hover:bg-gray-50">
+                                            <td className="px-4 py-2 border-b border-gray-200 bg-pureWhite-light text-center">
+                                                <Image src={ category?.image || '/placeholder-image.jpg' }
+                                                    alt={ `${ category.name } image` }
+                                                    width={ 100 }
+                                                    height={ 100 }
+                                                    
+                                                />
+                                            </td>
+                                            <td className="px-4 py-4 border-b border-gray-200 bg-white">
+                                                { category.name }
+                                            </td>
+
+                                            <td className="px-4 py-4 border-b border-gray-200 bg-white">
+                                                { category.description }
+                                            </td>
+
+                                            <td className="px-4 py-4 border-b border-gray-200 bg-white">
+                                                <div className="flex justify-center items-center space-x-2">
+
+                                                    <button className="text-green-600 hover:text-green-900" onClick={ () => handleEdit( category ) }>
+                                                        <img src="/images/viewIcon.png" alt="View" className="w-6 h-6" />
+                                                    </button>
+                                                    <button className="text-red-600 hover:text-red-900" onClick={ () => handleDelete( category?._id ) }>
+                                                        <img src="/images/deleteIcon.png" alt="Delete" className="w-6 h-6" />
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    ) )
+
+                                }
+                            </tbody>
+                        </table>
+                    </div>
                 }
             </div>
         </div>
