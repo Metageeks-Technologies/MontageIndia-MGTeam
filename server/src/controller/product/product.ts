@@ -451,18 +451,58 @@ export const removeFromWishlist = catchAsyncError(
   }
 );
 
+// export const getWishlist = catchAsyncError(async (req: any, res, next) => {
+//   const customerId = req.user._id;
+
+//   const customer = await Customer.findById(customerId);
+//   if (!customer) {
+//     return next(new ErrorHandler(`customer not found`, 404));
+//   }
+
+//   const products = await Product.find({ _id: { $in: customer.wishlist } });
+
+//   res.status(200).json({
+//     success: true,
+//     products,
+//   });
+// });
+
 export const getWishlist = catchAsyncError(async (req: any, res, next) => {
   const customerId = req.user._id;
 
   const customer = await Customer.findById(customerId);
   if (!customer) {
-    return next(new ErrorHandler(`customer not found`, 404));
+    return next(new ErrorHandler(`Customer not found`, 404));
   }
 
-  const products = await Product.find({ _id: { $in: customer.wishlist } });
+  const { mediaType, search, page = 1, limit = 10 } = req.query;
+
+  let query: any = { _id: { $in: customer.wishlist } };
+
+  if (mediaType) {
+    query.mediaType = mediaType; 
+  }
+
+  if (search) {
+    query.title = { $regex: search, $options: "i" }; 
+  }
+
+  const skip = (page - 1) * limit;
+  const products = await Product.find(query)
+    .skip(skip)
+    .limit(parseInt(limit))
+    .exec();
+
+  const totalProducts = await Product.countDocuments(query);
 
   res.status(200).json({
     success: true,
     products,
+    pagination: {
+      totalProducts,
+      currentPage: page,
+      totalPages: Math.ceil(totalProducts / limit),
+    },
   });
 });
+

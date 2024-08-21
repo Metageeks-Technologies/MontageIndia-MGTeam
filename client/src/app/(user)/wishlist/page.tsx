@@ -1,8 +1,8 @@
 "use client";
 import { useEffect, useState } from "react";
 import instance from "@/utils/axios";
-import { notifyError } from "@/utils/toast";
-import { GoVideo } from "react-icons/go";
+import { IoIosPause } from "react-icons/io";
+import { IoIosPlay } from "react-icons/io";
 
 interface Product {
   _id: string;
@@ -17,11 +17,56 @@ interface Product {
 
 interface WishlistData {
   products: Product[];
+  pagination: {
+    totalProducts: number;
+    currentPage: number;
+    totalPages: number;
+  };
 }
 
 const Collection: React.FC = () => {
   const [assetTypeOpen, setAssetTypeOpen] = useState(false);
   const [wishlistData, setWishlistData] = useState<WishlistData | null>(null);
+  const [mediaType, setMediaType] = useState<string | null>(null);
+  const [search, setSearch] = useState<string>("");
+  const [page, setPage] = useState<number>(1);
+
+  const [playingId, setPlayingId] = useState<string | null>(null);
+  const [progress, setProgress] = useState<{ [key: string]: number }>({});
+
+  const updateProgress = (audioElement: HTMLAudioElement, productId: string) => {
+    const progressValue = (audioElement.currentTime / audioElement.duration) * 100;
+    setProgress((prevProgress) => ({ ...prevProgress, [productId]: progressValue }));
+  };
+
+  const togglePlay = (productId: string, audioElement: HTMLAudioElement | null) => {
+    if (audioElement) {
+      if (playingId === productId) {
+        audioElement.pause();
+        setPlayingId(null);
+      } else {
+        if (playingId) {
+          const prevAudioElement = document.getElementById(
+            `audio-${playingId}`
+          ) as HTMLAudioElement | null;
+          if (prevAudioElement) {
+            prevAudioElement.pause();
+          }
+        }
+        audioElement.play();
+        setPlayingId(productId);
+
+        // Start updating progress
+        const interval = setInterval(() => {
+          if (audioElement.paused) {
+            clearInterval(interval);
+          } else {
+            updateProgress(audioElement, productId);
+          }
+        }, 500);
+      }
+    }
+  };
 
   const handleMouseEnter = (
     e: React.MouseEvent<HTMLDivElement, MouseEvent>
@@ -41,25 +86,53 @@ const Collection: React.FC = () => {
     }
   };
 
-  const fetchUser = async () => {
+  const fetchWishlist = async () => {
     try {
-      const response = await instance.get(`user/wishlist`);
-      console.log("wishlist", response);
+      const response = await instance.get("user/wishlist", {
+        params: {
+          mediaType,
+          search,
+          page,
+          limit: 8,
+        },
+      });
       if (response.data) {
         setWishlistData(response.data);
       }
     } catch (error) {
-      console.error("Error fetching user:", error);
-      notifyError("Failed to fetch user data");
+      console.error("Error fetching wishlist:", error);
     }
   };
 
   useEffect(() => {
-    fetchUser();
-  }, []);
+    fetchWishlist();
+  }, [mediaType, search, page]);
 
   const toggleDropdown = () => {
     setAssetTypeOpen(!assetTypeOpen);
+  };
+
+  const handleMediaTypeSelect = (type: string) => {
+    setMediaType(type);
+    setAssetTypeOpen(false);
+    setPage(1);
+  };
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearch(e.target.value);
+    setPage(1);
+  };
+
+  const handleNextPage = () => {
+    if (wishlistData && page < wishlistData.pagination.totalPages) {
+      setPage((prevPage) => prevPage + 1);
+    }
+  };
+
+  const handlePreviousPage = () => {
+    if (page > 1) {
+      setPage((prevPage) => prevPage - 1);
+    }
   };
 
   return (
@@ -106,7 +179,7 @@ const Collection: React.FC = () => {
               className="bg-white border border-gray-300 rounded-md py-2 px-4 w-full md:w-auto flex items-center justify-between"
               onClick={toggleDropdown}
             >
-              Asset type
+              {mediaType || "Asset type"}
               <svg
                 className={`ml-2 h-4 w-4 transform ${
                   assetTypeOpen ? "rotate-180" : ""
@@ -126,11 +199,23 @@ const Collection: React.FC = () => {
             {assetTypeOpen && (
               <div className="absolute mt-2 w-full rounded-md bg-white shadow-lg border border-gray-400 z-10">
                 <ul className="py-2 text-gray-700">
-                  <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">
+                  <li
+                    className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                    onClick={() => handleMediaTypeSelect("image")}
+                  >
                     Images
                   </li>
-                  <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">
+                  <li
+                    className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                    onClick={() => handleMediaTypeSelect("video")}
+                  >
                     Videos
+                  </li>
+                  <li
+                    className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                    onClick={() => handleMediaTypeSelect("audio")}
+                  >
+                    Audio
                   </li>
                 </ul>
               </div>
@@ -141,6 +226,8 @@ const Collection: React.FC = () => {
             type="text"
             className="border border-gray-300 rounded-md py-2 px-4 w-full md:w-auto"
             placeholder="Search by title"
+            value={search}
+            onChange={handleSearchChange}
           />
         </div>
       </div>
@@ -148,10 +235,13 @@ const Collection: React.FC = () => {
       {/* Cards */}
       <div className="grid lg:grid-cols-4 md:grid-cols-2 grid-cols-1 gap-4">
         {wishlistData?.products.map((product) => (
-          <div key={product._id} className="border rounded-lg p-4">
-            <div
-
-            >
+          <div
+            key={product._id}
+            className="border rounded-lg p-4"
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
+          >
+            <div>
               <div className="relative">
                 {product.mediaType === "image" && (
                   <img
@@ -164,11 +254,7 @@ const Collection: React.FC = () => {
                   OFF
                 </span>
               </div>
-
-              <div 
-              onMouseEnter={handleMouseEnter}
-              onMouseLeave={handleMouseLeave}
-              className="relative">
+              <div className="relative">
                 {product.mediaType === "video" && (
                   <video
                     loop
@@ -180,25 +266,84 @@ const Collection: React.FC = () => {
                     />
                   </video>
                 )}
-                <div className="absolute top-2 right-2 flex gap-2 ">
-                  {/* <GoVideo className="text-white h-6 w-6  flex gap-2" /> */}
+                <div className="absolute top-2 right-2 flex gap-2">
                   <p className="text-white">4k 0:17</p>
                 </div>
               </div>
 
+              <div className="relative">
+              {product.mediaType === "audio" && (
+              <div className="relative">
+                <audio id={`audio-${product._id}`}>
+                  <source
+                    src={`https://mi2-public.s3.ap-southeast-1.amazonaws.com/${product.thumbnailKey}`}
+                    type="audio/mpeg"
+                  />
+                </audio>
+                <div className="flex items-center justify-center relative bg-gray-100 rounded-lg h-36 w-full">
+                  <button
+                    onClick={() =>
+                      togglePlay(
+                        product._id,
+                        document.getElementById(
+                          `audio-${product._id}`
+                        ) as HTMLAudioElement | null
+                      )
+                    }
+                    className="text-black bg-white p-3 rounded-full shadow-md"
+                  >
+                    {playingId === product._id ? (
+                      <IoIosPause className="h-6 w-6" />
+                    ) : (
+                      <IoIosPlay className="h-6 w-6" />
+                    )}
+                  </button>
+                </div>
+                <div className="w-full mt-4 h-2 bg-gray-200 rounded-lg">
+                  <div
+                    className="h-full bg-gray-500 rounded-lg"
+                    style={{
+                      width: `${progress[product._id] || 0}%`,
+                      backgroundSize: "cover",
+                    }}
+                  ></div>
+                </div>
+
+                <div className="flex items-center justify-between mt-2">
+                  <p className="text-sm text-gray-700">2:26</p>
+                  <p className="text-sm text-gray-700">110 BPM</p>
+                </div>
+              </div>
+            )}
+              </div>
             </div>
-            <h2 className="mt-4 text-lg font-bold">{product.title}</h2>
-            <p className=" text-gray-500">{product.mediaType}</p>
+            <h2 className="mt-2 text-lg font-bold">{product.title}</h2>
+            <p className="text-gray-500">{product.mediaType}</p>
             <p className="text-green-500 text-xs">saved</p>
           </div>
         ))}
       </div>
 
-      {/* Next Button */}
+      {/* Pagination */}
       <div className="flex justify-end mt-6">
         <button
-          className="bg-gray-200 py-2 px-6 rounded-lg text-gray-500"
-          disabled
+          className="px-4 py-2 mx-1 bg-webgreen text-white rounded-lg disabled:opacity-50"
+          onClick={handlePreviousPage}
+          disabled={page === 1}
+        >
+          Prev
+        </button>
+        <span className="px-4 py-2">
+          {wishlistData?.pagination.currentPage} /{" "}
+          {wishlistData?.pagination.totalPages}
+        </span>
+        <button
+          className="px-4 py-2 mx-1 bg-webgreen text-white rounded-lg disabled:opacity-50"
+          onClick={handleNextPage}
+          disabled={
+            wishlistData?.pagination.currentPage ===
+            wishlistData?.pagination.totalPages
+          }
         >
           Next
         </button>
