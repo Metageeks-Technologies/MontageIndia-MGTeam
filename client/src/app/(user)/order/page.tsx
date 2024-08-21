@@ -9,11 +9,15 @@ import {
 import { useAppDispatch, useAppSelector } from "@/app/redux/hooks";
 import { OrderOption } from "@/types/order";
 import PayButton from "@/components/payment/payButton";
-import { MdDeleteForever, MdCurrencyRupee,MdShoppingCart } from "react-icons/md";
+import {
+  MdDeleteForever,
+  MdCurrencyRupee,
+  MdShoppingCart,
+} from "react-icons/md";
 import instance from "@/utils/axios";
 import { notifyError, notifySuccess } from "@/utils/toast";
 import { removeItemFromCart } from "@/app/redux/feature/product/api";
-import type {CartItem} from "@/app/redux/feature/product/slice";
+import { CartItem, removeCartProduct } from "@/app/redux/feature/product/slice";
 
 const PlaceOrder = () => {
   const dispatch = useAppDispatch();
@@ -29,7 +33,7 @@ const PlaceOrder = () => {
   const handleBuyWithCredits = async (item: CartItem) => {
     try {
       const response = await instance.post(`/product/buyWithCredits/`, {
-        productBody:{
+        productBody: {
           productId: item.productId._id,
           variantId: item.variantId,
         },
@@ -38,6 +42,7 @@ const PlaceOrder = () => {
       console.log(response);
       if (response.data.success) {
         notifySuccess(response.data.message);
+        dispatch(removeCartProduct(item.productId._id));
       }
     } catch (error: any) {
       console.error(error);
@@ -99,118 +104,121 @@ const PlaceOrder = () => {
 
   return (
     <div className="w-[90%] flex justify-start min-h-screen flex-col m-auto py-6">
-    {
-      cart?.length === 0 ? (
+      {cart?.length === 0 ? (
         <div className="flex justify-center items-center w-full h-full">
-          <div className="text-xl flex justify-center items-center gap-2"><span><MdShoppingCart /></span><span>Cart is empty</span></div>
+          <div className="text-xl flex justify-center items-center gap-2">
+            <span>
+              <MdShoppingCart />
+            </span>
+            <span>Cart is empty</span>
+          </div>
         </div>
       ) : (
         <>
-         <div className="mb-4">
-        {cart?.map((item, index: number) => (
-          <div
-            key={index}
-            className="flex justify-around w-full items-center py-4 px-2 hover:bg-gray-100 cursor-pointer "
-          >
-            <div className="flex justify-start gap-4 flex-wrap w-2/3">
-              <div className="w-80 h-40">
-                <img
-                  src={`https://mi2-public.s3.ap-southeast-1.amazonaws.com/${item?.productId.thumbnailKey}`}
-                  alt="Item"
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <div className="flex flex-col justify-between items-start py-2">
-                <div className="flex flex-col justify-start items-start ">
-                  <div className="text-xl font-bold">
-                    {" "}
-                    {item?.productId.title?.toUpperCase()}
+          <div className="mb-4">
+            {cart?.map((item, index: number) => (
+              <div
+                key={index}
+                className="flex justify-around w-full items-center py-4 px-2 hover:bg-gray-100 cursor-pointer "
+              >
+                <div className="flex justify-start gap-4 flex-wrap w-2/3">
+                  <div className="w-80 h-40">
+                    <img
+                      src={`https://mi2-public.s3.ap-southeast-1.amazonaws.com/${item?.productId.thumbnailKey}`}
+                      alt="Item"
+                      className="w-full h-full object-cover"
+                    />
                   </div>
-                  <div className="text-lg text-gray-600 mb-2 truncate">
-                    {item?.productId.description}
+                  <div className="flex flex-col justify-between items-start py-2">
+                    <div className="flex flex-col justify-start items-start ">
+                      <div className="text-xl font-bold">
+                        {" "}
+                        {item?.productId.title?.toUpperCase()}
+                      </div>
+                      <div className="text-lg text-gray-600 mb-2 truncate">
+                        {item?.productId.description}
+                      </div>
+                      <div className="text-lg text-gray-600 mb-2 truncate">
+                        <select
+                          className="text-gray-700 outline-none font-semibold py-3 select-none p-2 bg-gray-100 rounded-lg"
+                          value={
+                            selectedSizes[item.productId._id] ||
+                            item.variantId[0]
+                          }
+                          onChange={(e) =>
+                            handleSizeChange(item.productId._id, e.target.value)
+                          }
+                        >
+                          {item.productId.variants.map((variant: any) => (
+                            <option key={variant._id} value={variant._id}>
+                              {variant.size}
+                            </option>
+                          ))}
+                        </select>
+                        {
+                          item.productId?.variants.find((variant: any) =>
+                            item.variantId.includes(variant._id)
+                          )?.size
+                        }
+                      </div>
+                    </div>
+                    <div>
+                      {item?.productId.tags &&
+                        item?.productId.tags?.length > 0 &&
+                        item?.productId.tags?.map((tag: string) => (
+                          <span className="text-white rounded-full mr-2 px-4 py-1 bg-webgreen ">
+                            {tag}
+                          </span>
+                        ))}
+                    </div>
                   </div>
-                  <div className="text-lg text-gray-600 mb-2 truncate">
-                    <select
-                      className="text-gray-700 outline-none font-semibold py-3 select-none p-2 bg-gray-100 rounded-lg"
-                      value={
-                        selectedSizes[item.productId._id] || item.variantId[0]
-                      }
-                      onChange={(e) =>
-                        handleSizeChange(item.productId._id, e.target.value)
-                      }
-                    >
-                      {item.productId.variants.map((variant: any) => (
-                        <option key={variant._id} value={variant._id}>
-                          {variant.size}
-                        </option>
-                      ))}
-                    </select>
+                </div>
+                <div className="flex items-center justify-start gap-1">
+                  <div className="text-gray-600 items-center text-center flex flex-row">
+                    <span className="font-bold">
+                      <MdCurrencyRupee />
+                    </span>
+
                     {
                       item.productId?.variants.find((variant: any) =>
                         item.variantId.includes(variant._id)
-                      )?.size
+                      )?.price
                     }
                   </div>
                 </div>
-                <div>
-                  {item?.productId.tags &&
-                    item?.productId.tags?.length > 0 &&
-                    item?.productId.tags?.map((tag: string) => (
-                      <span className="text-white rounded-full mr-2 px-4 py-1 bg-webgreen ">
-                        {tag}
-                      </span>
-                    ))}
+                <div className="flex items-center gap-4 jutify-center">
+                  <span
+                    onClick={() => handleBuyWithCredits(item)}
+                    className="bg-var1-light text-white rounded-full px-4 py-1"
+                  >
+                    Buy with credits
+                  </span>
+                  <span
+                    className="text-red-500 cursor-pointer"
+                    onClick={() => {
+                      handleRemoveCart(item.productId?._id);
+                    }}
+                  >
+                    <MdDeleteForever size={25} />
+                  </span>
                 </div>
               </div>
-            </div>
-            <div className="flex items-center justify-start gap-1">
-              <div className="text-gray-600 items-center text-center flex flex-row">
-                <span className="font-bold">
-                  <MdCurrencyRupee />
-                </span>
-
-                {
-                  item.productId?.variants.find((variant: any) =>
-                    item.variantId.includes(variant._id)
-                  )?.price
-                }
-              </div>
-            </div>
-            <div className="flex items-center gap-4 jutify-center">
-              <span
-                onClick={() => handleBuyWithCredits(item)}
-                className="bg-var1-light text-white rounded-full px-4 py-1"
-              >
-                Buy with credits
-              </span>
-              <span
-                className="text-red-500 cursor-pointer"
-                onClick={() => {
-                  handleRemoveCart(item.productId?._id);
-                }}
-              >
-                <MdDeleteForever size={25} />
-              </span>
-            </div>
+            ))}
           </div>
-        ))}
-      </div>
 
-      <div className="flex justify-end items-center gap-4 px-4 ">
-        <div className="flex justify-center items-center gap-2 ">
-          <span className="font-semibold">Total Price: </span>
-          <span className="font-bold">
-            <MdCurrencyRupee />
-          </span>
-          <span>{amount}</span>
-        </div>
+          <div className="flex justify-end items-center gap-4 px-4 ">
+            <div className="flex justify-center items-center gap-2 ">
+              <span className="font-semibold">Total Price: </span>
+              <span className="font-bold">
+                <MdCurrencyRupee />
+              </span>
+              <span>{amount}</span>
+            </div>
 
-        <PayButton orderOption={orderOption} />
-      </div>
-      </>
-      )
-    }
-     
+            <PayButton orderOption={orderOption} />
+          </div>
+        </>
+      )}
     </div>
   );
 };

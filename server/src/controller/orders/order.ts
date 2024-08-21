@@ -33,10 +33,10 @@ export const createOrder = catchAsyncError(async (req: any, res, next) => {
   if (!user || !user.cart) {
     throw new Error("User not found or cart is empty.");
   }
-  console.log("user ::", user);
+  // console.log("user ::", user);
   let totalPrice = 0;
 
-  console.log("user.cart", user.cart);
+  // console.log("user.cart", user.cart);
   if (!user?.cart || user?.cart?.length === 0) {
     return next(new ErrorHandler("Cart is empty", 404));
   }
@@ -51,9 +51,13 @@ export const createOrder = catchAsyncError(async (req: any, res, next) => {
     );
     console.log("variant", variant);
     if (variant) {
+      console.log(typeof variant.price);
+
       totalPrice += variant.price;
     }
   });
+
+  console.log(totalPrice, "totalPrice");
 
   const options = {
     amount: totalPrice * 100,
@@ -68,14 +72,12 @@ export const createOrder = catchAsyncError(async (req: any, res, next) => {
     return next(new ErrorHandler("Error occured while creating Order", 404));
   }
   const amountString = totalPrice.toString();
-  const trimmedAmount = parseInt(amountString.slice(0, -2));
-  const totalAmount = trimmedAmount;
 
   const newOrder = await Order.create({
     userId: user._id,
     razorpayOrderId: response.id,
     products: user.cart,
-    totalAmount: totalAmount,
+    totalAmount: amountString,
     currency: "INR",
     status: "pending",
     method: "razorpay",

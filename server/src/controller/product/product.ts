@@ -258,7 +258,8 @@ export const getProductsByIds = catchAsyncError(async (req: any, res, next) => {
 
 export const buyWithCredits = catchAsyncError(async (req: any, res, next) => {
   const { id } = req.user;
-  const {productBody}=req.body;
+  const { productBody } = req.body;
+  const { productId, variantId } = productBody;
 
   const user = await Customer.findById(id);
 
@@ -266,70 +267,63 @@ export const buyWithCredits = catchAsyncError(async (req: any, res, next) => {
     return next(new ErrorHandler("User not found", 404));
   }
 
-  const  {productId,variantId}=productBody;
-
   const product = await Product.findById(productId);
 
   if (!product) {
     return next(new ErrorHandler("Product not found", 404));
   }
-  
-  // console.log("user", user);
-  // console.log("product", product,variantId);
 
-  const variantIndex=product.variants.findIndex((variant)=>variant?._id?.toString()===variantId);
-  const userCredits = user.subscription.credits;
+  const variantIndex = product.variants.findIndex(
+    (variant) => variant?._id?.toString() === variantId
+  );
 
-  const exitingProduct = user.purchasedProducts.find((item) => {
-    return (item.productId.toString() === productId.toString());
-  });
-
-  const exitingVariant = user.purchasedProducts.find((item) => {
-    return (
-      item.variantId.includes(variantId)
-    );
-  });
-
-  if(exitingProduct && exitingVariant ){
-    return next(new ErrorHandler("Product already purchased", 400));
+  if (variantIndex === -1) {
+    return next(new ErrorHandler("Variant not found", 404));
   }
 
+  const userCredits = user.subscription.credits;
   const productCredit = product.variants[variantIndex].credit;
 
   if (!productCredit || productCredit <= 0) {
     return next(new ErrorHandler("Product credit not found", 404));
   }
+
   if (userCredits < productCredit) {
     return next(new ErrorHandler("Insufficient credits", 400));
   }
 
-  if(!exitingProduct){
-    user.purchasedProducts.push({
-      productId: productId,
-      variantId: [variantId],
-    })
+  const existingProduct = user.purchasedProducts.find(
+    (item) => item.productId.toString() === productId.toString()
+  );
+
+  if (existingProduct && existingProduct.variantId.includes(variantId)) {
+    return next(
+      new ErrorHandler("Product with this variant already purchased", 400)
+    );
   }
 
-  if(!exitingVariant){
-    user.purchasedProducts=user.purchasedProducts.map((item)=>{
-      if(item.productId.toString()===productId.toString()){
-        return {...item,variantId:[...item.variantId,variantId]}
-      }else{
-        return item
-      }
-    })
+  // Add variantId if product exists but variant does not
+  if (existingProduct) {
+    existingProduct.variantId.push(variantId);
+  } else {
+    // Add both productId and variantId if neither exists
+    user.purchasedProducts.push({
+      productId,
+      variantId: [variantId],
+    });
   }
-  
+
+  // Deduct credits
   user.subscription.credits = userCredits - productCredit;
 
-  user.cart=user.cart.filter((item) => {
-    item.productId.toString() !== productId.toString();
-  });
+  // Remove product from cart if it exists
+  user.cart = user.cart.filter(
+    (item) => item.productId.toString() !== productId.toString()
+  );
 
-  console.log("updated user", user);
   await user.save();
 
-  res.send({ success: true, user, message: "purchased successfully" });
+  res.send({ success: true, user, message: "Purchased successfully" });
 });
 
 export const getPurchasedProducts = catchAsyncError(
