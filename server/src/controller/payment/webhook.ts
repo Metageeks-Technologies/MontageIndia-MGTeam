@@ -186,33 +186,40 @@ const orderPaid = async (payload: any) => {
     for (const product of products) {
       const { productId, variantId } = product;
 
-      const productIdString = productId.toString();
-      const existingProductIndex = user.purchasedProducts.findIndex(
-        (p) => p.productId.toString() === productIdString
-      );
+      const exitingProduct = user.purchasedProducts.find((item) => {
+        return (item.productId.toString() === productId.toString());
+      });
 
-      if (existingProductIndex > -1) {
-        if (
-          !user.purchasedProducts[existingProductIndex].variantId.includes(
-            variantId
-          )
-        ) {
-          user.purchasedProducts[existingProductIndex].variantId.push(
-            variantId
-          );
-        }
-      } else {
+      const exitingVariant = user.purchasedProducts.find((item) => {
+        return (
+          item.variantId.includes(variantId)
+        );
+      });
+
+      if(exitingProduct && exitingVariant ){
+        return ;
+      }
+
+      if(!exitingProduct){
         user.purchasedProducts.push({
           productId: productId,
           variantId: [variantId],
-        });
+        })
+      }
+
+      if(!exitingVariant){
+        user.purchasedProducts=user.purchasedProducts.map((item)=>{
+          if(item.productId.toString()===productId.toString()){
+            return {...item,variantId:[...item.variantId,variantId]}
+          }else{
+            return item
+          }
+        })
       }
     }
 
     user.cart = [];
-
     await user.save();
-
     await sendNotification(payload);
   } catch (error) {
     console.log(error);
