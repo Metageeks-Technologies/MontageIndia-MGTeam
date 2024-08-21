@@ -258,33 +258,77 @@ export const getProductsByIds = catchAsyncError(async (req: any, res, next) => {
 
 export const buyWithCredits = catchAsyncError(async (req: any, res, next) => {
   const { id } = req.user;
-  const { productId } = req.params;
+  const {productBody}=req.body;
+
   const user = await Customer.findById(id);
-  const product = await Product.findById(productId);
 
   if (!user) {
     return next(new ErrorHandler("User not found", 404));
   }
+
+  const  {productId,variantId}=productBody;
+
+  const product = await Product.findById(productId);
+
   if (!product) {
     return next(new ErrorHandler("Product not found", 404));
   }
+  
+  // console.log("user", user);
+  // console.log("product", product,variantId);
 
-  console.log("user", user);
-  console.log("product", product);
-
-  const variantIndex = "0";
+  const variantIndex=product.variants.findIndex((variant)=>variant?._id?.toString()===variantId);
   const userCredits = user.subscription.credits;
-  const productCredit = product.variants[variantIndex].credit || 10;
+
+  const exitingProduct = user.purchasedProducts.find((item) => {
+    return (item.productId.toString() === productId.toString());
+  });
+
+  const exitingVariant = user.purchasedProducts.find((item) => {
+    return (
+      item.variantId.includes(variantId)
+    );
+  });
+
+  if(exitingProduct && exitingVariant ){
+    return next(new ErrorHandler("Product already purchased", 400));
+  }
+
+  const productCredit = product.variants[variantIndex].credit;
+
   if (!productCredit || productCredit <= 0) {
     return next(new ErrorHandler("Product credit not found", 404));
   }
   if (userCredits < productCredit) {
     return next(new ErrorHandler("Insufficient credits", 400));
   }
+
+  if(!exitingProduct){
+    user.purchasedProducts.push({
+      productId: productId,
+      variantId: [variantId],
+    })
+  }
+
+  if(!exitingVariant){
+    user.purchasedProducts=user.purchasedProducts.map((item)=>{
+      if(item.productId.toString()===productId.toString()){
+        return {...item,variantId:[...item.variantId,variantId]}
+      }else{
+        return item
+      }
+    })
+  }
+  
   user.subscription.credits = userCredits - productCredit;
-  user.purchasedProducts.push({ productId, variantId: [variantIndex] });
+
+  user.cart=user.cart.filter((item) => {
+    item.productId.toString() !== productId.toString();
+  });
+
   console.log("updated user", user);
   await user.save();
+
   res.send({ success: true, user, message: "purchased successfully" });
 });
 

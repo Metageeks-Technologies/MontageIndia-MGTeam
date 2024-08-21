@@ -13,6 +13,7 @@ import { MdDeleteForever, MdCurrencyRupee,MdShoppingCart } from "react-icons/md"
 import instance from "@/utils/axios";
 import { notifyError, notifySuccess } from "@/utils/toast";
 import { removeItemFromCart } from "@/app/redux/feature/product/api";
+import type {CartItem} from "@/app/redux/feature/product/slice";
 
 const PlaceOrder = () => {
   const dispatch = useAppDispatch();
@@ -25,15 +26,18 @@ const PlaceOrder = () => {
     {}
   );
 
-  const handleBuyWithCredits = async (id: string) => {
+  const handleBuyWithCredits = async (item: CartItem) => {
     try {
-      const response = await instance.post(`/product/buyWithCredits/${id}`, {
+      const response = await instance.post(`/product/buyWithCredits/`, {
+        productBody:{
+          productId: item.productId._id,
+          variantId: item.variantId,
+        },
         withCredentials: true,
       });
       console.log(response);
       if (response.data.success) {
         notifySuccess(response.data.message);
-        removeItemFromCart(dispatch, id);
       }
     } catch (error: any) {
       console.error(error);
@@ -174,7 +178,7 @@ const PlaceOrder = () => {
             </div>
             <div className="flex items-center gap-4 jutify-center">
               <span
-                onClick={() => handleBuyWithCredits(item?.productId._id)}
+                onClick={() => handleBuyWithCredits(item)}
                 className="bg-var1-light text-white rounded-full px-4 py-1"
               >
                 Buy with credits

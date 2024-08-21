@@ -51,7 +51,7 @@ productRouter
   .route("/removeFromCart")
   .post(isAuthenticatedCustomer, removeProductFromCart);
 productRouter
-  .route("/buyWithCredits/:productId")
+  .route("/buyWithCredits/")
   .post(isAuthenticatedCustomer, buyWithCredits);
 productRouter
   .route("/purchased")
