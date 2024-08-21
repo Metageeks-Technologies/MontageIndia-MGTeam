@@ -1,17 +1,58 @@
-import express from 'express';
-import { isAuthenticatedCustomer } from '@src/middleware/auth';
-import {getAllCustomer, signupCustomer, loginCustomer, logoutCustomer, getCurrentCustomer, deleteCustomer, updateCustomerDetails,changePassword, forgetPassword, resetPassword, getCustomerById, addProductToCart, removeProductFromCart} from "@src/controller/user/customer";
+import express from "express";
+import { isAuthenticatedCustomer } from "@src/middleware/auth";
+import {
+  addToWishlist,
+  removeFromWishlist,
+  getWishlist,
+  getCart,
+  addToCart,
+  removeFromCart,
+} from "@src/controller/product/product";
+import {
+  getAllCustomer,
+  signupCustomer,
+  loginCustomer,
+  logoutCustomer,
+  getCurrentCustomer,
+  deleteCustomer,
+  updateCustomerDetails,
+  changePassword,
+  forgetPassword,
+  resetPassword,
+  getCustomerById,
+  addProductToCart,
+  removeProductFromCart,
+} from "@src/controller/user/customer";
 const userRouter = express.Router();
 
-userRouter.route('/signup').post(signupCustomer);
-userRouter.route('/login').post(loginCustomer);
-userRouter.route('/logout').get(logoutCustomer);
-userRouter.route('/getAll').get(getAllCustomer);
-userRouter.route('/getCurrent').get(isAuthenticatedCustomer,getCurrentCustomer);
-userRouter.route('/delete/:id').delete(isAuthenticatedCustomer,deleteCustomer);
-userRouter.route('/update').patch(isAuthenticatedCustomer,updateCustomerDetails);
-userRouter.route('/changePassword').patch(isAuthenticatedCustomer,changePassword);
-userRouter.route('/forgetPassword').post(forgetPassword);
-userRouter.route('/resetPassword').post(resetPassword);
-userRouter.route( '/:id' ).get( isAuthenticatedCustomer, getCustomerById );
+userRouter.route("/signup").post(signupCustomer);
+userRouter.route("/login").post(loginCustomer);
+userRouter.route("/logout").get(logoutCustomer);
+userRouter.route("/getAll").get(getAllCustomer);
+userRouter
+  .route("/getCurrent")
+  .get(isAuthenticatedCustomer, getCurrentCustomer);
+userRouter.route("/delete/:id").delete(isAuthenticatedCustomer, deleteCustomer);
+userRouter
+  .route("/update")
+  .patch(isAuthenticatedCustomer, updateCustomerDetails);
+userRouter
+  .route("/changePassword")
+  .patch(isAuthenticatedCustomer, changePassword);
+userRouter.route("/forgetPassword").post(forgetPassword);
+userRouter.route("/resetPassword").post(resetPassword);
+
+userRouter
+  .route("/wishlist")
+  .get(isAuthenticatedCustomer, getWishlist)
+  .patch(isAuthenticatedCustomer, addToWishlist)
+  .delete(isAuthenticatedCustomer, removeFromWishlist);
+
+userRouter
+  .route("/cart")
+  .get(isAuthenticatedCustomer, getCart)
+  .patch(isAuthenticatedCustomer, addToCart)
+  .delete(isAuthenticatedCustomer, removeFromCart);
+
+userRouter.route("/:id").get(isAuthenticatedCustomer, getCustomerById);
 export default userRouter;

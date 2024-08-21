@@ -58,7 +58,7 @@ const Form4 = () => {
   const [editingVariantIndex, setEditingVariantIndex] = useState<number | null>(null);
   const [status, setStatus] = useState(data?.status || '');
   const [isPublishButtonDisabled, setIsPublishButtonDisabled] = useState(false);
-
+  const[selected,setSelectedcheck]=useState(false)
   const BucketName=process.env.NEXT_PUBLIC_AWS_BUCKET;
   const AwsRegiosn=process.env.NEXT_PUBLIC_AWS_REIGION;
   const fetchData = async () => {
@@ -87,7 +87,9 @@ const Form4 = () => {
       try
       {
         const response = await instance.get( '/field/category' );
-        const formattedCategories = response.data.categories.map((category: any) => ({
+        const formattedCategories = response.data.categories.
+        filter((category: any) => category.name !== "editor choice")
+        .map((category: any) => ({
           label: category.name ? category.name : 'Unknown', // Display text
           value: category.name ? category.name : 'Unknown', // Underlying value
         }));
@@ -169,7 +171,7 @@ const Form4 = () => {
           updatedField = { title: data.title };
           break;
         case 'category':
-          updatedField = { category: selectedCategories.map(c => c.value)};
+          updatedField = { category: getCategoriesWithEditorChoice(selectedCategories, selected)};
           break;
         case 'description':
           updatedField = { description: data.description };
@@ -203,7 +205,16 @@ const Form4 = () => {
 
     setEditMode(prev => ({ ...prev, [field]: false }));
   };
-
+  const getCategoriesWithEditorChoice = (categories: { label: string }[], isSelected: boolean) => {
+    const editorChoiceCategory = "editor choice";
+    const categoriesLabels = categories.map(c => c.label);
+  
+    if (isSelected && !categoriesLabels.includes(editorChoiceCategory)) {
+      return [...categoriesLabels, editorChoiceCategory];
+    }
+  
+    return categoriesLabels;
+  };
   const handleSaveVariant = async (index: number) => {
     if (!data) return;
     const variant = data.variants[index];
@@ -310,7 +321,54 @@ const Form4 = () => {
         return <p>No media available</p>;
     }
   }
+  const updatedField = {};
+  const editorChoiceCategory="editor choice"
 
+  useEffect(() => {
+    if (data?.category?.includes(editorChoiceCategory)) {
+      setSelectedcheck(true);
+    } else {
+      setSelectedcheck(false);
+    }
+    setSelectedCategories(data?.category || []);
+  }, [data, editorChoiceCategory]);
+  const handleCheck = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const isChecked = event.target.checked;
+    setSelectedcheck(isChecked);
+
+    const categoryExists = selectedCategories.includes(editorChoiceCategory);
+
+    try {
+      let newCategories = [...selectedCategories];
+
+      if (isChecked && !categoryExists) {
+        newCategories.push(editorChoiceCategory);
+      } else if (!isChecked && categoryExists) {
+        newCategories = newCategories.filter(
+          (category) => category !== editorChoiceCategory
+        );
+      }
+
+      // Update the selected categories state
+      setSelectedCategories(newCategories);
+
+      // Update the server with new categories
+      const response = await instance.patch(`/product/${data?.uuid}`, {
+        ...updatedField,
+        category: newCategories,
+      });
+
+      if (response.status === 201) {
+        setloader(false);
+        notifySuccess("Updated successfully");
+        fetchData();
+      }
+    } catch (error) {
+      console.error("Error updating category:", error);
+    } finally {
+      setloader(false);
+    }
+  };
   if (!data) {
     return (
     <div role="status" className='justify-center h-screen flex items-center m-auto'>
@@ -433,7 +491,7 @@ const Form4 = () => {
             </div>
             </div>
         <div className="flex flex-col bg-gray-50 p-6">
-        <div className="mb-4">
+        <div className="my-4">
               <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="status">
                 Product Status
               </label>
@@ -448,6 +506,14 @@ const Form4 = () => {
                 <option value="archived">Delete</option>
               </select>
             </div>
+            <div className='py-8'>
+              <input 
+              type='checkbox'
+              checked={selected}
+              onChange={handleCheck}
+              />
+              <span className='text-base mb-3 font-semibold px-3'>Editor choice</span>
+        </div>
           <div className='text-xl flex flex-row gap-7 w-32 font-semibold'>Tags
              <span className='flex items-center '>
               {editMode.tags && (
@@ -538,8 +604,12 @@ const Form4 = () => {
                </div>
               </> : <>
                 <div className='flex flex-wrap'>
-                  {data.category.map((cat, index) => (
-                    <span key={index} className='p-2 rounded-md m-2 font-semibold bg-gray-200  text-gray-600'>{cat}</span>
+                {data.category
+                  .filter(cat => cat !== "editor choice")
+                  .map((cat, index) => (
+                    <span key={index} className='p-2 rounded-md m-2 font-semibold bg-gray-200 text-gray-600'>
+                      {cat}
+                    </span>
                   ))}
               </div>
               </> }

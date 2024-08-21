@@ -1,5 +1,5 @@
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
-import { PutObjectCommand } from "@aws-sdk/client-s3";
+import { GetObjectCommand, PutObjectCommand } from "@aws-sdk/client-s3";
 import { Upload } from "@aws-sdk/lib-storage";
 import fs from "fs";
 import { s3Client } from "@src/lib/awsClients";
@@ -9,7 +9,7 @@ const { awsBucketName: bucketName, awsTempBucketName } = config;
 
 type fileType = { folder: string; filename: string };
 
-async function uploadImage( s3image: fileType) {
+async function uploadImage(s3image: fileType) {
   const fileStream = fs.createReadStream(`output/${s3image.filename}`);
 
   try {
@@ -54,7 +54,17 @@ const getUrl = async (name: string) => {
   });
 
   const signedUrl = await getSignedUrl(s3Client, command, { expiresIn: 3600 });
-  console.log(signedUrl);
+  // console.log(signedUrl);
+  return signedUrl;
+};
+
+const getObject = async (key: string) => {
+  const command = new GetObjectCommand({
+    Bucket: bucketName,
+    Key: key,
+  });
+  const signedUrl = await getSignedUrl(s3Client, command, { expiresIn: 3600 });
+  // console.log(signedUrl);
   return signedUrl;
 };
 
@@ -67,7 +77,9 @@ const getUrlForCategoryImage = async (categoryName: string) => {
   });
 
   try {
-    const signedUrl = await getSignedUrl(s3Client, command, { expiresIn: 3600 });
+    const signedUrl = await getSignedUrl(s3Client, command, {
+      expiresIn: 3600,
+    });
     console.log("Generated signed URL:", signedUrl);
     return signedUrl;
   } catch (error) {
@@ -76,4 +88,4 @@ const getUrlForCategoryImage = async (categoryName: string) => {
   }
 };
 
-export { uploadImage, getUrl, uploadAudio, getUrlForCategoryImage };
+export { uploadImage, getUrl, uploadAudio, getUrlForCategoryImage, getObject };

@@ -81,7 +81,7 @@ const SubscriptionPage = () => {
   const [selected, setSelected] = useState<Key | null | undefined>("monthly");
   const fetchPlans = async () => {
     try {
-      const response = await instance.get("/payment/fetchAllPlans");
+      const response = await instance.get("/subscription/fetchAllPlans");
       setPlans(response.data.response);
     } catch (error) {
       console.error("Error fetching plans:", error);
@@ -110,7 +110,7 @@ const SubscriptionPage = () => {
 
   const updatePlan = async () => {
     const response = await instance.patch(
-      `/payment/plan/${selectedPlan.id}`,
+      `/subscription/plan/${selectedPlan.id}`,
       selectedPlan
     );
     if (response.data.success) {
@@ -119,7 +119,6 @@ const SubscriptionPage = () => {
       notifySuccess("Plan updated successfully");
     }
   };
-
   return (
     <>
       <div className="container mx-auto px-4 py-8 max-w-7xl">
@@ -211,11 +210,11 @@ const SubscriptionPage = () => {
                           type="text"
                           variant="bordered"
                           label="Price"
-                          value={selectedPlan?.amount.toString()}
+                          value={(selectedPlan?.amount / 100).toString()}
                           onChange={(e) =>
                             setSelectedPlan({
                               ...selectedPlan,
-                              amount: Number(e.target.value),
+                              amount: Number(e.target.value) * 100,
                             })
                           }
                         />
@@ -244,17 +243,6 @@ const SubscriptionPage = () => {
                         </div>
                       </div>
                     </div>
-                    {/* <div className="w-full">
-                      <Autocomplete
-                        label="Period"
-                        variant="bordered"
-                        defaultItems={periods}
-                        selectedKey={selectedPlan?.period}
-                        onSelectionChange={(periodValue) => setSelectedPlan({ ...selectedPlan, period: periodValue })}
-                      >
-                      {(item) => <AutocompleteItem key={item.value}>{item.label}</AutocompleteItem>}
-                      </Autocomplete>
-                  </div> */}
                     <Input
                       type="text"
                       variant="bordered"

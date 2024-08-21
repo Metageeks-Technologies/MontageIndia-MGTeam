@@ -83,9 +83,8 @@ const Page = () =>
         setloading(false)
       console.log(name,username,email,password)
       notifySuccess( "Login Successful" );
-      router.push( "/" );
+      router.push( "auth/user/login" );
       }
-
     } catch ( error:any )
     {
       setloading(false)

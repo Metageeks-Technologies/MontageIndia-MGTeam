@@ -25,11 +25,11 @@ const ProductList: React.FC = () => {
 
   const fetchOrder = async (_id: string) => {
     try {
-      const response = await instance.get(`/orders/${_id}`);
+      const response = await instance.get(`/order/customer/${_id}`);
       setOrders(response.data.orders);  
       console.log("data", response);
     } catch (error) {
-      console.error("Error fetching order by ID:", error);
+      console.error("Error fetching order by user ID:", error);
     }
   };
 
