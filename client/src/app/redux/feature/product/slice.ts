@@ -228,10 +228,19 @@ export const audioSlice = createSlice({
     },
     addSingleProductToCart: (state, action: PayloadAction<Payload>) => {
       const productId = action.payload.productId;
-      const product = state.singleProduct;
+      const product = state.cart.find(
+        (item) => item.productId._id === productId
+      );
+      const newProduct = state.singleProduct;
       if (product) {
+        state.cart = state.cart.map((product) =>
+          product.productId._id === productId
+            ? { ...product, variantId: action.payload.variantId }
+            : product
+        );
+      } else if (newProduct) {
         state.cart.push({
-          productId: product,
+          productId: newProduct,
           variantId: action.payload.variantId,
         });
       }

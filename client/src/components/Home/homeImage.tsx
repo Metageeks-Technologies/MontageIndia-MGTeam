@@ -14,6 +14,8 @@ import {
 } from "@/app/redux/feature/product/image/api";
 import { downloadProduct } from "@/app/redux/feature/product/api";
 import { BiSolidPurchaseTagAlt } from "react-icons/bi";
+import { useState } from "react";
+import { Spinner } from "@nextui-org/react";
 
 const ImageGallery = ({ data }: { data: TCustomerProduct }) => {
   function truncateText(text: string, wordLimit: number): string {
@@ -24,8 +26,15 @@ const ImageGallery = ({ data }: { data: TCustomerProduct }) => {
     return text;
   }
 
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
   const dispatch = useAppDispatch();
+
+  const handleDownload = async () => {
+    setLoading(true);
+    await downloadProduct(dispatch, data.publicKey, data.title);
+    setLoading(false);
+  };
 
   const handleeWishlist = () => {
     if (data.isWhitelisted) {
@@ -74,17 +83,19 @@ const ImageGallery = ({ data }: { data: TCustomerProduct }) => {
           <p className="text-sm"> {data.isWhitelisted ? "Saved" : "Save"} </p>
         </div>
       </div>
-      <div className="absolute bottom-0 left-0 m-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+      <div
+        onClick={handleDownload}
+        className="absolute bottom-0 left-0 m-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+      >
         <div className="text-white bg-black bg-opacity-50 px-2 py-2 flex items-center gap-1 rounded-3xl">
-          <TfiDownload className="font-semibold" />
-          <p
-            className="text-small"
-            onClick={() =>
-              downloadProduct(dispatch, data.publicKey, data.title)
-            }
-          >
-            Try
-          </p>
+          {!loading ? (
+            <>
+              <TfiDownload className="font-semibold" />
+              <p className="text-small">Try</p>
+            </>
+          ) : (
+            <Spinner label="" color="current" />
+          )}
         </div>
       </div>
       <div className="absolute bottom-0 right-0 m-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">

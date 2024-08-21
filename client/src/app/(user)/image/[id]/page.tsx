@@ -38,14 +38,8 @@ const Home = () => {
   } = useAppSelector((state) => state.product);
   const { user } = useAppSelector((state) => state.user);
 
-  const existId = cart.filter((item) => item.productId._id === product?._id);
-
-  const handleVariantChange = (variantId: string) => {
-    setSelectedVariantId(variantId);
-  };
-
   const handleeWishlist = () => {
-    if (!product) return;
+    if (!product || loading) return;
 
     if (product.isWhitelisted) {
       removeProductFromWishlist(dispatch, product._id);
@@ -59,12 +53,16 @@ const Home = () => {
   };
 
   const handleCart = (variant: string) => {
-    if (!product) return;
-    if (product.isInCart) {
+    if (!product || loading) return;
+    if (product.isInCart && isVariantInCart(variant)) {
       removeProductFromCart(dispatch, product._id);
     } else {
       addProductToCart(dispatch, product._id, variant);
     }
+  };
+
+  const isVariantInCart = (variantId: string) => {
+    return cart.some((item) => item.variantId.includes(variantId));
   };
 
   const isVariantPurchased = (variantId: string) => {
@@ -188,12 +186,12 @@ const Home = () => {
                         <>
                           <div
                             title={
-                              isVariantPurchased(license._id)
+                              isVariantInCart(license._id)
                                 ? "Remove from cart"
                                 : "Add to cart"
                             }
                             className={` p-2 ${
-                              isVariantPurchased(license._id)
+                              isVariantInCart(license._id)
                                 ? "bg-red-500 text-white"
                                 : "bg-white text-black"
                             } rounded-full`}
