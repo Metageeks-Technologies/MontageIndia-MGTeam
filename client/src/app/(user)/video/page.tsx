@@ -29,7 +29,7 @@ const Page = () => {
   };
 
   useEffect(() => {
-    getVideo(dispatch, {});
+    getVideo(dispatch, {page: videoPage, mediaType: ["video"] });
   }, [videoPage]);
 
   return (
