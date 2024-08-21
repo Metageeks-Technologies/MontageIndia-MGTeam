@@ -6,6 +6,7 @@ import { OrderOption } from "@/types/order";
 import { useRouter } from "next/navigation";
 import { useAppDispatch } from "@/app/redux/hooks";
 import { setCart } from "@/app/redux/feature/product/slice";
+import { Spinner } from "@nextui-org/react";
 declare global {
   interface Window {
     Razorpay: any;
@@ -64,6 +65,7 @@ const PayButton: React.FC<props> = ({ orderOption }) => {
 
     if (!response.data.success) {
       alert("Something went wrong. Please try again later");
+      setLoading(false);
       return;
     }
     const paymentOptions = {
