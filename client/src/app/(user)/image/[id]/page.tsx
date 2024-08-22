@@ -175,15 +175,17 @@ const Home = () => {
           className="flex-grow  py-2 bg-gray-100 rounded-md "
         />
         <IoSearchOutline className="h-6 w-6 cursor-pointer text-gray-400" />
+        <div className="lg:block md:block hidden">
         <button className="flex items-center gap-4 text-gray-500 hover:text-black  rounded-md">
           <img src="/asset/Rectangle 15.png" alt="" />
           <img src="/asset/Union.png" alt="" />
           <span>Search by image</span>
         </button>
+        </div>
       </div>
 
       <div className=" m-auto mt-4 bg w-[90%] ">
-        <div className="flex  m-auto justify-between gap-1">
+        <div className="flex  m-auto lg:flex-row lg:justify-between sm:flex-col flex-col gap-1">
           <div className=" py-4">
             {product && (
               <div className="relative ">
@@ -216,9 +218,9 @@ const Home = () => {
                 <img
                   src={`https://mi2-public.s3.ap-southeast-1.amazonaws.com/${product.thumbnailKey}`}
                   alt="Main Image"
-                  className="w-[56rem] h-[32rem] mt-2 rounded"
+                  className="lg:w-[56rem] md:w-[44rem] w-[27rem] h-[32rem] mt-2 rounded"
                 />
-                <div className="w-[50rem] mt-2">
+                <div className="lg:w-[50rem] md:w-[35rem] w-[22rem] mt-2">
                   <h2 className="font-bold">Description</h2>
                   <p className="text-sm text-neutral-700">
                     Stock Photo ID: {product._id}
@@ -228,7 +230,7 @@ const Home = () => {
               </div>
             )}
           </div>
-          <div className="border  w-[27rem] py-2 px-8 bg-white">
+          <div className="border  lg:w-[27rem] md:w-full w-[23rem] py-2 px-8 bg-white">
             {product && (
               <div>
                 <h3 className="font-bold text-lg">Purchase a Licence</h3>
@@ -327,26 +329,26 @@ const Home = () => {
               
             <div className="py-6">
             {product && (
-             <div className="bg-white p-4 border rounded-md w-full max-w-md">
+             <div className="bg-white p-4 border rounded-md w-full">
              <h2 className="text-lg font-semibold mb-4">Details</h2>
              <div className="space-y-2">
-               <div className="flex">
+               <div className="flex lg:justify-start md:justify-between">
                  <span className="font-medium w-32">Title:</span>
                  <p className="text-blue-600 hover:underline">{product.title}</p>
                </div>
-               <div className="flex">
+               <div className="flex  lg:justify-start md:justify-between">
                  <span className="font-medium w-32">Category:</span>
                  <p className="">{product.category}</p>
                </div>
-               <div className="flex">
+               <div className="flex  lg:justify-start md:justify-between">
                  <span className="font-medium w-32">Upload date:</span>
                  <span>{new Date().toLocaleDateString()}</span>
                </div>
-               <div className="flex">
+               <div className="flex  lg:justify-start md:justify-between">
                  <span className="font-medium w-32">Location:</span>
                  <span>India</span>
                </div>
-               <div className="flex">
+               <div className="flex  lg:justify-start md:justify-between">
                <span className="font-medium w-32">Format: </span>
                <span className="text-sm text-neutral-600">6725 × 4286 px</span>
                </div>
@@ -408,23 +410,7 @@ const Home = () => {
         </div>
 
         {product && (
-          <div className="">
-            {/* <div className="flex justify-between gap-10">
-              
-              <div className="flex justify-end items-start">
-                <div>
-                  <h2 className="font-bold">Important information</h2>
-                  <p className="text-sm">
-                    Release information: Signed model and property release on
-                    file with Shutterstock, Inc.
-                  </p>
-                  <h2 className="font-bold mt-4">Photo Formats</h2>
-                  <p className="text-sm">
-                    5760 × 3840 pixels • 19.2 × 12.8 in • DPI 300 • JPG
-                  </p>
-                </div>
-              </div>
-            </div> */}
+          <div>
             <div className="mt-8">
               <h2 className="font-bold text-lg">Related keywords</h2>
               <div className="flex gap-3 mt-2">
