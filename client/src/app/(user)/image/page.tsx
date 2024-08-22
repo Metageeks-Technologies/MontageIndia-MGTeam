@@ -203,7 +203,7 @@ const Page = () => {
             type="button"
             variant="flat"
             className={`${
-              currentPage === 1 ? "opacity-70" : "hover:bg-webgreenHover"
+              currentPage === 1 ? "opacity-70  cursor-not-allowed" : "hover:bg-webgreenHover"
             } bg-webgreen-light text-white rounded-md font-bold`}
             onPress={handlePrevPage}
           >

@@ -27,6 +27,11 @@ const config: Config = {
           DEFAULT: "#a8f521",
           dark: "#a8f521",
         },
+        cart: {
+          light: "#FFE6E5",
+          DEFAULT: "#FE423F",
+          bg: "#CCCCCC",
+        },
         var1: {
           light: "#f31260d6",
           DEFAULT: "#f31260",

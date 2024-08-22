@@ -21,6 +21,7 @@ import { AiOutlineDownload } from "react-icons/ai";
 import Trending from "@/components/Video/trendingVideos";
 import { getVideo } from "@/app/redux/feature/product/video/api";
 import { BiSolidPurchaseTagAlt } from "react-icons/bi";
+import { LuIndianRupee } from "react-icons/lu";
 
 const Home = () => {
   const [selectedVariantId, setSelectedVariantId] = useState("");
@@ -73,8 +74,14 @@ const Home = () => {
     return user?.purchasedProducts.some((item) =>
       item.variantId.includes(variantId)
     );
+  }; 
+  const fetchData = () => {
+    // setLoading(true);
+    getVideo(dispatch, {
+      mediaType: ["video"],
+      productsPerPage: "9",
+    }) 
   };
-
   const handleCart = (variant: string) => {
     if (!product || loading) return;
     if (product.isInCart && isVariantInCart(variant)) {
@@ -83,6 +90,11 @@ const Home = () => {
       addProductToCart(dispatch, product._id, variant);
     }
   };
+  
+  useEffect(() => {
+    fetchData();
+  }, []);
+
   return (
     <div className="main">
       <div className="flex items-center gap-4 px-4 py-0.5 bg-gray-100 border border-gray-300 rounded-md w-[90%] m-auto mt-4">
@@ -141,30 +153,21 @@ const Home = () => {
                 <video controls className="rounded-lg h-[20rem] md:h-[28rem] w-full object-cover">
                 <source
                     src={`https://mi2-public.s3.ap-southeast-1.amazonaws.com/${product.thumbnailKey}`}
-                />
+                /> 
                 </video>
-                <div>
-                <h2 className="font-medium">Description</h2>
-                <p className="text-sm">Stock Photo ID: {product._id}</p>
-                <p className="text-sm">{product.description}</p>
-              </div>
-                <div className="mt-4">
-                <h2 className="font-bold">Related keywords</h2>
-                <div className="flex flex-wrap mt-2">
-                  {product.tags.map((keyword, index) => (
-                    <span
-                      key={index}
-                      className="bg-gray-200 text-gray-700 rounded-sm px-3 py-1 text-sm font-semibold mr-2 mb-2"
-                    >
-                      {keyword}
-                    </span>
-                  ))}
+               
+                <div className="lg:w-[50rem] md:w-[35rem] w-[22rem] mt-2">
+                  <h2 className="font-bold">Description</h2>
+                  <p className="text-sm text-neutral-700">
+                    Stock Photo ID: {product._id}
+                  </p>
+                  <p className="text-sm">{product.description}</p>
                 </div>
-            </div>
+
             
               </div>
-              <div className="border-t border-t-gray-400 w-full md:w-[28%]  ">
-                <div className=" p-8">
+              <div className="border-t border-t-gray-400 md:border-t-0 w-full md:w-[28%]  ">
+                <div className="p-8 ">
                 <h3 className="font-semibold  text-gray-700 text-xl">
                   Purchase a License
                 </h3>
@@ -173,90 +176,91 @@ const Home = () => {
                   pricing with volume discounts available.
                 </div>
                 {product.variants.map((license, index) => (
-                  <div key={index} className="border p-4  ">
-                    <div className="flex justify-between">
-                    <label
-                        htmlFor={`license-${index}`}
-                        className="block text-gray-600"
-                      >
-                        ${license.price}
-                      </label>
-                    </div>
-                    <div className=" flex justify-between">
-                      <div>{license.size}</div>
-                      {isVariantPurchased(license._id) ? (
-                        <>
-                          <div
-                            title={"Purchased Product"}
-                            
-                            className={` p-2 bg-red-500 text-white rounded-full`}
-                          >
-                            <BiSolidPurchaseTagAlt />
+                  <div
+                    key={index}
+                    className={`border w-[90%]  cursor-pointer hover:bg-[#F4F4F4] p-2 flex flex-col ${
+                      index === 0 ? 'rounded-t-md' : ''
+                    } ${index === product.variants.length - 1 ? 'rounded-b-md' : ''}`}
+                    onClick={() => handleCart(license._id)}
+                  >
+                    <div className=" flex flex-row justify-between ">
+                      <div className="flex flex-row items-center gap-3">
+                        {/* Conditionally render the image */}
+                        {index === 0 ? (
+                          <img src="/asset/full-hd.svg" className="w-20" alt="Full HD" />
+                        ) : index === 1 ? (
+                          <img src="/asset/hd.svg" className="w-10 h-5" alt="HD" />
+                        ) : null}
+                      </div>
+                      <div>
+                        {isVariantPurchased(license._id) ? (
+                          <div title="Purchased Product" className="p-2 items-center flex flex-row gap-1 bg-red-500 text-white rounded-full">
+                           <LuIndianRupee /> {license.price} <BiSolidPurchaseTagAlt />
                           </div>
-                        </>
-                      ) : (
-                        <>
+                        ) : (
                           <div
                             title={
-                              isVariantInCart(license._id)
-                                ? "Remove from cart"
-                                : "Add to cart"
+                              isVariantInCart(license._id) ? 'Remove from cart' : 'Add to cart'
                             }
-                            className={` p-2 ${
-                              isVariantInCart(license._id)
-                                ? "bg-red-500 text-white cursor-pointer"
-                                : "bg-white text-black  cursor-pointer"
-                            } rounded-full`}
-                            onClick={() => handleCart(license._id)}
+                            className={`p-2 items-center flex flex-row gap-1 text-black  rounded-full`}
                           >
-                            {product.isInCart ? (
-                              <BsCartCheckFill />
-                            ) : (
-                              <BsCart2 />
-                            )}
+                            <LuIndianRupee />
+                             {license.price}
+                            <span  className={`p-2 items-center  ${
+                              isVariantInCart(license._id)
+                                ? 'bg-cart text-white cursor-pointer'
+                                : ' bg-white text-black cursor-pointer'
+                            } rounded-full`}>
+                            {product.isInCart ? <BsCartCheckFill /> : <BsCart2 />}
+                            </span>
                           </div>
-                        </>
-                      )}
+                        )}
+                      </div>
                     </div>
+                    <div className="items-center flex  flex-row">
+                      
+                      {license.label}
+                       </div>
                   </div>
                 ))}
+
                 </div>
                 <div className="flex flex-col vidbg  border-t border-t-gray-400  justify-end items-start">
-                  <div className="p-5">
-                    <h2 className="font-bold">Detail</h2>
-                    <div className="flex flex-row">
-                    <span className="font-semibold mt-4">Tittle : </span><span className="font-light mt-4">{product.title}</span>
-                    </div>
-                    <div className="flex flex-row">
-                    <span className="font-semibold mt-4">Description :</span> <span className="font-light mt-4"> {product.description}</span>
-                    </div>
-                    <div className="flex flex-row">
-                    <span className="font-semibold mt-4">Categories : </span><span className="font-light mt-4 ">{product.category}</span>
-                    </div>
-                    <div className="flex flex-row items-center">
-                    <div className="font-semibold mt-4">Tags : </div> 
-                    {product.tags.map((keyword, index) => (
-                    <span
-                      key={index}
-                      className="bg-gray-200 mt-5 mx-1 text-gray-700 rounded-lg px-2 py-1 text-sm font-semibold mr-2 mb-2"
-                    >
-                      {keyword}
-                    </span>
-                    ))}
-                    </div>
-                    <div className="flex flex-row">
-                    <span className="font-semibold mt-4">Categories : </span><span className="font-light mt-4">{product.category}</span>
-                    </div>
-                    <div className="flex flex-row">
-                    <span className="font-semibold mt-4">Upload date :</span> <span className="font-light mt-4"> {new Date().toLocaleDateString()}</span>
-                    </div>
-                  </div>
+            {product && (
+             <div className=" p-8  rounded-md w-full">
+             <h2 className="text-lg font-semibold mb-2">Details</h2>
+             <div className="space-y-1 text-base">
+               <div className="flex lg:justify-start md:justify-between">
+                 <span className="font-medium w-32">Title:</span>
+                 <p className="text-violet-600 hover:underline">{product.title}</p>
+               </div>
+               <div className="flex  lg:justify-start md:justify-between">
+                 <span className="font-medium w-32">Category:</span>
+                 <p className="">{product.category}</p>
+               </div>
+               <div className="flex  lg:justify-start md:justify-between">
+                 <span className="font-medium w-32">Upload date:</span>
+                 <span>{new Date().toLocaleDateString()}</span>
+               </div>
+               <div className="flex  lg:justify-start md:justify-between">
+                 <span className="font-medium w-32">Location:</span>
+                 <span>India</span>
+               </div>
+               <div className="flex  lg:justify-start md:justify-between">
+               <span className="font-medium w-32">Format: </span>
+               <span className="text-sm text-neutral-600">6725 × 4286 px</span>
+               </div>
+             </div>
+           </div>
+
+            )}
                 </div>
               </div>
             </>
           )}
         </div>
       </div>
+      
       <div className="py-10 lg:mx-24 md:mx-4 mx-4">
         <h2 className="text-xl font-semibold">Similar Videos</h2>
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 mt-5">
@@ -264,9 +268,36 @@ const Home = () => {
                 <Trending key={index} data={data} />
               ))}
         </div>
+        {product && (
+          <div>
+            <div className="mt-8">
+              <h2 className="font-bold text-lg">Related keywords</h2>
+              <div className="flex gap-3 mt-2">
+                {product.tags.map((keyword, index) => (
+                  <span key={index} className="">
+                    <button className="border rounded-md py-1 px-4 flex gap-1 items-center">
+                      <IoSearchOutline className="h-5 w-5" />
+                      {keyword}
+                    </button>
+                  </span>
+                ))}
+              </div>
+            </div>
+            <div className="mt-8 mb-3">
+              <h1 className="font-semibold text-lg">Category</h1>
+              <button className="border rounded-md py-1 px-4 mt-2">
+                {product.category}
+              </button>
+              {/* <p>Upload date: {new Date().toLocaleDateString()}</p> */}
+            </div>
+          </div>
+        )}
+
         </div>
+       
       <Footer />
     </div>
+
   );
 };
 
