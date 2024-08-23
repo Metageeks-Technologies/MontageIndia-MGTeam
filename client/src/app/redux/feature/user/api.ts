@@ -3,9 +3,9 @@ import {
   setCurrUser,
   requestStart,
   requestFail,
-  setCartData,
+  setProductCart,
   removeCart,
-  getCart,
+  // getCart,
 } from "./slice";
 import type { AppDispatch } from "@/app/redux/store";
 import type { AxiosError } from "axios";
@@ -32,7 +32,7 @@ export const getCartData = async (
   try {
     const response = await instance("/product/cart/data");
     console.log("response in getting cartitems:-", response);
-    dispatch(getCart(response.data));
+    // dispatch(getCart(response.data));
     return response.data;
   } catch (error) {
     const e = error as AxiosError;
@@ -42,14 +42,14 @@ export const getCartData = async (
 
 export const addCartItem = async (dispatch: AppDispatch, productId: string) => {
   dispatch(requestStart());
-  console.log("first", productId, variantId);
+  console.log("first", productId);
   try {
     const response = await instance.post(`/product/addToCart`, { productId });
     console.log("response after adding product to cart", response);
     if (response.status === 200) {
       notifySuccess(`${response.data.message}`);
       getCurrCustomer(dispatch);
-      dispatch(setCartData(response.data.cart));
+      dispatch(setProductCart(response.data.cart));
     }
 
     return response.data;

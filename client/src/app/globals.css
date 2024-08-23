@@ -99,8 +99,8 @@ td {
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 60px;
-  height: 60px;
+  width: 40px;
+  height: 40px;
   background: #efefef;
   border-radius: 50%;
   border: none;
@@ -124,14 +124,47 @@ td {
   align-items: center;
   justify-content: center;
   height: 80px;
+  /* width: 100%; */
+  background: transparent;
+}
+
+.detail-waveform-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  height: 300px;
   width: 100%;
   background: transparent;
 }
+
+.detail-wave {
+  width: 100%;
+  height: 300px;
+}
+.detail-play-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 60px;
+  height: 60px;
+  background: #fe423f;
+  border-radius: 50%;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding-bottom: 3px;
+}
+
+.detail-play-button:hover {
+  background: #fe423f;
+}
+/* radio */
 .custom-radio {
   appearance: none;
   width: 16px;
   height: 16px;
-  border: 2px solid #FE423F;
+  border: 2px solid #fe423f;
   border-radius: 50%;
   position: relative;
   cursor: pointer;
@@ -142,12 +175,12 @@ td {
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  background-color: #FE423F;
+  background-color: #fe423f;
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
 }
-.vidbg{
-  background-color: #F4F6F6;
+.vidbg {
+  background-color: #f4f6f6;
 }
