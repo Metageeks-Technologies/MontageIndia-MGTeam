@@ -45,7 +45,7 @@ function CartPopup() {
         className={`${
           !isOpen
             ? "hidden"
-            : "absolute bg-white rounded-md w-[30rem] max-h-[22rem] top-16 right-4 md:right-14  z-20"
+            : "absolute  shadow-xl bg-white rounded-md w-[30rem] max-h-[22rem] top-16 right-4 md:right-14  z-20"
         }`}
       >
         <div className=" rounded-md  bg-white  justify-self-end w-full max-w-2xl">
@@ -74,7 +74,7 @@ function CartPopup() {
                     {item?.productId.mediaType === "audio" && (
                       <img
                         className="w-[74px] h-14 rounded-md mr-4"
-                        src="/asset/audio.svg"
+                        src="/images/audioImage.png"
                         alt={item?.productId.title}
                       />
                     )}
