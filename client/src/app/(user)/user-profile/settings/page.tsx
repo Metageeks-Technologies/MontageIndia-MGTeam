@@ -6,7 +6,10 @@ import Swal from 'sweetalert2';
 import { useAppDispatch, useAppSelector } from "@/app/redux/hooks";
 import { getCurrCustomer } from "@/app/redux/feature/user/api";
 import { Spinner } from "@nextui-org/react";
-
+import { FaCamera } from "react-icons/fa";
+import { FileUploader } from "react-drag-drop-files";
+import axios from "axios";
+const fileTypes = ["JPG", "PNG", "JPEG"];
 interface Subscription {
   PlanId: string;
   credits: number;
@@ -18,6 +21,7 @@ interface Subscription {
 interface User {
   id: string;
   name: string;
+  image:string;
   email: string;
   phone: string;
   username: string;
@@ -36,6 +40,8 @@ interface Form {
 const ProfileSetting: FC = () => {
   const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [file, setFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
   const [updateLoader, setUpdateLoader] = useState(false);
   const [formData, setForm] = useState<Form>({
@@ -47,7 +53,19 @@ const ProfileSetting: FC = () => {
   });
   const dispatch=useAppDispatch()
   const users = useAppSelector((state: any) => state.user);
-  console.log("cuurent",users)
+  console.log("cuurent",users);
+
+  
+  const handleChange = (file: File) => {
+    setFile(file);
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   const fetchUser = async () => {
     setLoading(true);
@@ -76,18 +94,62 @@ const ProfileSetting: FC = () => {
     }
   };
 
-  const updateProfile = async () => {
+   const getUploadUrl = async ( fileName: string ): Promise<string> =>
+    {
+      if(!file){
+        return '';
+      }
+      console.log("file",file);
+        try
+        {
+            const response = await instance.post<{ url: string; }>( `/aws/getUploadRrl`, {
+                folder: "userProfile", 
+                fileName: `${user?._id}`,        
+            } );
+            return response.data.url;
+        } catch ( error )
+        {
+            console.error( 'Error getting upload URL:', error );
+            throw error;
+        }
+    };
 
-    if(!formData.currentPassword && formData.name===user?.name && !formData.newPassword && !formData.confirmPassword){
+
+    const handleUpload = async (): Promise<boolean> =>
+    {
+        if ( !file ) return false;
+        try
+        {
+            const uploadUrl = await getUploadUrl( file.name );
+            if ( !uploadUrl || uploadUrl === '' ) return false;
+
+
+            const res = await axios.put( uploadUrl, file, {
+                headers: { 'Content-Type': file.type },
+            } );
+
+
+            return res.status === 200;
+        } catch ( error )
+        {
+            console.error( 'Error uploading file:', error );
+            return false;
+        }
+    };
+
+  const updateProfile = async () => {
+    
+    if(!formData.currentPassword && !file && !imagePreview && formData.name===user?.name && !formData.newPassword && !formData.confirmPassword){
      return ;
     }
-    
+
     setUpdateLoader(true);
     try {
       let payload ={}
       if(formData.currentPassword && formData.newPassword && formData.confirmPassword){
         if(formData.newPassword === formData.confirmPassword){
           payload = {
+            ...payload,
             name: formData.name,
             currentPassword: formData.currentPassword,
             newPassword: formData.newPassword
@@ -102,13 +164,17 @@ const ProfileSetting: FC = () => {
           return;
         }
       }else{
-        payload = {
-          name: formData.name,
-        }
+        payload = {...payload,name: formData.name,}
       }
-      console.log("payload",payload)
       
-      const response = await instance.patch(`/user/update`,{ ...payload});
+      if(file){
+        await handleUpload();
+        let path=`${process.env.NEXT_PUBLIC_AWS_PREFIX}userProfile/${user?._id}`;
+        console.log("path",path);
+        payload={...payload,image:path}
+      }
+      
+      const response = await instance.patch(`/user/update`,{...payload});
       if (response.data && response.data.success) {
         fetchUser();
         Swal.fire({
@@ -150,11 +216,23 @@ const ProfileSetting: FC = () => {
             <div className="w-full min-h-fit mb-8 flex flex-col gap-4 justify-between items-center">
             <div className="w-full">
              <div className=" bg-[#F1F1F1] min-h-fit flex gap-4 p-8 rounded-lg justify-start items-center">
-            <div>
-            <svg className="w-full" xmlns="http://www.w3.org/2000/svg" width="138" height="138" viewBox="0 0 138 138" fill="none">
-            <path d="M68.5917 0C50.3275 0.108075 32.8511 7.45331 19.9936 20.4256C7.13603 33.3979 -0.053735 50.9389 0.000302414 69.2035C0.0543398 87.4682 7.34777 104.966 20.2819 117.862C33.216 130.758 50.7354 138 69 138C87.2646 138 104.784 130.758 117.718 117.862C130.652 104.966 137.946 87.4682 138 69.2035C138.054 50.9389 130.864 33.3979 118.006 20.4256C105.149 7.45331 87.6725 0.108075 69.4083 0H68.5917ZM68.5917 35.1127C76.7852 35.2206 84.6034 38.565 90.3401 44.4161C96.0768 50.2672 99.2663 58.15 99.2123 66.3441C99.1584 74.5381 95.8656 82.3783 90.0524 88.1534C84.2392 93.9285 76.3776 97.1698 68.1834 97.1698C59.9892 97.1698 52.1277 93.9285 46.3145 88.1534C40.5013 82.3783 37.2084 74.5381 37.1545 66.3441C37.1006 58.15 40.29 50.2672 46.0267 44.4161C51.7634 38.565 59.5817 35.2206 67.7751 35.1127H68.5917ZM22.8639 116.974C30.213 107.448 39.3314 102.684 50.2189 102.684H87.7811C98.6686 102.684 107.787 107.448 115.136 116.974C102.69 128.807 86.1732 135.406 69 135.406C51.8268 135.406 35.31 128.807 22.8639 116.974Z" fill="#DDD"/>
-            </svg>
-            </div>
+            <div className="relative flex justify-center items-center">
+              {file && imagePreview ? (
+                <div className="w-40 h-40 rounded-full overflow-hidden">
+                  <img className="w-full h-full" src={imagePreview} alt="image" />
+              </div>
+              ):(
+                <div className="w-40 h-40 rounded-full overflow-hidden">
+                  <img className="w-full h-full" src={user?.image} alt="" />
+                </div>
+              )}
+              <div className="absolute bottom-2 right-2 cursor-pointer border-2 border-[#F1F1F1] px-2 py-2 rounded-full bg-webred text-white">
+               
+                  <FileUploader handleChange={handleChange} name="file" types={fileTypes}>
+                       <FaCamera className="cursor-pointer" />
+                  </FileUploader>
+              </div>
+          </div>
             <div className="flex flex-col gap-2">
             <div className="font-bold text-xl">Profile Picture</div>
             <div className="text-gray-500 text-md ">This will be displayed on your profile.</div>

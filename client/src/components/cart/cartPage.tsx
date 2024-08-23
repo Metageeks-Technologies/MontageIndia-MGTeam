@@ -18,7 +18,7 @@ function CartPopup() {
   const handleRemoveCart = (id: string, variantId: string) => {
     removeItemFromCart(dispatch, id);
   };
-  const limitWords = (text:string, limit:number) => {
+ const limitWords = (text:string, limit:number) => {
     const words = text.split(' ');  
     if (words.length > limit) {
       return words.slice(0, limit).join(' ') + '...';

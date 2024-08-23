@@ -167,6 +167,7 @@ export const createSubscription = catchAsyncError(
       expire_by: req.body.expire_by,
       notes: {
         credits: req.body.notes.credits,
+        subscriptionId: req.body.notes.subscriptionId,
       },
     };
     console.log("step2", options);

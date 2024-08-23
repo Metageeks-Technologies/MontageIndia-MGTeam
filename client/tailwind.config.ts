@@ -42,6 +42,11 @@ const config: Config = {
           DEFAULT: "#FE423F",
           dark: "#FE423F",
         },
+        webredHover: {
+          light: "#FE423F",
+          DEFAULT: "#FE423F",
+          dark: "#FE423F",
+        },
         pageBg: {
           light: "#EFEBE9",
           DEFAULT: "#f5f5f5",
