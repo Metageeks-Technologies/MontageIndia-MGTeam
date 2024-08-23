@@ -17,12 +17,15 @@ const productSchema = new mongoose.Schema(
         price: { type: Number },
         credit: { type: Number, default: 10 },
         key: { type: String },
-        metaData: {
+        metadata: {
           format: { type: String, required: true },
-          length: { type: String },
-          size: { type: String, required: true },
+          length: { type: Number },
+          size: { type: Number, required: true },
           dimension: { type: String },
-          dpi: { type: String },
+          dpi: { type: Number },
+          bitrate: { type: Number },
+          resolution: { type: String },
+          frameRate: { type: String },
         },
       },
     ],
@@ -37,6 +40,7 @@ const productSchema = new mongoose.Schema(
       enum: ["image", "video", "audio"],
       required: true,
     },
+    length: { type: Number },
     createdBy: { type: mongoose.Schema.Types.ObjectId },
   },
   { timestamps: true }

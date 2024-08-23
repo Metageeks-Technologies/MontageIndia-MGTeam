@@ -3,12 +3,51 @@ import catchAsyncError from "../../middleware/catchAsyncError";
 import ErrorHandler from "../../utils/errorHandler";
 import ffmpeg from "fluent-ffmpeg";
 import ffmpegStatic from "ffmpeg-static";
+import ffprobeStatic from "ffprobe-static";
 import { uploadAudio } from "../../lib/uploadToS3";
 import Product from "@src/model/product/product";
 import { deleteLocalFile } from "@src/utils/helper";
-import { getAudioMetadata } from "@src/utils/audioMetadata";
+import fs from "fs";
+import type { MetaData } from "@src/types/product";
+
+interface AudioMetadata {
+  durationInSeconds: number;
+  bitrateInKbps: number;
+  fileSizeInMB: number;
+}
 
 ffmpeg.setFfmpegPath(ffmpegStatic as string);
+ffmpeg.setFfprobePath(ffprobeStatic.path);
+
+function getAudioMetadata(filePath: string): Promise<AudioMetadata> {
+  return new Promise((resolve, reject) => {
+    // Use ffprobe to extract metadata
+    ffmpeg.ffprobe(filePath, (err, metadata) => {
+      if (err) return reject(err);
+
+      try {
+        // Get file size in MB
+        const sizeInBytes = fs.statSync(filePath).size;
+        const fileSizeInMB = sizeInBytes / (1024 * 1024);
+
+        // Extract duration and bitrate from metadata
+        const durationInSeconds = metadata.format.duration || 0;
+        const bitrateInKbps: number = metadata.format.bit_rate
+          ? parseInt(metadata.format.bit_rate.toString(), 10) / 1000
+          : 0;
+
+        // Resolve with the audio metadata
+        resolve({
+          durationInSeconds,
+          bitrateInKbps: Math.round(bitrateInKbps),
+          fileSizeInMB: parseFloat(fileSizeInMB.toFixed(2)), // Rounded to 2 decimal places
+        });
+      } catch (error) {
+        reject(new Error("Error parsing metadata"));
+      }
+    });
+  });
+}
 
 function addAudioWatermark(
   mainAudio: string,
@@ -91,8 +130,15 @@ export const reduceAudio = catchAsyncError(
       console.error("Audio watermarking failed:", error);
     }
 
-    const audioMetaData = await getAudioMetadata(originalAudioPath);
-    console.log(audioMetaData);
+    let audioMetaData: AudioMetadata;
+
+    try {
+      audioMetaData = await getAudioMetadata(originalAudioPath);
+      console.log("Audio Metadata:", audioMetaData);
+    } catch (error) {
+      console.error("Error retrieving audio metadata:", error);
+      return next(new ErrorHandler("Failed to retrieve audio metadata", 500));
+    }
 
     const images = [
       { folder: `audio`, filename: `${filename}.${fileExtension}` },
@@ -127,13 +173,20 @@ export const reduceAudio = catchAsyncError(
       return next(new ErrorHandler(`Product not found`, 404));
     }
 
+    const metadata: MetaData = {
+      size: audioMetaData.fileSizeInMB,
+      format: fileExtension,
+      length: audioMetaData.durationInSeconds,
+      bitrate: audioMetaData.bitrateInKbps,
+    };
+
     const variants = [
       {
-        size: "Original",
+        metadata,
         key: `${uuid}-original.${fileExtension}`,
       },
     ];
-    // product.variants.push(...variants);
+    product.variants.push(...variants);
     product.publicKey = `${uuid}/audio/${uuid}-watermarked.${fileExtension}`;
     product.thumbnailKey = `${uuid}/audio/${uuid}-watermarked.${fileExtension}`;
 

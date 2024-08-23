@@ -5,6 +5,7 @@ import Activity from "@src/model/activity/activity";
 import type { TAdmin, TCustomer } from "@src/types/user";
 import Customer from "@src/model/user/customer.js";
 import { getObject } from "@src/lib/uploadToS3";
+import { MetaData } from "@src/types/product";
 
 export const createProduct = catchAsyncError(async (req: any, res, next) => {
   req.body.createdBy = req.user._id;
@@ -154,11 +155,24 @@ export const addSizeAndKeysToVideo = catchAsyncError(
     if (mediaType !== "video") {
       return next(new ErrorHandler("media type should be video", 400));
     }
+    const originalMetadata: MetaData = {
+      resolution: "1920x1080", //Px
+      bitrate: 5, //Mbps
+      frameRate: "30", //Hz
+      format: "mp4",
+      size: 1,
+    };
+    const mediumMetadata: MetaData = {
+      resolution: "1920x1080", //Px
+      bitrate: 5, //Mbps
+      frameRate: "30", //Hz
+      format: "mp4",
+      size: 1,
+    };
 
     const variants = [
-      { size: "original", key: `${uuid}/video/${uuid}-original.mp4` },
-      { size: "medium", key: `${uuid}/video/${uuid}-medium.mp4` },
-      { size: "small", key: `${uuid}/video/${uuid}-small.mp4` },
+      { metadata: originalMetadata, key: `${uuid}/video/${uuid}-original.mp4` },
+      { metadata: mediumMetadata, key: `${uuid}/video/${uuid}-medium.mp4` },
     ];
 
     const publicKey = `${uuid}/video/${uuid}-product_page.webm`;

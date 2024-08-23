@@ -1,10 +1,13 @@
 import mongoose, { Document } from "mongoose";
-type MetaData = {
+export type MetaData = {
   format: string;
-  size: string;
-  length?: string;
+  size: number;
+  length?: number;
   dimension?: string;
-  dpi?: string;
+  dpi?: number;
+  bitrate?: number;
+  resolution?: string;
+  frameRate?: string;
 };
 export type TProduct = Document & {
   _id: string;
@@ -26,6 +29,7 @@ export type TProduct = Document & {
   }[];
   status: "published" | "archived" | "unavailable" | "draft";
   mediaType: "image" | "video" | "audio";
+  length?: number;
   createdBy: mongoose.Types.ObjectId;
 };
 
