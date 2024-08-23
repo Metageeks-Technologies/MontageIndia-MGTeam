@@ -4,8 +4,9 @@ import { useRouter } from 'next/navigation';
 import instance from '@/utils/axios';
 import { notifyError, notifySuccess } from '@/utils/toast';
 import { Spinner } from '@nextui-org/react';
-import { FiUser, FiMail, FiTag, FiFilm, FiEdit2, FiLock} from 'react-icons/fi';
+import { FiUser, FiMail, FiTag, FiFilm, FiEdit2, FiLock } from 'react-icons/fi';
 import { MdOutlineAdminPanelSettings } from "react-icons/md";
+import Swal from 'sweetalert2';
 
 interface User
 {
@@ -70,11 +71,24 @@ export default function UserDetails ( { params }: { params: { id: string; }; } )
             {
                 setUser( response.data.user );
                 setIsEditing( false );
-                notifySuccess( response.data.message );
+                // notifySuccess( response.data.message );
+                Swal.fire( {
+                    icon: 'success',
+                    title: 'User updated successfully',
+                    text: response.data.message,
+                    confirmButtonText: 'OK',
+
+                } );
             }
         } catch ( error: any )
         {
-            notifyError( error.response?.data?.message || "There was an error updating the profile" );
+            // notifyError( error.response?.data?.message || "There was an error updating the profile" );
+            Swal.fire( {
+                icon: 'error',
+                title: 'Error updating user',
+                text: error.response?.data?.message || "There was an error updating the profile",
+                confirmButtonText: 'OK', 
+            } );
             console.error( 'Error updating user:', error );
         }
     };

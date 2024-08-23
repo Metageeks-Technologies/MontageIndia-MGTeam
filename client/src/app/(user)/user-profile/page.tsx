@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { RxCross2 } from "react-icons/rx";
 import { useAppDispatch, useAppSelector } from "@/app/redux/hooks";
 import { getCurrCustomer } from "@/app/redux/feature/user/api";
+import Swal from "sweetalert2";
 
 interface Subscription {
   PlanId: string;
@@ -47,7 +48,12 @@ const Home: FC = () => {
       }
     } catch (error) {
       console.error("Error fetching user:", error);
-      notifyError("Failed to fetch user data");
+      // notifyError("Failed to fetch user data");
+      Swal.fire( {
+        icon: 'error',
+        title: 'Oops...',
+        text: 'Failed to fetch user data',
+      } );
     }
   };
 
@@ -61,11 +67,23 @@ const Home: FC = () => {
       if (response.data && response.data.success) {
         fetchUser();
         setIsPopupOpen(false);
-        notifySuccess("User data updated successfully");
+        // notifySuccess("User data updated successfully");
+        Swal.fire( {
+          icon: 'success',
+          title: 'User data updated successfully',
+          showConfirmButton: false,
+          timer: 1500
+        } );
       }
     } catch (error) {
       console.error("Error updating user:", error);
-      notifyError("Failed to update user data");
+      // notifyError("Failed to update user data");
+      Swal.fire( {
+        icon: 'error',
+        title: 'Oops...',
+        text: 'Failed to update user data',
+        
+      } );
     }
   };
 

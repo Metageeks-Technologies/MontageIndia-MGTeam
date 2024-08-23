@@ -9,6 +9,7 @@ import instance from "@/utils/axios";
 import { notifySuccess } from "@/utils/toast";
 import { BiLogInCircle, BiLogOutCircle } from "react-icons/bi";
 import { useAppSelector } from "@/app/redux/hooks";
+import Swal from "sweetalert2";
 
 const Sidebar = () => {
   const router = useRouter();
@@ -21,7 +22,12 @@ const Sidebar = () => {
   const handleLogout = async () => {
     try {
       const response = await instance.get("/user/logout");
-      notifySuccess(response.data.message);
+      // notifySuccess(response.data.message);
+      Swal.fire( {
+        title: "Logged out successfully",
+        icon: "success",
+        timer: 2000,
+      } );
       router.push("/auth/user/login");
     } catch (error) {
       console.error("Error in logout:", error);

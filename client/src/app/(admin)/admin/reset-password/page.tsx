@@ -3,6 +3,7 @@ import { notifyError, notifySuccess } from '@/utils/toast';
 import React, { useState } from 'react';
 import instance from '@/utils/axios';
 import { useRouter } from 'next/navigation';
+import Swal from 'sweetalert2';
 const ResetPassword = () =>
 {
     const router = useRouter();
@@ -30,7 +31,13 @@ const ResetPassword = () =>
             );
 
             console.log( "Password reset requested:", response.data );
-            notifySuccess( `Password reset instructions have been sent to ${ email }` );
+            // notifySuccess( `Password reset instructions have been sent to ${ email }` );
+            Swal.fire( {
+                icon: 'success',
+                title: 'Password reset requested',
+                text: `Password reset instructions have been sent to ${ email }`
+                
+            } );
             setShowForgotPasswordModal( false );
             setEmail( "" );
             setTimeout( () =>
@@ -44,8 +51,12 @@ const ResetPassword = () =>
 
             setShowForgotPasswordModal( true );
 
-            notifyError( error.response?.data?.message || "An error occurred while requesting password reset. Please try again." );
-
+            // notifyError( error.response?.data?.message || "An error occurred while requesting password reset. Please try again." );
+            Swal.fire( {
+                icon: 'error',
+                title: 'Error',
+                text: error.response?.data?.message || "An error occurred while requesting password reset. Please try again." 
+            } );
         }
     };
     return (

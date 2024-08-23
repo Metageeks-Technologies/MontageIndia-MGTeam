@@ -8,6 +8,7 @@ import { categoriesOptions, mediaTypesOptions } from "@/utils/tempData";
 import { LuDot } from "react-icons/lu";
 import { useRouter } from "next/navigation";
 import { notifySuccess } from "@/utils/toast";
+import Swal from "sweetalert2";
 
 // Define the interfaces for the product and variant types
 interface Variant
@@ -109,7 +110,12 @@ const Home: React.FC = () =>
       if ( response.status === 201 )
       {
         // setloader( false );
-        notifySuccess( `Product updated successfully` );
+        // notifySuccess( `Product updated successfully` );
+        Swal.fire( {
+          icon: 'success',
+          title: 'Updated',
+          text: 'Product Updated successfully.',
+        } );
         fetchProduct();
       }
 
@@ -324,14 +330,14 @@ const Home: React.FC = () =>
                       <div className="text-sm text-gray-900">{ truncateText( prod.description, 3 ) }</div>
                     </td>
                     <td className="px-4 py-4 border-b border-gray-200 bg-white">
-                      <div className="flex justify-center items-center space-x-2">
+                      <div className="flex justify-center items-center space-x-2" title="View Product">
                         <Link href={ `/admin/product/update/${ prod.uuid }` } className="text-blue-600 hover:text-blue-900">
                           <img src="/images/editIcon.png" alt="Edit" className="w-6 h-6" />
                         </Link>
                         {/* <button className="text-green-600 hover:text-green-900">
                           <img src="/images/viewIcon.png" alt="View" className="w-6 h-6" />
                         </button> */}
-                        <button className="text-red-600 hover:text-red-900" onClick={ () => handleStatusUpdate (prod.uuid)}>
+                        <button className="text-red-600 hover:text-red-900" title="Delete" onClick={ () => handleStatusUpdate (prod.uuid)}>
                           <img src="/images/deleteIcon.png" alt="Delete" className="w-6 h-6" />
                         </button> 
                       </div>
@@ -353,7 +359,8 @@ const Home: React.FC = () =>
       { totalPages > 0 && (
         <div className="flex justify-between items-center mt-4">
           <div>
-            <p>Showing 1 to { productsPerPage } of { totalPages * productsPerPage } Entries</p>
+            <p>Showing { ( productsPerPage * ( currentPage - 1 ) ) + 1 } to { productsPerPage * ( currentPage ) } of { totalPages * productsPerPage } Entries</p>
+
           </div>
           <div className="flex items-center space-x-2">
             <button

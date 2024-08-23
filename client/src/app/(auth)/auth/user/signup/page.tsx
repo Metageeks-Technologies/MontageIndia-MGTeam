@@ -82,7 +82,14 @@ const Page = () =>
       if(response.status===201){
         setloading(false)
       console.log(name,username,email,password)
-      notifySuccess( "Login Successful" );
+        // notifySuccess( "Login Successful" );
+        Swal.fire( {
+          icon: 'success',
+          title: 'Login Successful',
+          text: 'You have been login successfully.',
+          confirmButtonText: 'OK',
+          showCancelButton: false, 
+        } );
       router.push( "auth/user/login" );
       }
     } catch ( error:any )

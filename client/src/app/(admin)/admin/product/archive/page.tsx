@@ -9,6 +9,7 @@ import { LuDot } from "react-icons/lu";
 import { useRouter } from "next/navigation";
 import { notifySuccess } from "@/utils/toast";
 import { FaTrashRestoreAlt } from "react-icons/fa";
+import Swal from "sweetalert2";
 
 // Define the interfaces for the product and variant types
 interface Variant
@@ -102,7 +103,12 @@ const Home: React.FC = () => {
       if ( response.status === 201 )
       {
         // setloader( false );
-        notifySuccess( `Product updated successfully` );
+        // notifySuccess( `Product updated successfully` );
+        Swal.fire( {
+          icon: 'success',
+          title: 'Updated',
+          text: 'Product updated successfully.',
+        } );
         fetchProduct();
       }
 

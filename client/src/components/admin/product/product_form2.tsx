@@ -230,7 +230,7 @@ console.log(file)
   const handleError = ( error: any ) =>
   {
     const errorMessage = error.response?.data?.message || `An error occurred while uploading the ${ data.mediaType }.`;
-    notifyError( errorMessage );
+    // notifyError( errorMessage );
     setError( errorMessage );
     Swal.fire( {
       icon: 'error',

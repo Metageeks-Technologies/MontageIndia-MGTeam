@@ -157,7 +157,12 @@ const Form4 = ( { formData }: any ) =>
       const response = await instance.patch( `/product/${ initialData.uuid }`, updatedField );
       if ( response.status === 201 )
       {
-        notifySuccess( `${ field } updated successfully` );
+        // notifySuccess( `${ field } updated successfully` );
+        Swal.fire( {
+          icon: 'success',
+          title: 'Updated successfully',
+          text: `${ field } updated successfully`
+        } );
 
         const updatedDataResponse = await instance.get( `/product/${ initialData.uuid }` );
         if ( updatedDataResponse.status === 201 )
@@ -336,7 +341,13 @@ const Form4 = ( { formData }: any ) =>
       if ( response.status === 201 )
       {
         setloader( false );
-        notifySuccess( "Updated successfully" );
+        // notifySuccess( "Updated successfully" );
+        Swal.fire( {
+          icon: 'success',
+          title: 'Updated successfully',
+          showConfirmButton: false,
+          timer: 1500
+        } );
       }
     } catch ( error )
     {

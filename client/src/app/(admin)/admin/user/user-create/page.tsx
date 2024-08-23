@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import React, { useState, useEffect } from 'react';
 import Multiselect from 'multiselect-react-dropdown';
 import { adminRolesOptions, categoriesOptions, mediaTypesOptions } from "@/utils/tempData";
+import Swal from 'sweetalert2';
 interface User
 {
     name: string;
@@ -104,7 +105,12 @@ const UserCreate: React.FC = () =>
             } );
             // setSelectedCategories([]);
             setSelectedMediaTypes( [] );
-            notifySuccess( "New user created successfully" );
+            // notifySuccess( "New user created successfully" );
+            Swal.fire( {
+                icon: 'success',
+                title: 'Published',
+                text: 'New user created successfully.',
+            } );
             router.push( "/admin/dashboard" );
         } catch ( error: any )
         {

@@ -6,6 +6,7 @@ import { notifyError, notifySuccess } from '@/utils/toast';
 import { adminRolesOptions, categoriesOptions, mediaTypesOptions } from '@/utils/tempData';
 import Multiselect from 'multiselect-react-dropdown';
 import { Spinner } from '@nextui-org/react';
+import Swal from 'sweetalert2';
 
 interface User
 {
@@ -132,12 +133,26 @@ export default function UserDetails ( { params }: { params: { id: string; }; } )
         setUser( response.data.user );
         setIsEditing( false );
         fetchUser();
-        notifySuccess( response.data.message );
+        // notifySuccess( response.data.message );
+        Swal.fire( {
+          icon: 'success',
+          title: 'Admin updated successfully',
+          text: response.data.message,  
+          confirmButtonColor: '#3085d6',
+          confirmButtonText: 'OK',
+
+        } );
       }
     } catch ( error: any )
     {
-      notifyError( error.response.data.message || "There is some internal server error. Please try later" );
-
+      // notifyError( error.response.data.message || "There is some internal server error. Please try later" );
+      Swal.fire( {
+        icon: 'error',
+        title: 'Error updating admin',
+        text: error.response.data.message || "There is some internal server error. Please try later",
+        confirmButtonColor: '#3085d6',
+        confirmButtonText: 'OK',
+      } );
       console.error( 'Error updating user:', error );
     }
   };
@@ -157,12 +172,27 @@ export default function UserDetails ( { params }: { params: { id: string; }; } )
         const response = await instance.delete( `/auth/admin/${ id }` );
         if ( response.data )
         {
-          notifySuccess( response.data.message );
+          // notifySuccess( response.data.message );
+          Swal.fire( {
+            icon: 'success',
+            title: 'User deleted successfully',
+            text: response.data.message,
+            confirmButtonColor: '#3085d6',
+            confirmButtonText: 'OK',
+            } );
           router.back();
         }
       } catch ( error: any )
       {
-        notifyError( error.message );
+        // notifyError( error.message );
+        Swal.fire( {
+          icon: 'error',
+          title: 'Error deleting user',
+          text: error.message,
+          confirmButtonColor: '#3085d6',
+          confirmButtonText: 'OK',
+        } );
+        
         console.error( 'Error deleting user:', error );
       }
     }
