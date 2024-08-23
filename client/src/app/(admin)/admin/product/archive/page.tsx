@@ -174,7 +174,7 @@ const Home: React.FC = () => {
     <div className="container p-4 m-4 bg-pureWhite-light rounded-md">
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-2xl font-bold">Deleted Product</h1>
-        <button className="text-safRed border-safRed border px-4 py-2 rounded" onClick={ () => router.push( "/admin/product/create" ) }> Add Product</button>
+        <button className="text-webred border-webred border px-4 py-2 rounded" onClick={ () => router.push( "/admin/product/create" ) }> Add Product</button>
       </div>
 
       {/* one horixonal line */ }

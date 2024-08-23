@@ -27,11 +27,6 @@ const config: Config = {
           DEFAULT: "#FE423F",
           dark: "#FE423F",
         },
-        cart: {
-          light: "#FFE6E5",
-          DEFAULT: "#FE423F",
-          bg: "#CCCCCC",
-        },
         var1: {
           light: "#f31260d6",
           DEFAULT: "#f31260",
@@ -43,7 +38,7 @@ const config: Config = {
           dark: "#BEF264",
         },
         webred: {
-          light: "#f45759",
+          light: "#FFE6E5",
           DEFAULT: "#FE423F",
           dark: "#FE423F",
         },
@@ -54,15 +49,6 @@ const config: Config = {
         },
         pureWhite: {
           light: "#FFFFFF", 
-
-        },
-        safRed: {
-          light: "#F1F1F1",
-          DEFAULT: "#FE423F",
-        },
-        safRedHover: {
-          light: "#F1F1F1",
-          DEFAULT: "#FE423F",
         },
         eyeGreen: {
           light: "#43D477",

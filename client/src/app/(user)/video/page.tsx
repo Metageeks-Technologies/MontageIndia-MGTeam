@@ -120,8 +120,8 @@ const Page = () => {
             disabled={videoPage === 1}
             variant="flat"
             className={`${
-              videoPage === 1 ? "opacity-70 cursor-not-allowed" : "hover:bg-cart"
-            } bg-cart text-white rounded-full font-bold`}
+              videoPage === 1 ? "opacity-70 cursor-not-allowed" : "hover:bg-webred"
+            } bg-webred text-white rounded-full font-bold`}
             onPress={handlePrevPage}
           >
             Prev
@@ -130,7 +130,7 @@ const Page = () => {
             color="success"
             classNames={{
               item: "w-8 h-8 text-small bg-gray-100 hover:bg-gray-300 rounded-full",
-              cursor: "bg-cart hover:bg-red text-white rounded-full font-bold",
+              cursor: "bg-webred hover:bg-red text-white rounded-full font-bold",
             }}
             total={totalVideoNumOfPage}
             page={videoPage}
@@ -146,8 +146,8 @@ const Page = () => {
             className={`${
               videoPage === totalVideoNumOfPage
                 ? "opacity-70 cursor-not-allowed"
-                : "hover:bg-cart"
-            } bg-cart text-white rounded-full font-bold`}
+                : "hover:bg-webred"
+            } bg-webred text-white rounded-full font-bold`}
             onPress={handleNextPage}
           >
             Next

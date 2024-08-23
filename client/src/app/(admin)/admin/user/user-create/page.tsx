@@ -222,7 +222,7 @@ const UserCreate: React.FC = () =>
                     <div className="mt-8 text-right">
                         <button
                             type="submit"
-                            className=" px-4 py-2 text-white bg-safRed hover:bg-safRed rounded-md transition duration-300 ease-in-out focus:outline-none  focus:ring-offset-2 "
+                            className=" px-4 py-2 text-white bg-webred hover:bg-webred rounded-md transition duration-300 ease-in-out focus:outline-none  focus:ring-offset-2 "
                         >
                             Create User
                         </button>

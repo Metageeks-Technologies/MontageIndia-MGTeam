@@ -326,7 +326,7 @@ const CategoriesPage: React.FC = () =>
                                     </button>
                                     <button
                                         type="submit"
-                                        className="px-4 py-2 bg-safRed text-white rounded-md hover:bg-safRedHover focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        className="px-4 py-2 bg-webred text-white rounded-md hover:bg-webred-light focus:outline-none focus:ring-2 focus:ring-blue-500"
                                     >
                                         Update
                                     </button>

@@ -220,7 +220,7 @@ const Form3: React.FC<Form3Props> = ( { onNext, formData } ) =>
             <button
               disabled={ !allVariantsUpdated }
               type="button"
-              className={ `bg-safRed text-white px-4 py-2 rounded-lg font-semibold transition-colors ${ allVariantsUpdated ? 'hover:bg-safRed' : 'opacity-50 cursor-not-allowed'
+              className={ `bg-webred text-white px-4 py-2 rounded-lg font-semibold transition-colors ${ allVariantsUpdated ? 'hover:bg-webred' : 'opacity-50 cursor-not-allowed'
                 }` }
               onClick={ handleSubmit }
             >

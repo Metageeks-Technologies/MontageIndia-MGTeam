@@ -310,7 +310,7 @@ const SubscriptionCard: React.FC<CardProps> = ( { plan, handleOpen } ) =>
         Credits: { plan.notes.credits }
       </div>
       <button onClick={ () => handleOpen( plan ) }
-        className="my-2 w-full text-white px-6 py-2 rounded-lg bg-safRed text-lg hover:bg-[#f63c3c] transition-all"
+        className="my-2 w-full text-white px-6 py-2 rounded-lg bg-webred text-lg hover:bg-[#f63c3c] transition-all"
       >
         Update
       </button>

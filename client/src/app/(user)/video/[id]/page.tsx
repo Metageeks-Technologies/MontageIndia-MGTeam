@@ -214,7 +214,7 @@ const Home = () => {
                              {license.price}
                             <span  className={`p-2 items-center  ${
                               isVariantInCart(license._id)
-                                ? 'bg-cart text-white cursor-pointer'
+                                ? 'bg-webred text-white cursor-pointer'
                                 : ' bg-white text-black cursor-pointer'
                             } rounded-full`}>
                             {product.isInCart ? <BsCartCheckFill /> : <BsCart2 />}

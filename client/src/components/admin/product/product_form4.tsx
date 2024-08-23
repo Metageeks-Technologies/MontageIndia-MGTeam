@@ -683,7 +683,7 @@ const Form4 = ( { formData }: any ) =>
                         { editMode.tags && (
                           <button
                             type="button"
-                            className="text-safRed hover:bg-safRedHover transition-colors"
+                            className="text-webred hover:bg-webred-light transition-colors"
                             onClick={ () => handleDeleteTag( index ) }
                           >
                             <FaTrashAlt />
@@ -785,8 +785,8 @@ const Form4 = ( { formData }: any ) =>
                 isPublishButtonDisabled === true &&
                 !Object.values( editMode ).some( ( mode ) => mode )
               )
-                ? 'bg-safRed cursor-not-allowed'
-                : 'bg-safRed cursor-pointer'
+                ? 'bg-webred cursor-not-allowed'
+                : 'bg-webred cursor-pointer'
                 }` }
             >
               Publish

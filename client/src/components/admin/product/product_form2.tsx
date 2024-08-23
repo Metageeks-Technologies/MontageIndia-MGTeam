@@ -287,7 +287,7 @@ console.log(file)
         </svg>
         <p className="mt-2 text-sm text-gray-600">Choose a file or drag & drop it here</p>
         <p className="mt-1 text-xs text-gray-500">{ acceptedFileTypes[ data.mediaType ] || 'Any file' } formats, up to 5MB</p>
-        <button className="mt-4 px-4 py-2 bg-safRed text-pureWhite-light rounded-md hover:bg-safRed focus:outline-none focus:ring-2 focus:ring-safRed focus:ring-opacity-50">
+        <button className="mt-4 px-4 py-2 bg-webred text-pureWhite-light rounded-md hover:bg-webred focus:outline-none focus:ring-2 focus:ring-webred focus:ring-opacity-50">
           Browse File
         </button>
       </div>
@@ -317,7 +317,7 @@ console.log(file)
       <div className="mt-6">
         <button
           onClick={ handleSubmit }
-          className={ `w-full p-3 font-semibold text-white rounded-lg ${ file && !loading ? 'bg-safRed hover:bg-safRedHover' : 'bg-gray-400 cursor-not-allowed'
+          className={ `w-full p-3 font-semibold text-white rounded-lg ${ file && !loading ? 'bg-webred hover:bg-webred-light' : 'bg-gray-400 cursor-not-allowed'
             }` }
           disabled={ !file || loading }
         >

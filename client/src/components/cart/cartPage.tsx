@@ -40,7 +40,7 @@ function CartPopup() {
         </Badge>
         <div className={`${!isOpen ? "hidden" : "absolute bg-white rounded-md w-[30rem] max-h-[22rem] top-16 right-4 md:right-14  z-20"}`}>
           <div className=" rounded-md  bg-white  justify-self-end w-full max-w-2xl">
-            <div className="flex justify-between pb-5 rounded-t-md p-3 px-7  bg-cart-light  items-center ">
+            <div className="flex justify-between pb-5 rounded-t-md p-3 px-7  bg-webred-light  items-center ">
               <h2 className="text-base leading-6  font-bold">My Cart</h2>
               <AiOutlineClose
                 className="text-gray-700   cursor-pointer"
@@ -128,7 +128,7 @@ function CartPopup() {
               <Link
                 href="/order"
                 onClick={() => setIsOpen(false)}
-                className="px-3 py-1 font-semibold text-white rounded-lg bg-cart"
+                className="px-3 py-1 font-semibold text-white rounded-lg bg-webred"
               >
                 Place  Order
               </Link>

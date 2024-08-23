@@ -323,7 +323,7 @@ const Form1 = ( { onNext }: any ) =>
                 <button
                   onClick={ handleNext }
                   className={ `w-full sm:w-auto px-6 py-2.5 text-white font-medium rounded-lg transition duration-150 ease-in-out ${ isFormValid()
-                    ? 'bg-safRed hover:bg-safRed active:safRed focus:outline-none focus:ring-2 focus:ring-safRed focus:ring-opacity-50'
+                    ? 'bg-webred hover:bg-webred active:webred focus:outline-none focus:ring-2 focus:ring-webred focus:ring-opacity-50'
                     : 'bg-gray-400 cursor-not-allowed'
                     }` }
                   disabled={ !isFormValid() }
