@@ -10,9 +10,13 @@ import { getImage } from "@/app/redux/feature/product/image/api";
 import { useAppDispatch, useAppSelector } from "@/app/redux/hooks";
 import { setImagePage } from "@/app/redux/feature/product/slice";
 import { IoSearchOutline } from "react-icons/io5";
+import { useSearchParams } from "next/navigation";
 
 const Page = () => {
   const dispatch = useAppDispatch();
+  const searchParams = useSearchParams();
+  const category = searchParams.get('category');
+
   const [totalPages, setTotalPages] = useState(1);
   const [productsPerPage, setProductsPerPage] = useState(20);
   const [productData, setProductData] = useState<Product[]>([]);
@@ -44,16 +48,22 @@ const Page = () => {
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
   };
+  const categoryParam = category ? ["editor choice"] : "";
 
-
-  useEffect(() => {
+  const fetchData = (page: number) => {
     getImage(dispatch, {
       page: imagePage,
       productsPerPage: 20,
       mediaType: ["image"],
       searchTerm,
-    });
-  }, [imagePage,searchTerm]);
+      category: categoryParam,
+    }) 
+  };
+
+  useEffect(() => {
+    fetchData(imagePage);
+  }, [imagePage,searchParams,searchTerm]);
+
 
   return (
     <div className="main ">

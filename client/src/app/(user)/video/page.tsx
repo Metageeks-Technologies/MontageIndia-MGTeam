@@ -42,7 +42,7 @@ const Page = () => {
       mediaType: ["video"],
       searchTerm,
       category: categoryParam,
-      productsPerPage: "5",
+      productsPerPage: "6",
     }) 
   };
 

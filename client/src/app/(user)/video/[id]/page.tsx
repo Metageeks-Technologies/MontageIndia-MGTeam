@@ -186,9 +186,7 @@ const Home = () => {
                     <div className=" flex flex-row justify-between ">
                       <div className="flex flex-row items-center gap-3">
                         {/* Conditionally render the image */}
-                        <div
-                      className={`custom-radio ${isVariantInCart(license._id) ? 'checked' : ''}`}
-                    ></div>     
+                          
                        {index === 0 ? (
                           <img src="/asset/full-hd.svg" className="w-20" alt="Full HD" />
                         ) : index === 1 ? (

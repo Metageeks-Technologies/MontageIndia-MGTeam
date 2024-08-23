@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import CartPopup from "../cart/cartPage";
 import { FaUserCircle } from "react-icons/fa";
 import instance from "@/utils/axios";
+import { ImCross } from "react-icons/im";
 import { notifySuccess } from "@/utils/toast";
 import { BiLogInCircle, BiLogOutCircle } from "react-icons/bi";
 import { useAppDispatch, useAppSelector } from "@/app/redux/hooks";
@@ -28,12 +29,10 @@ const Sidebar = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const toggleDropdown = () => setIsDropdownOpen(!isDropdownOpen);
   const closeDropdown = () => setIsDropdownOpen(false);
-  const getData = debounce(() => {
-    console.log("datasearch",searchTerm)
-    dispatch(setVideoPage(1)); // Reset to page 1 on search
-    fetchData(1); // Fetch data with the new search term
+  const getData = () => {
+    fetchData(1);  
   
-  }, 300);
+  };
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
       getData();
@@ -53,14 +52,31 @@ const Sidebar = () => {
       console.error("Error in logout:", error);
     }
   };
-  const fetchData = (page: number) => {
-    // setLoading(true);
+  const handleClear = () => {
+    setSearchTerm(''); // Clear the search term
+    dispatch(setVideoPage(1))
     getVideo(dispatch, {
-      page,
+      page:1,
       mediaType: ["video"],
-      searchTerm,
-      productsPerPage: "5",
-    }) 
+      productsPerPage: "6",
+    });};
+  const fetchData = (page: number) => {
+    if (!searchTerm.trim()) {
+      // If searchTerm is empty or contains only whitespace, fetch videos automatically
+      getVideo(dispatch, {
+        page,
+        mediaType: ["video"],
+        productsPerPage: "6",
+      });
+    } else {
+      // Fetch videos based on the searchTerm
+      getVideo(dispatch, {
+        page,
+        mediaType: ["video"],
+        searchTerm,
+        productsPerPage: "6",
+      });
+    }
   };
   const handleUserIconClick = () => {
     setIsUserOpen(!isUserOpen);
@@ -116,8 +132,8 @@ const Sidebar = () => {
               <div className="flex flex-col gap-2">
                 <Link
                      href={{
-                      pathname: '/video',
-                      query: { category: 'editorchoice',editor:'image' },
+                      pathname: '/image',
+                      query: { category: 'editorchoice' },
                     }}
                   className="text-gray-600 hover:text-gray-800 "
                 >
@@ -126,20 +142,20 @@ const Sidebar = () => {
                 <Link
                      href={{
                       pathname: '/video',
-                      query: { category: 'editorchoice',editor:'audio' },
+                      query: { category: 'editorchoice' },
                     }}
                   className="text-gray-600 hover:text-gray-800 "
                 >
-                  Editor Audio
+                  Editor Video
                   </Link>
                 <Link
                      href={{
-                      pathname: '/video',
-                      query: { category: 'editorchoice',editor:'video' },
+                      pathname: '/audio',
+                      query: { category: 'editorchoice' },
                     }}
                   className="text-gray-600 hover:text-gray-800"
                 >
-                  Editor Video
+                  Editor Audio
                   </Link>
               </div>
             </div>
@@ -252,7 +268,7 @@ const Sidebar = () => {
             </svg>
           </button>
           <img src="/asset/Rectangle 15.png" className="hidden py-2 md:block" alt="" />
-          <div className="w-[80%] py-1 items-center justify-center flex">
+          <div className="lg:w-[80%] sm:w-[90%]  w-[90%] md:w-[65%]  py-1 gap-2 md:gap-0 items-center justify-center flex">
           <input
             type="text"
             placeholder="Search for Videos"
@@ -263,6 +279,9 @@ const Sidebar = () => {
             onKeyDown={handleKeyDown} 
             className="flex-grow py-1 md:px-4 outline-none  bg-gray-100 rounded-md"
           />
+        <span onClick={()=>handleClear()} className={searchTerm ? "block text-gray-400 cursor-pointer": "hidden" }>
+          <ImCross />
+        </span>
           </div>
           </div>
           <div onClick={getData} className=" cursor-pointer absolute -top-[1px] -bottom-[1px] -right-[1px] flex justify-center m-auto w-12 rounded-r-md bg-[#8D529C]">
