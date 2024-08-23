@@ -198,3 +198,4 @@ const ChangePassword = ( { params }: { params: { id: string; }; } ) =>
 };
 
 export default ChangePassword;
+

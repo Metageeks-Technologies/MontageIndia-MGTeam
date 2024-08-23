@@ -101,7 +101,7 @@ const ImageGallery = ({ data }: { data: TCustomerProduct }) => {
               <TfiDownload className="font-semibold" />
             </>
           ) : (
-            <Spinner label="" color="current" />
+            <Spinner label="" color="danger" />
           )}
         </div>
       </div>

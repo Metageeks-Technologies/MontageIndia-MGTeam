@@ -25,9 +25,11 @@ const Page = () =>
   const [ dataPerPage, setDataPerPage ] = useState<number>( 6 );
   const [ searchTerm, setSearchTerm ] = useState<string>( "" );
   const [ totalPages, setTotalPages ] = useState<number>( 1 );
+  const [ isLoading, setIsLoading ] = useState( false );
 
   const fetchSubscription = async () =>
   {
+    setIsLoading( true );
     try
     {
       const response = await instance.get( `/subscription/history`, {
@@ -39,11 +41,14 @@ const Page = () =>
       } );
       setSubscription( response.data.subscriptionHistory );
       setTotalPages( response.data.totalPages );
+      setIsLoading( false );
       console.log( "subscription", response );
     } catch ( error )
     {
       console.error( "Error fetching subscriptions:", error );
+      setIsLoading( false );
     }
+
   };
 
   const handleSearch = ( e: React.ChangeEvent<HTMLInputElement> ) =>
@@ -131,10 +136,10 @@ const Page = () =>
             </tr>
           </thead>
           <tbody>
-            { false ? (
+            { isLoading ? (
               <tr>
                 <td colSpan={ 7 } className="text-center py-4">
-                  <Spinner label="Loading..." color="success" />
+                  <Spinner label="Loading..." color="danger" />
                 </td>
               </tr>
             ) : (
@@ -163,8 +168,8 @@ const Page = () =>
 
                     <td className="px-4 py-4 border-b border-gray-200 bg-white">
                       <span className={ `inline-flex items-center px-3  py-2.5 rounded-lg text-s font-bold ${ item.status === 'active'
-                          ? 'bg-green-600 text-white'
-                          : 'bg-red-100 text-red-800'
+                        ? 'bg-green-600 text-white'
+                        : 'bg-red-100 text-red-800'
                         }` }>
                         { item.status == "active" ? "Active" : "Inactive" }
                       </span>

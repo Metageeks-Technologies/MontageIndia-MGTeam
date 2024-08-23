@@ -138,7 +138,7 @@ const Page = () =>
             { loading ? (
               <tr>
                 <td colSpan={ 7 } className="text-center py-4">
-                  <Spinner label="Loading..." color="success" />
+                  <Spinner label="Loading..." color="danger" />
                 </td>
               </tr>
             ) : (

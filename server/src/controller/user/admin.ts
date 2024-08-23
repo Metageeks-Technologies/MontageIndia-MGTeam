@@ -138,24 +138,30 @@ export const createAdmin = catchAsyncError(async (req, res, next) => {
     });
 });
 
-export const deleteAdmin = catchAsyncError(async (req, res, next) => {
+export const toggleDeleteAdmin = catchAsyncError(async (req, res, next) => {
 
     const { id } = req.params;
     const user = await Admin.findOne({ _id: id });
 
     if (!user) {
-        next(new ErrorHandler("user does not exit", 404));
+        next( new ErrorHandler( "user does not exit", 404 ) );
+        return;
     }
 
-    if (user && user.isDeleted) {
-        next(new ErrorHandler("user already deleted", 400));
-    }
+    // if (user && user.isDeleted) {
+    //     next(new ErrorHandler("user already deleted", 400));
+    // } 
 
-    await Admin.findByIdAndUpdate(id, { isDeleted: true }, { new: true });
+     user.isDeleted = !user?.isDeleted;
+    
+    await user?.save();
+
+    // await Admin.findByIdAndUpdate(id, { isDeleted: !isDeleted }, { new: true });
 
     res.status(200).json({
         success: true,
-        message: "Account deleted successfully",
+        message: `Account ${ user.isDeleted ? "Deleted" : "Restored" } successfully`,
+        title : ` ${ user.isDeleted ? "Deleted" : "Restored" }`
     });
    
 });

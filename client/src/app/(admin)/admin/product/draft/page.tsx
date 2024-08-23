@@ -4,27 +4,28 @@ import Link from "next/link";
 import instance from "@/utils/axios";
 import { Spinner, Pagination, Button } from "@nextui-org/react";
 import Multiselect from 'multiselect-react-dropdown';
-import {categoriesOptions, mediaTypesOptions} from "@/utils/tempData";
+import { categoriesOptions, mediaTypesOptions } from "@/utils/tempData";
 import { BsThreeDots } from "react-icons/bs";
 import { GoDotFill } from "react-icons/go";
 import { LuDot } from "react-icons/lu";
 import { FaStarOfLife } from "react-icons/fa";
 import { useRouter } from "next/navigation";
- interface Variant
+interface Variant
 {
   label: string;
   price: number;
   key: string;
 }
 
-interface Product {
+interface Product
+{
   _id: string;
   slug: string;
   title: string;
   description: string;
   tags: string[];
   variants: Variant[];
-  uuid:string,
+  uuid: string,
   status: string;
   mediaType: string;
   publicKey: string;
@@ -33,105 +34,121 @@ interface Product {
   id: string;
 }
 
-const Home: React.FC = () => {
-  const [productData, setProductData] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [productsPerPage, setProductsPerPage] = useState(5);
-  const [SearchTerm, setSearchTerm] = useState("");
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
-  const [selectedMediaTypes, setSelectedMediaTypes] = useState<string[]>([]);
-  const [shouldFetch, setShouldFetch] = useState(true);
+const Home: React.FC = () =>
+{
+  const [ productData, setProductData ] = useState<Product[]>( [] );
+  const [ loading, setLoading ] = useState( false );
+  const [ currentPage, setCurrentPage ] = useState( 1 );
+  const [ totalPages, setTotalPages ] = useState( 1 );
+  const [ productsPerPage, setProductsPerPage ] = useState( 5 );
+  const [ SearchTerm, setSearchTerm ] = useState( "" );
+  const [ selectedCategories, setSelectedCategories ] = useState<string[]>( [] );
+  const [ selectedMediaTypes, setSelectedMediaTypes ] = useState<string[]>( [] );
+  const [ shouldFetch, setShouldFetch ] = useState( true );
   const [ availableCategories, setAvailableCategories ] = useState<any[]>( [] );
 
   const router = useRouter();
-  const onSelectCategory = (selectedList: string[]) => {
-    setSelectedCategories(selectedList);
+  const onSelectCategory = ( selectedList: string[] ) =>
+  {
+    setSelectedCategories( selectedList );
   };
 
-  const onRemoveCategory = (selectedList: string[]) => {
-    setSelectedCategories(selectedList);
+  const onRemoveCategory = ( selectedList: string[] ) =>
+  {
+    setSelectedCategories( selectedList );
   };
 
-  const onSelectMediaType = (selectedList: string[]) => {
-    setSelectedMediaTypes(selectedList);
+  const onSelectMediaType = ( selectedList: string[] ) =>
+  {
+    setSelectedMediaTypes( selectedList );
   };
 
-  const onRemoveMediaType = (selectedList: string[]) => {
-    setSelectedMediaTypes(selectedList);
+  const onRemoveMediaType = ( selectedList: string[] ) =>
+  {
+    setSelectedMediaTypes( selectedList );
   };
-  const capitalizeFirstLetter = (str: string): string => {
-        return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
-    };
-   const showAllProducts = async () => {
-    setSearchTerm("");
-    setSelectedCategories([]);
-    setSelectedMediaTypes([]);
-    setCurrentPage(1);
-    setShouldFetch(true);
-  }
+  const capitalizeFirstLetter = ( str: string ): string =>
+  {
+    return str.charAt( 0 ).toUpperCase() + str.slice( 1 ).toLowerCase();
+  };
+  const showAllProducts = async () =>
+  {
+    setSearchTerm( "" );
+    setSelectedCategories( [] );
+    setSelectedMediaTypes( [] );
+    setCurrentPage( 1 );
+    setShouldFetch( true );
+  };
   // fetch data from Server
-  const fetchProduct = async () => {
-    setLoading(true);
-    try {
-      const response = await instance.get(`/product`, {
-        params: { status: 'draft',productsPerPage, page: currentPage,category: selectedCategories, mediaType: selectedMediaTypes, searchTerm: SearchTerm   },
+  const fetchProduct = async () =>
+  {
+    setLoading( true );
+    try
+    {
+      const response = await instance.get( `/product`, {
+        params: { status: 'draft', productsPerPage, page: currentPage, category: selectedCategories, mediaType: selectedMediaTypes, searchTerm: SearchTerm },
         withCredentials: true,
       } );
-      console.log(response);
-      setProductData(response.data.products);
-      setTotalPages(response.data.numOfPages);
-     
-    } catch (error) {
-      console.error("Error fetching products:", error);
-    } finally {
-      setLoading(false);
+      console.log( response );
+      setProductData( response.data.products );
+      setTotalPages( response.data.numOfPages );
+
+    } catch ( error )
+    {
+      console.error( "Error fetching products:", error );
+    } finally
+    {
+      setLoading( false );
     }
   };
 
   const getCategories = async () =>
+  {
+    try
     {
-      try
-      {
-        const response = await instance.get( '/field/category' );
-        const formattedCategories = response.data.categories.map( ( category: any ) => ( {
-          name: category.name ? category.name : 'Unknown' // Handle undefined names
-        } ) );
-        setAvailableCategories( formattedCategories );
-        console.log("sdsd",response)
-      } catch ( error )
-      {
-        console.log( "error in getting the category:-", error );
-      }
-    };
+      const response = await instance.get( '/field/category' );
+      const formattedCategories = response.data.categories.map( ( category: any ) => ( {
+        name: category.name ? category.name : 'Unknown' // Handle undefined names
+      } ) );
+      setAvailableCategories( formattedCategories );
+      console.log( "sdsd", response );
+    } catch ( error )
+    {
+      console.log( "error in getting the category:-", error );
+    }
+  };
 
-   useEffect(() => {
-    getCategories()
-    if (shouldFetch) {
+  useEffect( () =>
+  {
+    getCategories();
+    if ( shouldFetch )
+    {
       fetchProduct();
-      setShouldFetch(false);
+      setShouldFetch( false );
     }
 
-  }, [currentPage, productsPerPage,shouldFetch]);
-  
-  const handleproductPerPage=(e:any)=>{
+  }, [ currentPage, productsPerPage, shouldFetch ] );
+
+  const handleproductPerPage = ( e: any ) =>
+  {
     e.preventDefault();
-    setShouldFetch(true);
-    setCurrentPage(1);
-    setProductsPerPage(parseInt(e.target.value));
-  }
+    setShouldFetch( true );
+    setCurrentPage( 1 );
+    setProductsPerPage( parseInt( e.target.value ) );
+  };
   // Handler to change page
   const handlePageChange = ( page: number ) =>
   {
-    setShouldFetch(true);
-    setCurrentPage(page);
+    setShouldFetch( true );
+    setCurrentPage( page );
   };
 
-  function truncateText(text: string, wordLimit: number): string {
-    const words = text.split(" ");
-    if (words.length > wordLimit) {
-      return words.slice(0, wordLimit).join(" ") + "...";
+  function truncateText ( text: string, wordLimit: number ): string
+  {
+    const words = text.split( " " );
+    if ( words.length > wordLimit )
+    {
+      return words.slice( 0, wordLimit ).join( " " ) + "...";
     }
     return text;
   }
@@ -140,7 +157,7 @@ const Home: React.FC = () => {
     <div className="container p-4 m-4 bg-pureWhite-light rounded-md">
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-2xl font-bold">Draft</h1>
-        
+
       </div>
 
       {/* one horixonal line */ }
@@ -205,7 +222,7 @@ const Home: React.FC = () => {
         <button className="bg-gray-200 text-gray-800 px-4 py-2 rounded" onClick={ showAllProducts }>
           Clear
         </button>
-       
+
       </div>
 
       <div className="mb-4">
@@ -225,11 +242,11 @@ const Home: React.FC = () => {
               <th className="px-5 py-3 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                 Media Type
               </th>
-             
+
               <th className="px-5 py-3 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                 Product Title
               </th>
-             
+
               <th className="px-5 py-3 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                 Category
               </th>
@@ -245,15 +262,15 @@ const Home: React.FC = () => {
             { loading ? (
               <tr>
                 <td colSpan={ 7 } className="text-center py-4">
-                  <Spinner label="Loading..." color="success" />
+                  <Spinner label="Loading..." color="danger" />
                 </td>
               </tr>
             ) : (
               productData && productData.length > 0 ?
                 productData.map( ( prod ) => (
                   <tr key={ prod._id } className="hover:bg-gray-50">
-                   
-                    
+
+
                     <td className="px-4 py-2 border-b border-gray-200 bg-pureWhite-light text-center">
                       <div className="relative flex items-center justify-center">
                         <div className="absolute top-0 left-0 ">
@@ -262,7 +279,12 @@ const Home: React.FC = () => {
                           { prod.mediaType === "video" && <img src="/images/videoIcon.png" alt="Video" className="w-8 h-8 rounded-full" /> }
                         </div>
                         <div className="flex items-center w-full p-3">
-                          { ( prod.mediaType === "image" || prod.mediaType === "video" ) &&
+                          { prod?.mediaType === "video" && (
+                            <div > <video controls className="w-full h-28 object-cover rounded">
+                              <source src={ `https://mi2-public.s3.ap-southeast-1.amazonaws.com/${ prod?.thumbnailKey }` } />
+                            </video>
+                            </div> ) }
+                          { ( prod.mediaType === "image" ) &&
                             <img src={ `https://mi2-public.s3.ap-southeast-1.amazonaws.com/${ prod.thumbnailKey }` } alt={ prod.title } className="w-3/4 h-16 object-cover rounded" /> }
                           { prod.mediaType === "audio" && <img src='/images/audioImage.png' alt={ prod.title } className="w-3/4 h-16 object-cover rounded" /> }
                         </div>
@@ -274,7 +296,7 @@ const Home: React.FC = () => {
                         { capitalizeFirstLetter( prod.title ) }
                       </div>
                     </td>
-                  
+
                     <td className="px-4 py-4 border-b border-gray-200 bg-white">
                       <div className="text-sm text-gray-900">{ prod.category.join( ", " ) }</div>
                     </td>

@@ -62,7 +62,7 @@ const SubscriptionTable=()=>{
         {
           loader?(
             <div className="flex justify-center items-center">
-            <Spinner color="secondary" size="lg" />
+              <Spinner label="Loading..." color="danger" />
             </div>
           ):(
              <div className="flex flex-col justify-center px-8 items-center">

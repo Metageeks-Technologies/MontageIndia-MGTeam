@@ -2,24 +2,24 @@
 import { useEffect, useState } from "react";
 import { Key } from "@react-types/shared";
 import
-  {
-    ScrollShadow,
-    Modal,
-    ModalContent,
-    Autocomplete,
-    AutocompleteItem,
-    ModalHeader,
-    ModalBody,
-    ModalFooter,
-    Tabs,
-    Tab,
-    Input,
-    Link,
-    Button,
-    Textarea,
-    useDisclosure,
-    Spinner,
-  } from "@nextui-org/react";
+{
+  ScrollShadow,
+  Modal,
+  ModalContent,
+  Autocomplete,
+  AutocompleteItem,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  Tabs,
+  Tab,
+  Input,
+  Link,
+  Button,
+  Textarea,
+  useDisclosure,
+  Spinner,
+} from "@nextui-org/react";
 import instance from "@/utils/axios";
 import { notifySuccess } from "@/utils/toast";
 import { FaRupeeSign } from "react-icons/fa";
@@ -73,8 +73,9 @@ interface CardProps
 const SubscriptionPage = () =>
 {
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const [ isUpdateMode, setIsUpdateMode ] = useState( false );
   const [ plans, setPlans ] = useState<SubscriptionPlan[]>( [] );
-  const [ loader, setLoader ] = useState( false ); 
+  const [ loader, setLoader ] = useState( false );
   const [ formTitle, setFormTitle ] = useState<string>( "" );
   const [ selectedPlan, setSelectedPlan ] = useState<Form>( {
     id: "",
@@ -119,174 +120,180 @@ const SubscriptionPage = () =>
       interval: plan.interval,
     } );
     setFormTitle( plan.item.name );
-    onOpen();
+    setIsUpdateMode( true );
+  };
+
+  const handleCancelUpdate = () =>
+  {
+    setIsUpdateMode( false );
+    setSelectedPlan( {
+      id: "",
+      itemId: "",
+      name: "",
+      description: "",
+      amount: 0.0,
+      currency: "",
+      credits: 0,
+      period: "",
+      interval: 0,
+    } );
   };
 
   const updatePlan = async () =>
   {
-    const response = await instance.patch(
-      `/subscription/plan/${ selectedPlan.id }`,
-      selectedPlan
-    );
-    if ( response.data.success )
-    {
-      onClose();
-      fetchPlans();
-      // notifySuccess( "Plan updated successfully" );
-      Swal.fire( {
-        icon: 'success',
-        title: 'Plan updated successfully',
-        showConfirmButton: false,
-        timer: 1500
-      } );
-
+    try {
+      const response = await instance.patch(
+        `/subscription/plan/${ selectedPlan.id }`,
+        selectedPlan
+      );
+      console.log("Response after update:_",response)
+      if ( response.data.success )
+      {
+        setIsUpdateMode( false );
+        fetchPlans();
+        Swal.fire( {
+          icon: 'success',
+          title: 'Plan updated successfully',
+          showConfirmButton: false,
+          timer: 1500
+        } );
+      }
+      else
+      {
+        Swal.fire( {
+          icon: 'error',
+          title: 'Error updating plan',
+  
+        } ); 
+      }
+      
+    } catch (error) {
+      console.log("Error in updateing plan:-",error)
     }
   };
+
   return (
-     <>
-    <div className="flex flex-col justify-start items-center min-h-screen rounded-lg overflow-hidden bg-white text-white">
-      <div className="w-full font-bold text-xl mb-8  bg-[#7828c8] text-white px-6 py-4" >
-        Subscription Plan
-      </div>
+    <div className={ `flex flex-col justify-start items-center m-6  rounded-lg    bg-white ${ isUpdateMode ? '' : 'min-h-screen' } ` }>
       {
-        loader ? (
-          <div className="flex justify-center items-center">
-            <Spinner color="secondary" size="lg" />
-          </div>  
-        ) : (
-          <div className="flex flex-col justify-center px-8 items-center">
-            <Tabs
-              color={ "secondary" }
-              aria-label="Tabs price"
-              radius="full"
-              size="lg"
-              selectedKey={ selected }
-              onSelectionChange={ setSelected }
-            >
-              <Tab key="Monthly" title="Monthly Plans">
-                <div className="flex flex-wrap justify-center items-center gap-4">
-                  { plans.map( ( plan ) => (
-                    plan.period === "monthly" && <SubscriptionCard plan={ plan } key={ plan._id } handleOpen={ handleOpen } />
-                  ) ) }
+        isUpdateMode ? (
+          <div className="bg-white w-full p-2 shadow rounded-lg overflow-hidden">
+            <div className=" p-4 border-b">
+              <h2 className="text-xl font-semibold">Update Plan</h2>
+            </div>
+            <div className="p-6">
+              <form className="space-y-6">
+                <div>
+                  <label htmlFor="planName" className="block text-sm font-medium text-gray-700">
+                    Plan Name *
+                  </label>
+                  <input
+                    id="planName"
+                    type="text"
+                    value={ selectedPlan?.name }
+                    onChange={ ( e ) => setSelectedPlan( { ...selectedPlan, name: e.target.value } ) }
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none   transition duration-150 ease-in-out bg-pageBg-light"
+
+                  />
                 </div>
+                <div className="grid grid-cols-2 gap-4">
 
 
-              </Tab>
-              <Tab key="Yearly" title="Yearly Plans">
-                <div className="flex flex-wrap justify-center items-center gap-4">
-                  { plans.map( ( plan ) => (
-                    plan.period === "yearly" && <SubscriptionCard key={ plan._id } plan={ plan } handleOpen={ handleOpen }  />
-                  ) ) }
-                </div>
-              </Tab>
-            </Tabs>
-          </div>
-        )
-      }
-      </div>
-      <Modal backdrop="transparent" isOpen={ isOpen } onClose={ onClose }>
-        <ModalContent>
-          { ( onClose ) => (
-            <>
-              <ModalHeader className="flex flex-col gap-1">
-                { formTitle }
-              </ModalHeader>
-              <ModalBody>
-                <form>
-                  <div className="flex w-full flex-wrap items-center flex-col mb-6 md:mb-0 gap-4">
-                    <Input
-                      type="text"
-                      variant="bordered"
-                      label="Plan Name"
-                      value={ selectedPlan?.name }
-                      onChange={ ( e ) =>
-                        setSelectedPlan( {
-                          ...selectedPlan,
-                          name: e.target.value,
-                        } )
-                      }
-                    />
-                    <Textarea
-                      maxRows={ 3 }
-                      label="Description"
-                      variant="bordered"
+                  <div>
+                    <label htmlFor="description" className="block text-sm font-medium text-gray-700">
+                      Description *
+                    </label>
+                    <textarea
+                      id="description"
                       value={ selectedPlan?.description }
-                      onChange={ ( e ) =>
-                        setSelectedPlan( {
-                          ...selectedPlan,
-                          description: e.target.value,
-                        } )
-                      }
-                    />
-                    <div className="w-full">
-                      <div className="relative mt-2 rounded-md shadow-sm">
-                        <Input
-                          type="text"
-                          variant="bordered"
-                          label="Price"
-                          value={ ( selectedPlan?.amount / 100 ).toString() }
-                          onChange={ ( e ) =>
-                            setSelectedPlan( {
-                              ...selectedPlan,
-                              amount: Number( e.target.value ) * 100,
-                            } )
-                          }
-                        />
-                        <div className="absolute inset-y-0 right-0 flex items-center">
-                          <select
-                            id="currency"
-                            name="currency"
-                            className="h-full border-l rounded-lg bg-transparent px-2 text-gray-500"
-                            value={ selectedPlan.currency }
-                            onChange={ ( e ) =>
-                              setSelectedPlan( {
-                                ...selectedPlan,
-                                currency: e.target.value,
-                              } )
-                            }
-                          >
-                            {/* <option selected className="px-4 py-2 text-center" value="USD">USD</option> */ }
-                            <option
-                              selected
-                              className="px-4 py-2 text-center"
-                              value="INR"
-                            >
-                              INR
-                            </option>
-                          </select>
-                        </div>
-                      </div>
-                    </div>
-                    <Input
-                      type="text"
-                      variant="bordered"
-                      label="Credits"
-                      value={ selectedPlan?.credits.toString() }
-                      onChange={ ( e ) =>
-                        setSelectedPlan( {
-                          ...selectedPlan,
-                          credits: Number( e.target.value ),
-                        } )
-                      }
+                      onChange={ ( e ) => setSelectedPlan( { ...selectedPlan, description: e.target.value } ) }
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none   transition duration-150 ease-in-out bg-pageBg-light"
+                      placeholder="Enter category description"
+                      required
+                      rows={ 5 }
                     />
                   </div>
-                </form>
-              </ModalBody>
-              <ModalFooter>
-                <Button color="danger" variant="light" onPress={ onClose }>
-                  Cancel
-                </Button>
-                <Button color="primary" onPress={ updatePlan }>
-                  Update
-                </Button>
-              </ModalFooter>
-            </>
-          ) }
-        </ModalContent>
-      </Modal>
+                  <div>
+                    <div className="p-2">
+                      <label htmlFor="price" className="block text-sm font-medium text-gray-700">
+                        Price *
+                      </label>
+                      <input
+                        id="price"
+                        type="number"
+                        value={ ( selectedPlan?.amount / 100 ).toString() }
+                        onChange={ ( e ) => setSelectedPlan( { ...selectedPlan, amount: Number( e.target.value ) * 100 } ) }
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none   transition duration-150 ease-in-out bg-pageBg-light"
 
-     </>
+                      />
+                    </div>
+                    <div className="p-2">
+                      <label htmlFor="credits" className="block text-sm font-medium text-gray-700">
+                        Credits *
+                      </label>
+                      <input
+                        id="credits"
+                        type="number"
+                        value={ selectedPlan?.credits.toString() }
+                        onChange={ ( e ) => setSelectedPlan( { ...selectedPlan, credits: Number( e.target.value ) } ) }
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none   transition duration-150 ease-in-out bg-pageBg-light"
 
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div className="flex justify-end space-x-3">
+                  <Button color="secondary" onClick={ handleCancelUpdate }>
+                    Cancel
+                  </Button>
+                  <Button className="bg-webred hover:bg-webgreen-light text-white" onClick={ updatePlan }>
+                    Update
+                  </Button>
+                </div>
+              </form>
+            </div>
+          </div>
+        ) :
+          <>
+
+
+            <div className="w-full font-bold text-xl mb-8 rounded-t-lg bg-[#7828c8] text-white px-6 py-4">   Subscription Plans
+            </div>
+            { loader ? (
+              <div className="flex justify-center items-center">
+                <Spinner color="danger" size="lg" />
+              </div>
+            ) :
+              (
+                <div className="flex flex-col justify-center px-8 items-center">
+                  <Tabs
+                    color={ "secondary" }
+                    aria-label="Tabs price"
+                    radius="full"
+                    size="lg"
+                    selectedKey={ selected }
+                    onSelectionChange={ setSelected }
+                  >
+                    <Tab key="Monthly" title="Monthly Plans">
+                      <div className="flex flex-wrap justify-center items-center gap-4">
+                        { plans.map( ( plan ) => (
+                          plan.period === "monthly" && <SubscriptionCard plan={ plan } key={ plan._id } handleOpen={ handleOpen } />
+                        ) ) }
+                      </div>
+
+
+                    </Tab>
+                    <Tab key="Yearly" title="Yearly Plans">
+                      <div className="flex flex-wrap justify-center items-center gap-4">
+                        { plans.map( ( plan ) => (
+                          plan.period === "yearly" && <SubscriptionCard key={ plan._id } plan={ plan } handleOpen={ handleOpen } />
+                        ) ) }
+                      </div>
+                    </Tab>
+                  </Tabs>
+                </div>
+              )
+            } </> }
+    </div>
   );
 };
 
@@ -295,7 +302,7 @@ export default SubscriptionPage;
 
 const SubscriptionCard: React.FC<CardProps> = ( { plan, handleOpen } ) =>
 {
-  
+
   return (
     <div className="flex-1 text-xl rounded-xl text-black border border-[#E3B4EF]/25 bg-[#FDF8FF] p-10">
       <div className="text-center h-[10vh] font-semibold mb-4">{ plan.item.name }</div>
@@ -316,6 +323,4 @@ const SubscriptionCard: React.FC<CardProps> = ( { plan, handleOpen } ) =>
       </button>
     </div>
   );
-};
-
-
+}; 
