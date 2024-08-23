@@ -290,6 +290,7 @@ export const {
   removeFromImageCart,
   setImagePage,
   setSingleProduct,
+  setAudioPage,
   clearSingleProduct,
   addSingleProductToCart,
   addSingleProductToWishlist,

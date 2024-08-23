@@ -24,19 +24,35 @@ import { FiDownload } from "react-icons/fi";
 import { Spinner } from "@nextui-org/react";
 import { downloadProduct } from "@/app/redux/feature/product/api";
 import Footer from "@/components/Footer";
+import Waveform from "@/components/Home/AudioWaveForm";
+import { getAudio } from "@/app/redux/feature/product/audio/api";
 
 const page = () => {
   const params = useParams();
   const id = params.id as string | undefined;
 
+  const dispatch = useAppDispatch();
+  const {audioData,page,totalNumOfPage} = useAppSelector((state) => state.product);
+  useEffect(() => {
+    getAudio(dispatch,{
+        page:page,
+        productsPerPage: 4,
+        mediaType: ["audio"],
+    });
+  }, [page]);
+
   useEffect(() => {
     if (id) getSingleProduct(dispatch, id);
+    getAudio(dispatch,{
+      page:page,
+      productsPerPage: 4,
+      mediaType: ["audio"],
+  });
     return () => {
       clearSingleProductData(dispatch);
     };
   }, [id]);
 
-  const dispatch = useAppDispatch();
   const {
     singleProduct: product,
     loading,
@@ -81,7 +97,7 @@ const page = () => {
     setLoading(false);
   };
   if (!product) {
-    return <div>Loading...</div>;
+    return <div></div>;
   }
 
   return (
@@ -116,8 +132,8 @@ const page = () => {
           <span>Search by image</span>
         </button>
       </div>
-      <div className="w-full border-y-[1px] flex">
-        <div className="w-8/12 border-e-[2px] px-20   bg-gray-100">
+      <div className="w-full border-y-[1px] flex lg:flex-row md:flex-col ">
+        <div className="lg:w-8/12 md:w-full w-full border-e-[2px] px-20 pb-10   bg-gray-100">
           <div className="flex flex-row text-gray-700  mt-4 justify-between items-center">
             <div className="font-semibold text-lg">{product.title}</div>
             <div className="flex-row flex gap-3">
@@ -152,14 +168,21 @@ const page = () => {
           </div>
           <div className="my-4">
             {product && <DetailWaveform product={product} />}
+            <div className="lg:w-[50rem] md:w-[35rem] w-[22rem] mt-2">
+            <h2 className="font-bold">Description</h2>
+            <p className="text-sm text-neutral-700">
+              Stock Photo ID: {product._id}
+            </p>
+            <p className="text-sm">{product.description}</p>
+          </div>
           </div>
         </div>
-        <div className="w-4/12  flex   flex-col bg-gray-100">
-          <div className="border-b-[2px] mr-20 w-full  py-2 px-8 bg-white">
+        <div className="lg:w-4/12 md:w-full lg:px-0 md:px-16  flex   flex-col bg-gray-100">
+          <div className="border-b-[2px]  w-full h-80 py-2 lg:px-8 bg-white">
             {product && (
-              <div className="w-fit">
-                <h3 className="font-bold text-lg">Purchase a Licence</h3>
-                <p className="text-sm mt-1 text-neutral-700">
+              <div className="w-[26rem] mt-3 px-8">
+                <h3 className="font-semibold text-xl">Music Standard License</h3>
+                <p className=" mt-1 text-neutral-700">
                   All Royalty-Free licences include global use rights,
                   comprehensive protection, and simple pricing with volume
                   discounts available
@@ -167,7 +190,7 @@ const page = () => {
                 {product.variants.map((license, index) => (
                   <div
                     key={index}
-                    className="border rounded p-4 mt-2 flex justify-between items-center hover:bg-[#F4F4F4] cursor-pointer"
+                    className="border rounded p-4 mt-5 flex justify-between items-center hover:bg-[#F4F4F4] cursor-pointer"
                   >
                     <div>
                       <label
@@ -218,10 +241,10 @@ const page = () => {
             )}
           </div>
           <div>
-            <div className="py-6 mr-20 bg-gray-100 px-4">
+            <div className=" bg-gray-100 lg:px-8 py-4">
               {product && (
-                <div className=" p-4 rounded-md w-full">
-                  <h2 className="text-lg font-semibold mb-4">Details</h2>
+                <div className="  rounded-md w-full">
+                  <h2 className="text-lg font-semibold mb-1">Details</h2>
                   <div className="space-y-2">
                     <div className="flex lg:justify-start md:justify-between">
                       <span className="font-medium w-32">Title:</span>
@@ -254,7 +277,46 @@ const page = () => {
           </div>
         </div>
       </div>
+
+   
+      {/* <div className=" overflow-y-auto mt-10 w-[90%] m-auto ">
+        <h1 className="text-xl font-semibold mb-4">More item by MoosBeat</h1>
+          {audioData.map((product, index) => (
+          
+            <Waveform key={index} product={product} />
+          
+          ))}
+      </div> */}
+
+      <div className="w-[90%] m-auto mb-4">
+      {product && (
+          <div>
+            <div className="mt-8">
+              <h2 className="font-bold text-lg">Related keywords</h2>
+              <div className="flex gap-3 mt-2">
+                {product.tags.map((keyword, index) => (
+                  <span key={index} className="">
+                    <button className="border rounded-md py-1 px-4 flex gap-1 items-center">
+                      <IoSearchOutline className="h-5 w-5" />
+                      {keyword}
+                    </button>
+                  </span>
+                ))}
+              </div>
+            </div>
+            <div className="mt-8 mb-3">
+              <h1 className="font-semibold text-lg">Category</h1>
+              <button className="border rounded-md py-1 px-4 mt-2">
+                {product.category}
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+
+      <div className="mt-12">
       <Footer />
+      </div>
     </div>
   );
 };

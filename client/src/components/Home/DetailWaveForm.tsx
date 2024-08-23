@@ -105,6 +105,7 @@ const DetailWaveform = ({ product }: { product: TCustomerProduct }) => {
         <div className="detail-wave" id={`waveform-${product._id}`} />
         <audio id={`track-${product._id}`} src={url} />
       </div>
+      <div className="flex gap-4 cursor-pointer">
       <button
         style={detailPlayButtonStyle}
         onClick={(e) => {
@@ -147,6 +148,10 @@ const DetailWaveform = ({ product }: { product: TCustomerProduct }) => {
           </svg>
         )}
       </button>
+      <div>
+        <img src="/asset/Group 47.svg" alt="" />
+      </div>
+      </div>
       <div className="w-2/12 flex text-right text-gray-400"></div>
     </div>
   );
