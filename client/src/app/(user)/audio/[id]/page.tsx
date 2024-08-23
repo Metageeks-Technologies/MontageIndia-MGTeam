@@ -1,0 +1,262 @@
+"use client";
+import {
+  clearSingleProductData,
+  getSingleProduct,
+  addProductToCart,
+  addProductToWishlist,
+  removeProductFromCart,
+  removeProductFromWishlist,
+} from "@/app/redux/feature/product/api";
+import { useAppDispatch, useAppSelector } from "@/app/redux/hooks";
+import DetailWaveform from "@/components/Home/DetailWaveForm";
+import { useParams } from "next/navigation";
+import { useEffect, useState } from "react";
+import { BiSolidPurchaseTagAlt } from "react-icons/bi";
+import { BsCart2, BsCartCheckFill } from "react-icons/bs";
+import { IoSearchOutline } from "react-icons/io5";
+import { IoMdHeart, IoMdHeartEmpty } from "react-icons/io";
+import { MdOutlineAddAPhoto } from "react-icons/md";
+import { CiHeart } from "react-icons/ci";
+import { AiOutlineDownload } from "react-icons/ai";
+import Trending from "@/components/Video/trendingVideos";
+import { getVideo } from "@/app/redux/feature/product/video/api";
+import { FiDownload } from "react-icons/fi";
+import { Spinner } from "@nextui-org/react";
+import { downloadProduct } from "@/app/redux/feature/product/api";
+import Footer from "@/components/Footer";
+
+const page = () => {
+  const params = useParams();
+  const id = params.id as string | undefined;
+
+  useEffect(() => {
+    if (id) getSingleProduct(dispatch, id);
+    return () => {
+      clearSingleProductData(dispatch);
+    };
+  }, [id]);
+
+  const dispatch = useAppDispatch();
+  const {
+    singleProduct: product,
+    loading,
+    cart,
+  } = useAppSelector((state) => state.product);
+  const { user } = useAppSelector((state) => state.user);
+
+  const isVariantPurchased = (variantId: string) => {
+    return user?.purchasedProducts.some((item) =>
+      item.variantId.includes(variantId)
+    );
+  };
+  const isVariantInCart = (variantId: string) => {
+    return cart.some((item) => item.variantId.includes(variantId));
+  };
+
+  const handleCart = (variant: string) => {
+    if (!product || loading) return;
+    if (product.isInCart && isVariantInCart(variant)) {
+      removeProductFromCart(dispatch, product._id);
+    } else {
+      addProductToCart(dispatch, product._id, variant);
+    }
+  };
+
+  const handleeWishlist = () => {
+    if (!product) return;
+
+    if (product.isWhitelisted) {
+      removeProductFromWishlist(dispatch, product._id);
+    } else {
+      addProductToWishlist(dispatch, product._id, product.variants[0]._id);
+    }
+  };
+
+  const [downloading, setLoading] = useState(false);
+
+  const handleDownload = async () => {
+    if (!product) return;
+    setLoading(true);
+    await downloadProduct(dispatch, product.publicKey, product.title);
+    setLoading(false);
+  };
+  if (!product) {
+    return <div>Loading...</div>;
+  }
+
+  return (
+    <div className="bg-white">
+      <div className="flex items-center gap-4 px-4 py-0.5 bg-gray-100 border border-gray-300 rounded-md  mr-20 ml-20  my-4">
+        <button className="md:flex items-center hidden  gap-2 text-black hover:bg-gray-200 rounded-md">
+          <img src="/asset/28-camera-1.svg" alt="" />
+          <span>Photos</span>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-4 w-4 ml-1"
+            viewBox="0 0 20 20"
+            fill="currentColor"
+          >
+            <path
+              fillRule="evenodd"
+              d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+              clipRule="evenodd"
+            />
+          </svg>
+        </button>
+        <img src="/asset/Rectangle 15.png" alt="" />
+        <input
+          type="text"
+          placeholder="Search for Photos"
+          className="flex-grow  py-2 bg-gray-100 rounded-md "
+        />
+        <IoSearchOutline className="h-6 w-6 cursor-pointer text-gray-400" />
+        <button className="md:flex items-center gap-4 text-gray-500 hidden  hover:text-black  rounded-md">
+          <img src="/asset/Rectangle 15.png" alt="" />
+          <img src="/asset/Union.png" alt="" />
+          <span>Search by image</span>
+        </button>
+      </div>
+      <div className="w-full border-y-[1px] flex">
+        <div className="w-8/12 border-e-[2px] px-20   bg-gray-100">
+          <div className="flex flex-row text-gray-700  mt-4 justify-between items-center">
+            <div className="font-semibold text-lg">{product.title}</div>
+            <div className="flex-row flex gap-3">
+              <span
+                onClick={handleeWishlist}
+                title={
+                  product.isWhitelisted ? "Remove from Saved" : "Save Image"
+                }
+                className=" bg-opacity-35 bg-white cursor-pointer px-3 py-2 border font-medium  border-gray-300 rounded-md flex gap-1 items-center"
+              >
+                {product.isWhitelisted ? (
+                  <IoMdHeart className="h-5 w-5 text-red-500" />
+                ) : (
+                  <IoMdHeartEmpty className="h-5 w-5" />
+                )}
+                <p> {product.isWhitelisted ? "Saved" : "Save"} </p>
+              </span>
+              <span
+                onClick={handleDownload}
+                className=" flex font-medium bg-white rounded-md gap-2 border-gray-300 flex-row text-center p-2 border items-center"
+              >
+                {!downloading ? (
+                  <>
+                    <FiDownload className="font-semibold" />
+                    <p className="text-small">Try</p>
+                  </>
+                ) : (
+                  <Spinner label="" color="current" />
+                )}
+              </span>
+            </div>
+          </div>
+          <div className="my-4">
+            {product && <DetailWaveform product={product} />}
+          </div>
+        </div>
+        <div className="w-4/12  flex   flex-col bg-gray-100">
+          <div className="border-b-[2px] mr-20 w-full  py-2 px-8 bg-white">
+            {product && (
+              <div className="w-fit">
+                <h3 className="font-bold text-lg">Purchase a Licence</h3>
+                <p className="text-sm mt-1 text-neutral-700">
+                  All Royalty-Free licences include global use rights,
+                  comprehensive protection, and simple pricing with volume
+                  discounts available
+                </p>
+                {product.variants.map((license, index) => (
+                  <div
+                    key={index}
+                    className="border rounded p-4 mt-2 flex justify-between items-center hover:bg-[#F4F4F4] cursor-pointer"
+                  >
+                    <div>
+                      <label
+                        htmlFor={`license-${index}`}
+                        className="block text-gray-600"
+                      >
+                        ${license.price}
+                      </label>
+                      <div>{license.size}</div>
+                    </div>
+                    <div className=" flex justify-between ">
+                      {isVariantPurchased(license._id) ? (
+                        <>
+                          <div
+                            title={"Purchased Product"}
+                            className={` p-2 bg-red-500 text-white rounded-full`}
+                          >
+                            <BiSolidPurchaseTagAlt />
+                          </div>
+                        </>
+                      ) : (
+                        <>
+                          <div
+                            title={
+                              isVariantInCart(license._id)
+                                ? "Remove from cart"
+                                : "Add to cart"
+                            }
+                            className={` p-2 ${
+                              isVariantInCart(license._id)
+                                ? "bg-red-500 text-white"
+                                : "bg-white text-black"
+                            } rounded-full`}
+                            onClick={() => handleCart(license._id)}
+                          >
+                            {product.isInCart ? (
+                              <BsCartCheckFill />
+                            ) : (
+                              <BsCart2 />
+                            )}
+                          </div>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+          <div>
+            <div className="py-6 mr-20 bg-gray-100 px-4">
+              {product && (
+                <div className=" p-4 rounded-md w-full">
+                  <h2 className="text-lg font-semibold mb-4">Details</h2>
+                  <div className="space-y-2">
+                    <div className="flex lg:justify-start md:justify-between">
+                      <span className="font-medium w-32">Title:</span>
+                      <p className="text-blue-600 hover:underline">
+                        {product.title}
+                      </p>
+                    </div>
+                    <div className="flex  lg:justify-start md:justify-between">
+                      <span className="font-medium w-32">Category:</span>
+                      <p className="">{product.category}</p>
+                    </div>
+                    <div className="flex  lg:justify-start md:justify-between">
+                      <span className="font-medium w-32">Upload date:</span>
+                      <span>{new Date().toLocaleDateString()}</span>
+                    </div>
+                    <div className="flex  lg:justify-start md:justify-between">
+                      <span className="font-medium w-32">Location:</span>
+                      <span>India</span>
+                    </div>
+                    <div className="flex  lg:justify-start md:justify-between">
+                      <span className="font-medium w-32">Format: </span>
+                      <span className="text-sm text-neutral-600">
+                        6725 × 4286 px
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+      <Footer />
+    </div>
+  );
+};
+
+export default page;

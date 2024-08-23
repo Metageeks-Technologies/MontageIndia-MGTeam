@@ -3,9 +3,9 @@ import {
   setCurrUser,
   requestStart,
   requestFail,
-  setCartData,
+  setProductCart,
   removeCart,
-  getCart,
+  // getCart,
 } from "./slice";
 import type { AppDispatch } from "@/app/redux/store";
 import type { AxiosError } from "axios";
@@ -32,7 +32,7 @@ export const getCartData = async (
   try {
     const response = await instance("/product/cart/data");
     console.log("response in getting cartitems:-", response);
-    dispatch(getCart(response.data));
+    // dispatch(getCart(response.data));
     return response.data;
   } catch (error) {
     const e = error as AxiosError;
@@ -54,7 +54,7 @@ export const addCartItem = async (dispatch: AppDispatch, productId: string) => {
         icon: "success",
       } ); 
       getCurrCustomer(dispatch);
-      dispatch(setCartData(response.data.cart));
+      dispatch(setProductCart(response.data.cart));
     }
 
     return response.data;
