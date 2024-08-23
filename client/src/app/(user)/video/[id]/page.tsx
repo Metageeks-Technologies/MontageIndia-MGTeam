@@ -16,12 +16,14 @@ import { BsCart2, BsCartCheckFill, BsChatRightHeart } from "react-icons/bs";
 import { IoMdHeart, IoMdHeartEmpty } from "react-icons/io";
 import { IoSearchOutline } from "react-icons/io5";
 import { MdOutlineAddAPhoto } from "react-icons/md";
-import { CiHeart } from "react-icons/ci";
+import { CiHeart, CiShare2 } from "react-icons/ci";
 import { AiOutlineDownload } from "react-icons/ai";
 import Trending from "@/components/Video/trendingVideos";
 import { getVideo } from "@/app/redux/feature/product/video/api";
 import { BiSolidPurchaseTagAlt } from "react-icons/bi";
 import { LuIndianRupee } from "react-icons/lu";
+import { FaShareAlt } from "react-icons/fa";
+import CustomShareButton from "@/components/Home/gallary/share";
 
 const Home = () => {
   const [selectedVariantId, setSelectedVariantId] = useState("");
@@ -70,21 +72,18 @@ const Home = () => {
   const isVariantInCart = (variantId: string) => {
     return cart.some((item) => item.variantId.includes(variantId));
   };
-  const capitalizeFirstLetter = (string: string) => {
-    return string.charAt(0).toUpperCase() + string.slice(1);
+  const capitalizeFirstLetter = (str: string | null | undefined): string => {
+    if (!str) {
+      return ''; // Return an empty string if str is null or undefined
+    }
+    return str.charAt(0).toUpperCase() + str.slice(1);
   };
   const isVariantPurchased = (variantId: string) => {
     return user?.purchasedProducts.some((item) =>
       item.variantId.includes(variantId)
     );
   }; 
-  const fetchData = () => {
-    // setLoading(true);
-    getVideo(dispatch, {
-      mediaType: ["video"],
-      productsPerPage: "9",
-    }) 
-  };
+ 
   const handleCart = (variant: string) => {
     if (!product || loading) return;
     if (product.isInCart && isVariantInCart(variant)) {
@@ -94,13 +93,10 @@ const Home = () => {
     }
   };
   
-  useEffect(() => {
-    fetchData();
-  }, []);
-
+  
   return (
     <div className="main">
-      <div className="flex items-center gap-4 px-4 py-0.5 bg-gray-100 border border-gray-300 rounded-md w-[90%] m-auto mt-4">
+      {/* <div className="flex items-center gap-4 px-4 py-0.5 bg-gray-100 border border-gray-300 rounded-md w-[90%] m-auto mt-4">
         <button className="md:flex items-center hidden  gap-2 text-black hover:bg-gray-200 rounded-md">
         <img src="/asset/28-camera-1.svg" alt="" />
           <span>Photos</span>
@@ -120,7 +116,7 @@ const Home = () => {
           <img src="/asset/Union.png" alt="" />
           <span>Search by image</span>
         </button>
-      </div>
+      </div> */}
       <div className="border-t border-b border-b-gray-400 border-t-gray-400 m-auto mt-5">
         <div className="flex md:flex-row flex-col  ">
           {product && (
@@ -148,6 +144,7 @@ const Home = () => {
                       {product.isWhitelisted ? "Saved" : "Save"}{" "}
                     </p>
                     </span>
+                    <CustomShareButton/>
                      <span className=" flex font-medium rounded-md gap-2 border-gray-300 flex-row text-center p-2 border items-center">
                      <AiOutlineDownload size={20}/> Try
                     </span>
@@ -236,27 +233,29 @@ const Home = () => {
              <div className=" p-8  rounded-md w-full">
              <h2 className="text-lg font-semibold ">Details</h2>
              <div className="space-y-1 text-base">
-               <div className="flex lg:justify-start md:justify-between">
-                 <span className="font-medium w-32">Title:</span>
-                 <span className="text-violet-600 hover:underline">{capitalizeFirstLetter(product.title)}</span>
+               <div className="flex lg:justify-start w-full md:justify-between ">
+                 <span className="font-medium w-[35%]">Title:</span>
+                 <span className="text-violet-600 text-sm w-[65%]    hover:underline">
+                 {capitalizeFirstLetter(product?.title || '')}
+                 </span>
                </div>
-               <div className="flex  lg:justify-start md:justify-between">
-                 <span className="font-medium w-32">Upload date:</span>
-                 <span>{new Date().toLocaleDateString()}</span>
+               <div className="flex  lg:justify-start w-full md:justify-between">
+                 <span className="font-medium w-[35%]">Upload date:</span>
+                 <span className="w-[65%] ">{new Date().toLocaleDateString()}</span>
                </div>
-               <div className="flex  lg:justify-start md:justify-between">
-                 <span className="font-medium w-32">Location:</span>
-                 <span>India</span>
+               <div className="flex  lg:justify-start w-full md:justify-between">
+                 <span className="font-medium w-[35%]">Location:</span>
+                 <span className="w-[65%] ">India</span>
                </div>
-               <div className="flex  lg:justify-start md:justify-between">
-                 <span className="font-medium w-32">Category:</span>
-                 <p className="text-violet-600">
-                    {product.category.map((cat) => capitalizeFirstLetter(cat)).join(", ") + "."}
-                  </p>        
+               <div className="flex  lg:justify-start w-full md:justify-between">
+                 <span className="font-medium w-[35%]">Category:</span>
+                 <p className="text-violet-600 w-[65%] ">
+                  {product?.category.map((cat: string) => capitalizeFirstLetter(cat)).join(", ") + "."}
+                </p>      
                </div>
-               <div className="flex  lg:justify-start md:justify-between">
-               <span className="font-medium w-32">Format: </span>
-               <span className="text-sm text-neutral-600">6725 × 4286 px</span>
+               <div className="flex  w-full lg:justify-start md:justify-between">
+               <span className="font-medium w-[35%]">Format: </span>
+               <span className="text-sm text-neutral-600 w-[65%]">6725 × 4286 px</span>
                </div>
              </div>
            </div>

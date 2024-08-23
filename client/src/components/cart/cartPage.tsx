@@ -38,7 +38,7 @@ function CartPopup() {
             onClick={() => setIsOpen(true)}
           />
         </Badge>
-        <div className={`${!isOpen ? "hidden" : "absolute bg-white rounded-md w-[30rem] max-h-[22rem] top-16 right-4 md:right-14  z-20"}`}>
+        <div className={`${!isOpen ? "hidden" : "absolute  shadow-xl bg-white rounded-md w-[30rem] max-h-[22rem] top-16 right-4 md:right-14  z-20"}`}>
           <div className=" rounded-md  bg-white  justify-self-end w-full max-w-2xl">
             <div className="flex justify-between pb-5 rounded-t-md p-3 px-7  bg-webred-light  items-center ">
               <h2 className="text-base leading-6  font-bold">My Cart</h2>
@@ -65,7 +65,7 @@ function CartPopup() {
                        { item?.productId.mediaType === "audio" && (
                          <img
                          className="w-[74px] h-14 rounded-md mr-4"
-                         src="/asset/audio.svg"
+                         src="/images/audioImage.png"
                            alt={ item?.productId.title }
                      />
                        ) }

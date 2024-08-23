@@ -213,3 +213,18 @@ td {
 .vidbg {
   background-color: #f4f6f6;
 }
+/*  share  CSS start */
+.custom-share-button {
+  margin: 0 5px;
+  border-radius: 8px;
+}
+
+.custom-share-button > div {
+  background-color: #FE423F; /* Custom button color */
+  color: #fff; /* Text color */
+  padding: 8px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

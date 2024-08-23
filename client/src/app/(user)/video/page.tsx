@@ -6,27 +6,23 @@ import Footer from "@/components/Footer";
 import FAQ from "@/components/Video/fag";
 import Trending from "@/components/Video/trendingVideos";
 import { Button, Pagination } from "@nextui-org/react";
+import { useSearchParams } from "next/navigation";
+import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { IoIosSearch } from "react-icons/io";
-import { IoSearchOutline } from "react-icons/io5";
-import debounce from "lodash.debounce";
 
 const Page = () => {
+  const searchParams = useSearchParams();
+  const category = searchParams.get('category');
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
+  console.log("datacategoy",category)
   const dispatch = useAppDispatch();
   const { videoData: product, videoPage, totalVideoNumOfPage } = useAppSelector((state) => state.product);
 
   const handlePageChange = (page: number) => {
     dispatch(setVideoPage(page));
   };
-
-  const getData = debounce(() => {
-    console.log("datasearch",searchTerm)
-    dispatch(setVideoPage(1)); // Reset to page 1 on search
-    fetchData(1); // Fetch data with the new search term
-  
-  }, 300);
 
   const handleNextPage = () => {
     handlePageChange(videoPage === totalVideoNumOfPage ? 1 : videoPage + 1);
@@ -36,9 +32,8 @@ const Page = () => {
     handlePageChange(videoPage === 1 ? totalVideoNumOfPage : videoPage - 1);
   };
 
-  // useEffect(() => {
-  //   getVideo(dispatch, { page: videoPage, mediaType: ["video"], productsPerPage: "5" });
-  // }, [videoPage]);
+  const categoryParam = category ? ["editor choice"] : "";
+
 
   const fetchData = (page: number) => {
     // setLoading(true);
@@ -46,44 +41,18 @@ const Page = () => {
       page,
       mediaType: ["video"],
       searchTerm,
+      category: categoryParam,
       productsPerPage: "5",
     }) 
   };
 
   useEffect(() => {
     fetchData(videoPage);
-  }, [videoPage]);
+  }, [videoPage,searchParams]);
 
   return (
     <div className="main items-center ">
-      <div className="flex my-8 items-center gap-4 px-4 py-0.5 bg-gray-100 border border-gray-300 rounded-md w-[90%] m-auto">
-        <button className="md:flex items-center hidden outline-none gap-2 text-black hover:bg-gray-200 rounded-md">
-          <img src="/asset/28-camera-1.svg" alt="" />
-          <span>Videos</span>
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-1" viewBox="0 0 20 20" fill="currentColor">
-            <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
-          </svg>
-        </button>
-        <img src="/asset/Rectangle 15.png" alt="" />
-        <input
-          type="text"
-          placeholder="Search for Videos"
-          value={searchTerm}
-          onChange={(e) => {
-            setSearchTerm(e.target.value);
-            getData();
-          }}
-          className="flex-grow py-2 outline-none bg-gray-100 rounded-md"
-        />
-        <button onClick={getData}>
-          <IoSearchOutline className="h-6 w-6 cursor-pointer text-gray-400" />
-        </button>
-        <button className="md:flex items-center gap-4 text-gray-500 hidden hover:text-black rounded-md">
-          <img src="/asset/Rectangle 15.png" alt="" />
-          <img src="/asset/Union.png" alt="" />
-          <span>Search by video</span>
-        </button>
-      </div>
+
 
       {/* Category Buttons */}
       <div className="border-t bg-[#eeeeee] border-gray-300 px-[5%] py-5 flex flex-wrap justify-start space-x-2 space-y-2 md:space-y-0 sm:space-x-4">
@@ -154,14 +123,6 @@ const Page = () => {
           </Button>
         </div>
       )}
-
-      {/* FAQ Section */}
-      <div className="py-8 bg-gray-100">
-        <div className="lg:mx-24 md:mx-4 mx-4 flex lg:flex-row md:flex-col flex-col">
-          <h2 className="text-2xl font-bold mt-5 basis-[25%]">Stock Footage FAQs</h2>
-          <FAQ />
-        </div>
-      </div>
 
       <Footer />
     </div>

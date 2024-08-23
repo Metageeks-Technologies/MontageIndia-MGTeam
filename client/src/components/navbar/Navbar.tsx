@@ -1,25 +1,44 @@
 "use client";
 import React, { useState } from "react";
 import { AiOutlineHeart, AiOutlineMenu, AiOutlineClose } from "react-icons/ai";
-import { IoMdArrowDropdown } from "react-icons/io";
+import { IoIosArrowDropdown, IoMdArrowDropdown } from "react-icons/io";
 import { useRouter } from "next/navigation";
 import CartPopup from "../cart/cartPage";
 import { FaUserCircle } from "react-icons/fa";
 import instance from "@/utils/axios";
 import { notifySuccess } from "@/utils/toast";
 import { BiLogInCircle, BiLogOutCircle } from "react-icons/bi";
-import { useAppSelector } from "@/app/redux/hooks";
+import { useAppDispatch, useAppSelector } from "@/app/redux/hooks";
 import Link from "next/link";
 import Swal from "sweetalert2";
+import debounce from "lodash.debounce";
+import { setVideoPage } from "@/app/redux/feature/product/slice";
+import { getVideo } from "@/app/redux/feature/product/video/api";
+import { IoSearchOutline } from "react-icons/io5";
 
 const Sidebar = () => {
   const router = useRouter();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const dispatch = useAppDispatch();
 
   const [isUserOpen, setIsUserOpen] = useState(false);
   const user = useAppSelector((state: any) => state.user?.user?._id);
   const cart = useAppSelector((state) => state.product.cart);
-
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const toggleDropdown = () => setIsDropdownOpen(!isDropdownOpen);
+  const closeDropdown = () => setIsDropdownOpen(false);
+  const getData = debounce(() => {
+    console.log("datasearch",searchTerm)
+    dispatch(setVideoPage(1)); // Reset to page 1 on search
+    fetchData(1); // Fetch data with the new search term
+  
+  }, 300);
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      getData();
+    }
+  };
   const handleLogout = async () => {
     try {
       const response = await instance.get("/user/logout");
@@ -34,7 +53,15 @@ const Sidebar = () => {
       console.error("Error in logout:", error);
     }
   };
-
+  const fetchData = (page: number) => {
+    // setLoading(true);
+    getVideo(dispatch, {
+      page,
+      mediaType: ["video"],
+      searchTerm,
+      productsPerPage: "5",
+    }) 
+  };
   const handleUserIconClick = () => {
     setIsUserOpen(!isUserOpen);
   };
@@ -45,6 +72,7 @@ const Sidebar = () => {
   };
 
   return (
+  <>
     <div className="flex items-center justify-between bg-white px-6 py-4 shadow-md">
       <div className="flex items-center gap-5">
         <img
@@ -72,6 +100,50 @@ const Sidebar = () => {
               onClick={() => router.push("/audio")}
             >
               Audio
+            </li>
+            <li
+              className="text-gray-700 relative flex flex-row items-center gap-2 hover:text-black transition duration-300 ease-in-out"
+              onClick={toggleDropdown}
+
+            >
+              Editor Choice <span className={`${isDropdownOpen?"rotate-180 transform duration-75":"rotate-0 transform duration-75"}`}> <IoIosArrowDropdown /></span>
+              {isDropdownOpen && (
+              <div
+                className="absolute w-36 flex flex-col items-center gap-6 -left-4 justify-center  top-full  mt-2 bg-white border rounded shadow-xl p-4 z-50"
+                onMouseEnter={() => setIsDropdownOpen(true)}
+                onMouseLeave={closeDropdown}
+              >
+              <div className="flex flex-col gap-2">
+                <Link
+                     href={{
+                      pathname: '/video',
+                      query: { category: 'editorchoice',editor:'image' },
+                    }}
+                  className="text-gray-600 hover:text-gray-800 "
+                >
+                  Editor Image
+                </Link>
+                <Link
+                     href={{
+                      pathname: '/video',
+                      query: { category: 'editorchoice',editor:'audio' },
+                    }}
+                  className="text-gray-600 hover:text-gray-800 "
+                >
+                  Editor Audio
+                  </Link>
+                <Link
+                     href={{
+                      pathname: '/video',
+                      query: { category: 'editorchoice',editor:'video' },
+                    }}
+                  className="text-gray-600 hover:text-gray-800"
+                >
+                  Editor Video
+                  </Link>
+              </div>
+            </div>
+              )}
             </li>
           </ul>
         </div>
@@ -170,6 +242,34 @@ const Sidebar = () => {
         </div>
       )}
     </div>
+          <div className="flex relative my-8 justify-between items-center flex-row gap-4  bg-gray-100 border border-gray-300 rounded-md w-[90%] m-auto">
+            <div className="flex flex-row px-3 w-full  gap-5">
+          <button className="md:flex flex-row items-center px-4 py-2  hidden outline-none gap-2 text-black hover:bg-gray-200 rounded-md">
+            <img src="/asset/28-camera-1.svg" alt="" />
+            <span>Videos</span>
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-1" viewBox="0 0 20 20" fill="currentColor">
+              <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+            </svg>
+          </button>
+          <img src="/asset/Rectangle 15.png" className="hidden py-2 md:block" alt="" />
+          <div className="w-[80%] py-1 items-center justify-center flex">
+          <input
+            type="text"
+            placeholder="Search for Videos"
+            value={searchTerm}
+            onChange={(e) => {
+              setSearchTerm(e.target.value);
+            }}
+            onKeyDown={handleKeyDown} 
+            className="flex-grow py-1 md:px-4 outline-none  bg-gray-100 rounded-md"
+          />
+          </div>
+          </div>
+          <div onClick={getData} className=" cursor-pointer absolute -top-[1px] -bottom-[1px] -right-[1px] flex justify-center m-auto w-12 rounded-r-md bg-[#8D529C]">
+            <IoSearchOutline className="h-full text-white w-6 " />
+          </div>
+        </div>
+        </>
   );
 };
 
