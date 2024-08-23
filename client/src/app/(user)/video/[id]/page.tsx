@@ -70,6 +70,9 @@ const Home = () => {
   const isVariantInCart = (variantId: string) => {
     return cart.some((item) => item.variantId.includes(variantId));
   };
+  const capitalizeFirstLetter = (string: string) => {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+  };
   const isVariantPurchased = (variantId: string) => {
     return user?.purchasedProducts.some((item) =>
       item.variantId.includes(variantId)
@@ -156,7 +159,7 @@ const Home = () => {
                 /> 
                 </video>
                
-                <div className="lg:w-[50rem] md:w-[35rem] w-[22rem] mt-2">
+                <div className="lg:w-[50rem] pb-7 md:w-[35rem] w-[22rem] mt-2">
                   <h2 className="font-bold">Description</h2>
                   <p className="text-sm text-neutral-700">
                     Stock Photo ID: {product._id}
@@ -166,8 +169,8 @@ const Home = () => {
 
             
               </div>
-              <div className="border-t border-t-gray-400 md:border-t-0 w-full md:w-[28%]  ">
-                <div className="p-8 ">
+              <div className="border-t vidbg border-t-gray-400 md:border-t-0 w-full md:w-[28%]  ">
+                <div className="p-8 bg-white ">
                 <h3 className="font-semibold  text-gray-700 text-xl">
                   Purchase a License
                 </h3>
@@ -186,7 +189,10 @@ const Home = () => {
                     <div className=" flex flex-row justify-between ">
                       <div className="flex flex-row items-center gap-3">
                         {/* Conditionally render the image */}
-                        {index === 0 ? (
+                        <div
+                      className={`custom-radio ${isVariantInCart(license._id) ? 'checked' : ''}`}
+                    ></div>     
+                       {index === 0 ? (
                           <img src="/asset/full-hd.svg" className="w-20" alt="Full HD" />
                         ) : index === 1 ? (
                           <img src="/asset/hd.svg" className="w-10 h-5" alt="HD" />
@@ -228,15 +234,11 @@ const Home = () => {
                 <div className="flex flex-col vidbg  border-t border-t-gray-400  justify-end items-start">
             {product && (
              <div className=" p-8  rounded-md w-full">
-             <h2 className="text-lg font-semibold mb-2">Details</h2>
+             <h2 className="text-lg font-semibold ">Details</h2>
              <div className="space-y-1 text-base">
                <div className="flex lg:justify-start md:justify-between">
                  <span className="font-medium w-32">Title:</span>
-                 <p className="text-violet-600 hover:underline">{product.title}</p>
-               </div>
-               <div className="flex  lg:justify-start md:justify-between">
-                 <span className="font-medium w-32">Category:</span>
-                 <p className="">{product.category}</p>
+                 <span className="text-violet-600 hover:underline">{capitalizeFirstLetter(product.title)}</span>
                </div>
                <div className="flex  lg:justify-start md:justify-between">
                  <span className="font-medium w-32">Upload date:</span>
@@ -245,6 +247,12 @@ const Home = () => {
                <div className="flex  lg:justify-start md:justify-between">
                  <span className="font-medium w-32">Location:</span>
                  <span>India</span>
+               </div>
+               <div className="flex  lg:justify-start md:justify-between">
+                 <span className="font-medium w-32">Category:</span>
+                 <p className="text-violet-600">
+                    {product.category.map((cat) => capitalizeFirstLetter(cat)).join(", ") + "."}
+                  </p>        
                </div>
                <div className="flex  lg:justify-start md:justify-between">
                <span className="font-medium w-32">Format: </span>
