@@ -9,6 +9,7 @@ import instance from "@/utils/axios";
 import { notifySuccess } from "@/utils/toast";
 import { BiLogInCircle, BiLogOutCircle } from "react-icons/bi";
 import { useAppSelector } from "@/app/redux/hooks";
+import Link from "next/link";
 
 const Sidebar = () => {
   const router = useRouter();
@@ -76,10 +77,12 @@ const Sidebar = () => {
             <span>0 Credits Available</span>
             <IoMdArrowDropdown className="ml-1" />
           </div>
-          <AiOutlineHeart
-            onClick={() => router.push("/wishlist")}
-            className="text-gray-700 cursor-pointer w-7 h-7 transition-transform duration-200 ease-in-out hover:scale-110"
-          />
+          <Link href="/user-profile/favorites" >
+            <AiOutlineHeart
+              className="text-gray-700 hover:text-webred cursor-pointer w-7 h-7 transition-transform duration-200 ease-in-out hover:scale-110"
+            />
+          </Link>
+          
           <CartPopup />
           <div className="relative">
             <FaUserCircle

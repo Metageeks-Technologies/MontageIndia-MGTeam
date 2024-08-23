@@ -74,10 +74,11 @@ export const fetchOrdersByCustomerId = catchAsyncError(
       queryObject["$or"] = [
         { razorpayOrderId: { $regex: searchTerm, $options: "i" } },
         { method: { $regex: searchTerm, $options: "i" } },
+        { status: { $regex: searchTerm, $options: "i" } },
       ];
     }
 
-    const skip = (currentPage - 1) * (Number(dataPerPage)-1);
+    const skip = (currentPage - 1) * (Number(dataPerPage));
 
      const orders = await Order.find(queryObject)
       .populate("products.productId")
@@ -91,14 +92,12 @@ export const fetchOrdersByCustomerId = catchAsyncError(
       return res.status(404).json({ message: "No orders found for this user." });
     }
 
-    res.status(200).json({ orders,
+    res.status(200).json({ 
+      orders,
       totalOrders,
-      currentPage: parseInt(currentPage),
       totalPages,
-      dataPerPage: parseInt(dataPerPage), });
-  }
-);
-
+  });
+  });
 export const getOrders = catchAsyncError(async (req: any, res, next) => {
   const orders = await Order.find();
 
@@ -111,12 +110,13 @@ export const getOrders = catchAsyncError(async (req: any, res, next) => {
 export const getOrderById = catchAsyncError(async (req: any, res, next) => {
   const { id: orderId } = req.params;
 
-  const order = await Order.findById(orderId);
+  const order = await Order.findById(orderId).populate('products.productId');
+
   if (!order) {
     return next(new ErrorHandler("Order not found", 404));
   }
 
-  res.status(201).json({
+  res.status(200).json({
     success: true,
     order,
   });

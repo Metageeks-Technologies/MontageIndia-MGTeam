@@ -32,7 +32,7 @@ function CartPopup() {
       {!isOpen ? (
         <Badge color="danger" content={cart.length} shape="circle">
           <AiOutlineShoppingCart
-            className="text-gray-700 w-6 h-6 cursor-pointer"
+            className="text-gray-700  cursor-pointer w-7 h-7 transition-transform duration-200 ease-in-out hover:scale-110"
             onClick={() => setIsOpen(true)}
           />
         </Badge>

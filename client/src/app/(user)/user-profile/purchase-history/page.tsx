@@ -4,7 +4,11 @@ import { useAppDispatch, useAppSelector } from "@/app/redux/hooks";
 import {Spinner,Button,Pagination} from "@nextui-org/react";
 import { getCurrCustomer } from "@/app/redux/feature/user/api";
 import { FaRupeeSign } from "react-icons/fa";
+import { IoSearchOutline } from "react-icons/io5";
+import { IoEyeOutline } from "react-icons/io5";
+import {useRouter} from 'next/navigation'
 import instance from "@/utils/axios";
+import {formatDateTime} from '@/utils/DateFormat'
 
 interface Order {
   _id: string;
@@ -24,7 +28,9 @@ const ProductList: React.FC = () => {
   const [dataPerPage, setDataPerPage] = useState(6);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [totalPages, setTotalPages] = useState(1);
+  const [totalOrder, setTotalOrder] = useState(0);
   const [loading, setLoading] = useState<boolean>(false);
+  const router=useRouter();
   const dispatch = useAppDispatch();
   const user = useAppSelector((state: any) => state.user?.user);
   console.log("user", user);
@@ -41,6 +47,7 @@ const ProductList: React.FC = () => {
       });
       setOrders(response.data.orders);  
       setTotalPages(response.data.totalPages);
+      setTotalOrder(response.data.totalOrders);
       console.log("data", response);
     } catch (error) {
       console.error("Error fetching order by user ID:", error);
@@ -73,19 +80,27 @@ const ProductList: React.FC = () => {
     if (user?._id){
       fetchOrder(user?._id);
     }
-  }, [currentPage, dataPerPage, searchTerm,user]);
+  }, [currentPage, dataPerPage,user]);
 
   return (
     <div className="w-full rounded-lg overflow-hidden bg-white px-6 py-4">
       <h1 className="text-xl font-semibold mb-6 text-gray-800">Purchase History</h1>
       <div className="flex justify-between items-center gap-4 flex-wrap my-6">
+      <div className="flex">
         <input
           type="text"
           placeholder="Search"
-          className="border rounded px-4 py-2 w-full max-w-sm"
+          className="border rounded-r-none rounded-l-md px-4 py-2 w-full max-w-sm"
           value={searchTerm}
           onChange={handleSearch}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              fetchOrder(user?._id);
+            }
+          }}
         />
+        <div onClick={()=>{fetchOrder(user?._id)}} className="cursor-pointer bg-webred px-4 py-2 flex justify-center items-center text-white rounded-l-none rounded-r-md text-lg"><IoSearchOutline/></div>
+        </div>
         <div className="flex items-center flex-wrap gap-4">
           <div>
             <select
@@ -102,7 +117,7 @@ const ProductList: React.FC = () => {
       </div>
        {loading?(
               <div className="w-full flex justify-center items-center ">
-              <Spinner color="secondary" size="lg" />
+              <Spinner color="danger" size="lg" />
             </div>
             ):(
               <>
@@ -115,7 +130,7 @@ const ProductList: React.FC = () => {
               <th className="px-6 py-3 border-b text-sm font-medium tracking-wider">Method</th>
               <th className="px-6 py-3 border-b text-sm font-medium tracking-wider">Date</th>
               <th className="px-6 py-3 border-b text-sm font-medium tracking-wider">Status</th>
-              <th className="px-6 py-3 border-b text-sm font-medium tracking-wider">Order Details</th>
+              <th className="px-6 py-3 border-b text-center text-sm font-medium tracking-wider">Order Details</th>
             </tr>
           </thead>
           <tbody className="bg-white">
@@ -129,7 +144,7 @@ const ProductList: React.FC = () => {
                 <td className="px-6 py-4 text-gray-700"><div className="flex gap-1 justify-start items-center"><span><FaRupeeSign /></span> <span>{order.totalAmount}</span></div></td>
                 <td className="px-6 py-4 text-gray-700">{order.method}</td>
                 <td className="px-6 py-4 text-gray-600">
-                  {new Date(order.createdAt).toLocaleDateString()}
+                  {formatDateTime(order.createdAt)}
                 </td>
                 <td
                   className={`px-6 py-4 font-semibold ${
@@ -138,21 +153,24 @@ const ProductList: React.FC = () => {
                 >
                   {order.status}
                 </td>
-                <td className="px-6 py-4 flex justify-center items-center" > <button className="px-4 py-2 bg-gray-200 rounded-full text-black">View Order</button> </td>
+                <td className="px-6 py-4 flex justify-center items-center" > <button onClick={()=>{router.push(`/user-profile/purchase-history/${order._id}`);}} className="px-4 py-2 border-1 border-[#8D529C] rounded-lg text-[#8D529C] hover:text-white hover:bg-[#8D529C]"><div className="flex gap-2 justify-start items-center"><span>View Order</span> <span><IoEyeOutline/></span></div> </button> </td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
+
       {totalPages > 0 && (
-        <div className="flex justify-center items-center gap-4 my-4">
+        <div className="flex justify-between items-center">
+        <div className="text-[#999999] w-1/3 ">Showing {((currentPage-1)*dataPerPage)+1} to {((currentPage-1)*dataPerPage+dataPerPage)>totalOrder?totalOrder:((currentPage-1)*dataPerPage+dataPerPage)}  of {totalOrder} Entries </div>
+        <div className="w-1/3 flex justify-center items-center gap-4 my-4">
           <Button
             size="sm"
             disabled={currentPage === 1}
             variant="flat"
             className={`${
-              currentPage === 1 ? "opacity-70" : "hover:bg-webgreenHover"
-            } bg-webgreen-light text-white rounded-md font-bold`}
+              currentPage === 1 ? "opacity-70" : "hover:bg-webred-light"
+            } bg-webred text-white rounded-md font-bold`}
             onPress={() =>
               setCurrentPage((prev) => (prev > 1 ? prev - 1 : prev))
             }
@@ -164,7 +182,7 @@ const ProductList: React.FC = () => {
             classNames={{
               item: "w-8 h-8 text-small bg-gray-100 hover:bg-gray-300 rounded-md",
               cursor:
-                "bg-webgreen hover:bg-webgreen text-white rounded-md font-bold",
+                "bg-webred hover:bg-webred-light text-white rounded-md font-bold",
             }}
             total={totalPages}
             page={currentPage}
@@ -178,14 +196,16 @@ const ProductList: React.FC = () => {
             className={`${
               currentPage === totalPages
                 ? "opacity-70"
-                : "hover:bg-webgreenHover"
-            } bg-webgreen-light text-white rounded-md font-bold`}
+                : "hover:bg-webred"
+            } bg-webred-light text-white rounded-md font-bold`}
             onPress={() =>
               setCurrentPage((prev) => (prev < totalPages ? prev + 1 : prev))
             }
           >
             Next
           </Button>
+        </div>
+        <div className="w-1/3"></div>
         </div>
       )}
 </>

@@ -121,11 +121,11 @@ customerSchema.methods.comparePassword = async function (
   this: TCustomer,
   givenPassword: string
 ) {
-  if (typeof this.password === "string") {
+  if (this.password) { 
     const isMatch = await bcrypt.compare(givenPassword, this.password);
     return isMatch;
   } else {
-    throw new Error("Password is not defined");
+    throw new Error("Password is not defined or not available in this context");
   }
 };
 

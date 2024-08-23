@@ -38,7 +38,7 @@ const config: Config = {
           dark: "#BEF264",
         },
         webred: {
-          light: "#FFECEC",
+          light: "#f45759",
           DEFAULT: "#FE423F",
           dark: "#FE423F",
         },
