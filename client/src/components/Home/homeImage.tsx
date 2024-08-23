@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { addCartItem } from "@/app/redux/feature/user/api";
 import { useAppDispatch, useAppSelector } from "@/app/redux/hooks";
 import { TCustomerProduct } from "@/types/product";
+import { FaRegHeart } from "react-icons/fa";
 import {
   addAudioToCart,
   addImageToWishlist,
@@ -53,52 +54,58 @@ const ImageGallery = ({ data }: { data: TCustomerProduct }) => {
   };
 
   return (
-    <div className="relative rounded-md overflow-hidden group cursor-pointer">
+    <div className="relative rounded overflow-hidden group cursor-pointer">
       <div
-        className="aspect-w-1 aspect-h-1"
+        className="mb-2 break-inside-avoid"
         onClick={() => router.push(`/image/${data?.uuid}`)}
       >
         <img
           src={`https://mi2-public.s3.ap-southeast-1.amazonaws.com/${data?.thumbnailKey}`}
           alt={`Image`}
-          className="w-full h-72 object-cover"
+          className="w-auto h-auto object-cover rounded"
         />
       </div>
-      <div className="absolute top-0 left-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+      {/* <div className="absolute top-0 left-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
         <p className="text-white px-2 py-2 rounded">
-          {truncateText(data?.description || "No description", 6)}
+          {truncateText(data?.title || "No description", 6)}
         </p>
-      </div>
-      <div className="absolute top-0 right-0 m-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+      </div> */}
+      {/* <div className="absolute bottom-0 left-0 m-2 opacity-5 group-hover:opacity-100 transition-opacity duration-300">
+                  <div className="text-white bg-black bg-opacity-50 px-2 py-2 flex items-center gap-1 rounded-3xl">
+                    <img src="/asset/Group 19.svg" alt="" />
+                    <p className="text-small">Similar</p>
+                  </div>
+                </div> */}
+
+      <div className="absolute bottom-1 right-9 m-2 opacity-5 group-hover:opacity-100 transition-opacity duration-300">
         <div
           onClick={handleeWishlist}
           title={data.isWhitelisted ? "Remove from Saved" : "Save Image"}
-          className="text-white bg-black bg-opacity-35 px-3 py-2 rounded-3xl flex gap-1 items-center"
+          className="text-white bg-black bg-opacity-35 px-2 py-1 rounded-full flex gap-1 items-center"
         >
           {data.isWhitelisted ? (
-            <IoMdHeart className="h-5 w-5 text-red-500" />
+            <IoMdHeart className="h-6 w-5 text-red-500" />
           ) : (
-            <IoMdHeartEmpty className="h-5 w-5" />
+            <FaRegHeart  className="h-6 w-5" />
           )}
-          <p className="text-sm"> {data.isWhitelisted ? "Saved" : "Save"} </p>
+          {/* <p className="text-sm"> {data.isWhitelisted ? "" : ""} </p> */}
         </div>
       </div>
       <div
         onClick={handleDownload}
-        className="absolute bottom-0 left-0 m-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+        className="absolute bottom-1 right-0 m-2 opacity-5 group-hover:opacity-100 transition-opacity duration-300"
       >
-        <div className="text-white bg-black bg-opacity-50 px-2 py-2 flex items-center gap-1 rounded-3xl">
+        <div className="text-white bg-red-500 p-2 flex items-center gap-1 rounded-full">
           {!loading ? (
             <>
               <TfiDownload className="font-semibold" />
-              <p className="text-small">Try</p>
             </>
           ) : (
             <Spinner label="" color="current" />
           )}
         </div>
       </div>
-      <div className="absolute bottom-0 right-0 m-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+      <div className="absolute bottom-1 right-20 m-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
         {!data.isPurchased ? (
           <div
             title={data.isInCart ? "Remove from cart" : "Add to cart"}

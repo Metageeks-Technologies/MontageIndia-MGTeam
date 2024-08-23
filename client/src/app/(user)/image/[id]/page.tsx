@@ -151,7 +151,7 @@ const Home = () => {
 
   return (
     <div className="main ">
-      <div className="flex items-center gap-4 px-4 py-0.5 bg-white border border-gray-300 rounded-md w-[90%] m-auto mt-4">
+      <div className="flex items-center gap-4 px-4 py-0.5 bg-[#F4F6F6] border rounded-md w-[90%] m-auto mt-4">
         <button className="flex items-center gap-2 text-black hover:bg-gray-200 rounded-md">
           <img src="/asset/28-camera-1.svg" alt="" />
           <span>Photos</span>
@@ -172,7 +172,7 @@ const Home = () => {
         <input
           type="text"
           placeholder="Search for Photos"
-          className="flex-grow  py-2 bg-gray-100 rounded-md "
+          className="flex-grow  py-2 bg-[#F4F6F6] focus:outline-none rounded-md "
         />
         <IoSearchOutline className="h-6 w-6 cursor-pointer text-gray-400" />
         <div className="lg:block md:block hidden">
@@ -230,7 +230,7 @@ const Home = () => {
               </div>
             )}
           </div>
-          <div className="border  lg:w-[27rem] md:w-full w-[23rem] py-2 px-8 bg-white">
+          <div className="border  lg:w-[27rem] md:w-full w-[23rem] py-4 px-8 bg-white">
             {product && (
               <div>
                 <h3 className="font-bold text-lg">Purchase a Licence</h3>
@@ -239,6 +239,7 @@ const Home = () => {
                   comprehensive protection, and simple pricing with volume
                   discounts available
                 </p>
+                <div className="py-4">
                 {product.variants.map((license, index) => (
                   <div
                     key={index}
@@ -291,6 +292,7 @@ const Home = () => {
 
                   
                 ))}
+                </div>
                 <div className="flex justify-between mt-3">
                   {/* <div
                     title={
