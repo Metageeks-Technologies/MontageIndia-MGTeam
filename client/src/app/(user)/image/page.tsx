@@ -9,6 +9,7 @@ import { IoIosSearch } from "react-icons/io";
 import { getImage } from "@/app/redux/feature/product/image/api";
 import { useAppDispatch, useAppSelector } from "@/app/redux/hooks";
 import { setImagePage } from "@/app/redux/feature/product/slice";
+import { IoSearchOutline } from "react-icons/io5";
 
 const Page = () => {
   const dispatch = useAppDispatch();
@@ -17,9 +18,10 @@ const Page = () => {
   const [productData, setProductData] = useState<Product[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
-  const [SearchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
   const [shouldFetch, setShouldFetch] = useState(true);
   const [loading, setloading] = useState(false);
+  
 
   const {
     imageData: product,
@@ -39,13 +41,23 @@ const Page = () => {
     handlePageChange(imagePage === 1 ? totalImageNumOfPage : imagePage - 1);
   };
 
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value);
+  };
+
+
   useEffect(() => {
-    getImage(dispatch, { page: imagePage, mediaType: ["image"] });
-  }, [imagePage]);
+    getImage(dispatch, {
+      page: imagePage,
+      productsPerPage: 20,
+      mediaType: ["image"],
+      searchTerm,
+    });
+  }, [imagePage,searchTerm]);
 
   return (
-    <div className="main  ">
-      <div className="relative h-[550px] w-full overflow-hidden">
+    <div className="main ">
+      {/* <div className="relative h-[550px] w-full overflow-hidden">
         <video
           className="absolute h-full w-full object-cover"
           autoPlay
@@ -128,7 +140,7 @@ const Page = () => {
             </button>
           </div>
         </div>
-      </div>
+      </div> */}
 
       {/* <div className="p-10 mx-24 border">
         <h1 className="text-2xl font-bold">Explore Stock Footage Categories</h1>
@@ -136,75 +148,105 @@ const Page = () => {
         <Explore />
       </div> */}
 
-      <div className="bg-[#eeeeee]">
-        <div className="py-10 lg:mx-24 md:mx-4 mx-4">
-          <h1 className="text-2xl font-bold lg:text-start md:text-center text-center ">
-            Today's Trending Videos
-          </h1>
-          <div className="mx-auto mt-4">
-            <div className="flex flex-col lg:flex-row md:flex-col md:gap-4 justify-between items-center space-y-4 md:space-y-0">
-              <div className="flex flex-wrap justify-center md:space-y-1 space-y-1  space-x-2 sm:space-x-2">
-                <button className="flex items-center text-sm px-3 py-1 border border-gray-700 rounded-full text-gray-700 bg-transparent backdrop-blur-sm bg-opacity-20 hover:bg-opacity-30 transition duration-300">
-                  <IoIosSearch className="h-5 w-5 mr-1" />
-                  Flower
-                </button>
-                <button className="flex items-center text-sm px-3 py-1 border border-gray-700 rounded-full text-gray-700 bg-transparent backdrop-blur-sm bg-opacity-20 hover:bg-opacity-30 transition duration-300">
-                  <IoIosSearch className="h-5 w-5 mr-1" />
-                  Portrait
-                </button>
-                <button className="flex items-center text-sm px-3 py-1 border border-gray-700 rounded-full text-gray-700 bg-transparent backdrop-blur-sm bg-opacity-20 hover:bg-opacity-30 transition duration-300">
-                  <IoIosSearch className="h-5 w-5 mr-1" />
-                  Interior
-                </button>
-                <button className="flex items-center text-sm px-3 py-1 border border-gray-700 rounded-full text-gray-700 bg-transparent backdrop-blur-sm bg-opacity-20 hover:bg-opacity-30 transition duration-300">
-                  <IoIosSearch className="h-5 w-5 mr-1" />
-                  Texture
-                </button>
-                <button className="flex items-center text-sm px-3 py-1 border border-gray-700 rounded-full text-gray-700 bg-transparent backdrop-blur-sm bg-opacity-20 hover:bg-opacity-30 transition duration-300">
-                  <IoIosSearch className="h-5 w-5 mr-1" />
-                  Animal
-                </button>
-                <button className="flex items-center text-sm px-3 py-1 border border-gray-700 rounded-full text-gray-700 bg-transparent backdrop-blur-sm bg-opacity-20 hover:bg-opacity-30 transition duration-300">
-                  <IoIosSearch className="h-5 w-5 mr-1" />
-                  Nature
-                </button>
-              </div>
-              <div className="flex flex-wrap px-5 gap-5 item-end">
-                <button className="border-black  border-b-3 px-3 font-bold">
-                  Handpicked
-                </button>
-                <button>Most popular</button>
-              </div>
-            </div>
+      <div className="flex items-center gap-4 px-4 py-0.5 bg-[#F4F6F6]  border rounded-md w-[90%] m-auto mt-4">
+        <button className="flex items-center gap-2 text-black rounded-md">
+          <img src="/asset/28-camera-1.svg" alt="" />
+          <span>Photos</span>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-4 w-4 ml-1"
+            viewBox="0 0 20 20"
+            fill="currentColor"
+          >
+            <path
+              fillRule="evenodd"
+              d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+              clipRule="evenodd"
+            />
+          </svg>
+        </button>
+        <img src="/asset/Rectangle 15.png" alt="" />
+        <input
+          type="text"
+          value={searchTerm}
+          onChange={handleSearch}
+          placeholder="Search for Photos"
+          className="flex-grow  py-2 rounded-md bg-[#F4F6F6]  focus:outline-none"
+        />
+        <IoSearchOutline className="h-6 w-6 cursor-pointer text-gray-400" />
+        <div className="lg:block md:block hidden">
+          <button className="flex items-center gap-4 text-gray-500 hover:text-black  rounded-md">
+            <img src="/asset/Rectangle 15.png" alt="" />
+            <img src="/asset/Union.png" alt="" />
+            <span>Search by image</span>
+          </button>
+        </div>
+      </div>
 
-            {loading ? (
-              <div className="h-screen justify-center flex">
-                <Spinner color="success" />
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 mt-5">
-                {product.map((data, index: number) => (
-                  <ImageGallery key={index} data={data} />
-                ))}
-              </div>
-            )}
+      <hr className="mt-5" />
+
+      <div className="m-auto mt-4 bg w-[90%]">
+        
+        <div className="flex flex-wrap gap-2 ">
+          <button className="flex items-center hover:bg-[#c7c7c9] text-sm px-3 py-1 border border-gray-700 rounded text-gray-700 bg-transparent backdrop-blur-sm bg-opacity-20 hover:bg-opacity-30 transition duration-300">
+            <IoIosSearch className="h-5 w-5 mr-1" />
+            Nature
+          </button>
+          <button className="flex items-center text-sm hover:bg-[#c7c7c9] px-3 py-1 border border-gray-700 rounded text-gray-700 bg-transparent backdrop-blur-sm bg-opacity-20 hover:bg-opacity-30 transition duration-300">
+            <IoIosSearch className="h-5 w-5 mr-1" />
+            India Gate
+          </button>
+          <button className="flex items-center text-sm hover:bg-[#c7c7c9] px-3 py-1 border border-gray-700 rounded text-gray-700 bg-transparent backdrop-blur-sm bg-opacity-20 hover:bg-opacity-30 transition duration-300">
+            <IoIosSearch className="h-5 w-5 mr-1" />
+            Travel
+          </button>
+          <button className="flex items-center text-sm hover:bg-[#c7c7c9] px-3 py-1 border border-gray-700 rounded text-gray-700 bg-transparent backdrop-blur-sm bg-opacity-20 hover:bg-opacity-30 transition duration-300">
+            <IoIosSearch className="h-5 w-5 mr-1" />
+            Architecture
+          </button>
+          <button className="flex items-center text-sm hover:bg-[#c7c7c9] px-3 py-1 border border-gray-700 rounded text-gray-700 bg-transparent backdrop-blur-sm bg-opacity-20 hover:bg-opacity-30 transition duration-300">
+            <IoIosSearch className="h-5 w-5 mr-1" />
+            India Gate Delhi Night 
+          </button>
+          <button className="flex items-center text-sm px-3 hover:bg-[#c7c7c9] py-1 border border-gray-700 rounded text-gray-700 bg-transparent backdrop-blur-sm bg-opacity-20 hover:bg-opacity-30 transition duration-300">
+            <IoIosSearch className="h-5 w-5 mr-1" />
+            Nature
+          </button>
+          <button className="flex items-center text-sm px-3 py-1 hover:bg-[#c7c7c9] border border-gray-700 rounded text-gray-700 bg-transparent backdrop-blur-sm bg-opacity-20 hover:bg-opacity-30 transition duration-300">
+            <IoIosSearch className="h-5 w-5 mr-1" />
+           India
+          </button>
+        </div>
+
+        <h4 className="mt-6 text-lg text-neutral-700">20 Product stock Photos and High-res Pictures</h4>
+
+        {loading ? (
+          <div className="h-screen justify-center flex">
+            <Spinner color="success" />
           </div>
-          {/* <div className="mt-8 flex justify-center ">
-            <button className="flex items-center text-lg px-6 font-semibold py-2 border border-gray-700  rounded-full text-black bg-transparent backdrop-blur-sm bg-opacity-20 hover:bg-opacity-40 transition duration-300">
+        ) : (
+          <div className="columns-1 sm:columns-2 md:columns-3 lg:columns-4 gap-2 mt-2 relative">
+            {product.map((data, index: number) => (
+              <ImageGallery key={index} data={data} />
+            ))}
+          </div>
+           
+        )}
+      </div>
+      {/* <div className="mt-8 flex justify-center ">
+            <button className="flex items-center text-lg px-6 font-semibold py-2 border border-gray-700  rounded text-black bg-transparent backdrop-blur-sm bg-opacity-20 hover:bg-opacity-40 transition duration-300">
               See more Image
             </button>
           </div> */}
-        </div>
-      </div>
       {totalImageNumOfPage > 1 && (
-        <div className="flex justify-center items-center gap-4 my-4">
+        <div className="flex justify-center items-center gap-4 my-12">
           <Button
             size="sm"
             type="button"
             variant="flat"
             className={`${
-              currentPage === 1 ? "opacity-70" : "hover:bg-webgreenHover"
-            } bg-webgreen-light text-white rounded-md font-bold`}
+              currentPage === 1 ? "opacity-70" : "hover:bg-red-600"
+            } bg-red-500 text-white rounded-full font-bold`}
             onPress={handlePrevPage}
           >
             Prev
@@ -212,9 +254,9 @@ const Page = () => {
           <Pagination
             color="success"
             classNames={{
-              item: "w-8 h-8 text-small bg-gray-100 hover:bg-gray-300 rounded-md",
+              item: "w-8 h-8 text-small bg-gray-100 hover:bg-gray-300 rounded-full",
               cursor:
-                "bg-webgreen hover:bg-webgreen text-white rounded-md font-bold",
+                "bg-red-500 hover:bg-red-600 text-white rounded-full font-bold",
             }}
             total={totalImageNumOfPage}
             page={imagePage}
@@ -229,132 +271,19 @@ const Page = () => {
             className={`${
               currentPage === totalPages
                 ? "opacity-70"
-                : "hover:bg-webgreenHover"
-            } bg-webgreen-light text-white rounded-md font-bold`}
+                : "hover:bg-red-600"
+            } bg-red-600 text-white rounded-full font-bold`}
             onPress={handleNextPage}
           >
             Next
           </Button>
         </div>
       )}
+      <div className="mt-8">
       <Footer />
+      </div>
     </div>
   );
 };
 
 export default Page;
-
-type Video = {
-  video: string;
-};
-
-const videoUrls: Video[] = [
-  { video: "/images/dance.webm" },
-  { video: "/images/Flower.webm" },
-  { video: "/images/sky.webm" },
-  { video: "/images/Yellow_Final.webm" },
-  { video: "/images/sky.webm" },
-  { video: "/images/Flower.webm" },
-  { video: "/images/sky.webm" },
-  { video: "/images/dance.webm" },
-  { video: "/images/Yellow_Final.webm" },
-];
-
-// collection data
-interface Card {
-  title: string;
-  image: string;
-}
-
-const cards: Card[] = [
-  {
-    title: "Cinematic Lightscapes",
-    image:
-      "https://images.ctfassets.net/hrltx12pl8hq/15JSyH0rEvAQWTU2OP55Kw/1fc5ea75df571edd7c2731acd5124a6e/Cinematic-lightscapes.jpg",
-  },
-  {
-    title: "Summer Action",
-    image:
-      "https://images.ctfassets.net/hrltx12pl8hq/6n76rBKjbDYUTu6cIWlBp8/58f297d91bd0057626197e1ac5d0fadb/SummerAction.jpg",
-  },
-  {
-    title: "Calming Textures",
-    image:
-      "https://images.ctfassets.net/hrltx12pl8hq/6kdzY2fgPHsyBwEXVLGb9/7b99fed0765784014b03506703e34482/Calming-Textures.jpg",
-  },
-  {
-    title: "Time-Lapsed Cities",
-    image:
-      "https://images.ctfassets.net/hrltx12pl8hq/7errAkofD3gYCvRAEXMGfG/9a02870250fc2c82edbda96757aa1f9d/Time-Lapsed.jpg",
-  },
-];
-
-// Blog Data
-export interface BlogPost {
-  imageUrl: string;
-  title: string;
-  description: string;
-}
-
-const posts: BlogPost[] = [
-  {
-    imageUrl:
-      "https://images.ctfassets.net/hrltx12pl8hq/6nJaRnp2pkQcIq5qDlnTlL/37e62b10f34ccd1669629045c14312ff/rgbcover.webp",
-    title: "Free Colorful Clip Art to Promote Sales and Discounts",
-    description:
-      "Neon-colored and easy-to-use PNGs are here to assist you with any sale or promotion you’ve planned for 2023.",
-  },
-  {
-    imageUrl:
-      "https://images.ctfassets.net/hrltx12pl8hq/1PMfxyPFpntWyrKVeScdDD/e59aac83bb3e5b5737d1a60cd08dd8e5/stock_footage_glossary_cover.webp",
-    title: "How to Build Brand Trust Through Good Design",
-    description:
-      "Reach your audience with five shortcuts for building brand trust through good design.",
-  },
-  {
-    imageUrl:
-      "https://images.ctfassets.net/hrltx12pl8hq/26vH4jX8NikGFE4EgOeIjB/2761c52ebba2de165a2e4dc3507acdeb/5-ProjectsFeature__1_.webp",
-    title: "How to Write Better Generative AI Descriptions",
-    description:
-      "Get tips and tricks on how to adjust your text, so you can create imagery without limits.",
-  },
-];
-
-// category Data
-export interface category {
-  title: string;
-  imageUrl: string;
-}
-
-const categories: category[] = [
-  {
-    title: "Abstract",
-    imageUrl:
-      "https://images.ctfassets.net/hrltx12pl8hq/29slzVZfucEQwKoKc8QcEA/ed7ceb74525e822dd3eb888f570f0d52/adventure",
-  },
-  {
-    title: "Animals | Wildlife",
-    imageUrl:
-      "https://images.ctfassets.net/hrltx12pl8hq/79UGbvGqfj9bQVi66yr9VT/1cae2227203e2c3c7ff3b21befe96a9f/Abstract",
-  },
-  {
-    title: "The arts",
-    imageUrl:
-      "https://images.ctfassets.net/hrltx12pl8hq/61MiY3Wj3U6KSSKi2muig2/7e4c77aa598ca4ac93aab5858c3e7627/Autumn",
-  },
-  {
-    title: "Backgrounds | Textures",
-    imageUrl:
-      "https://images.ctfassets.net/hrltx12pl8hq/yZsuq5HdBuUmYekaKiuUQ/d73a0e6f5fe939be07a19f22a92f2e09/Wild-Life",
-  },
-  {
-    title: "Beauty | Fashion",
-    imageUrl:
-      "https://images.ctfassets.net/hrltx12pl8hq/77nM3vIkxOy0MSIeESAsi6/ef81eb2041ae0b3a240a8241c732b0eb/3D_Footage",
-  },
-  {
-    title: "Beauty | Fashion",
-    imageUrl:
-      "https://images.ctfassets.net/hrltx12pl8hq/2R1nDTrRheK6ae2IWAgGwW/e879fceb983dd133702ecdbfb560d4cd/Aerial",
-  },
-];
