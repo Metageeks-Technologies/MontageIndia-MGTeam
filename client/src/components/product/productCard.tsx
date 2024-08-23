@@ -32,7 +32,7 @@ const ProductCard : React.FC<ProductCardProps> = ({ product,status }) => {
     
     return (
         <div className="w-full flex justify-start gap-4 items-start border-b rounded-lg p-4 ">
-        <div className="md:w-1/3 md:h-[40vh] overflow-hidden"><img className="w-full h-full rounded-lg object-cover" src={`${process.env.NEXT_PUBLIC_IMG_URL}${product.thumbnailKey}`} alt={product.title} /></div>
+        <div className="md:w-1/3 md:h-[40vh] overflow-hidden"><img className="w-full h-full rounded-lg object-cover" src={`${process.env.NEXT_PUBLIC_AWS_PREFIX}${product.thumbnailKey}`} alt={product.title} /></div>
         <div className="md:w-2/3 md:h-[40vh] flex flex-col justify-between items-start">
             <div className="mb-2">
               <div className="text-2xl font-bold">{capitalizeFirstLetter(product.title)} </div>

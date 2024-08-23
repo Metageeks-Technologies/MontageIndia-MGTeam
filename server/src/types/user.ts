@@ -24,6 +24,7 @@ export type TAdmin = Document & {
 export type TCustomer = Document & {
   username: string;
   email: string;
+  image?: string;
   name: string; // Customer's full name
   password: string;
   isDeleted: boolean;

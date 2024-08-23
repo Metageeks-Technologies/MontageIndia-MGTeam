@@ -162,9 +162,9 @@ export const getAllCustomer = catchAsyncError(async (req, res, next) => {
 
 export const updateCustomerDetails = catchAsyncError(
   async (req: any, res, next) => {
-    const { name,currentPassword,newPassword } = req.body;
+    const { name,currentPassword,newPassword,image } = req.body;
 
-    console.log(name, currentPassword, newPassword);
+    console.log(name, currentPassword, newPassword,image);
     const { id } = req.user;
     const customerToUpdate = await Customer.findById(id).select('+password');;
 
@@ -174,6 +174,7 @@ export const updateCustomerDetails = catchAsyncError(
 
     const updates: Partial<typeof customerToUpdate> = {};
     if (name) updates.name = name ;
+    if(image) updates.image = image;
 
     if (currentPassword && newPassword) {
       const verifyPassword = await customerToUpdate.comparePassword(

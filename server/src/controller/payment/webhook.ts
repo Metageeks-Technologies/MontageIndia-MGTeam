@@ -111,13 +111,13 @@ const subscriptionCharged = async (payload: any) => {
     console.log("subscription charged", payload);
     const { start_at, end_at, status, expire_by, plan_id, id, notes } =
       payload.subscription.entity;
-
+      console.log("Notes",notes);
     const user = await customer.findOneAndUpdate(
       { "subscription.subscriptionId": id },
       {
         $set: {
           "subscription.status": status,
-          "subscription.PlanId": plan_id,
+          "subscription.PlanId": notes.subscriptionId as string,
         },
         $inc: { "subscription.credits": notes.credits },
       },
