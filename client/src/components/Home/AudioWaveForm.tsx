@@ -131,9 +131,9 @@ const Waveform = ({ product }: { product: TCustomerProduct }) => {
   return (
     <div
       onClick={() => handleClick(product.uuid)}
-      className="bg-gray-800 w-full justify-between rounded-lg px-4 py-2 mb-2 flex items-center"
+      className="bg-gray-800 w-full justify-between rounded-lg px-4 py-2 mb-2 flex items-center cursor-pointer"
     >
-      <div className="flex justify-start items-center gap-3 w-4/12 ">
+      <div className="flex justify-start items-center lg:gap-3 md:gap-2 gap-1 w-4/12">
         <button
           className="play-button"
           onClick={(e) => {
@@ -180,43 +180,21 @@ const Waveform = ({ product }: { product: TCustomerProduct }) => {
           <h3 className="text-white font-semibold">{product.title || ""}</h3>
           <p className="flex gap-2 text-[#999999]">
             {product.tags.map((tag) => (
-              <span className="text-gray-400">{tag}</span>
+              <span className="text-[#999999] text-sm">{tag}</span>
             ))}
           </p>
         </div>
       </div>
-      <div className="w-4/12 waveform-container">
+      <div className="lg:w-4/12 md:w-40 w-28 waveform-container ">
         <div className="wave" id={`waveform-${product._id}`} />
         <audio id={`track-${product._id}`} src={url} />
       </div>
-      <div className="w-4/12 gap-6 items-center justify-end flex text-right text-gray-400">
+      <div className="w-4/12 lg:gap-9 md:gap-5 gap-3 items-center justify-end flex text-right text-gray-400">
         <div className="flex items-center gap-2 text-right text-white">
-          <p>{"2.5 min"}</p>
-          <p>.mp3</p>
+          <p>{"2:30"}</p>
+          <p>mp3</p>
         </div>
-        <div className="text-white items-center flex gap-3">
-          <button
-            className="cursor-pointer "
-            onClick={(e) => {
-              e.stopPropagation();
-              handleAddToWishlist();
-            }}
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill={product.isWhitelisted ? "currentColor" : "none"}
-              viewBox="0 0 24 24"
-              strokeWidth={1.5}
-              stroke="currentColor"
-              className="size-6"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z"
-              />
-            </svg>
-          </button>
+        <div className="text-white items-center flex gap-4">
           {!product.isPurchased ? (
             <button
               className="cursor-pointer "
@@ -248,6 +226,29 @@ const Waveform = ({ product }: { product: TCustomerProduct }) => {
               <BiSolidPurchaseTagAlt />
             </div>
           )}
+
+          <button
+            className="cursor-pointer "
+            onClick={(e) => {
+              e.stopPropagation();
+              handleAddToWishlist();
+            }}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill={product.isWhitelisted ? "currentColor" : "none"}
+              viewBox="0 0 24 24"
+              strokeWidth={1.5}
+              stroke="currentColor"
+              className="size-6"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z"
+              />
+            </svg>
+          </button>
 
           <button
             className="cursor-pointer "

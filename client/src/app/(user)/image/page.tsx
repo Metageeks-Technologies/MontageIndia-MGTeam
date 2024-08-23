@@ -18,12 +18,8 @@ const Page = () => {
   const category = searchParams.get("category");
 
   const [totalPages, setTotalPages] = useState(1);
-  const [productsPerPage, setProductsPerPage] = useState(20);
-  const [productData, setProductData] = useState<Product[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [shouldFetch, setShouldFetch] = useState(true);
   const [loading, setloading] = useState(false);
 
   const {
@@ -65,97 +61,6 @@ const Page = () => {
 
   return (
     <div className="main ">
-      {/* <div className="relative h-[550px] w-full overflow-hidden">
-        <video
-          className="absolute h-full w-full object-cover"
-          autoPlay
-          loop
-          muted
-        >
-          <source src="/images/VHP_5-27.webm" type="video/mp4" />
-        </video>
-
-        <div className="relative z-10 flex flex-col items-center justify-center h-full text-white text-center px-4 sm:px-6 md:px-10">
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold">
-            Unleash your creativity with unrivaled images
-          </h1>
-          <p className="mt-4 text-lg sm:text-xl md:text-2xl">
-            Add wonder to your stories with 450M+ photos, vectors,
-            illustrations, and editorial images.
-          </p>
-          <div className="w-full max-w-7xl bg-white  rounded-lg shadow-lg">
-            <div className="flex lg:flex-wrap flex-row items-center gap-4">
-              <div className="flex-grow relative">
-                <input
-                  type="text"
-                  placeholder="Search for image"
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  value={SearchTerm}
-                  // onKeyDown={(e) => {
-                  //   if (e.key === "Enter") {
-                  //     e.preventDefault(); // Prevents the default action of the Enter key (like submitting a form)
-                  //     getProduct();
-                  //   }
-                  // }}
-                  className="w-full px-4 outline-none py-2 border border-gray-400 rounded-md text-black"
-                />
-                <button
-                  // onClick={getProduct}
-                  className="absolute right-2 top-1/2 transform -translate-y-1/2  text-gray-600 p-2 rounded-md  transition-colors"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-5 w-5"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                    />
-                  </svg>
-                </button>
-              </div>
-            </div>
-          </div>
-          <div className="mt-6 flex flex-wrap justify-center space-x-2 space-y-2 md:space-y-2 sm:space-x-4">
-            <button className="flex items-center px-3 py-2 sm:px-4 sm:py-2 border border-white rounded-full text-white bg-transparent backdrop-blur-sm bg-opacity-20 hover:bg-opacity-30 transition duration-300">
-              <IoIosSearch className="h-5 w-5 mr-2" />
-              Happy birthday
-            </button>
-            <button className="flex items-center px-3 py-2 sm:px-4 sm:py-2 border border-white rounded-full text-white bg-transparent backdrop-blur-sm bg-opacity-20 hover:bg-opacity-30 transition duration-300">
-              <IoIosSearch className="h-5 w-5 mr-2" />
-              Thank You
-            </button>
-            <button className="flex items-center px-3 py-2 sm:px-4 sm:py-2 border border-white rounded-full text-white bg-transparent backdrop-blur-sm bg-opacity-20 hover:bg-opacity-30 transition duration-300">
-              <IoIosSearch className="h-5 w-5 mr-2" />
-              Background
-            </button>
-            <button className="flex items-center px-3 py-2 sm:px-4 sm:py-2 border border-white rounded-full text-white bg-transparent backdrop-blur-sm bg-opacity-20 hover:bg-opacity-30 transition duration-300">
-              <IoIosSearch className="h-5 w-5 mr-2" />
-              Congratulations
-            </button>
-            <button className="flex items-center px-3 py-2 sm:px-4 sm:py-2 border border-white rounded-full text-white bg-transparent backdrop-blur-sm bg-opacity-20 hover:bg-opacity-30 transition duration-300">
-              <IoIosSearch className="h-5 w-5 mr-2" />
-              Business
-            </button>
-            <button className="flex items-center px-3 py-2 sm:px-4 sm:py-2 border border-white rounded-full text-white bg-transparent backdrop-blur-sm bg-opacity-20 hover:bg-opacity-30 transition duration-300">
-              <IoIosSearch className="h-5 w-5 mr-2" />
-              Welcome
-            </button>
-          </div>
-        </div>
-      </div> */}
-
-      {/* <div className="p-10 mx-24 border">
-        <h1 className="text-2xl font-bold">Explore Stock Footage Categories</h1>
-
-        <Explore />
-      </div> */}
-
       <div className="flex items-center gap-4 px-4 py-0.5 bg-[#F4F6F6]  border rounded-md w-[90%] m-auto mt-4">
         <button className="flex items-center gap-2 text-black rounded-md">
           <img src="/asset/28-camera-1.svg" alt="" />
@@ -241,11 +146,6 @@ const Page = () => {
           </div>
         )}
       </div>
-      {/* <div className="mt-8 flex justify-center ">
-            <button className="flex items-center text-lg px-6 font-semibold py-2 border border-gray-700  rounded text-black bg-transparent backdrop-blur-sm bg-opacity-20 hover:bg-opacity-40 transition duration-300">
-              See more Image
-            </button>
-          </div> */}
       {totalImageNumOfPage > 1 && (
         <div className="flex justify-center items-center gap-4 my-12">
           <Button

@@ -11,11 +11,11 @@ import {
   setAudioData,
 } from "../slice";
 
-export const getAudio = async (dispatch: AppDispatch) => {
+export const getAudio = async (dispatch: AppDispatch, params: any) => {
   dispatch(requestStart());
   try {
     const { data } = await instance.get(`product/customer`, {
-      params: { mediaType: ["audio"] },
+      params: {...params },
     });
     console.log(data);
     dispatch(
