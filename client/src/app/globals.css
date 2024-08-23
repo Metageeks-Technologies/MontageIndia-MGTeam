@@ -136,3 +136,45 @@ td {
     overflow: hidden;
     text-overflow: ellipsis;
 }
+.vidbg{
+  background-color: #F4F6F6;
+}
+/* cart scroll bar css start */
+
+::-webkit-scrollbar {
+  width: 5px;
+}
+
+/* Track */
+
+ 
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #d65b59; 
+  border-radius: 10px;
+}
+
+
+/* cart scroll bar css end */
+
+.custom-radio {
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border: 2px solid #FE423F;
+  border-radius: 50%;
+  position: relative;
+  cursor: pointer;
+}
+
+.custom-radio.checked::before {
+  content: "";
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: #FE423F;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}

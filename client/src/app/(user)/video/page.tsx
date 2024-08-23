@@ -1,194 +1,164 @@
 "use client";
+import { setVideoPage } from "@/app/redux/feature/product/slice";
 import { getVideo } from "@/app/redux/feature/product/video/api";
 import { useAppDispatch, useAppSelector } from "@/app/redux/hooks";
 import Footer from "@/components/Footer";
 import FAQ from "@/components/Video/fag";
 import Trending from "@/components/Video/trendingVideos";
-import { Product } from "@/types/order";
 import { Button, Pagination } from "@nextui-org/react";
 import { useEffect, useState } from "react";
 import { IoIosSearch } from "react-icons/io";
+import { IoSearchOutline } from "react-icons/io5";
+import debounce from "lodash.debounce";
 
-// videos data
 const Page = () => {
-  const [totalPages, setTotalPages] = useState(1);
-  const [productsPerPage, setProductsPerPage] = useState(20);
-  const [productData, setProductData] = useState<Product[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
-  const [SearchTerm, setSearchTerm] = useState("");
-  const [shouldFetch, setShouldFetch] = useState(true);
-  const [loading, setloading] = useState(false);
-
+  const [searchTerm, setSearchTerm] = useState("");
   const dispatch = useAppDispatch();
-  const { videoData, videoPage } = useAppSelector((state) => state.product);
+  const { videoData: product, videoPage, totalVideoNumOfPage } = useAppSelector((state) => state.product);
 
   const handlePageChange = (page: number) => {
-    setShouldFetch(true);
-    setCurrentPage(page);
+    dispatch(setVideoPage(page));
+  };
+
+  const getData = debounce(() => {
+    console.log("datasearch",searchTerm)
+    dispatch(setVideoPage(1)); // Reset to page 1 on search
+    fetchData(1); // Fetch data with the new search term
+  
+  }, 300);
+
+  const handleNextPage = () => {
+    handlePageChange(videoPage === totalVideoNumOfPage ? 1 : videoPage + 1);
+  };
+
+  const handlePrevPage = () => {
+    handlePageChange(videoPage === 1 ? totalVideoNumOfPage : videoPage - 1);
+  };
+
+  // useEffect(() => {
+  //   getVideo(dispatch, { page: videoPage, mediaType: ["video"], productsPerPage: "5" });
+  // }, [videoPage]);
+
+  const fetchData = (page: number) => {
+    // setLoading(true);
+    getVideo(dispatch, {
+      page,
+      mediaType: ["video"],
+      searchTerm,
+      productsPerPage: "5",
+    }) 
   };
 
   useEffect(() => {
-    getVideo(dispatch, { mediaType: ["video"] });
+    fetchData(videoPage);
   }, [videoPage]);
 
   return (
-    <div className="main  ">
-      <div className="relative h-[550px] w-full overflow-hidden">
-        <video
-          className="absolute h-full w-full object-cover"
-          autoPlay
-          loop
-          muted
-        >
-          <source src="/images/VHP_5-27.webm" type="video/mp4" />
-        </video>
-
-        <div className="relative z-10 flex flex-col items-center justify-center h-full text-white text-center px-4 sm:px-6 md:px-10">
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold">
-            Unleash your creativity with unrivaled images
-          </h1>
-          <p className="mt-4 text-lg sm:text-xl md:text-2xl">
-            Add wonder to your stories with 450M+ photos, vectors,
-            illustrations, and editorial images.
-          </p>
-          <div className="mt-6 flex flex-wrap justify-center space-x-2 space-y-2 md:space-y-2 sm:space-x-4">
-            <button className="flex items-center px-3 py-2 sm:px-4 sm:py-2 border border-white rounded-full text-white bg-transparent backdrop-blur-sm bg-opacity-20 hover:bg-opacity-30 transition duration-300">
-              <IoIosSearch className="h-5 w-5 mr-2" />
-              Happy birthday
-            </button>
-            <button className="flex items-center px-3 py-2 sm:px-4 sm:py-2 border border-white rounded-full text-white bg-transparent backdrop-blur-sm bg-opacity-20 hover:bg-opacity-30 transition duration-300">
-              <IoIosSearch className="h-5 w-5 mr-2" />
-              Thank You
-            </button>
-            <button className="flex items-center px-3 py-2 sm:px-4 sm:py-2 border border-white rounded-full text-white bg-transparent backdrop-blur-sm bg-opacity-20 hover:bg-opacity-30 transition duration-300">
-              <IoIosSearch className="h-5 w-5 mr-2" />
-              Background
-            </button>
-            <button className="flex items-center px-3 py-2 sm:px-4 sm:py-2 border border-white rounded-full text-white bg-transparent backdrop-blur-sm bg-opacity-20 hover:bg-opacity-30 transition duration-300">
-              <IoIosSearch className="h-5 w-5 mr-2" />
-              Congratulations
-            </button>
-            <button className="flex items-center px-3 py-2 sm:px-4 sm:py-2 border border-white rounded-full text-white bg-transparent backdrop-blur-sm bg-opacity-20 hover:bg-opacity-30 transition duration-300">
-              <IoIosSearch className="h-5 w-5 mr-2" />
-              Business
-            </button>
-            <button className="flex items-center px-3 py-2 sm:px-4 sm:py-2 border border-white rounded-full text-white bg-transparent backdrop-blur-sm bg-opacity-20 hover:bg-opacity-30 transition duration-300">
-              <IoIosSearch className="h-5 w-5 mr-2" />
-              Welcome
-            </button>
-          </div>
-        </div>
+    <div className="main items-center ">
+      <div className="flex my-8 items-center gap-4 px-4 py-0.5 bg-gray-100 border border-gray-300 rounded-md w-[90%] m-auto">
+        <button className="md:flex items-center hidden outline-none gap-2 text-black hover:bg-gray-200 rounded-md">
+          <img src="/asset/28-camera-1.svg" alt="" />
+          <span>Videos</span>
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-1" viewBox="0 0 20 20" fill="currentColor">
+            <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+          </svg>
+        </button>
+        <img src="/asset/Rectangle 15.png" alt="" />
+        <input
+          type="text"
+          placeholder="Search for Videos"
+          value={searchTerm}
+          onChange={(e) => {
+            setSearchTerm(e.target.value);
+            getData();
+          }}
+          className="flex-grow py-2 outline-none bg-gray-100 rounded-md"
+        />
+        <button onClick={getData}>
+          <IoSearchOutline className="h-6 w-6 cursor-pointer text-gray-400" />
+        </button>
+        <button className="md:flex items-center gap-4 text-gray-500 hidden hover:text-black rounded-md">
+          <img src="/asset/Rectangle 15.png" alt="" />
+          <img src="/asset/Union.png" alt="" />
+          <span>Search by video</span>
+        </button>
       </div>
 
-      {/* <div className="p-10 mx-24 border">
-        <h1 className="text-2xl font-bold">Explore Stock Footage Categories</h1>
+      {/* Category Buttons */}
+      <div className="border-t bg-[#eeeeee] border-gray-300 px-[5%] py-5 flex flex-wrap justify-start space-x-2 space-y-2 md:space-y-0 sm:space-x-4">
+        {["Happy birthday", "Thank You", "Background", "Congratulations", "Business", "Welcome"].map((category) => (
+          <button key={category} className="flex items-center px-3 py-2 sm:px-4 sm:py-2 border border-gray-300 rounded-md bg-transparent backdrop-blur-sm bg-opacity-20 hover:bg-opacity-30 transition duration-300">
+            <IoIosSearch className="h-5 w-5 mr-2" />
+            {category}
+          </button>
+        ))}
+      </div>
 
-        <Explore />
-      </div> */}
-
+      {/* Trending Videos */}
       <div className="bg-[#eeeeee]">
         <div className="py-10 lg:mx-24 md:mx-4 mx-4">
-          <h1 className="text-2xl font-bold lg:text-start md:text-center text-center ">
-            Today's Trending Videos
-          </h1>
+          <h1 className="text-2xl font-bold lg:text-start md:text-center text-center">Today's Trending Videos</h1>
           <div className="mx-auto mt-4">
-            <div className="flex flex-col lg:flex-row md:flex-col md:gap-4 justify-between items-center space-y-4 md:space-y-0">
-              <div className="flex flex-wrap justify-center md:space-y-1 space-y-1  space-x-2 sm:space-x-2">
-                <button className="flex items-center text-sm px-3 py-1 border border-gray-700 rounded-full text-gray-700 bg-transparent backdrop-blur-sm bg-opacity-20 hover:bg-opacity-30 transition duration-300">
-                  <IoIosSearch className="h-5 w-5 mr-1" />
-                  Flower
-                </button>
-                <button className="flex items-center text-sm px-3 py-1 border border-gray-700 rounded-full text-gray-700 bg-transparent backdrop-blur-sm bg-opacity-20 hover:bg-opacity-30 transition duration-300">
-                  <IoIosSearch className="h-5 w-5 mr-1" />
-                  Portrait
-                </button>
-                <button className="flex items-center text-sm px-3 py-1 border border-gray-700 rounded-full text-gray-700 bg-transparent backdrop-blur-sm bg-opacity-20 hover:bg-opacity-30 transition duration-300">
-                  <IoIosSearch className="h-5 w-5 mr-1" />
-                  Interior
-                </button>
-                <button className="flex items-center text-sm px-3 py-1 border border-gray-700 rounded-full text-gray-700 bg-transparent backdrop-blur-sm bg-opacity-20 hover:bg-opacity-30 transition duration-300">
-                  <IoIosSearch className="h-5 w-5 mr-1" />
-                  Texture
-                </button>
-                <button className="flex items-center text-sm px-3 py-1 border border-gray-700 rounded-full text-gray-700 bg-transparent backdrop-blur-sm bg-opacity-20 hover:bg-opacity-30 transition duration-300">
-                  <IoIosSearch className="h-5 w-5 mr-1" />
-                  Animal
-                </button>
-                <button className="flex items-center text-sm px-3 py-1 border border-gray-700 rounded-full text-gray-700 bg-transparent backdrop-blur-sm bg-opacity-20 hover:bg-opacity-30 transition duration-300">
-                  <IoIosSearch className="h-5 w-5 mr-1" />
-                  Nature
-                </button>
-              </div>
-              <div className="flex flex-wrap px-5 gap-5 item-end">
-                <button className="border-black  border-b-3 px-3 font-bold">
-                  Handpicked
-                </button>
-                <button>Most popular</button>
-              </div>
-            </div>
-
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 mt-5">
-              {videoData.map((data, index: number) => (
-                <Trending key={index} data={data} />
-              ))}
+              {product.length > 0 ? product.map((data) => (
+                <Trending key={data._id} data={data} />
+              )) : (
+                <p>No videos found.</p>
+              )}
             </div>
           </div>
         </div>
       </div>
 
-      {totalPages > 0 && (
+      {/* Pagination */}
+      {totalVideoNumOfPage > 1 && (
         <div className="flex justify-center items-center gap-4 my-4">
           <Button
             size="sm"
             type="button"
-            disabled={currentPage === 1}
+            disabled={videoPage === 1}
             variant="flat"
             className={`${
-              currentPage === 1 ? "opacity-70" : "hover:bg-webgreenHover"
-            } bg-webgreen-light text-white rounded-md font-bold`}
-            onPress={() =>
-              setCurrentPage((prev) => (prev > 1 ? prev - 1 : prev))
-            }
+              videoPage === 1 ? "opacity-70 cursor-not-allowed" : "hover:bg-cart"
+            } bg-cart text-white rounded-full font-bold`}
+            onPress={handlePrevPage}
           >
             Prev
           </Button>
           <Pagination
             color="success"
             classNames={{
-              item: "w-8 h-8 text-small bg-gray-100 hover:bg-gray-300 rounded-md",
-              cursor:
-                "bg-webgreen hover:bg-webgreen text-white rounded-md font-bold",
+              item: "w-8 h-8 text-small bg-gray-100 hover:bg-gray-300 rounded-full",
+              cursor: "bg-cart hover:bg-red text-white rounded-full font-bold",
             }}
-            total={totalPages}
-            page={currentPage}
+            total={totalVideoNumOfPage}
+            page={videoPage}
             onChange={handlePageChange}
             initialPage={1}
           />
-
+          <p className="text-cart">of {totalVideoNumOfPage}</p>
           <Button
             type="button"
-            disabled={currentPage === totalPages}
             size="sm"
+            disabled={videoPage === totalVideoNumOfPage}
             variant="flat"
             className={`${
-              currentPage === totalPages
-                ? "opacity-70"
-                : "hover:bg-webgreenHover"
-            } bg-webgreen-light text-white rounded-md font-bold`}
-            onPress={() =>
-              setCurrentPage((prev) => (prev < totalPages ? prev + 1 : prev))
-            }
+              videoPage === totalVideoNumOfPage
+                ? "opacity-70 cursor-not-allowed"
+                : "hover:bg-cart"
+            } bg-cart text-white rounded-full font-bold`}
+            onPress={handleNextPage}
           >
             Next
           </Button>
         </div>
       )}
-      <div className=" my-8 bg-gray-100 ">
-        <div className=" lg:mx-24 md:mx-4 mx-4 flex  lg:flex-row md:flex-col flex-col">
-          <h2 className="text-2xl font-bold mt-5 basis-[25%]">
-            Stock Footage FAQs
-          </h2>
+
+      {/* FAQ Section */}
+      <div className="py-8 bg-gray-100">
+        <div className="lg:mx-24 md:mx-4 mx-4 flex lg:flex-row md:flex-col flex-col">
+          <h2 className="text-2xl font-bold mt-5 basis-[25%]">Stock Footage FAQs</h2>
           <FAQ />
         </div>
       </div>
@@ -199,118 +169,3 @@ const Page = () => {
 };
 
 export default Page;
-
-type Video = {
-  video: string;
-};
-
-const videoUrls: Video[] = [
-  { video: "/images/dance.webm" },
-  { video: "/images/Flower.webm" },
-  { video: "/images/sky.webm" },
-  { video: "/images/Yellow_Final.webm" },
-  { video: "/images/sky.webm" },
-  { video: "/images/Flower.webm" },
-  { video: "/images/sky.webm" },
-  { video: "/images/dance.webm" },
-  { video: "/images/Yellow_Final.webm" },
-];
-
-// collection data
-interface Card {
-  title: string;
-  image: string;
-}
-
-const cards: Card[] = [
-  {
-    title: "Cinematic Lightscapes",
-    image:
-      "https://images.ctfassets.net/hrltx12pl8hq/15JSyH0rEvAQWTU2OP55Kw/1fc5ea75df571edd7c2731acd5124a6e/Cinematic-lightscapes.jpg",
-  },
-  {
-    title: "Summer Action",
-    image:
-      "https://images.ctfassets.net/hrltx12pl8hq/6n76rBKjbDYUTu6cIWlBp8/58f297d91bd0057626197e1ac5d0fadb/SummerAction.jpg",
-  },
-  {
-    title: "Calming Textures",
-    image:
-      "https://images.ctfassets.net/hrltx12pl8hq/6kdzY2fgPHsyBwEXVLGb9/7b99fed0765784014b03506703e34482/Calming-Textures.jpg",
-  },
-  {
-    title: "Time-Lapsed Cities",
-    image:
-      "https://images.ctfassets.net/hrltx12pl8hq/7errAkofD3gYCvRAEXMGfG/9a02870250fc2c82edbda96757aa1f9d/Time-Lapsed.jpg",
-  },
-];
-
-// Blog Data
-export interface BlogPost {
-  imageUrl: string;
-  title: string;
-  description: string;
-}
-
-const posts: BlogPost[] = [
-  {
-    imageUrl:
-      "https://images.ctfassets.net/hrltx12pl8hq/6nJaRnp2pkQcIq5qDlnTlL/37e62b10f34ccd1669629045c14312ff/rgbcover.webp",
-    title: "Free Colorful Clip Art to Promote Sales and Discounts",
-    description:
-      "Neon-colored and easy-to-use PNGs are here to assist you with any sale or promotion you’ve planned for 2023.",
-  },
-  {
-    imageUrl:
-      "https://images.ctfassets.net/hrltx12pl8hq/1PMfxyPFpntWyrKVeScdDD/e59aac83bb3e5b5737d1a60cd08dd8e5/stock_footage_glossary_cover.webp",
-    title: "How to Build Brand Trust Through Good Design",
-    description:
-      "Reach your audience with five shortcuts for building brand trust through good design.",
-  },
-  {
-    imageUrl:
-      "https://images.ctfassets.net/hrltx12pl8hq/26vH4jX8NikGFE4EgOeIjB/2761c52ebba2de165a2e4dc3507acdeb/5-ProjectsFeature__1_.webp",
-    title: "How to Write Better Generative AI Descriptions",
-    description:
-      "Get tips and tricks on how to adjust your text, so you can create imagery without limits.",
-  },
-];
-
-// category Data
-export interface category {
-  title: string;
-  imageUrl: string;
-}
-
-const categories: category[] = [
-  {
-    title: "Abstract",
-    imageUrl:
-      "https://images.ctfassets.net/hrltx12pl8hq/29slzVZfucEQwKoKc8QcEA/ed7ceb74525e822dd3eb888f570f0d52/adventure",
-  },
-  {
-    title: "Animals | Wildlife",
-    imageUrl:
-      "https://images.ctfassets.net/hrltx12pl8hq/79UGbvGqfj9bQVi66yr9VT/1cae2227203e2c3c7ff3b21befe96a9f/Abstract",
-  },
-  {
-    title: "The arts",
-    imageUrl:
-      "https://images.ctfassets.net/hrltx12pl8hq/61MiY3Wj3U6KSSKi2muig2/7e4c77aa598ca4ac93aab5858c3e7627/Autumn",
-  },
-  {
-    title: "Backgrounds | Textures",
-    imageUrl:
-      "https://images.ctfassets.net/hrltx12pl8hq/yZsuq5HdBuUmYekaKiuUQ/d73a0e6f5fe939be07a19f22a92f2e09/Wild-Life",
-  },
-  {
-    title: "Beauty | Fashion",
-    imageUrl:
-      "https://images.ctfassets.net/hrltx12pl8hq/77nM3vIkxOy0MSIeESAsi6/ef81eb2041ae0b3a240a8241c732b0eb/3D_Footage",
-  },
-  {
-    title: "Beauty | Fashion",
-    imageUrl:
-      "https://images.ctfassets.net/hrltx12pl8hq/2R1nDTrRheK6ae2IWAgGwW/e879fceb983dd133702ecdbfb560d4cd/Aerial",
-  },
-];
