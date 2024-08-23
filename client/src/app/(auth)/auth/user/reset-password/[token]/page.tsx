@@ -161,7 +161,7 @@ const ResetPassword = ( { params }: { params: { token: string; }; } ) =>
                     <button
                         className="flex items-center rounded-md justify-center w-full px-4 py-2 mt-4  bg-webgreen"
                     >
-                        <Spinner color="white"/>
+                        <Spinner color="danger"/>
                          </button>:
                         <button
                             type="submit"

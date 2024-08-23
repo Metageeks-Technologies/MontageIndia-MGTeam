@@ -11,49 +11,55 @@ import { useAppDispatch, useAppSelector } from "@/app/redux/hooks";
 import { setImagePage } from "@/app/redux/feature/product/slice";
 import { IoSearchOutline } from "react-icons/io5";
 
-const Page = () => {
+const Page = () =>
+{
   const dispatch = useAppDispatch();
-  const [totalPages, setTotalPages] = useState(1);
-  const [productsPerPage, setProductsPerPage] = useState(20);
-  const [productData, setProductData] = useState<Product[]>([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [shouldFetch, setShouldFetch] = useState(true);
-  const [loading, setloading] = useState(false);
-  
+  const [ totalPages, setTotalPages ] = useState( 1 );
+  const [ productsPerPage, setProductsPerPage ] = useState( 20 );
+  const [ productData, setProductData ] = useState<Product[]>( [] );
+  const [ currentPage, setCurrentPage ] = useState( 1 );
+  const [ selectedCategories, setSelectedCategories ] = useState<string[]>( [] );
+  const [ searchTerm, setSearchTerm ] = useState( "" );
+  const [ shouldFetch, setShouldFetch ] = useState( true );
+  const [ loading, setloading ] = useState( false );
+
 
   const {
     imageData: product,
     imagePage,
     totalImageData,
     totalImageNumOfPage,
-  } = useAppSelector((state) => state.product);
+  } = useAppSelector( ( state ) => state.product );
 
-  const handlePageChange = (page: number) => {
+  const handlePageChange = ( page: number ) =>
+  {
     // console.log(page);
-    dispatch(setImagePage(page));
+    dispatch( setImagePage( page ) );
   };
-  const handleNextPage = () => {
-    handlePageChange(imagePage === totalImageNumOfPage ? 1 : imagePage + 1);
+  const handleNextPage = () =>
+  {
+    handlePageChange( imagePage === totalImageNumOfPage ? 1 : imagePage + 1 );
   };
-  const handlePrevPage = () => {
-    handlePageChange(imagePage === 1 ? totalImageNumOfPage : imagePage - 1);
-  };
-
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(e.target.value);
+  const handlePrevPage = () =>
+  {
+    handlePageChange( imagePage === 1 ? totalImageNumOfPage : imagePage - 1 );
   };
 
+  const handleSearch = ( e: React.ChangeEvent<HTMLInputElement> ) =>
+  {
+    setSearchTerm( e.target.value );
+  };
 
-  useEffect(() => {
-    getImage(dispatch, {
+
+  useEffect( () =>
+  {
+    getImage( dispatch, {
       page: imagePage,
       productsPerPage: 20,
-      mediaType: ["image"],
+      mediaType: [ "image" ],
       searchTerm,
-    });
-  }, [imagePage,searchTerm]);
+    } );
+  }, [ imagePage, searchTerm ] );
 
   return (
     <div className="main ">
@@ -168,8 +174,8 @@ const Page = () => {
         <img src="/asset/Rectangle 15.png" alt="" />
         <input
           type="text"
-          value={searchTerm}
-          onChange={handleSearch}
+          value={ searchTerm }
+          onChange={ handleSearch }
           placeholder="Search for Photos"
           className="flex-grow  py-2 rounded-md bg-[#F4F6F6]  focus:outline-none"
         />
@@ -186,7 +192,7 @@ const Page = () => {
       <hr className="mt-5" />
 
       <div className="m-auto mt-4 bg w-[90%]">
-        
+
         <div className="flex flex-wrap gap-2 ">
           <button className="flex items-center hover:bg-[#c7c7c9] text-sm px-3 py-1 border border-gray-700 rounded text-gray-700 bg-transparent backdrop-blur-sm bg-opacity-20 hover:bg-opacity-30 transition duration-300">
             <IoIosSearch className="h-5 w-5 mr-1" />
@@ -206,7 +212,7 @@ const Page = () => {
           </button>
           <button className="flex items-center text-sm hover:bg-[#c7c7c9] px-3 py-1 border border-gray-700 rounded text-gray-700 bg-transparent backdrop-blur-sm bg-opacity-20 hover:bg-opacity-30 transition duration-300">
             <IoIosSearch className="h-5 w-5 mr-1" />
-            India Gate Delhi Night 
+            India Gate Delhi Night
           </button>
           <button className="flex items-center text-sm px-3 hover:bg-[#c7c7c9] py-1 border border-gray-700 rounded text-gray-700 bg-transparent backdrop-blur-sm bg-opacity-20 hover:bg-opacity-30 transition duration-300">
             <IoIosSearch className="h-5 w-5 mr-1" />
@@ -214,73 +220,71 @@ const Page = () => {
           </button>
           <button className="flex items-center text-sm px-3 py-1 hover:bg-[#c7c7c9] border border-gray-700 rounded text-gray-700 bg-transparent backdrop-blur-sm bg-opacity-20 hover:bg-opacity-30 transition duration-300">
             <IoIosSearch className="h-5 w-5 mr-1" />
-           India
+            India
           </button>
         </div>
 
         <h4 className="mt-6 text-lg text-neutral-700">20 Product stock Photos and High-res Pictures</h4>
 
-        {loading ? (
+        { loading ? (
           <div className="h-screen justify-center flex">
-            <Spinner color="success" />
+            <Spinner label="Loading..." color="danger" /> />
           </div>
         ) : (
           <div className="columns-1 sm:columns-2 md:columns-3 lg:columns-4 gap-2 mt-2 relative">
-            {product.map((data, index: number) => (
-              <ImageGallery key={index} data={data} />
-            ))}
+            { product.map( ( data, index: number ) => (
+              <ImageGallery key={ index } data={ data } />
+            ) ) }
           </div>
-           
-        )}
+
+        ) }
       </div>
       {/* <div className="mt-8 flex justify-center ">
             <button className="flex items-center text-lg px-6 font-semibold py-2 border border-gray-700  rounded text-black bg-transparent backdrop-blur-sm bg-opacity-20 hover:bg-opacity-40 transition duration-300">
               See more Image
             </button>
           </div> */}
-      {totalImageNumOfPage > 1 && (
+      { totalImageNumOfPage > 1 && (
         <div className="flex justify-center items-center gap-4 my-12">
           <Button
             size="sm"
             type="button"
             variant="flat"
-            className={`${
-              currentPage === 1 ? "opacity-70" : "hover:bg-red-600"
-            } bg-red-500 text-white rounded-full font-bold`}
-            onPress={handlePrevPage}
+            className={ `${ currentPage === 1 ? "opacity-70" : "hover:bg-red-600"
+              } bg-red-500 text-white rounded-full font-bold` }
+            onPress={ handlePrevPage }
           >
             Prev
           </Button>
           <Pagination
             color="success"
-            classNames={{
+            classNames={ {
               item: "w-8 h-8 text-small bg-gray-100 hover:bg-gray-300 rounded-full",
               cursor:
                 "bg-red-500 hover:bg-red-600 text-white rounded-full font-bold",
-            }}
-            total={totalImageNumOfPage}
-            page={imagePage}
-            onChange={handlePageChange}
-            initialPage={1}
+            } }
+            total={ totalImageNumOfPage }
+            page={ imagePage }
+            onChange={ handlePageChange }
+            initialPage={ 1 }
           />
 
           <Button
             type="button"
             size="sm"
             variant="flat"
-            className={`${
-              currentPage === totalPages
+            className={ `${ currentPage === totalPages
                 ? "opacity-70"
                 : "hover:bg-red-600"
-            } bg-red-600 text-white rounded-full font-bold`}
-            onPress={handleNextPage}
+              } bg-red-600 text-white rounded-full font-bold` }
+            onPress={ handleNextPage }
           >
             Next
           </Button>
         </div>
-      )}
+      ) }
       <div className="mt-8">
-      <Footer />
+        <Footer />
       </div>
     </div>
   );

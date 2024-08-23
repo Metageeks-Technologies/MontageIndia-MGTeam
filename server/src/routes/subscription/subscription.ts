@@ -10,6 +10,6 @@ subscriptionRouter.route('/plan/:id').get(fetchPlanById);
 subscriptionRouter.route('/create').post(isAuthenticatedCustomer,createSubscription);
 subscriptionRouter.route('/plan/:id').patch(isAuthenticatedAdmin,updatePlan);
 subscriptionRouter.route('/verify').post(verifyPayment);
-subscriptionRouter.route('/history').get(getSubscriptionHistory);
+subscriptionRouter.route('/history').get(isAuthenticatedAdmin, getSubscriptionHistory);
 
 export default subscriptionRouter

@@ -19,12 +19,9 @@ interface Category
 const CreateCategory: React.FC = () =>
 {
     const router = useRouter();
-    const [ categories, setCategories ] = useState<Category[]>( [] );
-    const [ isModalOpen, setIsModalOpen ] = useState( false );
     const [ name, setName ] = useState( '' );
     const [ description, setDescription ] = useState( '' );
     const [ image, setImage ] = useState<File | null>( null );
-    const [ editingCategory, setEditingCategory ] = useState<Category | null>( null );
     const fileInputRef = useRef<HTMLInputElement>( null );
     const [ isLoading, setIsLoading ] = useState( false );
     const [ error, setError ] = useState<string | null>( null );
@@ -105,21 +102,27 @@ const CreateCategory: React.FC = () =>
                 description,
                 image: imageUrl
             };
-            if ( editingCategory )
-            {
-                await instance.patch( `/field/category/${ editingCategory._id }`, categoryData );
-            } else
-            {
-                await instance.post( '/field/category', categoryData );
-            }
-            setIsModalOpen( false );
+
+            await instance.post( '/field/category', categoryData );
+
             // notifySuccess( editingCategory ? "Category updated successfully" : "Category added successfully" );
             Swal.fire( {
                 icon: 'success',
-                title: 'Created',
-                text: 'Category added successfully.',
+                title: 'Category added successfully',
+                text: 'You will be redirected to the categories page.',
+                showConfirmButton: false,
+                timer: 2000
+            } ).then( ( result ) => 
+            {
+                if ( result.dismiss === Swal.DismissReason.timer )
+                {
+                    // Redirect to categories page
+                    router.push('/admin/category')
+                }
+                
             } );
-            setEditingCategory( null );
+            // window.location.reload();
+
             setName( '' );
             setDescription( '' );
             setImage( null );
@@ -127,6 +130,8 @@ const CreateCategory: React.FC = () =>
             {
                 fileInputRef.current.value = '';
             }
+            setIsLoading( false );
+
 
         } catch ( error )
         {
@@ -205,7 +210,7 @@ const CreateCategory: React.FC = () =>
                             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none   transition duration-150 ease-in-out bg-pageBg-light"
                             placeholder="Enter category description"
                             required
-                            rows={ 4 } 
+                            rows={ 4 }
                         />
                     </div>
                     <div className="mt-8 text-right">

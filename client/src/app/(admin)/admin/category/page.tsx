@@ -89,7 +89,7 @@ const CategoriesPage: React.FC = () =>
                 title: 'Error getting upload URL',
                 text: 'Please try again later.',
                 // footer: '<a href>Why do I have this issue?</a>',
-                } );
+            } );
             throw error;
         }
     };
@@ -125,7 +125,7 @@ const CategoriesPage: React.FC = () =>
                 text: 'Please try again later.',
                 // footer: '<a href>Why do I have this issue?</a>',
             } );
-            
+
             return null;
         } finally
         {
@@ -139,7 +139,7 @@ const CategoriesPage: React.FC = () =>
         setError( null );
         try
         {
-            let imageUrl:any = editingCategory?.image;
+            let imageUrl: any = editingCategory?.image;
             if ( image )
             {
                 imageUrl = await uploadImage( image );
@@ -198,27 +198,69 @@ const CategoriesPage: React.FC = () =>
             reader.readAsDataURL( file );
         }
     };
+    // const handleDelete = async ( id: string ) =>
+    // {
+    //     if ( window.confirm( 'Are you sure you want to delete this category?' ) )
+    //     {
+    //         setIsLoading( true );
+    //         setError( null );
+    //         try
+    //         {
+    //             await instance.delete( `/field/category/${ id }` );
+    //             fetchCategories();
+    //             // notifySuccess( "Category deleted successfully" );
+    //             Swal.fire( {
+    //                 icon: 'success',
+    //                 title: 'Deleted',
+    //                 text: 'Category deleted successfully.',
+    //             } );
+    //         } catch ( error )
+    //         {
+    //             console.error( 'Error deleting category:', error );
+    //             setError( 'Failed to delete category. Please try again.' );
+    //             // notifyError( 'Failed to delete category' );
+    //             Swal.fire( {
+    //                 icon: 'error',
+    //                 title: 'Error',
+    //                 text: 'Failed to delete category. Please try again.',
+    //             } );
+    //         } finally
+    //         {
+    //             setIsLoading( false );
+    //         }
+    //     }
+    // };
+
+
     const handleDelete = async ( id: string ) =>
     {
-        if ( window.confirm( 'Are you sure you want to delete this category?' ) )
+        const result = await Swal.fire( {
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!'
+        } );
+
+        if ( result.isConfirmed )
         {
             setIsLoading( true );
             setError( null );
             try
             {
                 await instance.delete( `/field/category/${ id }` );
-                fetchCategories();
-                // notifySuccess( "Category deleted successfully" );
+                await fetchCategories();
                 Swal.fire( {
                     icon: 'success',
-                    title: 'Deleted',
-                    text: 'Category deleted successfully.',
+                    title: 'Deleted!',
+                    text: 'Category has been deleted successfully.',
                 } );
             } catch ( error )
             {
                 console.error( 'Error deleting category:', error );
                 setError( 'Failed to delete category. Please try again.' );
-                // notifyError( 'Failed to delete category' );
                 Swal.fire( {
                     icon: 'error',
                     title: 'Error',
@@ -231,14 +273,10 @@ const CategoriesPage: React.FC = () =>
         }
     };
 
-
-
     console.log( "categoies:-", categories );
 
     return (
         <div className="container p-4 m-4 bg-pureWhite-light rounded-md">
-
-
             <div className="flex justify-between items-center mb-4">
                 <h1 className="text-2xl font-bold">Categories</h1>
                 <button className="bg-red-500 text-white px-4 py-2 rounded" onClick={ () => router.push( '/admin/category/create' ) }>+  Add New Category</button>
@@ -248,13 +286,13 @@ const CategoriesPage: React.FC = () =>
             <hr className="border-t border-gray-300 mb-4" />
 
 
-            { isLoading && (
+            {/* { isLoading && (
                 <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50">
                     <div className="bg-white p-4 rounded-lg shadow-lg">
                         <p className="text-lg font-semibold">Loading...</p>
                     </div>
                 </div>
-            ) }
+            ) } */}
 
             { error && (
                 <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
@@ -336,68 +374,68 @@ const CategoriesPage: React.FC = () =>
                     </div>
                 </div>
             ) }
-          
+
 
             <div className="bg-white shadow-md rounded-lg overflow-hidden">
                 { categories.length === 0 && !isLoading ? (
                     <p className="text-center py-4 text-gray-500">No categories found. Add a new category to get started.</p>
                 ) : <div className="bg-white shadow-md rounded-lg relative overflow-x-auto ">
-                        <table className=" w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                            <thead>
-                                <tr>
-                                    <th className="px-5 py-3 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                                        Image
-                                    </th>
+                    <table className=" w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                        <thead>
+                            <tr>
+                                <th className="px-5 py-3 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                    Image
+                                </th>
 
-                                    <th className="px-5 py-3 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                                        Category Name
-                                    </th>
-                                    <th className="px-5 py-3 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                                        Description
-                                    </th>
+                                <th className="px-5 py-3 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                    Category Name
+                                </th>
+                                <th className="px-5 py-3 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                    Description
+                                </th>
 
 
-                                    <th className="px-5 py-3 bg-gray-100 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                                        Action
-                                    </th>
+                                <th className="px-5 py-3 bg-gray-100 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                    Action
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            { categories?.map( ( category ) => (
+                                <tr key={ category._id } className="hover:bg-gray-50">
+                                    <td className="px-4 py-2 border-b border-gray-200 bg-pureWhite-light text-center">
+                                        <Image src={ category?.image || '/placeholder-image.jpg' }
+                                            alt={ `${ category.name } image` }
+                                            width={ 100 }
+                                            height={ 100 }
+
+                                        />
+                                    </td>
+                                    <td className="px-4 py-4 border-b border-gray-200 bg-white">
+                                        { category.name }
+                                    </td>
+
+                                    <td className="px-4 py-4 border-b border-gray-200 bg-white">
+                                        { category.description }
+                                    </td>
+
+                                    <td className="px-4 py-4 border-b border-gray-200 bg-white">
+                                        <div className="flex justify-center items-center space-x-2">
+
+                                            <button className="text-green-600 hover:text-green-900" onClick={ () => handleEdit( category ) }>
+                                                <img src="/images/editIcon.png" title='Edit the Category' alt="View" className="w-6 h-6" />
+                                            </button>
+                                            <button className="text-red-600 hover:text-red-900" title='Delete the Category' onClick={ () => handleDelete( category?._id ) }>
+                                                <img src="/images/deleteIcon.png" alt="Delete" className="w-6 h-6" />
+                                            </button>
+                                        </div>
+                                    </td>
                                 </tr>
-                            </thead>
-                            <tbody> 
-                                {   categories?.map( ( category ) => (
-                                        <tr key={ category._id } className="hover:bg-gray-50">
-                                            <td className="px-4 py-2 border-b border-gray-200 bg-pureWhite-light text-center">
-                                                <Image src={ category?.image || '/placeholder-image.jpg' }
-                                                    alt={ `${ category.name } image` }
-                                                    width={ 100 }
-                                                    height={ 100 }
-
-                                                />
-                                            </td>
-                                            <td className="px-4 py-4 border-b border-gray-200 bg-white">
-                                                { category.name }
-                                            </td>
-
-                                            <td className="px-4 py-4 border-b border-gray-200 bg-white">
-                                                { category.description }
-                                            </td>
-
-                                            <td className="px-4 py-4 border-b border-gray-200 bg-white">
-                                                <div className="flex justify-center items-center space-x-2">
-
-                                                    <button className="text-green-600 hover:text-green-900" onClick={ () => handleEdit( category ) }>
-                                                        <img src="/images/editIcon.png" title='Edit the Category' alt="View" className="w-6 h-6" />
-                                                    </button>
-                                                    <button className="text-red-600 hover:text-red-900" title='Delete the Category' onClick={ () => handleDelete( category?._id ) }>
-                                                        <img src="/images/deleteIcon.png" alt="Delete" className="w-6 h-6" />
-                                                    </button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    ) ) 
-                                }
-                            </tbody>
-                        </table>
-                    </div>
+                            ) )
+                            }
+                        </tbody>
+                    </table>
+                </div>
                 }
             </div>
         </div>

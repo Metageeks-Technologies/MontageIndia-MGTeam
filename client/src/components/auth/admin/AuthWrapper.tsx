@@ -60,14 +60,14 @@ const AuthWrapper = ( { children }: { children: React.ReactNode; } ) =>
     if ( isLoading )
     {
         return <div className="flex justify-center items-center h-screen">
-            <Spinner label="Loading..." color="success" />
+            <Spinner label="Loading..." color="danger" />
         </div>;
     }
 
     return (
         <div className="flex items-center w-[95%] mx-auto bg-pageBg-light   ">
             { isAuthenticated && !isPasswordResetRoute && <Sidebar /> }
-            <div className={ `${ isAuthenticated && !isPasswordResetRoute ? 'md:ml-[18%] md:mr-[2%] sm:ml-[25%]' : '' } w-full min-h-screen mt-16   ` }> 
+            <div className={ `${ isAuthenticated && !isPasswordResetRoute ? 'md:ml-[18%] md:mr-[2%] sm:ml-[25%]' : '' } w-full min-h-screen mt-16   ` }>
 
                 { children }
             </div>

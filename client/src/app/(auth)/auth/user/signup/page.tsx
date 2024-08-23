@@ -257,7 +257,7 @@ const Page = () =>
                  className="flex items-center rounded-md justify-center w-full px-4 py-1 mt-4  bg-webgreen"
                  onClick={ handleLogin }
                >
-                 <Spinner color="white"/>
+                 <Spinner color="danger"/>
               </button>
                 :
               <button

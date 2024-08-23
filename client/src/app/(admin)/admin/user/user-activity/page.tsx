@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import React, { useEffect, useMemo, useState } from "react";
 import instance from "@/utils/axios";
 import { Spinner, Button } from "@nextui-org/react";
@@ -231,7 +231,7 @@ const UserActivityPage = () =>
                 { loading ? (
                   <tr>
                     <td colSpan={ 7 } className="text-center py-4">
-                      <Spinner label="Loading..." color="success" />
+                      <Spinner label="Loading..." color="danger" />
                     </td>
                   </tr>
                 ) : data === null || data.length === 0 ? (
@@ -269,13 +269,13 @@ const UserActivityPage = () =>
                         { formatDate( item.timestamp ) }
                       </td>
                       <td
-                        className={ `px-4 py-4 sm:px-6 text-center ${ (item.action === 'create' || item.action == "created" )
+                        className={ `px-4 py-4 sm:px-6 text-center ${ ( item.action === 'create' || item.action == "created" )
                           ? 'text-[#8D529C]'
                           : item.action === 'Deleted'
-                              ? 'text-red-700'
-                              : item.action === 'update'
+                            ? 'text-red-700'
+                            : item.action === 'update'
                               ? 'text-[#42A5D0]'
-                                : ''
+                              : ''
                           }` }
                       >
                         { capitalizeFirstLetter( item.action ) }

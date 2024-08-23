@@ -4,6 +4,8 @@ import instance from '@/utils/axios';
 import { Spinner, Pagination, Button } from '@nextui-org/react';
 import Link from 'next/link';
 import { notifyInfo } from '@/utils/toast';
+import Swal from 'sweetalert2';
+import { FaTrashRestoreAlt } from 'react-icons/fa';
 
 interface User
 {
@@ -14,6 +16,7 @@ interface User
     role: string;
     mediaType: string[];
     category: string[];
+    isDeleted:boolean;  
 }
 
 export default function UserList ()
@@ -67,6 +70,47 @@ export default function UserList ()
     {
         setDataPerPage( e.target.value );
         setCurrentPage( 1 );
+    };
+
+    const handleDelete = async ( id: string ) =>
+    {
+        const result = await Swal.fire( {
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!'
+        } );
+
+        if ( result.isConfirmed )
+        {
+            try
+            {
+                const response = await instance.delete( `/auth/admin/${ id }` );
+                if ( response.data )
+                {
+                    console.log("response :-",response.data)
+                    Swal.fire( {
+                        icon: 'success',
+                        title: `${response?.data?.title} !!`,
+                        text: `${response?.data?.message}`,
+                        confirmButtonColor: '#3085d6',
+                    } );
+                    fetchUsers();
+                }
+            } catch ( error: any )
+            {
+                Swal.fire( {
+                    icon: 'error',
+                    title: 'Error',
+                    text: error.message || 'An error occurred while deleting the user.',
+                    confirmButtonColor: '#3085d6',
+                } );
+                console.error( 'Error deleting user:', error );
+            }
+        }
     };
 
     return (
@@ -123,7 +167,7 @@ export default function UserList ()
                                 { loading ? (
                                     <tr>
                                         <td colSpan={ 6 } className="text-center py-4">
-                                            <Spinner label="Loading..." color="success" />
+                                            <Spinner label="Loading..." color="danger" />
                                         </td>
                                     </tr>
                                 ) : (
@@ -158,9 +202,17 @@ export default function UserList ()
                                                         <Link href={ `/admin/user/userList/${ user._id }` } className="text-blue-600 hover:text-blue-900">
                                                             <img src="/images/editIcon.png" alt="Edit" className="w-6 h-6" />
                                                         </Link>
-                                                      
-                                                        <button className="text-red-600 hover:text-red-900" onClick={()=>notifyInfo("Your can't delete anyone")}>
-                                                            <img src="/images/deleteIcon.png" alt="Delete" className="w-6 h-6" />
+
+                                                        <button className="text-red-600 hover:text-red-900"
+                                                            onClick={ () => handleDelete( user._id ) }
+                                                            
+                                                            >
+                                                            { user?.isDeleted ?
+                                                                <FaTrashRestoreAlt className="w-6 h-6" title='Restore the User' />
+                                                                :
+                                                                <img title='Delete the User' src="/images/deleteIcon.png" alt="Delete" className="w-6 h-6" />
+
+                                                            }
                                                         </button>
                                                     </div>
                                                 </td>
@@ -177,7 +229,7 @@ export default function UserList ()
             { totalPages > 0 && (
                 <div className="flex justify-between items-center mt-4">
                     <div>
-                        <p>Showing {(dataPerPage * (currentPage-1))+1} to { dataPerPage * (currentPage) } of { totalPages * dataPerPage } Entries</p>
+                        <p>Showing { ( dataPerPage * ( currentPage - 1 ) ) + 1 } to { dataPerPage * ( currentPage ) } of { totalPages * dataPerPage } Entries</p>
                     </div>
                     <div className="flex items-center space-x-2">
                         <button

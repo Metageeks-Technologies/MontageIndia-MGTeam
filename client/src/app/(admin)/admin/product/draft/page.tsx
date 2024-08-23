@@ -61,7 +61,7 @@ const Home: React.FC = () => {
     setSelectedMediaTypes(selectedList);
   };
   const capitalizeFirstLetter = (str: string): string => {
-    if (!str) return "";
+    if(!str) return "";
     return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
   };
   const showAllProducts = async () => {
@@ -268,7 +268,7 @@ const Home: React.FC = () => {
             {loading ? (
               <tr>
                 <td colSpan={7} className="text-center py-4">
-                  <Spinner label="Loading..." color="success" />
+                  <Spinner label="Loading..." color="danger" />
                 </td>
               </tr>
             ) : productData && productData.length > 0 ? (
@@ -300,8 +300,20 @@ const Home: React.FC = () => {
                         )}
                       </div>
                       <div className="flex items-center w-full p-3">
-                        {(prod.mediaType === "image" ||
-                          prod.mediaType === "video") && (
+                        {prod?.mediaType === "video" && (
+                          <div>
+                            {" "}
+                            <video
+                              controls
+                              className="w-full h-28 object-cover rounded"
+                            >
+                              <source
+                                src={`https://mi2-public.s3.ap-southeast-1.amazonaws.com/${prod?.thumbnailKey}`}
+                              />
+                            </video>
+                          </div>
+                        )}
+                        {prod.mediaType === "image" && (
                           <img
                             src={`https://mi2-public.s3.ap-southeast-1.amazonaws.com/${prod.thumbnailKey}`}
                             alt={prod.title}
