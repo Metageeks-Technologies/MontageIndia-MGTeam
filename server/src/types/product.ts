@@ -1,4 +1,11 @@
 import mongoose, { Document } from "mongoose";
+type MetaData = {
+  format: string;
+  size: string;
+  length?: string;
+  dimension?: string;
+  dpi?: string;
+};
 export type TProduct = Document & {
   _id: string;
   uuid: string;
@@ -14,8 +21,8 @@ export type TProduct = Document & {
     label?: string;
     price?: number;
     credit?: number;
-    size: string;
     key: string;
+    metadata: MetaData;
   }[];
   status: "published" | "archived" | "unavailable" | "draft";
   mediaType: "image" | "video" | "audio";
