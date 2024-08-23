@@ -344,18 +344,52 @@ export const getPurchasedProducts = catchAsyncError(
   async (req: any, res, next) => {
     try {
       const { id } = req.user;
-      const customer = await Customer.findById(id).populate(
-        "purchasedProducts.productId"
-      );
+      const {searchTerm,currentPage=1,dataPerPage=6}=req.query;
+      console.log("searchTerm",searchTerm,currentPage,dataPerPage);
+
+      const customer = await Customer.findById(id).populate("purchasedProducts.productId").populate("purchasedProducts.variantId");
 
       if (!customer) {
-        return res.status(404).json({ message: "Customer not found" });
+        return next(new ErrorHandler(`customer not found`, 404));
+      }
+      console.log("customer", customer);
+
+      let purchasedProducts = customer?.purchasedProducts?.map((item: any) => ({
+        product: item.productId,
+        variant: item.variantId,
+        createdAt: item.createdAt, 
+      }));
+
+      if (searchTerm) {
+        const regex = new RegExp(searchTerm, 'i');
+        purchasedProducts = purchasedProducts.filter((item: any) =>
+          regex.test(item.product.title) ||
+          regex.test(item.variant.label) ||
+          regex.test(item.product.tags.join(" ")) ||
+          regex.test(item.product.mediaType)
+        );
       }
 
-      // Return the list of purchased products
+      purchasedProducts.sort((a: any, b: any) => {
+        const dateA: number = new Date(a.createdAt).getTime();
+        const dateB: number = new Date(b.createdAt).getTime();
+        return dateA - dateB;
+    });
+
+      // Pagination
+      const totalPurchased = purchasedProducts.length;
+      const totalPages = Math.ceil(totalPurchased / dataPerPage);
+      const paginatedProducts = purchasedProducts.slice(
+        (currentPage - 1) * dataPerPage,
+        currentPage * dataPerPage
+      );
+
+
       res.send({
         success: true,
-        purchasedProducts: customer.purchasedProducts,
+        purchasedProducts:paginatedProducts,
+        totalPurchased,
+        totalPages
       });
     } catch (err) {
       console.log(err);

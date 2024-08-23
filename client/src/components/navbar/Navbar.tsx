@@ -9,6 +9,8 @@ import instance from "@/utils/axios";
 import { notifySuccess } from "@/utils/toast";
 import { BiLogInCircle, BiLogOutCircle } from "react-icons/bi";
 import { useAppSelector } from "@/app/redux/hooks";
+import Link from "next/link";
+import Swal from "sweetalert2";
 
 const Sidebar = () => {
   const router = useRouter();
@@ -21,7 +23,12 @@ const Sidebar = () => {
   const handleLogout = async () => {
     try {
       const response = await instance.get("/user/logout");
-      notifySuccess(response.data.message);
+      // notifySuccess(response.data.message);
+      Swal.fire( {
+        title: "Logged out successfully",
+        icon: "success",
+        timer: 2000,
+      } );
       router.push("/auth/user/login");
     } catch (error) {
       console.error("Error in logout:", error);
@@ -76,10 +83,12 @@ const Sidebar = () => {
             <span>0 Credits Available</span>
             <IoMdArrowDropdown className="ml-1" />
           </div>
-          <AiOutlineHeart
-            onClick={() => router.push("/wishlist")}
-            className="text-gray-700 cursor-pointer w-7 h-7 transition-transform duration-200 ease-in-out hover:scale-110"
-          />
+          <Link href="/user-profile/favorites" >
+            <AiOutlineHeart
+              className="text-gray-700 hover:text-webred cursor-pointer w-7 h-7 transition-transform duration-200 ease-in-out hover:scale-110"
+            />
+          </Link>
+          
           <CartPopup />
           <div className="relative">
             <FaUserCircle

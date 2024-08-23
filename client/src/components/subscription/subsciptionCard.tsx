@@ -2,6 +2,7 @@ import React,{useState,useEffect} from 'react';
 import { loadScript } from '../../utils/loadScript';
 import instance from '@/utils/axios';
 import {ScrollShadow} from '@nextui-org/react'
+import { FaRupeeSign } from "react-icons/fa";
 import { useRouter } from 'next/navigation';
 interface SubscriptionPlan {
     planId: string;
@@ -111,20 +112,20 @@ const SubscriptionCard: React.FC<Props> = ({ plan }) => {
 
     console.log(plan);
     return (
-        <div className="flex-1 text-xl rounded-xl border border-[#4E67E5]/25 bg-[#080C23] p-10">
-            <div className="text-center h-[10vh] mb-4">{plan.item.name}</div>
-            <div className="text-6xl mb-4 text-center font-light">
-                {plan.item.amount / 100} {plan.item.currency}
+        <div className="flex-1 text-xl rounded-xl text-black border border-[#E3B4EF]/25 bg-[#FDF8FF] p-10">
+            <div className="text-center h-[10vh] font-semibold mb-4">{plan.item.name}</div>
+            <div className="flex justify-center items-center  mb-4 text-center text-[#7828c8]">
+              <span className="text-3xl font-bold mr-2"><FaRupeeSign/></span><span className='font-bold text-3xl'> {plan.item.amount / 100} {plan.item.currency}</span> 
             </div>
-             <ScrollShadow hideScrollBar size={0} className="h-[20vh] mb-4">
+             <ScrollShadow hideScrollBar size={0} className="h-[20vh] text-center mb-4">
         {plan.item.description}
         </ScrollShadow>
              
-            <ul className="text-lg flex justify-start items-center gap-4 mb-4">
-        <li>Credits: {plan.notes.credits}</li>
-      </ul>
+            <div className="text-lg text-center font-bold mb-4">
+                Credits: {plan.notes.credits}
+            </div>
              <button onClick={handleSubsription}
-                className="my-5 w-full text-white p-5 max-sm:p-2 rounded-3xl bg-var1 text-xl max-sm:text-lg hover:bg-var1-light transition-all"
+                className="my-2 w-full text-white px-6 py-2 rounded-lg bg-webred text-lg hover:bg-[#f63c3c] transition-all"
               >
                 Subscribe
             </button>

@@ -3,9 +3,10 @@
 import instance from '@/utils/axios';
 import { notifySuccess } from '@/utils/toast';
 import { useRouter } from 'next/navigation';
-import React, { useState,useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import Multiselect from 'multiselect-react-dropdown';
-import {adminRolesOptions,categoriesOptions, mediaTypesOptions} from "@/utils/tempData";
+import { adminRolesOptions, categoriesOptions, mediaTypesOptions } from "@/utils/tempData";
+import Swal from 'sweetalert2';
 interface User
 {
     name: string;
@@ -30,49 +31,52 @@ const UserCreate: React.FC = () =>
         category: [],
     } );
     // const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
-    const [selectedMediaTypes, setSelectedMediaTypes] = useState<string[]>([]);
-    const [error, setError] = useState<string | null>(null);
+    const [ selectedMediaTypes, setSelectedMediaTypes ] = useState<string[]>( [] );
+    const [ error, setError ] = useState<string | null>( null );
 
-    useEffect(() => {
-        setError(null);
-    }, [user]);
-    
-//     const onSelectCategory = (selectedList: string[]) => {
-//     setSelectedCategories(selectedList);
-//     const lowerCaseList = selectedList.map(item => item.toLowerCase());
-//     setUser(prevUser => ({
-//             ...prevUser,
-//             category: lowerCaseList,
-//         }));
+    useEffect( () =>
+    {
+        setError( null );
+    }, [ user ] );
 
-//   };
+    //     const onSelectCategory = (selectedList: string[]) => {
+    //     setSelectedCategories(selectedList);
+    //     const lowerCaseList = selectedList.map(item => item.toLowerCase());
+    //     setUser(prevUser => ({
+    //             ...prevUser,
+    //             category: lowerCaseList,
+    //         }));
 
-//   const onRemoveCategory = (selectedList: string[]) => {
-//     setSelectedCategories(selectedList);
-//     const lowerCaseList = selectedList.map(item => item.toLowerCase());
-//     setUser(prevUser => ({
-//             ...prevUser,
-//             category: lowerCaseList,
-//         }));
-//   };
+    //   };
 
-  const onSelectMediaType = (selectedList: string[]) => {
-    setSelectedMediaTypes(selectedList);
-    const lowerCaseList = selectedList.map(item => item.toLowerCase());
-    setUser(prevUser => ({
+    //   const onRemoveCategory = (selectedList: string[]) => {
+    //     setSelectedCategories(selectedList);
+    //     const lowerCaseList = selectedList.map(item => item.toLowerCase());
+    //     setUser(prevUser => ({
+    //             ...prevUser,
+    //             category: lowerCaseList,
+    //         }));
+    //   };
+
+    const onSelectMediaType = ( selectedList: string[] ) =>
+    {
+        setSelectedMediaTypes( selectedList );
+        const lowerCaseList = selectedList.map( item => item.toLowerCase() );
+        setUser( prevUser => ( {
             ...prevUser,
             mediaType: lowerCaseList,
-        }));
-  };
+        } ) );
+    };
 
-  const onRemoveMediaType = (selectedList: string[]) => {
-    setSelectedMediaTypes(selectedList);
-    const lowerCaseList = selectedList.map(item => item.toLowerCase());
-    setUser(prevUser => ({
+    const onRemoveMediaType = ( selectedList: string[] ) =>
+    {
+        setSelectedMediaTypes( selectedList );
+        const lowerCaseList = selectedList.map( item => item.toLowerCase() );
+        setUser( prevUser => ( {
             ...prevUser,
             mediaType: lowerCaseList,
-        }));
-  };
+        } ) );
+    };
 
     const handleChange = ( e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement> ) =>
     {
@@ -82,7 +86,8 @@ const UserCreate: React.FC = () =>
     const handleSubmit = async ( e: React.FormEvent<HTMLFormElement> ) =>
     {
         e.preventDefault();
-        if( !user.name || !user.email || !user.role || !user.password || !user.username || user.mediaType.length === 0  ){
+        if ( !user.name || !user.email || !user.role || !user.password || !user.username || user.mediaType.length === 0 )
+        {
             setError( "Please fill all the required fields" );
             return;
         }
@@ -99,28 +104,38 @@ const UserCreate: React.FC = () =>
                 category: [],
             } );
             // setSelectedCategories([]);
-            setSelectedMediaTypes([]);
-            notifySuccess( "New user created successfully" );
+            setSelectedMediaTypes( [] );
+            // notifySuccess( "New user created successfully" );
+            Swal.fire( {
+                icon: 'success',
+                title: 'Published',
+                text: 'New user created successfully.',
+            } );
             router.push( "/admin/dashboard" );
-        } catch ( error:any )
+        } catch ( error: any )
         {
             console.log( "error in creating the user :-", error );
             setError( error.response.data.message );
-            
+
         }
     };
 
     return (
-        <div className=" bg-white min-h-screen flex justify-center items-center">
-            <div className="flex-grow p-6">
-                <h2 className="text-3xl text-center font-bold  text-gray-800">Create User</h2>
-                <form onSubmit={ handleSubmit } className="bg-white max-w-lg rounded-lg p-8 w-full mx-auto  mt-12 min-h-full shadow-md ">
-                     <div className='flex justify-start items-center'>
-                            { error && <p className="text-red-500 font-bold">{ error }</p> }
-                        </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div className="col-span-1 md:col-span-2">
+        <div className="container p-4 m-4 bg-pureWhite-light rounded-md">
 
+            <div className="flex justify-between items-center mb-4">
+                <h1 className="text-2xl font-bold">Create User</h1>
+            </div>
+            {/* one horixonal line */ }
+            <hr className="border-t border-gray-300 mb-4" />
+            <div >
+
+                <form onSubmit={ handleSubmit } className="bg-pureWhite-light  rounded-lg p-8 w-full mx-auto ">
+                    <div className='flex justify-start items-center'>
+                        { error && <p className="text-red-500 font-bold">{ error }</p> }
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="">
                             <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">Name  <span className="text-red-500">*</span> </label>
                             <input required
                                 type="text"
@@ -128,7 +143,7 @@ const UserCreate: React.FC = () =>
                                 name="name"
                                 value={ user.name }
                                 onChange={ handleChange }
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#BEF264] transition duration-150 ease-in-out"
+                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none   transition duration-150 ease-in-out bg-pageBg-light"
                             />
                         </div>
                         <div>
@@ -139,7 +154,7 @@ const UserCreate: React.FC = () =>
                                 name="email"
                                 value={ user.email }
                                 onChange={ handleChange }
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#BEF264] transition duration-150 ease-in-out"
+                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none   transition duration-150 ease-in-out bg-pageBg-light"
                             />
                         </div>
                         <div>
@@ -150,7 +165,7 @@ const UserCreate: React.FC = () =>
                                 name="username"
                                 value={ user.username }
                                 onChange={ handleChange }
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#BEF264] transition duration-150 ease-in-out"
+                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none   transition duration-150 ease-in-out bg-pageBg-light"
                             />
                         </div>
                         <div>
@@ -161,7 +176,7 @@ const UserCreate: React.FC = () =>
                                 name="password"
                                 value={ user.password }
                                 onChange={ handleChange }
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#BEF264] transition duration-150 ease-in-out"
+                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none   transition duration-150 ease-in-out bg-pageBg-light"
                             />
                         </div>
                         <div>
@@ -171,7 +186,7 @@ const UserCreate: React.FC = () =>
                                 name="role"
                                 value={ user.role }
                                 onChange={ handleChange }
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#BEF264] transition duration-150 ease-in-out"
+                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none   transition duration-150 ease-in-out bg-pageBg-light"
                             >
                                 <option value="">Select Role</option>
                                 { adminRolesOptions.map( ( adminRole, index ) => (
@@ -181,56 +196,33 @@ const UserCreate: React.FC = () =>
                         </div>
                         <div>
                             <label htmlFor="mediaType" className="block text-sm font-medium text-gray-700 mb-1">Media Type  <span className="text-red-500">*</span></label>
-                             <Multiselect
+                            <Multiselect
                                 avoidHighlightFirstOption
                                 showArrow
                                 id="mediaType"
-                                options={mediaTypesOptions.map((option) => ({ name: option.name, value: option.value }))} 
-                                selectedValues={selectedMediaTypes.map((type) => ({ name: type }))}
-                                onSelect={(selectedList) => onSelectMediaType(selectedList.map((item:any) => item.name))} 
-                                onRemove={(selectedList) => onRemoveMediaType(selectedList.map((item:any) => item.name))} 
+                                options={ mediaTypesOptions.map( ( option ) => ( { name: option.name, value: option.value } ) ) }
+                                selectedValues={ selectedMediaTypes.map( ( type ) => ( { name: type } ) ) }
+                                onSelect={ ( selectedList ) => onSelectMediaType( selectedList.map( ( item: any ) => item.name ) ) }
+                                onRemove={ ( selectedList ) => onRemoveMediaType( selectedList.map( ( item: any ) => item.name ) ) }
                                 showCheckbox
-                                displayValue="name" 
-                                style={{
-                                chips: {
-                                    background: '#BEF264'
-                                },
-                                searchBox: {
-                                    background: 'white',
-                                    border: '1px solid #e5e7eb',
-                                }
-                                }}
+                                displayValue="name"
+                                style={ {
+                                    chips: {
+                                        background: '#EFEBE9'
+                                    },
+                                    searchBox: {
+                                        background: '#EFEBE9',
+                                        border: '1px solid #e5e7eb',
+                                    }
+                                } }
                             />
                         </div>
-                        {/* <div className="col-span-1 md:col-span-2">
-                            <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-1">Category  <span className="text-red-500">*</span></label>
-                             <Multiselect
-                                avoidHighlightFirstOption
-                                showArrow
-                                id="category"
-                                className='upDropdown'
-                                options={categoriesOptions.map((option) => ({ name: option.name, value: option.value }))} 
-                                selectedValues={selectedCategories.map((type) => ({ name: type }))}
-                                onSelect={(selectedList) => onSelectCategory(selectedList.map((item:any) => item.name))} 
-                                onRemove={(selectedList) => onRemoveCategory(selectedList.map((item:any) => item.name))} 
-                                showCheckbox
-                                displayValue="name" 
-                                style={{
-                                chips: {
-                                    background: '#BEF264'
-                                },
-                                searchBox: {
-                                    background: 'white',
-                                    border: '1px solid #e5e7eb',
-                                }
-                                }}
-                            />
-                        </div> */}
+                       
                     </div>
-                    <div className="mt-8">
+                    <div className="mt-8 text-right">
                         <button
                             type="submit"
-                            className="w-full flex items-center justify-center px-4 py-2 text-white bg-[#BEF264] hover:bg-[#cbff70] rounded-md transition duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#BEF264]"
+                            className=" px-4 py-2 text-white bg-webred hover:bg-webred rounded-md transition duration-300 ease-in-out focus:outline-none  focus:ring-offset-2 "
                         >
                             Create User
                         </button>

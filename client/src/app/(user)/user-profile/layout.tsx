@@ -19,11 +19,9 @@ export default function ProfileLayout({
 }>) {
   return (
     <>
-    <div className="flex  gap-4">
-      <div className="w-80  p-4 py-12 border-r"><ProfileSidebar /></div>
-      
-      <div className=" w-full px-5 py-8">{children}</div>
-      
+    <div className="flex gap-4">
+      <div className="w-[25%] px-2 py-12 border-r bg-white"><ProfileSidebar /></div>
+      <div className="w-full px-4 py-8 ">{children}</div>
     </div>
     <Footer/>
     </>

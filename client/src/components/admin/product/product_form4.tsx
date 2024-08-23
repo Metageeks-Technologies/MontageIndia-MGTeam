@@ -2,7 +2,7 @@ import instance from '@/utils/axios';
 import { categoriesOptions } from '@/utils/tempData';
 import { notifySuccess } from '@/utils/toast';
 import { useRouter } from 'next/navigation';
-import React, {  useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { FaRegEdit, FaTrashAlt } from 'react-icons/fa';
 import { IoIosAddCircleOutline } from 'react-icons/io';
 import { MdOutlineSave } from 'react-icons/md';
@@ -12,7 +12,8 @@ import Select, { MultiValue, ActionMeta } from 'react-select';
 import useAdminAuth from '@/components/hooks/useAdminAuth';
 import Swal from 'sweetalert2';
 
-interface Variant {
+interface Variant
+{
   label: string;
   size: string;
   price: number;
@@ -25,7 +26,7 @@ interface FormData
 {
   id: string;
   slug: string;
-  uuid:string;
+  uuid: string;
   title: string;
   description: string;
   tags: string[];
@@ -42,7 +43,7 @@ const Form4 = ( { formData }: any ) =>
   const { user } = useAdminAuth();
   const initialData = formData.product || {};
   const [ data, setFormData ] = useState<FormData>( initialData );
-  const[selected,setSelectedcheck]=useState(false)
+  const [ selected, setSelectedcheck ] = useState( false );
 
   const [ newTag, setNewTag ] = useState<string>( '' ); // State for the new tag input
   const [ editMode, setEditMode ] = useState<{ [ key: string ]: boolean; }>( {
@@ -53,35 +54,36 @@ const Form4 = ( { formData }: any ) =>
     variants: false,
     status: false,
     mediaType: false,
-    category:false
-  });
-  const [editingVariantIndex, setEditingVariantIndex] = useState<number | null>(null);
-  const[loading,setloader]=useState(false)
-  const [selectedCategories, setSelectedCategories] = useState<any[]>([]);
+    category: false
+  } );
+  const [ editingVariantIndex, setEditingVariantIndex ] = useState<number | null>( null );
+  const [ loading, setloader ] = useState( false );
+  const [ selectedCategories, setSelectedCategories ] = useState<any[]>( [] );
   const [ availableCategories, setAvailableCategories ] = useState<any[]>( [] );
-  const BucketName=process.env.NEXT_PUBLIC_AWS_BUCKET;
-  const [isPublishButtonDisabled, setIsPublishButtonDisabled] = useState(false);
-  const AwsRegiosn=process.env.NEXT_PUBLIC_AWS_REIGION;
+  const BucketName = process.env.NEXT_PUBLIC_AWS_BUCKET;
+  const [ isPublishButtonDisabled, setIsPublishButtonDisabled ] = useState( false );
+  const AwsRegiosn = process.env.NEXT_PUBLIC_AWS_REIGION;
   const updatedField = {};
-  const editorChoiceCategory="editor choice"
+  const editorChoiceCategory = "editor choice";
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>| string, field: string) => {
-    if (typeof e === 'string') {
+  const handleChange = ( e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | string, field: string ) =>
+  {
+    if ( typeof e === 'string' )
+    {
       // Handle cases where e is a string, e.g., for rich text editors
-      setFormData({ ...data, [field]: e });
+      setFormData( { ...data, [ field ]: e } );
       // console.log(e, field);
-    } else {
-      console.log(field)
+    } else
+    {
+      console.log( field );
       const { name, value } = e.target;
-      console.log(name,value)
-      setFormData({
+      console.log( name, value );
+      setFormData( {
         ...data,
-        [name]: value
-      });
+        [ name ]: value
+      } );
     }
   };
-
-
 
   const handleTagChange = ( index: number, value: string ) =>
   {
@@ -112,24 +114,25 @@ const Form4 = ( { formData }: any ) =>
     } else
     {
       setEditMode( prev => ( { ...prev, [ field ]: !prev[ field ] } ) );
-    } 
+    }
   };
 
-  const filteredTags = data.tags.filter(tag => tag.trim() !== '');
+  const filteredTags = data.tags.filter( tag => tag.trim() !== '' );
   const isTagsEmpty: boolean = filteredTags.length === 0;
 
   const handleSave = async ( field: string ) =>
   {
-    if (!data.title || !data.description || filteredTags.length === 0) {
-    Swal.fire({
-      icon: 'error',
-      title: 'Invalid input',
-      text: `${field} must be valid and not empty.`,
-    });
-    setEditMode( prev => ({ ...prev,[ field ]:false}));
+    if ( !data.title || !data.description || filteredTags.length === 0 )
+    {
+      Swal.fire( {
+        icon: 'error',
+        title: 'Invalid input',
+        text: `${ field } must be valid and not empty.`,
+      } );
+      setEditMode( prev => ( { ...prev, [ field ]: false } ) );
 
-    return ;
-  }
+      return;
+    }
     try
     {
       let updatedField = {};
@@ -147,31 +150,39 @@ const Form4 = ( { formData }: any ) =>
         case 'tags':
           updatedField = { tags: filteredTags };
           break;
-         default:
+        default:
           throw new Error( 'Unknown field' );
       }
-      console.log(updatedField)
+      console.log( updatedField );
       const response = await instance.patch( `/product/${ initialData.uuid }`, updatedField );
-      if (response.status === 201) {
-        notifySuccess(`${field} updated successfully`);
+      if ( response.status === 201 )
+      {
+        // notifySuccess( `${ field } updated successfully` );
+        Swal.fire( {
+          icon: 'success',
+          title: 'Updated successfully',
+          text: `${ field } updated successfully`
+        } );
 
-      const updatedDataResponse = await instance.get(`/product/${initialData.uuid}`);
-      if (updatedDataResponse.status === 201) {
-        setFormData(updatedDataResponse.data.product);
+        const updatedDataResponse = await instance.get( `/product/${ initialData.uuid }` );
+        if ( updatedDataResponse.status === 201 )
+        {
+          setFormData( updatedDataResponse.data.product );
 
-        setSelectedCategories(response.data.product.category);
-        }   else {
-          throw new Error('Failed to fetch updated data');
+          setSelectedCategories( response.data.product.category );
+        } else
+        {
+          throw new Error( 'Failed to fetch updated data' );
         }
       }
-    } catch ( error:any )
+    } catch ( error: any )
     {
       setloader( false );
       const errorMessage = error.response?.data?.message || 'An error occurred while sending data';
       Swal.fire( {
         icon: 'error',
         title: 'Oops...',
-        text:errorMessage,
+        text: errorMessage,
       } );
       console.error( 'Error saving data:', error );
     }
@@ -182,16 +193,17 @@ const Form4 = ( { formData }: any ) =>
   {
     const variant = data.variants[ index ];
 
-    if (!variant.price || variant.price <= 0 || !variant.credit || variant.credit <= 0 || !variant.label || variant.label.trim() === '') {
-      Swal.fire({
+    if ( !variant.price || variant.price <= 0 || !variant.credit || variant.credit <= 0 || !variant.label || variant.label.trim() === '' )
+    {
+      Swal.fire( {
         icon: 'error',
         title: 'Invalid input',
         text: 'Label, price and Credit must be valid and not empty.',
-      });
-      const allVariantsValid = data.variants.every(variant =>
+      } );
+      const allVariantsValid = data.variants.every( variant =>
         variant.label?.trim() !== '' && variant.price > 0 && variant.credit > 0
       );
-      setIsPublishButtonDisabled(allVariantsValid);
+      setIsPublishButtonDisabled( allVariantsValid );
       return;
     }
     try
@@ -200,31 +212,33 @@ const Form4 = ( { formData }: any ) =>
         uuid: initialData.uuid,
         price: variant.price,
         label: variant.label,
-        credit:variant.credit
+        credit: variant.credit
       };
       const response = await instance.patch( `/product/variant/${ variant._id }`, sendData );
 
-      if(response.status===201){
-      console.log( 'Saving variant data:', response.data );
-      setFormData(response.data.product)
-        console.log("h",data)
+      if ( response.status === 201 )
+      {
+        console.log( 'Saving variant data:', response.data );
+        setFormData( response.data.product );
+        console.log( "h", data );
       }
-        const isAllVariantsValid = data.variants.every(variant => 
-          variant.label && variant.price
-        );
-        setIsPublishButtonDisabled(isAllVariantsValid);
+      const isAllVariantsValid = data.variants.every( variant =>
+        variant.label && variant.price
+      );
+      setIsPublishButtonDisabled( isAllVariantsValid );
 
-    } catch ( error:any )
-    {  const isAllVariantsValid = data.variants.every(variant => 
-      variant.label && variant.price && variant.credit
-    );
-    setIsPublishButtonDisabled(isAllVariantsValid);
+    } catch ( error: any )
+    {
+      const isAllVariantsValid = data.variants.every( variant =>
+        variant.label && variant.price && variant.credit
+      );
+      setIsPublishButtonDisabled( isAllVariantsValid );
       console.error( 'Error saving variant:', error );
       const errorMessage = error.response?.data?.message || 'An error occurred while sending data';
       Swal.fire( {
         icon: 'error',
         title: 'Oops...',
-        text:errorMessage,
+        text: errorMessage,
       } );
     }
     setEditingVariantIndex( null ); // Exit edit mode for the variant
@@ -244,15 +258,16 @@ const Form4 = ( { formData }: any ) =>
     const newTags = data.tags.filter( ( _, i ) => i !== index );
     setFormData( { ...data, tags: newTags } );
   };
-  
+
   const handleSubmit = async ( e: React.FormEvent<HTMLFormElement> ) =>
   {
     e.preventDefault();
-  
-    if (!isPublishButtonDisabled || Object.values(editMode).some(mode => mode) || isTagsEmpty) {
+
+    if ( !isPublishButtonDisabled || Object.values( editMode ).some( mode => mode ) || isTagsEmpty )
+    {
       // Optionally, you can show an error message here if desired
-      console.log(isPublishButtonDisabled, Object.values(editMode).some(mode => mode) ,isTagsEmpty)
-      console.log('Form submission is not allowed due to invalid conditions.');
+      console.log( isPublishButtonDisabled, Object.values( editMode ).some( mode => mode ), isTagsEmpty );
+      console.log( 'Form submission is not allowed due to invalid conditions.' );
       return; // Prevent form submission if conditions are not met
     }
     try
@@ -262,63 +277,84 @@ const Form4 = ( { formData }: any ) =>
       setloader( true );
       if ( response.status === 201 )
       {
-        notifySuccess( "Product published successfully" );
+        // notifySuccess( "Product published successfully" );
+        Swal.fire( {
+          icon: 'success',
+          title: 'Published',
+          text: 'Your product has been published.',
+        } );
         router.push( '/admin/product/available' );
         setloader( false );
       }
-    } catch ( error:any )
+    } catch ( error: any )
     {
       console.error( 'Error submitting form:', error );
       const errorMessage = error.response?.data?.message || 'An error occurred while sending data';
       Swal.fire( {
         icon: 'error',
         title: 'Oops...',
-        text:errorMessage,
+        text: errorMessage,
       } );
     }
   };
-  useEffect(() => {
-    if (data?.category?.includes(editorChoiceCategory)) {
-      setSelectedcheck(true);
-    } else {
-      setSelectedcheck(false);
+  useEffect( () =>
+  {
+    if ( data?.category?.includes( editorChoiceCategory ) )
+    {
+      setSelectedcheck( true );
+    } else
+    {
+      setSelectedcheck( false );
     }
-    setSelectedCategories(data?.category || []);
-  }, [data, editorChoiceCategory]);
-  const handleCheck = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSelectedCategories( data?.category || [] );
+  }, [ data, editorChoiceCategory ] );
+  const handleCheck = async ( event: React.ChangeEvent<HTMLInputElement> ) =>
+  {
     const isChecked = event.target.checked;
-    setSelectedcheck(isChecked);
+    setSelectedcheck( isChecked );
 
-    const categoryExists = selectedCategories.includes(editorChoiceCategory);
+    const categoryExists = selectedCategories.includes( editorChoiceCategory );
 
-    try {
-      let newCategories = [...selectedCategories];
+    try
+    {
+      let newCategories = [ ...selectedCategories ];
 
-      if (isChecked && !categoryExists) {
-        newCategories.push(editorChoiceCategory);
-      } else if (!isChecked && categoryExists) {
+      if ( isChecked && !categoryExists )
+      {
+        newCategories.push( editorChoiceCategory );
+      } else if ( !isChecked && categoryExists )
+      {
         newCategories = newCategories.filter(
-          (category) => category !== editorChoiceCategory
+          ( category ) => category !== editorChoiceCategory
         );
       }
 
       // Update the selected categories state
-      setSelectedCategories(newCategories);
+      setSelectedCategories( newCategories );
 
       // Update the server with new categories
-      const response = await instance.patch(`/product/${data?.uuid}`, {
+      const response = await instance.patch( `/product/${ data?.uuid }`, {
         ...updatedField,
         category: newCategories,
-      });
+      } );
 
-      if (response.status === 201) {
-        setloader(false);
-        notifySuccess("Updated successfully");
+      if ( response.status === 201 )
+      {
+        setloader( false );
+        // notifySuccess( "Updated successfully" );
+        Swal.fire( {
+          icon: 'success',
+          title: 'Updated successfully',
+          showConfirmButton: false,
+          timer: 1500
+        } );
       }
-    } catch (error) {
-      console.error("Error updating category:", error);
-    } finally {
-      setloader(false);
+    } catch ( error )
+    {
+      console.error( "Error updating category:", error );
+    } finally
+    {
+      setloader( false );
     }
   };
   const handleCategoryChange = ( newValue: MultiValue<any>, actionMeta: ActionMeta<any> ) =>
@@ -331,7 +367,7 @@ const Form4 = ( { formData }: any ) =>
     {
       case 'audio':
         return <>
-          <audio  controls>
+          <audio controls>
             <source src={ `https://${ BucketName }.s3.${ AwsRegiosn }.amazonaws.com/${ data.thumbnailKey }` } type="audio/mpeg" />
           </audio>
         </>;
@@ -355,10 +391,10 @@ const Form4 = ( { formData }: any ) =>
     try
     {
       const response = await instance.get( '/field/category' );
-      const formattedCategories = response.data.categories.map((category: any) => ({
+      const formattedCategories = response.data.categories.map( ( category: any ) => ( {
         label: category.name ? category.name : 'Unknown', // Display text
         value: category.name ? category.name : 'Unknown', // Underlying value
-      }));
+      } ) );
       setAvailableCategories( formattedCategories );
     } catch ( error )
     {
@@ -367,14 +403,17 @@ const Form4 = ( { formData }: any ) =>
   };
 
   useEffect( () =>
-  { getCategories()
-    const allVariantsValid = data.variants.every(variant =>
+  {
+    getCategories();
+    const allVariantsValid = data.variants.every( variant =>
       variant.label?.trim() !== '' && variant.price > 0
     );
-    setIsPublishButtonDisabled(allVariantsValid)
-    }, [] );
-    console.log(availableCategories)
-  return ( <>  { loading ? <>
+    setIsPublishButtonDisabled( allVariantsValid );
+  }, [] );
+
+  console.log( availableCategories );
+
+  return ( <>  { loading ?
     <div role="status" className='justify-center h-screen flex items-center m-auto'>
       <svg aria-hidden="true" className="w-8 h-8 text-gray-200 animate-spin dark:text-gray-600 fill-lime-400" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor" />
@@ -382,219 +421,381 @@ const Form4 = ( { formData }: any ) =>
       </svg>
       <span className="sr-only">Loading...</span>
     </div>
-  </> : ( <>
-    <div className="flex flex-col  ">
-      <div className='text-3xl font-semibold w-full flex items-center justify-center'>Review Product</div>
-      <form onSubmit={ handleSubmit } className="mt-2 mx-auto bg-white shadow-lg rounded-lg overflow-hidden">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="col-span-2 p-6">
-            <div className="mb-4 ">
-              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="title">
-                Title
-              </label>
-              <div className='flex flex-row gap-4'>
-                <input
-                  type="text"
-                  name="title"
-                  className={ `text-gray-700 w-full outline-none py-3 p-2 rounded-lg ${ !editMode.title ? 'bg-gray-100' : 'bg-gray-200' }` }
-                  value={ data.title }
-                  disabled={ !editMode.title }
-                  onChange={ ( e ) => handleChange( e, 'title' ) }
-                />
-                <button type="button" className={ `${ !editMode.title ? 'hidden' : 'block' }` } onClick={ () => { handleSave( 'title' ); handleEditToggle( 'title' ); } }><MdOutlineSave size={ 20 } /></button>
-                <button type="button" className={ `${ editMode.title ? 'hidden' : 'block' }` } onClick={ () => handleEditToggle( 'title' ) }><FaRegEdit size={ 25 } /></button>
-              </div>
-            </div>
-            <div className="flex flex-col">
-              <label className="w-52 gap-4 text-gray-700 flex flex-row text-sm font-bold mb-2" htmlFor="description">
-                Description
-                <button type="button" className={ `text-xl ${ !editMode.description ? 'hidden' : 'block' }` } onClick={ () => { handleSave( 'description' ); handleEditToggle( 'description' ); } }><MdOutlineSave size={ 20 } /></button>
-                <button type="button" className={ `${ editMode.description ? 'hidden' : 'block' }` } onClick={ () => handleEditToggle( 'description' ) }>
-                  <FaRegEdit />
-                </button>
-              </label>
-              <textarea
-               name="description"
-               value={ data.description } 
-              readOnly={ !editMode.description }
-              className='outline-none p-4 bg-gray-100 h-72  rounded-lg' 
-              onChange={ (value) => handleChange(value, 'description' ) }/>
-            </div>
-            <div className="mb-4">
-              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="media">
-                Media
-              </label>
-              <div className="border-dashed border-2 justify-center flex items-center m-auto border-gray-300 p-4 rounded-lg">
-                { renderMedia() }
-              </div>
-            </div>
-            <div className='flex flex-col mt-8 '>
-              { data.variants.map( ( variant, index ) => (
-                <React.Fragment key={ variant._id }>
-                  <div className="w-52 gap-4 text-gray-700 flex flex-row text-sm font-bold mb-2">
-                    {variant.size}
-                    { editingVariantIndex === index ? (
-                      <button type="button" onClick={ () => handleSaveVariant( index ) }><MdOutlineSave size={ 20 } /></button>
-                    ) : (
-                      <button type="button" onClick={ () => handleEditToggle( 'variants', index ) }><FaRegEdit size={ 20 } /></button>
-                    ) }
-                  </div>
-                  <div className='flex flex-wrap m-2 gap-8'>
-                    <div className='flex flex-row gap-2'>
-                    <span className='flex flex-row items-center justify-between '>Label :-</span>
-                    <input
-                      type="text"
-                      className={ `text-gray-700 w-fit outline-none py-3 p-2 rounded-lg ${ editingVariantIndex === index ? 'bg-gray-200' : 'bg-gray-100' }` }
-                      value={ variant.label }
-                      onChange={ ( e ) => handleVariantChange( index, 'label', e.target.value ) }
-                      readOnly={ editingVariantIndex !== index }
-                    />
-                    </div>
-                    <div className='flex flex-row gap-2'>
-                    <span className='flex flex-row items-center justify-between '>Price:</span>
-                    <input
-                      type="number"
-                      className={ `text-gray-700 w-fit outline-none py-3 p-2 rounded-lg ${ editingVariantIndex === index ? 'bg-gray-200' : 'bg-gray-100' }` }
-                      value={ variant.price }
-                      onChange={ ( e ) => handleVariantChange( index, 'price', Number( e.target.value ) ) }
-                      readOnly={ editingVariantIndex !== index }
-                    />
-                    </div>
-                    <div className='flex flex-row gap-2'>
-                    <span className='flex flex-row items-center justify-between '>credit:</span>
-                    <input
-                      type="number"
-                      className={ `text-gray-700 w-fit outline-none py-3 p-2 rounded-lg ${ editingVariantIndex === index ? 'bg-gray-200' : 'bg-gray-100' }` }
-                      value={ variant.credit }
-                      onChange={ ( e ) => handleVariantChange( index, 'credit', Number( e.target.value ) ) }
-                      readOnly={ editingVariantIndex !== index }
-                    />
-                    </div>
-                  </div>
-                </React.Fragment> ) ) }
-            </div>
-          </div>
+    : (
+      <div className="p-6 mx-auto">
+        <div className="flex items-center mb-6">
+          <h1 className="text-2xl font-semibold">Review Product</h1>
+        </div>
 
-          <div className="flex flex-col bg-gray-50 p-6">
-            <div className='text-xl flex flex-row gap-7 w-32 font-semibold'>Tags
-              <span className='flex items-center '>
-                { !editMode.tags ? 
-                  
-                <button
-                type="button"
-                className={ `text-xl ` }
-                onClick={ () => handleEditToggle( 'tags' ) }
-              >
-                <FaRegEdit size={ 22 } />
-              </button> :<button type="button" onClick={ () => handleSave( 'tags' ) }><MdOutlineSave size={ 20 } /></button>}
-                
-              </span>
-            </div>
-            
-            <div className='flex py-2 flex-wrap w-full'>
-            {data.tags.map((tag, index) => (
-                  tag.trim() !== '' && ( // Filter out empty tags
-                    <span key={index} className='flex gap-2 w-fit'>
-                      <input
-                        type="text"
-                        value={tag}
-                        required
-                        onChange={(e) => handleTagChange(index, e.target.value)}
-                        disabled={!editMode.tags}
-                        className={`bg-gray-200 m-2 w-32 rounded-md px-3 py-1 text-sm font-semibold text-gray-700 ${!editMode.tags ? 'bg-gray-200' : 'bg-gray-200'}`}
-                      />
-                      {editMode.tags && (
-                        <button
-                          type="button"
-                          onClick={() => handleDeleteTag(index)}
-                        >
-                          <FaTrashAlt />
-                        </button>
-                      )}
-                    </span>
-                  )
-                ))}
-              { editMode.tags && (
-                <div className='flex gap-2 items-center mt-2'>
+        <form onSubmit={ handleSubmit } className="bg-pureWhite shadow-lg rounded-lg overflow-hidden">
+          <div className="p-6 space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <div className="mb-6">
+                  <div className="flex justify-between items-center">
+                    <label className="text-gray-700 text-sm font-bold mb-2" htmlFor="title">
+                      Title
+                    </label>
+                    <div className="flex space-x-2">
+                      <button
+                        type="button"
+                        className={ `${ !editMode.title ? 'hidden' : 'block' }` }
+                        onClick={ () => { handleSave( 'title' ); handleEditToggle( 'title' ); } }
+                      >
+                        <MdOutlineSave size={ 20 } />
+                      </button>
+                      <button
+                        type="button"
+                        className={ `${ editMode.title ? 'hidden' : 'block' }` }
+                        onClick={ () => handleEditToggle( 'title' ) }
+                      >
+                        <FaRegEdit size={ 25 } />
+                      </button>
+                    </div>
+                  </div>
+
                   <input
                     type="text"
-                    value={ newTag }
-                    onChange={ ( e ) => setNewTag( e.target.value ) }
-                    className="  bg-gray-200 w-36 rounded-md px-3 py-1 text-sm font-semibold text-gray-700  "
-                    placeholder="Add new tag"
+                    name="title"
+                    placeholder="Enter Title"
+                    className={ `w-full p-2 border rounded bg-pageBg-light` }
+                    value={ data.title }
+                    disabled={ !editMode.title }
+                    onChange={ ( e ) => handleChange( e, 'title' ) }
                   />
-                  <button
-                    type="button"
-                    onClick={ handleAddTag }
-                  >
-                    <IoIosAddCircleOutline />
-                  </button>
                 </div>
-              ) }
-            </div>
-            <div className='py-8'>
-              <input 
-              type='checkbox'
-              checked={selected}
-              onChange={handleCheck}
-              />
-              <span className='text-base mb-3 font-semibold px-3'>Editor choice</span>
-            </div>
-            <div className="mb-4">
-              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="mediaType">
-                Media Type
-              </label>
-              <input
-                id="mediaType"
-                type="text"
-                value={ data.mediaType }
-                className="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none"
-                readOnly
-              />
-            </div>
-            <div className='mt-4 '>
-              <label className=" gap-5 text-center flex flex-row text-gray-700 text-sm font-bold mb-2" htmlFor="category">
-                Category
-                <button type="button" className={ `${ !editMode.category ? 'hidden' : 'block' }` } onClick={ () => { handleSave( 'category' ); handleEditToggle( 'category' ); } }><MdOutlineSave size={ 20 } /></button>
-                <button type="button" className={ `${ editMode.category ? 'hidden' : 'block' }` } onClick={ () => handleEditToggle( 'category' ) }><FaRegEdit size={ 25 } /></button>
-              </label>
-               
-              { editMode.category ? <>
-                <div>
-               <Select
-                  isMulti
-                  name="categories"
-                  options={availableCategories}
-                  className='basic-multi-select'
-                  classNamePrefix="select"
-                  onChange={handleCategoryChange}
+
+
+                <div className="">
+                  <div className="flex justify-between items-center">
+                    <label className="text-gray-700 text-sm font-bold" htmlFor="description">
+                      Description
+                    </label>
+                    <div className="flex space-x-2">
+                      <button
+                        type="button"
+                        className={ `text-xl ${ !editMode.description ? 'hidden' : 'block' }` }
+                        onClick={ () => { handleSave( 'description' ); handleEditToggle( 'description' ); } }
+                      >
+                        <MdOutlineSave size={ 20 } />
+                      </button>
+                      <button
+                        type="button"
+                        className={ `${ editMode.description ? 'hidden' : 'block' }` }
+                        onClick={ () => handleEditToggle( 'description' ) }
+                      >
+                        <FaRegEdit size={ 20 } />
+                      </button>
+                    </div>
+                  </div>
+
+                  <textarea
+                    name="description"
+                    placeholder="Product description"
+                    value={ data.description }
+                    readOnly={ !editMode.description }
+                    className="w-full p-2 border rounded h-32 bg-pageBg-light"
+                    onChange={ ( e ) => handleChange( e, 'description' ) }
                   />
-               </div>
-              </> : <>
-                <div className='flex flex-wrap'>
-                {data.category
-                  .filter(cat => cat !== "editor choice")
-                  .map((cat, index) => (
-                    <span key={index} className='p-2 rounded-md m-2 font-semibold bg-gray-200 text-gray-600'>
-                      {cat}
-                    </span>
-                  ))}
+                </div>
+
               </div>
-              </> }
+
+              <div className="mb-6">
+                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="media">
+                  Media
+                </label>
+                <div className="border-dashed border-2 border-gray-300 p-4 rounded-lg mb-5">
+                  { renderMedia() }
+                </div>
+                { data.mediaType === 'audio' && data.variants.map( ( variant, index ) => (
+                  <div key={ variant._id } className="bg-pageBg-light p-4 rounded-lg">
+                    <div className="flex justify-between items-center mb-2">
+                      <h3 className="font-bold">{ variant.size }</h3>
+                      { editingVariantIndex === index ? (
+                        <button type="button" onClick={ () => handleSaveVariant( index ) }><MdOutlineSave size={ 20 } /></button>
+                      ) : (
+                        <button type="button" onClick={ () => handleEditToggle( 'variants', index ) }><FaRegEdit size={ 20 } /></button>
+                      ) }
+                    </div>
+
+                    <div className="flex w-full gap-4">
+                      <div >
+                        <label className="block text-sm font-medium text-gray-600 mb-1">Label:</label>
+                        <input
+                          type="text"
+                          className="w-full p-2 border border-gray-300 rounded-md"
+                          placeholder="Enter label"
+                          value={ variant.label }
+                          readOnly={ editingVariantIndex !== index }
+                          onChange={ ( e ) => handleVariantChange( index, 'label', e.target.value ) }
+                        />
+                      </div>
+                      <div className="">
+                        <label className="block text-sm font-medium text-gray-600 mb-1">Price:</label>
+                        <input
+                          type="number"
+                          className="w-full p-2 border border-gray-300 rounded-md"
+                          placeholder="Enter price"
+                          value={ variant.price }
+                          readOnly={ editingVariantIndex !== index }
+                          onChange={ ( e ) => handleVariantChange( index, 'price', parseFloat( e.target.value ) ) }
+                        />
+                      </div>
+                      <div >
+                        <label className="block text-sm font-medium text-gray-600 mb-1">Credit:</label>
+                        <input
+                          type="number"
+                          className="w-full p-2 border border-gray-300 rounded-md"
+                          placeholder="Enter Credit"
+                          value={ variant.credit }
+                          readOnly={ editingVariantIndex !== index }
+                          onChange={ ( e ) => handleVariantChange( index, 'credit', parseFloat( e.target.value ) ) }
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                ) ) }
+              </div>
             </div>
+
+            {/* Media Type & Editor's Choice */ }
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="mb-4">
+                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="mediaType">
+                  Media Type
+                </label>
+                <input
+                  id="mediaType"
+                  type="text"
+                  value={ data.mediaType }
+                  className="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none bg-pageBg-light"
+                  readOnly
+                />
+              </div>
+
+              <div className="flex items-center mb-4">
+                <input
+                  type="checkbox"
+                  checked={ selected }
+                  onChange={ handleCheck }
+                  className="mr-2"
+                />
+                <span className="text-base font-semibold">Editor Choice</span>
+              </div>
+            </div>
+
+            {/* Variants */ }
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+              { data.mediaType !== 'audio' && data.variants.map( ( variant, index ) => (
+                <div key={ variant._id } className="bg-pageBg-light p-4 rounded-lg shadow-sm">
+                  <div className="flex justify-between items-center mb-4">
+                    <h3 className="text-lg font-semibold text-gray-700">{ variant.size }</h3>
+                    { editingVariantIndex === index ? (
+                      <button type="button" onClick={ () => handleSaveVariant( index ) } className="text-gray-600 hover:text-gray-700 transition-colors">
+                        <MdOutlineSave size={ 24 } />
+                      </button>
+                    ) : (
+                      <button type="button" onClick={ () => handleEditToggle( 'variants', index ) } className="text-gray-600 hover:text-gray-700 transition-colors">
+                        <FaRegEdit size={ 24 } />
+                      </button>
+                    ) }
+                  </div>
+                  <div className="grid grid-cols-1 gap-4">
+                    <div className="flex flex-col">
+                      <label className="block text-sm font-medium text-gray-600 mb-1">Label:</label>
+                      <input
+                        type="text"
+                        className="w-full p-2 border border-gray-300 rounded-md"
+                        placeholder="Enter label"
+                        value={ variant.label }
+                        readOnly={ editingVariantIndex !== index }
+                        onChange={ ( e ) => handleVariantChange( index, 'label', e.target.value ) }
+                      />
+                    </div>
+                    <div className="">
+                      <label className="block text-sm font-medium text-gray-600 mb-1">Price:</label>
+                      <input
+                        type="number"
+                        className="w-full p-2 border border-gray-300 rounded-md"
+                        placeholder="Enter price"
+                        value={ variant.price }
+                        readOnly={ editingVariantIndex !== index }
+                        onChange={ ( e ) => handleVariantChange( index, 'price', parseFloat( e.target.value ) ) }
+                      />
+                    </div>
+                    <div >
+                      <label className="block text-sm font-medium text-gray-600 mb-1">Credit:</label>
+                      <input
+                        type="number"
+                        className="w-full p-2 border border-gray-300 rounded-md"
+                        placeholder="Enter Credit"
+                        value={ variant.credit }
+                        readOnly={ editingVariantIndex !== index }
+                        onChange={ ( e ) => handleVariantChange( index, 'credit', parseFloat( e.target.value ) ) }
+                      />
+                    </div>
+                  </div>
+                </div>
+              ) ) }
+            </div>
+
+            {/* Tags and Category */ }
+            <div className="flex flex-col space-y-6 md:flex-row md:space-y-0 md:space-x-6">
+              {/* Tags */ }
+              <div className="flex flex-col bg-pageBg-light p-6 rounded-lg shadow-md w-full">
+                <div className='text-xl flex items-center justify-between font-semibold mb-4'>
+                  <span>Tags</span>
+                  <div>
+                    { !editMode.tags ? (
+                      <button
+                        type="button"
+                        className="text-xl text-gray-600 hover:text-gray-800 transition-colors"
+                        onClick={ () => handleEditToggle( 'tags' ) }
+                      >
+                        <FaRegEdit size={ 22 } />
+                      </button>
+                    ) : (
+                      <button
+                        type="button"
+                        className="text-xl text-green-600 hover:text-green-800 transition-colors"
+                        onClick={ () => handleSave( 'tags' ) }
+                      >
+                        <MdOutlineSave size={ 20 } />
+                      </button>
+                    ) }
+                  </div>
+                </div>
+
+                <div className='flex py-2 flex-wrap gap-2 w-full'>
+                  { data.tags.map( ( tag, index ) => (
+                    tag.trim() !== '' && (
+                      <div key={ index } className='flex items-center gap-2 bg-pureWhite border border-gray-300 rounded-full px-4 py-2 shadow-sm'>
+                        <input
+                          type="text"
+                          value={ tag }
+                          required
+                          onChange={ ( e ) => handleTagChange( index, e.target.value ) }
+                          disabled={ !editMode.tags }
+                          className={ `w-full bg-transparent text-sm font-semibold text-gray-700 focus:outline-none ${ !editMode.tags ? 'cursor-default' : '' }` }
+                        />
+                        { editMode.tags && (
+                          <button
+                            type="button"
+                            className="text-webred hover:bg-webred-light transition-colors"
+                            onClick={ () => handleDeleteTag( index ) }
+                          >
+                            <FaTrashAlt />
+                          </button>
+                        ) }
+                      </div>
+                    )
+                  ) ) }
+                  { editMode.tags && (
+                    <div className='flex gap-2 items-center mt-2'>
+                      <input
+                        type="text"
+                        value={ newTag }
+                        onChange={ ( e ) => setNewTag( e.target.value ) }
+                        className="w-36 rounded-full px-4 py-2 bg-pureWhite border border-gray-300 shadow-sm text-sm font-semibold text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        placeholder="Add new tag"
+                      />
+                      <button
+                        type="button"
+                        className="text-blue-600 hover:text-blue-800 transition-colors"
+                        onClick={ handleAddTag }
+                      >
+                        <IoIosAddCircleOutline size={ 22 } />
+                      </button>
+                    </div>
+                  ) }
+                </div>
+              </div>
+
+              {/* Category */ }
+              <div className='flex flex-col bg-pageBg-light p-6 rounded-lg shadow-md w-full'>
+                <div className="flex items-center justify-between text-xl font-semibold mb-4">
+                  <label htmlFor="category">Category</label>
+                  <div>
+                    { editMode.category ? (
+                      <button
+                        type="button"
+                        className="text-green-600 hover:text-green-800 transition-colors"
+                        onClick={ () => { handleSave( 'category' ); handleEditToggle( 'category' ); } }
+                      >
+                        <MdOutlineSave size={ 20 } />
+                      </button>
+                    ) : (
+                      <button
+                        type="button"
+                        className="text-gray-600 hover:text-gray-800 transition-colors"
+                        onClick={ () => handleEditToggle( 'category' ) }
+                      >
+                        <FaRegEdit size={ 25 } />
+                      </button>
+                    ) }
+                  </div>
+                </div>
+
+                { editMode.category ? (
+                  <Select
+                    isMulti
+                    name="categories"
+                    options={ availableCategories }
+                    className='basic-multi-select'
+                    classNamePrefix="select"
+                    onChange={ handleCategoryChange }
+                  />
+                ) : (
+                  <div className='flex flex-wrap gap-3'>
+                    { data.category
+                      .filter( cat => cat !== "editor choice" )
+                      .map( ( cat, index ) => (
+                        <span
+                          key={ index }
+                          className='p-2 rounded-full font-semibold bg-blue-100 text-blue-700 shadow-md'
+                        >
+                          { cat }
+                        </span>
+                      ) ) }
+                  </div>
+                ) }
+              </div>
+            </div>
+
           </div>
-        </div>
-        <div className="flex my-8 flex-row justify-center gap-4">
-          <button
-            type="submit"
-            disabled={!(isTagsEmpty === false && isPublishButtonDisabled === true && !Object.values(editMode).some(mode => mode))}
-            className={`px-20 text-white p-2 rounded ${!(isTagsEmpty === false && isPublishButtonDisabled === true && !Object.values(editMode).some(mode => mode)) ? "cursor-not-allowed bg-lime-300" : "bg-lime-500 cursor-pointer"}`}
-          >
-            Publish
-          </button>
-        </div>
-      </form>
-    </div></> ) }
+
+          {/* Save Buttons */ }
+          <div className="bg-gray-50 px-6 py-4 flex justify-end space-x-4">
+            <button type="button" className="px-4 py-2 bg-gray-200 rounded">
+              Save as Draft
+            </button>
+            <button
+              type="submit"
+              disabled={
+                !(
+                  isTagsEmpty === false &&
+                  isPublishButtonDisabled === true &&
+                  !Object.values( editMode ).some( ( mode ) => mode )
+                )
+              }
+              className={ `px-4 py-2 text-white rounded ${ !(
+                isTagsEmpty === false &&
+                isPublishButtonDisabled === true &&
+                !Object.values( editMode ).some( ( mode ) => mode )
+              )
+                ? 'bg-webred cursor-not-allowed'
+                : 'bg-webred cursor-pointer'
+                }` }
+            >
+              Publish
+            </button>
+          </div>
+        </form>
+      </div>
+
+    ) }
   </> );
 };
 

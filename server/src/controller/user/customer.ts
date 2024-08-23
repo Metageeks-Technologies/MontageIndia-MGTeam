@@ -162,16 +162,32 @@ export const getAllCustomer = catchAsyncError(async (req, res, next) => {
 
 export const updateCustomerDetails = catchAsyncError(
   async (req: any, res, next) => {
-    const { name, email } = req.body;
+    const { name,currentPassword,newPassword } = req.body;
+
+    console.log(name, currentPassword, newPassword);
     const { id } = req.user;
-    const customerToUpdate = await Customer.findById(id);
+    const customerToUpdate = await Customer.findById(id).select('+password');;
 
     if (!customerToUpdate) {
       return next(new ErrorHandler("Customer not found", 404));
     }
+
     const updates: Partial<typeof customerToUpdate> = {};
-    if (name) updates.name = name;
-    if (email) updates.email = email;
+    if (name) updates.name = name ;
+
+    if (currentPassword && newPassword) {
+      const verifyPassword = await customerToUpdate.comparePassword(
+        currentPassword as string
+      );
+      console.log("verify",verifyPassword);
+      if (!verifyPassword) {
+        return next(
+          new ErrorHandler("Current password is incorrect", 400)
+        );
+      }
+      updates.password = newPassword as string; 
+    }
+    console.log(updates);
 
     const updatedCustomer = await Customer.findByIdAndUpdate(id, updates, {
       new: true,

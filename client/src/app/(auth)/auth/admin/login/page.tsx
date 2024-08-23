@@ -8,6 +8,7 @@ import { FaEye, FaEyeSlash } from "react-icons/fa";
 import Cookies from 'js-cookie';
 import { notifySuccess } from "@/utils/toast";
 import instance from "@/utils/axios";
+import Swal from "sweetalert2";
 
 const AdminLoginPage = () =>
 {
@@ -45,10 +46,16 @@ const AdminLoginPage = () =>
         }
       );
 
-      console.log( "Login successful:", response.data.token );
+      console.log( "Login successful:", response.data.token ); 
 
-
-      notifySuccess( "Login Successful" );
+      // notifySuccess( "Login Successful" );
+      
+      Swal.fire( {
+        icon: 'success',
+        title: 'Login Successful',
+        text: 'You have been logged in successfully.',
+        
+      } );
       router.push( "/admin/dashboard" );
       setUsernameOrEmail( "" );
       setPassword( "" );

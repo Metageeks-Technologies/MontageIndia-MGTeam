@@ -4,8 +4,10 @@ import instance from "@/utils/axios";
 import { notifyError, notifySuccess } from "@/utils/toast";
 import { useRouter } from "next/navigation";
 import { RxCross2 } from "react-icons/rx";
+import { BiEdit } from "react-icons/bi";
 import { useAppDispatch, useAppSelector } from "@/app/redux/hooks";
 import { getCurrCustomer } from "@/app/redux/feature/user/api";
+import Swal from "sweetalert2";
 
 interface Subscription {
   PlanId: string;
@@ -14,7 +16,6 @@ interface Subscription {
   status: string;
   subscriptionId: string;
 }
-
 
 interface User {
   id: string;
@@ -47,7 +48,12 @@ const Home: FC = () => {
       }
     } catch (error) {
       console.error("Error fetching user:", error);
-      notifyError("Failed to fetch user data");
+      // notifyError("Failed to fetch user data");
+      Swal.fire( {
+        icon: 'error',
+        title: 'Oops...',
+        text: 'Failed to fetch user data',
+      } );
     }
   };
 
@@ -61,11 +67,23 @@ const Home: FC = () => {
       if (response.data && response.data.success) {
         fetchUser();
         setIsPopupOpen(false);
-        notifySuccess("User data updated successfully");
+        // notifySuccess("User data updated successfully");
+        Swal.fire( {
+          icon: 'success',
+          title: 'User data updated successfully',
+          showConfirmButton: false,
+          timer: 1500
+        } );
       }
     } catch (error) {
       console.error("Error updating user:", error);
-      notifyError("Failed to update user data");
+      // notifyError("Failed to update user data");
+      Swal.fire( {
+        icon: 'error',
+        title: 'Oops...',
+        text: 'Failed to update user data',
+        
+      } );
     }
   };
 
@@ -86,7 +104,8 @@ const Home: FC = () => {
 
   return (
     <>
-      <div>
+    <div className="w-full px-6 py-4 min-h-full flex flex-col rounded-lg overflow-hidden bg-white">
+      <div className="mb-8">
       {isPopupOpen && (
         <div className="fixed inset-0 bg-gray-900 bg-opacity-85 flex justify-center items-center">
           <div className="bg-white p-8 rounded-2xl shadow-lg w-[25rem] relative">
@@ -123,105 +142,119 @@ const Home: FC = () => {
       )}
 
       {/* Sidebar */}
-
-      
-        <h2 className="text-4xl font-bold">Profile</h2>
-        <p className="py-6">User details</p>
-        <div className="border border-gray-200 pt-4">
+        <h2 className="text-xl font-bold mb-2">Profile</h2>
+        <hr className="mb-4" />
           {user && (
-            <>
-              <div className="flex justify-between items-center mx-6 py-2 border-b">
-                <div className="text-gray-700">Name</div>
-                <div className="text-gray-700">{user.name}</div>
+            <div className="w-full min-h-fit flex md:flex-row flex-col-reverse gap-4 justify-between items-center">
+            <div className="md:w-3/4 border border-gray-200 rounded-lg overflow-hidden">
+              <div className="flex justify-between items-center bg-[#F1F1F1] border-gray-300 px-4 py-3 border-b">
+                <div className="w-1/3 text-black">Name</div>
+                <div className="w-1/3 text-black">{user.name}</div>
+                {/* <div className="w-1/3 flex justify-end items-center">
                 <button
                   onClick={() => {
                     setCurrentField("Name");
                     setUpdatedName(user.name);
                     setIsPopupOpen(true);
                   }}
-                  className="text-blue-600"
+                  className="bg-white px-2 py-1 rounded-lg border-1 border-gray-400 flex justify-end items-center gap-2"
                 >
-                  Edit
+                  <span className="text-black">Edit</span><span className="text-webred"><BiEdit /></span>
                 </button>
+                </div> */}
               </div>
-              <div className="flex justify-between items-center mx-6 py-3 border-b">
-                <div className="text-gray-700">User ID</div>
-                <div className="text-gray-700">{user._id}</div>
-                <button />
+              <div className="flex justify-between items-center px-4 py-3 border-b">
+                <div className="text-black w-1/3">User ID</div>
+                <div className="text-black w-1/3">{user._id}</div>
+                {/* <div className="w-1/3"></div> */}
               </div>
-              <div className="flex justify-between items-center mx-6 py-3 border-b">
-                <div className="text-gray-700">User Name</div>
-                <div className="text-gray-700">{user.username}</div>
-                <button />
+              <div className="flex justify-between items-center bg-[#F1F1F1] border-gray-300 px-4 py-3 border-b">
+                <div className="text-black w-1/3 ">User Name</div>
+                <div className="text-black w-1/3">{user.username}</div>
+                {/* <div className="w-1/3"></div> */}
               </div>
-              <div className="flex justify-between items-center mx-6 py-3 border-b">
-                <div className="text-gray-700">Password</div>
-                <div className="text-gray-700">********</div>
+              <div className="flex justify-between items-center px-4 py-3 border-b">
+                <div className="text-black w-1/3">Password</div>
+                <div className="text-black w-1/3">********</div>
+                {/* <div className="w-1/3 flex justify-end items-center">
                 <button
-                  onClick={() => router.push(`/user-profile/${user._id}`)}
-                  className="text-blue-600"
+                  onClick={() => router.push(`/user-profile/change-password`)}
+                  className=" bg-white px-2 py-1 rounded-lg border-1 border-gray-400 flex justify-end items-center gap-2"
                 >
-                  Edit
+                 <span className="text-black">Edit</span><span className="text-webred"><BiEdit /></span>
                 </button>
+                </div> */}
               </div>
-              <div className="flex justify-between items-center mx-6 py-3 border-b">
-                <div className="text-gray-700">E-mail</div>
-                <div className="text-gray-700">{user.email}</div>
+              <div className="flex justify-between items-center bg-[#F1F1F1] border-gray-300 px-4  py-3 border-b">
+                <div className="text-black w-1/3">E-mail</div>
+                <div className="text-black w-1/3">{user.email}</div>
+                {/* <div className="w-1/3 flex justify-end items-center">
                 <button
                   onClick={() => {
                     setCurrentField("Email");
                     setUpdatedEmail(user.email);
                     setIsPopupOpen(true);
                   }}
-                  className="text-blue-600"
+                  className=" bg-white px-2 py-1 rounded-lg border-1 border-gray-400 flex justify-end items-center gap-2"
                 >
-                  Edit
+                <span className="text-black">Edit</span><span className="text-webred"><BiEdit /></span>
                 </button>
+                </div> */}
               </div>
-            </>
+            </div>
+            <div className="md:w-1/4 bg-[#f4f4f4] border-gray-300 min-h-fit flex p-16 rounded-lg justify-center items-center">
+              <svg className="w-full" xmlns="http://www.w3.org/2000/svg" width="138" height="138" viewBox="0 0 138 138" fill="none">
+<path d="M68.5917 0C50.3275 0.108075 32.8511 7.45331 19.9936 20.4256C7.13603 33.3979 -0.053735 50.9389 0.000302414 69.2035C0.0543398 87.4682 7.34777 104.966 20.2819 117.862C33.216 130.758 50.7354 138 69 138C87.2646 138 104.784 130.758 117.718 117.862C130.652 104.966 137.946 87.4682 138 69.2035C138.054 50.9389 130.864 33.3979 118.006 20.4256C105.149 7.45331 87.6725 0.108075 69.4083 0H68.5917ZM68.5917 35.1127C76.7852 35.2206 84.6034 38.565 90.3401 44.4161C96.0768 50.2672 99.2663 58.15 99.2123 66.3441C99.1584 74.5381 95.8656 82.3783 90.0524 88.1534C84.2392 93.9285 76.3776 97.1698 68.1834 97.1698C59.9892 97.1698 52.1277 93.9285 46.3145 88.1534C40.5013 82.3783 37.2084 74.5381 37.1545 66.3441C37.1006 58.15 40.29 50.2672 46.0267 44.4161C51.7634 38.565 59.5817 35.2206 67.7751 35.1127H68.5917ZM22.8639 116.974C30.213 107.448 39.3314 102.684 50.2189 102.684H87.7811C98.6686 102.684 107.787 107.448 115.136 116.974C102.69 128.807 86.1732 135.406 69 135.406C51.8268 135.406 35.31 128.807 22.8639 116.974Z" fill="#e9e6e6"/>
+</svg>
+            </div>
+            </div>
+        
           )}
         </div>
-        </div>
 
-        <div className="mt-8">
+        <div className="mb-8">
         <div className="flex justify-between items-center">
-        <div className="text-2xl font-bold">Subscription plan</div>
-        <div onClick={() => router.push(`/subscription`)} className="text-md cursor-pointer px-4 py-2 bg-var1 text-white rounded-3xl hover:bg-var1-light">Buy More credits</div>
+        <div className="text-xl font-bold">Subscription plan</div>
+        <div onClick={() => router.push(`/subscription`)} className="text-md cursor-pointer px-8 py-2 bg-webred text-white rounded-lg hover:bg-[#f46379ec]">Buy More credits</div>
         </div>
         
-        <div className="border border-gray-200 mt-2">
+        <div className="border rounded-lg border-gray-200 mt-2">
         {user && (
           <>
             {/* User Details */}
-            <div className="flex justify-between items-center mx-6 py-3 border-b">
-              <div className="text-gray-700">Credits</div>
-              <div className="text-gray-700">{user.subscription.credits}</div>
+            <div className="flex justify-between items-center px-4 py-4 border-b">
+              <div className="text-black">Plan Name</div>
+              <div className="text-black font-semibold">Basic Plan</div>
             </div>
-            <div className="flex justify-between items-center mx-6 py-3 border-b">
-              <div className="text-gray-700">Plan Validity</div>
-              <div className="text-gray-700">  {new Date(user.subscription.planValidity).toLocaleDateString()}</div>
+            <div className="flex justify-between items-center px-4 py-4 border-b">
+              <div className="text-black">Credits</div>
+              <div className="text-black font-semibold">{user.subscription.credits}</div>
             </div>
-            <div className="flex justify-between items-center mx-6 py-3 border-b">
-              <div className="text-gray-700">Status</div>
-              <div className="text-gray-700">{user.subscription.status}</div>
+            <div className="flex justify-between items-center px-4 py-4 border-b">
+              <div className="text-black">Plan Validity</div>
+              <div className="text-black font-semibold">  {new Date(user.subscription.planValidity).toLocaleDateString()}</div>
+            </div>
+            <div className="flex justify-between items-center px-4 py-4 border-b">
+              <div className="text-black">Status</div>
+              <div className="text-green ont-semibold ">{user.subscription.status}</div>
             </div>
           </>
         )}
       </div>
       </div>
-
-
         <div className="mt-10 pb-2">
-          <h1 className="text-lg font-bold">Delete my Account</h1>
-          <div className="border w-full mt-2 p-6 flex flex-col gap-2">
-            <p className="text-sm text-gray-700">
+          <h1 className="text-lg font-bold mb-1">Delete my Account</h1>
+          <div className="w-full flex flex-col">
+            <p className="text-sm text-black">
               This will remove all of your personal data forever.
             </p>
-            <p className="text-blue-600 hover:underline cursor-pointer">
+            <p className="text-webred text-sm font-bold underline cursor-pointer">
               Delete my Account
             </p>
           </div>
         </div>
+    </div>
+      
         
         </>
   

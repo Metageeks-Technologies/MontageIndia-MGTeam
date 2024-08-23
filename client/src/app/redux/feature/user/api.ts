@@ -41,12 +41,17 @@ export const getCartData = async (
 
 export const addCartItem = async (dispatch: AppDispatch, productId: string) => {
   dispatch(requestStart());
-  console.log("first", productId);
+
   try {
     const response = await instance.post(`/product/addToCart`, { productId });
     console.log("response after adding product to cart", response);
     if (response.status === 200) {
-      notifySuccess(`${response.data.message}`);
+      // notifySuccess(`${response.data.message}`);
+      Swal.fire({
+        title: "Product Added to Cart",
+        text: "You can now view your cart",
+        icon: "success",
+      });
       getCurrCustomer(dispatch);
       dispatch(setProductCart(response.data.cart));
     }
@@ -76,7 +81,12 @@ export const removeCartItem = async (
     });
 
     if (response.status === 200) {
-      notifySuccess(`${response.data.message}`);
+      // notifySuccess(`${response.data.message}`);
+      Swal.fire({
+        title: "Product Removed from Cart",
+        text: "You can now view your cart",
+        icon: "success",
+      });
       dispatch(removeCart(productId));
       getCurrCustomer(dispatch);
     }

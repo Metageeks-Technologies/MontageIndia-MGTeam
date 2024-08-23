@@ -18,14 +18,14 @@ const config: Config = {
       },
       colors: {
         webgreen: {
-          light: "#BEF264",
-          DEFAULT: "#BEF264",
-          dark: "#BEF264",
+          light: "#FE423F",
+          DEFAULT: "#FE423F",
+          dark: "#FE423F",
         },
         webgreenHover: {
-          light: "#a8f521",
-          DEFAULT: "#a8f521",
-          dark: "#a8f521",
+          light: "#FE423F",
+          DEFAULT: "#FE423F",
+          dark: "#FE423F",
         },
         var1: {
           light: "#f31260d6",
@@ -37,11 +37,26 @@ const config: Config = {
           DEFAULT: "#BEF264",
           dark: "#BEF264",
         },
+        webred: {
+          light: "#FFE6E5",
+          DEFAULT: "#FE423F",
+          dark: "#FE423F",
+        },
         pageBg: {
-          light: "#f5f5f5",
+          light: "#EFEBE9",
           DEFAULT: "#f5f5f5",
           dark: "#f5f5f5",
         },
+        pureWhite: {
+          light: "#FFFFFF", 
+        },
+        eyeGreen: {
+          light: "#43D477",
+          DEFAULT: "#43D477",
+        }
+      },
+      boxShadow: {
+        'custom': '0px 4px 4px 0px rgba(0, 0, 0, 0.25)',
       },
     },
   },

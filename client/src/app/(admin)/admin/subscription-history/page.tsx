@@ -1,9 +1,10 @@
 "use client";
 import instance from "@/utils/axios";
-import { Pagination, Button } from "@nextui-org/react";
+import { Pagination, Button, Spinner } from "@nextui-org/react";
 import React, { useEffect, useState } from "react";
 
-interface Subscription {
+interface Subscription
+{
   _id: string;
   userId: {
     _id: string;
@@ -17,171 +18,206 @@ interface Subscription {
   status: string;
 }
 
-const Page = () => {
-  const [subscription, setSubscription] = useState<Subscription[]>([]);
-  const [currentPage, setCurrentPage] = useState<number>(1);
-  const [dataPerPage, setDataPerPage] = useState<number>(6);
-  const [searchTerm, setSearchTerm] = useState<string>("");
-  const [totalPages, setTotalPages] = useState<number>(1);
+const Page = () =>
+{
+  const [ subscription, setSubscription ] = useState<Subscription[]>( [] );
+  const [ currentPage, setCurrentPage ] = useState<number>( 1 );
+  const [ dataPerPage, setDataPerPage ] = useState<number>( 6 );
+  const [ searchTerm, setSearchTerm ] = useState<string>( "" );
+  const [ totalPages, setTotalPages ] = useState<number>( 1 );
 
-  const fetchSubscription = async () => {
-    try {
-      const response = await instance.get(`/subscription/history`, {
+  const fetchSubscription = async () =>
+  {
+    try
+    {
+      const response = await instance.get( `/subscription/history`, {
         params: {
           searchTerm,
           currentPage,
           dataPerPage,
         },
-      });
-      setSubscription(response.data.subscriptionHistory);
-      setTotalPages(response.data.totalPages);
-      console.log("subscription", response);
-    } catch (error) {
-      console.error("Error fetching subscriptions:", error);
+      } );
+      setSubscription( response.data.subscriptionHistory );
+      setTotalPages( response.data.totalPages );
+      console.log( "subscription", response );
+    } catch ( error )
+    {
+      console.error( "Error fetching subscriptions:", error );
     }
   };
 
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(e.target.value);
-    setCurrentPage(1);
+  const handleSearch = ( e: React.ChangeEvent<HTMLInputElement> ) =>
+  {
+    setSearchTerm( e.target.value );
+    setCurrentPage( 1 );
   };
 
-  const handlePageChange = (newPage: number) => {
-    setCurrentPage(newPage);
+  const handlePageChange = ( newPage: number ) =>
+  {
+    setCurrentPage( newPage );
   };
 
-  const handleDataPerPageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setDataPerPage(Number(e.target.value));
-    setCurrentPage(1);
+  const handleDataPerPageChange = ( e: React.ChangeEvent<HTMLSelectElement> ) =>
+  {
+    setDataPerPage( Number( e.target.value ) );
+    setCurrentPage( 1 );
   };
 
-  useEffect(() => {
+  useEffect( () =>
+  {
     fetchSubscription();
-  }, [currentPage, dataPerPage, searchTerm]);
+  }, [ currentPage, dataPerPage, searchTerm ] );
 
   return (
-    <div className="container">
-      <h1 className="text-2xl font-bold mb-6 text-gray-800">
-        Subscription History
-      </h1>
-      <div className="flex justify-between items-center gap-4 flex-wrap my-6">
-        <input
-          type="text"
-          placeholder="Search"
-          className="border rounded px-4 py-2 w-full max-w-sm"
-          value={searchTerm}
-          onChange={handleSearch}
-        />
-        <div className="flex items-center flex-wrap gap-4">
+    <div className="container p-4 m-4 bg-pureWhite-light rounded-md">
+      <div className="flex justify-between items-center mb-4">
+        <h1 className="text-2xl font-bold">Subscription History</h1>
+      </div>
+
+      {/* one horixonal line */ }
+      <hr className="border-t border-gray-300 mb-4" />
+
+
+      <div className="flex items-center justify-between space-x-2 mb-4">
+        <div>
+
+          <input
+            type="text"
+            placeholder="Search "
+            value={ searchTerm }
+            onChange={ handleSearch }
+            className="border rounded px-4 py-2 flex-grow"
+          />
+
+        </div>
+
+
+
+        <div className="mb-4">
+
+          <select className="border rounded px-4 py-2" onChange={ handleDataPerPageChange } value={ dataPerPage }>
+            <option value={ 6 }>6 Data per page</option>
+            <option value={ 12 }>12 Data per page</option>
+            <option value={ 24 }>24 Data per page</option>
+          </select>
+        </div>
+
+      </div>
+
+      <div className="bg-white shadow-md rounded-lg relative overflow-x-auto ">
+        <table className=" w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+          <thead>
+            <tr>
+              <th className="px-5 py-3 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                Name
+              </th>
+
+              <th className="px-5 py-3 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                Email
+              </th>
+              <th className="px-5 py-3 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                Plan ID
+              </th>
+              <th className="px-5 py-3 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                Start Date
+              </th>
+              <th className="px-5 py-3 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                End Date
+              </th>
+
+              <th className="px-5 py-3 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                Status
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            { false ? (
+              <tr>
+                <td colSpan={ 7 } className="text-center py-4">
+                  <Spinner label="Loading..." color="success" />
+                </td>
+              </tr>
+            ) : (
+              subscription && subscription.length > 0 ? (
+                subscription.map( ( item, index ) => (
+                  <tr key={ index } className="hover:bg-gray-50">
+
+                    <td className="px-4 py-4 border-b border-gray-200 bg-white">
+                      <div className="text-sm font-medium text-gray-900">
+                        { item.userId.name }
+                      </div>
+                    </td>
+                    <td className="px-4 py-4 border-b border-gray-200 bg-white">
+                      <div className="text-sm text-gray-900">{ item.userId.email }</div>
+                    </td>
+                    <td className="px-4 py-4 border-b border-gray-200 bg-white">
+                      <div className="text-sm text-gray-900">{ item.planId }</div>
+                    </td>
+                    <td className="px-4 py-4 border-b border-gray-200 bg-white">
+                      <div className="text-sm text-gray-900">{ new Date( item.startDate ).toLocaleDateString() } </div>
+                    </td>                    <td className="px-4 py-4 border-b border-gray-200 bg-white">
+                      <div className="text-sm text-gray-900">{ item.endDate
+                        ? new Date( item.endDate ).toLocaleDateString()
+                        : "N/A" }</div>
+                    </td>
+
+                    <td className="px-4 py-4 border-b border-gray-200 bg-white">
+                      <span className={ `inline-flex items-center px-3  py-2.5 rounded-lg text-s font-bold ${ item.status === 'active'
+                          ? 'bg-green-600 text-white'
+                          : 'bg-red-100 text-red-800'
+                        }` }>
+                        { item.status == "active" ? "Active" : "Inactive" }
+                      </span>
+                    </td>
+
+                  </tr>
+                ) )
+              ) : (
+                <tr>
+                  <td colSpan={ 8 } className="text-center py-4">
+                    <p className="text-gray-500">No Subscription History Found</p>
+                  </td>
+                </tr>
+              )
+            ) }
+          </tbody>
+        </table>
+      </div>
+
+      { totalPages > 0 && (
+        <div className="flex justify-between items-center mt-4">
           <div>
-            <select
-              className="border rounded px-4 py-2"
-              onChange={handleDataPerPageChange}
-              value={dataPerPage}
+            <p>Showing { ( dataPerPage * ( currentPage - 1 ) ) + 1 } to { dataPerPage * ( currentPage ) } of { totalPages * dataPerPage } Entries</p>
+
+          </div>
+          <div className="flex items-center space-x-2">
+            <button
+              className="px-3 py-1 border rounded"
+              onClick={ () => handlePageChange( currentPage - 1 ) }
+              disabled={ currentPage === 1 }
             >
-              <option value={6}>6 Data per page</option>
-              <option value={12}>12 Data per page</option>
-              <option value={24}>24 Data per page</option>
-            </select>
+              &lt;
+            </button>
+            { [ ...Array( totalPages ) ].map( ( _, index ) => (
+              <button
+                key={ index }
+                className={ `px-3 py-1 border rounded ${ currentPage === index + 1 ? 'bg-red-500 text-white' : 'bg-white'
+                  }` }
+                onClick={ () => handlePageChange( index + 1 ) }
+              >
+                { index + 1 }
+              </button>
+            ) ) }
+            <button
+              className="px-3 py-1 border rounded"
+              onClick={ () => handlePageChange( currentPage + 1 ) }
+              disabled={ currentPage === totalPages }
+            >
+              &gt;
+            </button>
           </div>
         </div>
-      </div>
-      <div className="bg-white shadow-md rounded-lg">
-        <div className="overflow-x-auto lg:overflow-visible">
-          <table className="min-w-full text-sm text-left text-gray-900">
-            <thead className="text-xs text-gray-700 uppercase bg-gray-200">
-              <tr>
-                <th scope="col" className="px-6 py-3">
-                  {" "}
-                  Name
-                </th>
-                <th scope="col" className="px-6 py-3">
-                  {" "}
-                  Email
-                </th>
-                {/* <th scope="col" className="px-6 py-3">
-                  User Name
-                </th> */}
-                <th scope="col" className="px-6 py-3">
-                  Plan ID
-                </th>
-                <th scope="col" className="px-6 py-3">
-                  Start Date
-                </th>
-                <th scope="col" className="px-6 py-3">
-                  End Date
-                </th>
-                <th scope="col" className="px-6 py-3">
-                  Status
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {subscription.map((sub, index) => (
-                <tr key={index} className="bg-white border-b hover:bg-gray-50">
-                  <td className="px-6 py-4">{sub.userId.name}</td>
-                  <td className="px-6 py-4">{sub.userId.email}</td>
-
-                  <td className="px-6 py-4">{sub.planId}</td>
-                  <td className="px-6 py-4">
-                    {new Date(sub.startDate).toLocaleDateString()}
-                  </td>
-                  <td className="px-6 py-4">
-                    {sub.endDate
-                      ? new Date(sub.endDate).toLocaleDateString()
-                      : "N/A"}
-                  </td>
-                  <td className="px-6 py-4">{sub.status}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
-      {totalPages > 1 && (
-        <div className="flex justify-center items-center gap-4 my-4">
-          <Button
-            size="sm"
-            disabled={currentPage === 1}
-            variant="flat"
-            className={`${
-              currentPage === 1 ? "opacity-70" : "hover:bg-webgreenHover"
-            } bg-webgreen-light text-white rounded-md font-bold`}
-            onPress={() =>
-              setCurrentPage((prev) => (prev > 1 ? prev - 1 : prev))
-            }
-          >
-            Prev
-          </Button>
-          <Pagination
-            color="success"
-            classNames={{
-              item: "w-8 h-8 text-small bg-gray-100 hover:bg-gray-300 rounded-md",
-              cursor:
-                "bg-webgreen hover:bg-webgreen text-white rounded-md font-bold",
-            }}
-            total={totalPages}
-            page={currentPage}
-            onChange={handlePageChange}
-            initialPage={1}
-          />
-          <Button
-            size="sm"
-            disabled={currentPage === totalPages}
-            variant="flat"
-            className={`${
-              currentPage === totalPages
-                ? "opacity-70"
-                : "hover:bg-webgreenHover"
-            } bg-webgreen-light text-white rounded-md font-bold`}
-            onPress={() =>
-              setCurrentPage((prev) => (prev < totalPages ? prev + 1 : prev))
-            }
-          >
-            Next
-          </Button>
-        </div>
-      )}
+      ) }
     </div>
   );
 };

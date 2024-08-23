@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import instance from '@/utils/axios';
 import { notifyError, notifySuccess } from '@/utils/toast';
+import Swal from 'sweetalert2';
 
 const ChangePassword = ( { params }: { params: { id: string; }; } ) =>
 {
@@ -67,7 +68,14 @@ const ChangePassword = ( { params }: { params: { id: string; }; } ) =>
             );
             console.log( "Password change success:", response );
             setSuccess( 'Password changed successfully. You will be redirected to the profile page soon.' );
-            notifySuccess( "PassWord changed successfully " );
+            // notifySuccess( "PassWord changed successfully " );
+            Swal.fire( {
+                icon: 'success',
+                title: 'Password changed successfully',
+                text: 'You will be redirected to the profile page soon.',
+                timer: 2000,
+                showConfirmButton: false
+            } );
             setTimeout( () =>
             {
                 router.push( '/admin/profile' );
