@@ -5,6 +5,7 @@ const inter = Inter( { subsets: [ "latin" ] } );
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import AuthWrapper from "../../components/auth/admin/AuthWrapper";
+import Navbar from "@/components/admin/Navbar";
 
 export const metadata: Metadata = {
   title: "Montage India",
@@ -21,6 +22,7 @@ export default function RootLayout ( {
     <html lang="en">
       <body className={ inter.className }>
         <ToastContainer />
+        <Navbar/>
         <AuthWrapper>
           { children }
         </AuthWrapper>

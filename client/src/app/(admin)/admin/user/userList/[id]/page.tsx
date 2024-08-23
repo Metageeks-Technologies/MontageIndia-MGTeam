@@ -6,6 +6,7 @@ import { notifyError, notifySuccess } from '@/utils/toast';
 import { adminRolesOptions, categoriesOptions, mediaTypesOptions } from '@/utils/tempData';
 import Multiselect from 'multiselect-react-dropdown';
 import { Spinner } from '@nextui-org/react';
+import Swal from 'sweetalert2';
 
 interface User
 {
@@ -132,12 +133,26 @@ export default function UserDetails ( { params }: { params: { id: string; }; } )
         setUser( response.data.user );
         setIsEditing( false );
         fetchUser();
-        notifySuccess( response.data.message );
+        // notifySuccess( response.data.message );
+        Swal.fire( {
+          icon: 'success',
+          title: 'Admin updated successfully',
+          text: response.data.message,  
+          confirmButtonColor: '#3085d6',
+          confirmButtonText: 'OK',
+
+        } );
       }
     } catch ( error: any )
     {
-      notifyError( error.response.data.message || "There is some internal server error. Please try later" );
-
+      // notifyError( error.response.data.message || "There is some internal server error. Please try later" );
+      Swal.fire( {
+        icon: 'error',
+        title: 'Error updating admin',
+        text: error.response.data.message || "There is some internal server error. Please try later",
+        confirmButtonColor: '#3085d6',
+        confirmButtonText: 'OK',
+      } );
       console.error( 'Error updating user:', error );
     }
   };
@@ -157,12 +172,27 @@ export default function UserDetails ( { params }: { params: { id: string; }; } )
         const response = await instance.delete( `/auth/admin/${ id }` );
         if ( response.data )
         {
-          notifySuccess( response.data.message );
+          // notifySuccess( response.data.message );
+          Swal.fire( {
+            icon: 'success',
+            title: 'User deleted successfully',
+            text: response.data.message,
+            confirmButtonColor: '#3085d6',
+            confirmButtonText: 'OK',
+            } );
           router.back();
         }
       } catch ( error: any )
       {
-        notifyError( error.message );
+        // notifyError( error.message );
+        Swal.fire( {
+          icon: 'error',
+          title: 'Error deleting user',
+          text: error.message,
+          confirmButtonColor: '#3085d6',
+          confirmButtonText: 'OK',
+        } );
+        
         console.error( 'Error deleting user:', error );
       }
     }
@@ -179,24 +209,32 @@ export default function UserDetails ( { params }: { params: { id: string; }; } )
   </div>;
 
   return (
-    <div className="bg-gray-100 min-h-screen py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-3xl mx-auto bg-white shadow-lg rounded-lg">
-        <div className="px-6 py-4 bg-gray-200 text-black">
-          <h1 className="text-3xl font-bold text-center">User Profile</h1>
-        </div>
+    <div className="container p-4 m-4 bg-pureWhite-light rounded-md">
+      <div className="flex justify-between items-center mb-4">
+        <h1 className="text-2xl font-bold">Profile Setting</h1>
+        
+      </div>
+      <div>
+
+      {/* one horixonal line */ }
+      <hr className="border-t border-gray-300 mb-4" />
+
         <div className="p-6">
           { !user && <Spinner label='Loading..' color="success" /> }
-          { user && <div className="mb-8 text-center">
-            {/* <div className="w-32 h-32 mx-auto bg-gray-300 rounded-full flex items-center justify-center text-4xl font-bold text-white">
+
+          <div className="flex justify-center mb-6 bg-pageBg-light">
+            { user && <div className="mb-8 text-center">
+              {/* <div className="w-32 h-32 mx-auto bg-gray-300 rounded-full flex items-center justify-center text-4xl font-bold text-white">
               { user.name.charAt( 0 ) }
             </div> */}
-            {/* <div className='flex flex-row justify-center items-center gap-4'> */ }
-            <h2 className="mt-4 text-2xl font-semibold">{ user.name }</h2>
-            <p className="text-gray-600 text-md italic ">User Name : { user.username }</p>
-            {/* </div> */ }
+              {/* <div className='flex flex-row justify-center items-center gap-4'> */ }
+              <h2 className="mt-4 text-2xl font-semibold">{ user.name }</h2>
+              <p className="text-gray-600 text-md italic ">User Name : { user.username }</p>
+              {/* </div> */ }
 
-            <p className="text-gray-600 text-md"> Email: { user.email }</p>
-          </div> }
+              <p className="text-gray-600 text-md"> Email: { user.email }</p>
+            </div> }
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             { Object.entries( user ).map( ( [ key, value ] ) => (
 
@@ -283,14 +321,14 @@ export default function UserDetails ( { params }: { params: { id: string; }; } )
                     </>
                     ) }
                   { !isEditing && (
-                    <p className="mt-1 block w-full py-2 px-3 bg-gray-100 rounded-md">   { Array.isArray( value ) ? value.map( item => capitalizeFirstLetter( item ) ).join( ', ' ) : capitalizeFirstLetter( value ) }</p>
+                    <p className="mt-1 block w-full py-2 px-3 bg-pageBg-light rounded-md">   { Array.isArray( value ) ? value.map( item => capitalizeFirstLetter( item ) ).join( ', ' ) : capitalizeFirstLetter( value ) }</p>
                   ) }
                 </div>
               )
             ) ) }
           </div>
         </div>
-        <div className="px-6 py-4 bg-gray-50 flex justify-end space-x-4">
+        <div className="px-6 py-4 bg-pureWhite-light flex justify-end space-x-4">
           { isEditing ? (
             <>
               <button
