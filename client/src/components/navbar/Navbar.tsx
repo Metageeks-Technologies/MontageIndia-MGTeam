@@ -5,41 +5,23 @@ import { IoIosArrowDropdown, IoMdArrowDropdown } from "react-icons/io";
 import { useRouter, useSearchParams } from "next/navigation";
 import CartPopup from "../cart/cartPage";
 import { FaUserCircle } from "react-icons/fa";
-import instance from "@/utils/axios";
-import { ImCross } from "react-icons/im";
-import { notifySuccess } from "@/utils/toast";
+import instance from "@/utils/axios"; 
 import { BiLogInCircle, BiLogOutCircle } from "react-icons/bi";
 import { useAppDispatch, useAppSelector } from "@/app/redux/hooks";
 import Link from "next/link";
-import Swal from "sweetalert2";
-import debounce from "lodash.debounce";
-import { setVideoPage } from "@/app/redux/feature/product/slice";
-import { getVideo } from "@/app/redux/feature/product/video/api";
-import { IoSearchOutline } from "react-icons/io5";
+import Swal from "sweetalert2"; 
 
 const Sidebar = () => {
   const router = useRouter();
   const [menuOpen, setMenuOpen] = useState(false);
-  const [searchTerm, setSearchTerm] = useState("");
-  const dispatch = useAppDispatch();
-  const searchParams = useSearchParams();
-  const category = searchParams.get('category');
-  const categoryParam = category ? ["editor choice"] : "";
   const [isUserOpen, setIsUserOpen] = useState(false);
   const user = useAppSelector((state: any) => state.user?.user?._id);
   const cart = useAppSelector((state) => state.product.cart);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const toggleDropdown = () => setIsDropdownOpen(!isDropdownOpen);
   const closeDropdown = () => setIsDropdownOpen(false);
-  const getData = () => {
-    fetchData(1);  
+
   
-  };
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
-      getData();
-    }
-  };
   const handleLogout = async () => {
     try {
       const response = await instance.get("/user/logout");
@@ -54,35 +36,8 @@ const Sidebar = () => {
       console.error("Error in logout:", error);
     }
   };
-  const handleClear = () => {
-    setSearchTerm(''); // Clear the search term
-    dispatch(setVideoPage(1))
-    getVideo(dispatch, {
-      page:1,
-      mediaType: ["video"],
-      productsPerPage: "6",
-      category: categoryParam,
-    });};
-  const fetchData = (page: number) => {
-    if (!searchTerm.trim()) {
-      // If searchTerm is empty or contains only whitespace, fetch videos automatically
-      getVideo(dispatch, {
-        page,
-        mediaType: ["video"],
-        category: categoryParam,
-        productsPerPage: "6",
-      });
-    } else {
-      // Fetch videos based on the searchTerm
-      getVideo(dispatch, {
-        page,
-        mediaType: ["video"],
-        searchTerm,
-        category: categoryParam,
-        productsPerPage: "6",
-      });
-    }
-  };
+
+
   const handleUserIconClick = () => {
     setIsUserOpen(!isUserOpen);
   };
@@ -94,7 +49,7 @@ const Sidebar = () => {
 
   return (
   <>
-    <div className="flex items-center justify-between border-b bg-white px-6 py-4 shadow-md">
+    <div className="flex items-center justify-between   bg-white px-6 py-4 shadow-md">
       <div className="flex items-center gap-5">
         <img
           src="/images/logo.png"
@@ -138,7 +93,7 @@ const Sidebar = () => {
                 <Link
                      href={{
                       pathname: '/image',
-                      query: { category: 'editorchoice' },
+                      query: { category: 'editorchoice' ,mediaType:'image'},
                     }}
                   className="text-gray-600 hover:text-gray-800 "
                 >
@@ -147,7 +102,7 @@ const Sidebar = () => {
                 <Link
                      href={{
                       pathname: '/video',
-                      query: { category: 'editorchoice' },
+                      query: { category: 'editorchoice' ,mediaType:'video'},
                     }}
                   className="text-gray-600 hover:text-gray-800 "
                 >
@@ -156,7 +111,7 @@ const Sidebar = () => {
                 <Link
                      href={{
                       pathname: '/audio',
-                      query: { category: 'editorchoice' },
+                      query: { category: 'editorchoice',mediaType:'audio' },
                     }}
                   className="text-gray-600 hover:text-gray-800"
                 >
@@ -263,36 +218,7 @@ const Sidebar = () => {
         </div>
       )}
     </div>
-          <div className="flex relative my-6  justify-between items-center flex-row gap-4  bg-gray-100 border border-gray-300 rounded-md w-[90%] m-auto">
-            <div className="flex flex-row px-3 w-full  gap-5">
-          <button className="md:flex flex-row items-center px-4 py-2  hidden outline-none gap-2 text-black hover:bg-gray-200 rounded-md">
-            <img src="/asset/28-camera-1.svg" alt="" />
-            <span>Videos</span>
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-1" viewBox="0 0 20 20" fill="currentColor">
-              <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
-            </svg>
-          </button>
-          <img src="/asset/Rectangle 15.png" className="hidden py-2 md:block" alt="" />
-          <div className="lg:w-[80%] sm:w-[90%]  w-[90%] md:w-[65%]  py-1 gap-2 md:gap-0 items-center justify-center flex">
-          <input
-            type="text"
-            placeholder="Search for Videos"
-            value={searchTerm}
-            onChange={(e) => {
-              setSearchTerm(e.target.value);
-            }}
-            onKeyDown={handleKeyDown} 
-            className="flex-grow py-1 md:px-4 outline-none  bg-gray-100 rounded-md"
-          />
-        <span onClick={()=>handleClear()} className={searchTerm ? "block text-gray-400 cursor-pointer": "hidden" }>
-          <ImCross />
-        </span>
-          </div>
-          </div>
-          <div onClick={getData} className=" cursor-pointer absolute -top-[1px] -bottom-[1px] -right-[1px] flex justify-center m-auto w-12 rounded-r-md bg-[#8D529C]">
-            <IoSearchOutline className="h-full text-white w-6 " />
-          </div>
-        </div>
+   
         </>
   );
 };

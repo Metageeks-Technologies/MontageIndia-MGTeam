@@ -11,6 +11,7 @@ import { useAppDispatch, useAppSelector } from "@/app/redux/hooks";
 import { setImagePage } from "@/app/redux/feature/product/slice";
 import { IoSearchOutline } from "react-icons/io5";
 import { useSearchParams } from "next/navigation";
+import Searchbar from "@/components/searchBar/search";
 
 const Page = () => {
   const dispatch = useAppDispatch();
@@ -40,9 +41,6 @@ const Page = () => {
     handlePageChange(imagePage === 1 ? totalImageNumOfPage : imagePage - 1);
   };
 
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(e.target.value);
-  };
   const categoryParam = category ? ["editor choice"] : "";
 
   const fetchData = (page: number) => {
@@ -57,44 +55,13 @@ const Page = () => {
 
   useEffect(() => {
     fetchData(imagePage);
-  }, [imagePage, searchParams, searchTerm]);
+  }, [imagePage, searchParams]);
 
   return (
+    <>
+    <Searchbar/>
     <div className="main ">
-      <div className="flex items-center gap-4 px-4 py-0.5 bg-[#F4F6F6]  border rounded-md w-[90%] m-auto mt-4">
-        <button className="flex items-center gap-2 text-black rounded-md">
-          <img src="/asset/28-camera-1.svg" alt="" />
-          <span>Photos</span>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-4 w-4 ml-1"
-            viewBox="0 0 20 20"
-            fill="currentColor"
-          >
-            <path
-              fillRule="evenodd"
-              d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-              clipRule="evenodd"
-            />
-          </svg>
-        </button>
-        <img src="/asset/Rectangle 15.png" alt="" />
-        <input
-          type="text"
-          value={searchTerm}
-          onChange={handleSearch}
-          placeholder="Search for Photos"
-          className="flex-grow  py-2 rounded-md bg-[#F4F6F6]  focus:outline-none"
-        />
-        <IoSearchOutline className="h-6 w-6 cursor-pointer text-gray-400" />
-        <div className="lg:block md:block hidden">
-          <button className="flex items-center gap-4 text-gray-500 hover:text-black  rounded-md">
-            <img src="/asset/Rectangle 15.png" alt="" />
-            <img src="/asset/Union.png" alt="" />
-            <span>Search by image</span>
-          </button>
-        </div>
-      </div>
+
 
       <hr className="mt-5" />
 
@@ -189,6 +156,7 @@ const Page = () => {
         <Footer />
       </div>
     </div>
+    </>
   );
 };
 

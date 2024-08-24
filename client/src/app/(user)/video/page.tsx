@@ -3,6 +3,7 @@ import { setVideoPage } from "@/app/redux/feature/product/slice";
 import { getVideo } from "@/app/redux/feature/product/video/api";
 import { useAppDispatch, useAppSelector } from "@/app/redux/hooks";
 import Footer from "@/components/Footer";
+import Searchbar from "@/components/searchBar/search";
 import FAQ from "@/components/Video/fag";
 import Trending from "@/components/Video/trendingVideos";
 import { Button, Pagination } from "@nextui-org/react";
@@ -16,7 +17,6 @@ const Page = () => {
   const category = searchParams.get('category');
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
-  console.log("datacategoy",category)
   const dispatch = useAppDispatch();
   const { videoData: product, videoPage, totalVideoNumOfPage } = useAppSelector((state) => state.product);
 
@@ -51,10 +51,13 @@ const Page = () => {
   }, [videoPage,searchParams]);
 
   return (
+    <>
+    <Searchbar/>
+
     <div className="main items-center ">
-
-
       {/* Category Buttons */}
+      <hr className="mt-5" />
+
       <div className="border-t bg-[#eeeeee] border-gray-300 px-[5%] py-5 flex flex-wrap justify-start space-x-2 space-y-2 md:space-y-0 sm:space-x-4">
         {["Happy birthday", "Thank You", "Background", "Congratulations", "Business", "Welcome"].map((category) => (
           <button key={category} className="flex items-center px-3 py-2 sm:px-4 sm:py-2 border border-gray-300 rounded-md bg-transparent backdrop-blur-sm bg-opacity-20 hover:bg-opacity-30 transition duration-300">
@@ -126,6 +129,7 @@ const Page = () => {
 
       <Footer />
     </div>
+    </>
   );
 };
 
