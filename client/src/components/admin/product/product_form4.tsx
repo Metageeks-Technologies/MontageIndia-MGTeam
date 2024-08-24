@@ -776,9 +776,9 @@ const Form4 = ( { formData }: any ) =>
 
           {/* Save Buttons */ }
           <div className="bg-gray-50 px-6 py-4 flex justify-end space-x-4">
-            <button type="button" className="px-4 py-2 bg-gray-200 rounded">
+            {/* <button type="button" className="px-4 py-2 bg-gray-200 rounded" onClick={()=>window.location.reload()}>
               Save as Draft
-            </button>
+            </button> */}
             <button
               type="submit"
               disabled={
