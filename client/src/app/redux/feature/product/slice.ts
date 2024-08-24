@@ -37,6 +37,8 @@ type InitialState = {
   totalVideoNumOfPage: number;
   totalVideoData: number;
   cart: CartItem[];
+  relatedKeyword: string[];
+  similarProducts: TCustomerProduct[];
 };
 
 const initialState: InitialState = {
@@ -60,6 +62,9 @@ const initialState: InitialState = {
   totalVideoNumOfPage: 1,
   totalVideoData: 0,
   cart: [],
+
+  relatedKeyword: [],
+  similarProducts: [],
 };
 
 export const audioSlice = createSlice({
@@ -301,7 +306,6 @@ export const {
   removeFromVideoCart,
   setVideoPage,
   setCart,
-
 } = audioSlice.actions;
 
 export default audioSlice.reducer;
