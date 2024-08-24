@@ -8,6 +8,7 @@ import {
   removeProductFromWishlist,
 } from "@/app/redux/feature/product/api";
 import { useAppDispatch, useAppSelector } from "@/app/redux/hooks";
+import Searchbar from "@/components/searchBar/search";
 import DetailWaveform from "@/components/Home/DetailWaveForm";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -32,22 +33,24 @@ const page = () => {
   const id = params.id as string | undefined;
 
   const dispatch = useAppDispatch();
-  const {audioData,page,totalNumOfPage} = useAppSelector((state) => state.product);
+  const { audioData, page, totalNumOfPage } = useAppSelector(
+    (state) => state.product
+  );
   useEffect(() => {
-    getAudio(dispatch,{
-        page:page,
-        productsPerPage: 4,
-        mediaType: ["audio"],
+    getAudio(dispatch, {
+      page: page,
+      productsPerPage: 4,
+      mediaType: ["audio"],
     });
   }, [page]);
 
   useEffect(() => {
     if (id) getSingleProduct(dispatch, id);
-    getAudio(dispatch,{
-      page:page,
+    getAudio(dispatch, {
+      page: page,
       productsPerPage: 4,
       mediaType: ["audio"],
-  });
+    });
     return () => {
       clearSingleProductData(dispatch);
     };
@@ -100,23 +103,15 @@ const page = () => {
     return <div></div>;
   }
 
-  return (
-    <div className="bg-white">
-      <div className="flex items-center gap-4 px-4 py-0.5 bg-gray-100 border border-gray-300 rounded-md  mr-20 ml-20  my-4">
+  return (<>
+       <Searchbar/>
+       <div className="bg-white">
+      {/* <div className="flex items-center gap-4 px-4 py-0.5 bg-gray-100 border border-gray-300 rounded-md w-[90%] m-auto mt-4">
         <button className="md:flex items-center hidden  gap-2 text-black hover:bg-gray-200 rounded-md">
-          <img src="/asset/28-camera-1.svg" alt="" />
+        <img src="/asset/28-camera-1.svg" alt="" />
           <span>Photos</span>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-4 w-4 ml-1"
-            viewBox="0 0 20 20"
-            fill="currentColor"
-          >
-            <path
-              fillRule="evenodd"
-              d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-              clipRule="evenodd"
-            />
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-1" viewBox="0 0 20 20" fill="currentColor">
+            <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
           </svg>
         </button>
         <img src="/asset/Rectangle 15.png" alt="" />
@@ -125,13 +120,14 @@ const page = () => {
           placeholder="Search for Photos"
           className="flex-grow  py-2 bg-gray-100 rounded-md "
         />
-        <IoSearchOutline className="h-6 w-6 cursor-pointer text-gray-400" />
+        <IoSearchOutline className="h-6 w-6 cursor-pointer text-gray-400"/>
         <button className="md:flex items-center gap-4 text-gray-500 hidden  hover:text-black  rounded-md">
-          <img src="/asset/Rectangle 15.png" alt="" />
+        <img src="/asset/Rectangle 15.png" alt="" />
           <img src="/asset/Union.png" alt="" />
           <span>Search by image</span>
         </button>
-      </div>
+      </div> */}
+      <hr className="mt-5" />
       <div className="w-full border-y-[1px] flex lg:flex-row md:flex-col ">
         <div className="lg:w-8/12 md:w-full w-full border-e-[2px] px-20 pb-10   bg-gray-100">
           <div className="flex flex-row text-gray-700  mt-4 justify-between items-center">
@@ -169,19 +165,21 @@ const page = () => {
           <div className="my-4">
             {product && <DetailWaveform product={product} />}
             <div className="lg:w-[50rem] md:w-[35rem] w-[22rem] mt-2">
-            <h2 className="font-bold">Description</h2>
-            <p className="text-sm text-neutral-700">
-              Stock Photo ID: {product._id}
-            </p>
-            <p className="text-sm">{product.description}</p>
-          </div>
+              <h2 className="font-bold">Description</h2>
+              <p className="text-sm text-neutral-700">
+                Stock Photo ID: {product._id}
+              </p>
+              <p className="text-sm">{product.description}</p>
+            </div>
           </div>
         </div>
         <div className="lg:w-4/12 md:w-full lg:px-0 md:px-16  flex   flex-col bg-gray-100">
           <div className="border-b-[2px]  w-full h-80 py-2 lg:px-8 bg-white">
             {product && (
               <div className="w-[26rem] mt-3 px-8">
-                <h3 className="font-semibold text-xl">Music Standard License</h3>
+                <h3 className="font-semibold text-xl">
+                  Music Standard License
+                </h3>
                 <p className=" mt-1 text-neutral-700">
                   All Royalty-Free licences include global use rights,
                   comprehensive protection, and simple pricing with volume
@@ -278,7 +276,6 @@ const page = () => {
         </div>
       </div>
 
-   
       {/* <div className=" overflow-y-auto mt-10 w-[90%] m-auto ">
         <h1 className="text-xl font-semibold mb-4">More item by MoosBeat</h1>
           {audioData.map((product, index) => (
@@ -289,7 +286,7 @@ const page = () => {
       </div> */}
 
       <div className="w-[90%] m-auto mb-4">
-      {product && (
+        {product && (
           <div>
             <div className="mt-8">
               <h2 className="font-bold text-lg">Related keywords</h2>
@@ -315,9 +312,10 @@ const page = () => {
       </div>
 
       <div className="mt-12">
-      <Footer />
+        <Footer />
       </div>
     </div>
+    </>
   );
 };
 
