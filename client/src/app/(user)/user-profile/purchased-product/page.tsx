@@ -4,7 +4,6 @@ import React, { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/app/redux/hooks";
 import { Spinner, Button, Pagination } from "@nextui-org/react";
 import { CiImageOn } from "react-icons/ci";
-import { getCurrCustomer } from "@/app/redux/feature/user/api";
 import { MdOutlineSlowMotionVideo } from "react-icons/md";
 import { SiAudioboom } from "react-icons/si";
 import { FaRupeeSign } from "react-icons/fa";
@@ -51,9 +50,6 @@ const Page: React.FC = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [totalPurchased, setTotalPurchased] = useState(0);
   const [loading, setLoading] = useState<boolean>(false);
-
-  const dispatch = useAppDispatch();
-  const user = useAppSelector((state: any) => state.user?.user);
 
   const fetchProducts = async () => {
     setLoading(true);

@@ -7,19 +7,24 @@ import { IoMdHeartEmpty, IoMdHeart } from "react-icons/io";
 import { TfiDownload } from "react-icons/tfi";
 import { useAppDispatch } from "@/app/redux/hooks";
 import {
-  getVideo,
-  addVideoToCart,
-  addVideoToWishlist,
-  removeVideoFromWishlist,
-  removeVideoFromCart,
-} from "@/app/redux/feature/product/video/api";
+  addProductToCart,
+  addProductToWishlist,
+  removeProductFromCart,
+  removeProductFromWishlist,
+} from "@/app/redux/feature/product/audio/api";
 import { useRouter } from "next/navigation";
 import { FaRegHeart } from "react-icons/fa";
 import { Spinner } from "@nextui-org/react";
 import { BiSolidPurchaseTagAlt } from "react-icons/bi";
 import { downloadProduct } from "@/app/redux/feature/product/api";
 
-const Trending = ({ data }: { data: TCustomerProduct }) => {
+const Trending = ({
+  data,
+  productType = "videoData",
+}: {
+  data: TCustomerProduct;
+  productType?: "audioData" | "imageData" | "videoData" | "similarProducts";
+}) => {
   const [loading, setLoading] = useState(false);
   const handleDownload = async () => {
     setLoading(true);
@@ -50,17 +55,22 @@ const Trending = ({ data }: { data: TCustomerProduct }) => {
 
   const handleeWishlist = () => {
     if (data.isWhitelisted) {
-      removeVideoFromWishlist(dispatch, data._id);
+      removeProductFromWishlist(dispatch, data._id, productType);
     } else {
-      addVideoToWishlist(dispatch, data._id, data.variants[0]._id);
+      addProductToWishlist(
+        dispatch,
+        data._id,
+        data.variants[0]._id,
+        productType
+      );
     }
   };
 
   const handleCart = () => {
     if (data.isInCart) {
-      removeVideoFromCart(dispatch, data._id);
+      removeProductFromCart(dispatch, data._id, productType);
     } else {
-      addVideoToCart(dispatch, data._id, data.variants[0]._id);
+      addProductToCart(dispatch, data._id, data.variants[0]._id, productType);
     }
   };
 
@@ -70,46 +80,54 @@ const Trending = ({ data }: { data: TCustomerProduct }) => {
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       onClick={() => router.push(`/video/${data?.uuid}`)}
-
     >
-      <div className="aspect-w-1 aspect-h-1"
-      >
+      <div className="aspect-w-1 aspect-h-1">
         <video loop muted className="w-full h-64 object-cover">
           <source
-            src={`https://mi2-public.s3.ap-southeast-1.amazonaws.com/${data.thumbnailKey}`}
+            src={`${process.env.NEXT_PUBLIC_AWS_PREFIX}/${data.thumbnailKey}`}
           />
-        </video> 
+        </video>
       </div>
       <div className="absolute  justify-center  top-1 left-1 gap-1 flex flex-row text-white m-2 opacity-5 group-hover:opacity-100 transition-opacity duration-300">
-        <span className=" pt-1 "><img src="/asset/video.svg"  alt="Hd "/></span> 
-      <span className=" pt-[2px]">|</span>
-      <span className="px-1 items-center text-start flex ">{capitalizeFirstLetter(data.title)}</span>
+        <span className=" pt-1 ">
+          <img src="/asset/video.svg" alt="Hd " />
+        </span>
+        <span className=" pt-[2px]">|</span>
+        <span className="px-1 items-center text-start flex ">
+          {capitalizeFirstLetter(data.title)}
+        </span>
       </div>
       <div className="absolute bottom-1 right-9 m-2 opacity-5 group-hover:opacity-100 transition-opacity duration-300">
         <div
-          onClick={handleeWishlist}
+          onClick={(e) => {
+            e.stopPropagation();
+            handleeWishlist();
+          }}
           title={data.isWhitelisted ? "Remove from Saved" : "Save Image"}
           className="text-white bg-black bg-opacity-35 px-2 py-1 rounded-full flex gap-1 items-center"
         >
           {data.isWhitelisted ? (
             <IoMdHeart className="h-6 w-5 text-red-500" />
           ) : (
-            <FaRegHeart  className="h-6 w-5" />
+            <FaRegHeart className="h-6 w-5" />
           )}
           {/* <p className="text-sm"> {data.isWhitelisted ? "" : ""} </p> */}
         </div>
       </div>
       <div
-        onClick={handleDownload}
+        onClick={(e) => {
+          e.stopPropagation();
+          handleDownload();
+        }}
         className="absolute bottom-1 right-0 m-2 opacity-5 group-hover:opacity-100 transition-opacity duration-300"
       >
-        <div className="text-white bg-red-500 p-2 flex items-center gap-1 rounded-full">
+        <div className="text-white h-8 w-8 bg-red-500 p-2 flex items-center gap-1 rounded-full">
           {!loading ? (
             <>
               <TfiDownload className="font-semibold" />
             </>
           ) : (
-            <Spinner label="" color="current" />
+            <Spinner className="w-4" color="current" />
           )}
         </div>
       </div>
@@ -120,7 +138,10 @@ const Trending = ({ data }: { data: TCustomerProduct }) => {
             className={` p-2 ${
               data.isInCart ? "bg-red-500 text-white" : "bg-white text-black"
             } rounded-full`}
-            onClick={handleCart}
+            onClick={(e) => {
+              e.stopPropagation();
+              handleCart();
+            }}
           >
             {data.isInCart ? <BsCartCheckFill /> : <BsCart2 />}
           </div>

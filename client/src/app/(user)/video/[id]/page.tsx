@@ -28,7 +28,7 @@ import Searchbar from "@/components/searchBar/search";
 
 const Home = () => {
   const [selectedVariantId, setSelectedVariantId] = useState("");
-  const { videoData } = useAppSelector((state) => state.product);
+  const { similarProducts } = useAppSelector((state) => state.product);
   const { user } = useAppSelector((state) => state.user);
   const params = useParams();
   const id = params.id as string | undefined;
@@ -40,7 +40,7 @@ const Home = () => {
       clearSingleProductData(dispatch);
     };
   }, [id]);
- 
+
   const dispatch = useAppDispatch();
   const {
     singleProduct: product,
@@ -72,7 +72,7 @@ const Home = () => {
   };
   const capitalizeFirstLetter = (str: string | null | undefined): string => {
     if (!str) {
-      return ''; // Return an empty string if str is null or undefined
+      return ""; // Return an empty string if str is null or undefined
     }
     return str.charAt(0).toUpperCase() + str.slice(1);
   };
@@ -80,8 +80,8 @@ const Home = () => {
     return user?.purchasedProducts.some((item) =>
       item.variantId.includes(variantId)
     );
-  }; 
- 
+  };
+
   const handleCart = (variant: string) => {
     if (!product || loading) return;
     if (product.isInCart && isVariantInCart(variant)) {
@@ -90,14 +90,13 @@ const Home = () => {
       addProductToCart(dispatch, product._id, variant);
     }
   };
-  console.log("sd",product)
+  console.log("sd", product);
 
-  
   return (
     <>
-    <Searchbar/>
-    <div className="main">
-      {/* <div className="flex items-center gap-4 px-4 py-0.5 bg-gray-100 border border-gray-300 rounded-md w-[90%] m-auto mt-4">
+      <Searchbar />
+      <div className="main">
+        {/* <div className="flex items-center gap-4 px-4 py-0.5 bg-gray-100 border border-gray-300 rounded-md w-[90%] m-auto mt-4">
         <button className="md:flex items-center hidden  gap-2 text-black hover:bg-gray-200 rounded-md">
         <img src="/asset/28-camera-1.svg" alt="" />
           <span>Photos</span>
@@ -118,192 +117,236 @@ const Home = () => {
           <span>Search by image</span>
         </button>
       </div> */}
-      <hr className="mt-5" />
-      <div className="border-t border-b border-b-gray-400 border-t-gray-400 m-auto mt-5">
-        <div className="flex md:flex-row flex-col  ">
-          {product && (
-            <>
-              <div className="w-full md:w-[72%] pr-5 vidbg pl-5  md:pr-20 pt-10 gap-5 md:pl-20 border-r border-r-gray-400 flex flex-col">
-                <div className="flex flex-row text-gray-700  justify-between items-center">
-                  <div className="font-semibold text-lg">
-                  {product.title}
-                  </div>
-                  <div className="flex-row flex gap-3">
-                    <span
-                    onClick={handleeWishlist}
-                    title={
-                      product.isWhitelisted ? "Remove from Saved" : "Save Image"
-                    }
-                    className=" bg-opacity-35 cursor-pointer px-3 py-2 border  border-gray-300 rounded-md flex gap-1 items-center"
-                  >
-                    {product.isWhitelisted ? (
-                      <IoMdHeart className="h-5 w-5 text-red-500" />
-                    ) : (
-                      <IoMdHeartEmpty className="h-5 w-5" />
-                    )}
-                    <p className="text-sm">
-                      {" "}
-                      {product.isWhitelisted ? "Saved" : "Save"}{" "}
-                    </p>
-                    </span>
-                    <CustomShareButton/>
-                     <span className=" flex font-medium rounded-md gap-2 border-gray-300 flex-row text-center p-2 border items-center">
-                     <AiOutlineDownload size={20}/> Try
-                    </span>
-                  </div>
-                </div>
-                <video controls className="rounded-lg h-[20rem] md:h-[28rem] w-full object-cover">
-                <source
-                    src={`https://mi2-public.s3.ap-southeast-1.amazonaws.com/${product.thumbnailKey}`}
-                /> 
-                </video>
-               
-                <div className="lg:w-[50rem] pb-7 md:w-[35rem] w-[22rem] mt-2">
-                  <h2 className="font-bold">Description</h2>
-                  <p className="text-sm text-neutral-700">
-                    Stock Photo ID: {product._id}
-                  </p>
-                  <p className="text-sm">{product.description}</p>
-                </div>
-
-            
-              </div>
-              <div className="border-t vidbg border-t-gray-400 md:border-t-0 w-full md:w-[28%]  ">
-                <div className="p-8 bg-white ">
-                <h3 className="font-semibold  text-gray-700 text-xl">
-                  Purchase a License
-                </h3>
-                <div  className="text-xs py-2">
-                  All Royalty-Free licenses include global use rights,comprehensive protection, and simple 
-                  pricing with volume discounts available.
-                </div>
-                {product.variants.map((license, index) => (
-                  <div
-                    key={index}
-                    className={`border w-[90%]  cursor-pointer hover:bg-[#F4F4F4] p-2 flex flex-col ${
-                      index === 0 ? 'rounded-t-md' : ''
-                    } ${index === product.variants.length - 1 ? 'rounded-b-md' : ''}`}
-                    onClick={() => handleCart(license._id)}
-                  >
-                    <div className=" flex flex-row justify-between ">
-                      <div className="flex flex-row items-center gap-3">
-                        {/* Conditionally render the image */}
-                          
-                       {index === 0 ? (
-                          <img src="/asset/full-hd.svg" className="w-20" alt="Full HD" />
-                        ) : index === 1 ? (
-                          <img src="/asset/hd.svg" className="w-10 h-5" alt="HD" />
-                        ) : null}
-                      </div>
-                      <div>
-                        {isVariantPurchased(license._id) ? (
-                          <div title="Purchased Product" className="p-2 items-center flex flex-row gap-1 bg-red-500 text-white rounded-full">
-                           <LuIndianRupee /> {license.price} <BiSolidPurchaseTagAlt />
-                          </div>
+        <hr className="mt-5" />
+        <div className="border-t border-b border-b-gray-400 border-t-gray-400 m-auto mt-5">
+          <div className="flex md:flex-row flex-col  ">
+            {product && (
+              <>
+                <div className="w-full md:w-[72%] pr-5 vidbg pl-5  md:pr-20 pt-10 gap-5 md:pl-20 border-r border-r-gray-400 flex flex-col">
+                  <div className="flex flex-row text-gray-700  justify-between items-center">
+                    <div className="font-semibold text-lg">{product.title}</div>
+                    <div className="flex-row flex gap-3">
+                      <span
+                        onClick={handleeWishlist}
+                        title={
+                          product.isWhitelisted
+                            ? "Remove from Saved"
+                            : "Save Image"
+                        }
+                        className=" bg-opacity-35 cursor-pointer px-3 py-2 border  border-gray-300 rounded-md flex gap-1 items-center"
+                      >
+                        {product.isWhitelisted ? (
+                          <IoMdHeart className="h-5 w-5 text-red-500" />
                         ) : (
-                          <div
-                            title={
-                              isVariantInCart(license._id) ? 'Remove from cart' : 'Add to cart'
-                            }
-                            className={`p-2 items-center flex flex-row gap-1 text-black  rounded-full`}
-                          >
-                            <LuIndianRupee />
-                             {license.price}
-                            <span  className={`p-2 items-center  ${
-                              isVariantInCart(license._id)
-                                ? 'bg-webred text-white cursor-pointer'
-                                : ' bg-white text-black cursor-pointer'
-                            } rounded-full`}>
-                            {product.isInCart ? <BsCartCheckFill /> : <BsCart2 />}
+                          <IoMdHeartEmpty className="h-5 w-5" />
+                        )}
+                        <p className="text-sm">
+                          {" "}
+                          {product.isWhitelisted ? "Saved" : "Save"}{" "}
+                        </p>
+                      </span>
+                      <CustomShareButton />
+                      <span className=" flex font-medium rounded-md gap-2 border-gray-300 flex-row text-center p-2 border items-center">
+                        <AiOutlineDownload size={20} /> Try
+                      </span>
+                    </div>
+                  </div>
+                  <video
+                    controls
+                    className="rounded-lg h-[20rem] md:h-[28rem] w-full object-cover"
+                  >
+                    <source
+                      src={`https://mi2-public.s3.ap-southeast-1.amazonaws.com/${product.thumbnailKey}`}
+                    />
+                  </video>
+
+                  <div className="lg:w-[50rem] pb-7 md:w-[35rem] w-[22rem] mt-2">
+                    <h2 className="font-bold">Description</h2>
+                    <p className="text-sm text-neutral-700">
+                      Stock Photo ID: {product._id}
+                    </p>
+                    <p className="text-sm">{product.description}</p>
+                  </div>
+                </div>
+                <div className="border-t vidbg border-t-gray-400 md:border-t-0 w-full md:w-[28%]  ">
+                  <div className="p-8 bg-white ">
+                    <h3 className="font-semibold  text-gray-700 text-xl">
+                      Purchase a License
+                    </h3>
+                    <div className="text-xs py-2">
+                      All Royalty-Free licenses include global use
+                      rights,comprehensive protection, and simple pricing with
+                      volume discounts available.
+                    </div>
+                    {product.variants.map((license, index) => (
+                      <div
+                        key={index}
+                        className={`border w-[90%]  cursor-pointer hover:bg-[#F4F4F4] p-2 flex flex-col ${
+                          index === 0 ? "rounded-t-md" : ""
+                        } ${
+                          index === product.variants.length - 1
+                            ? "rounded-b-md"
+                            : ""
+                        }`}
+                        onClick={() => handleCart(license._id)}
+                      >
+                        <div className=" flex flex-row justify-between ">
+                          <div className="flex flex-row items-center gap-3">
+                            {/* Conditionally render the image */}
+
+                            {index === 0 ? (
+                              <img
+                                src="/asset/full-hd.svg"
+                                className="w-20"
+                                alt="Full HD"
+                              />
+                            ) : index === 1 ? (
+                              <img
+                                src="/asset/hd.svg"
+                                className="w-10 h-5"
+                                alt="HD"
+                              />
+                            ) : null}
+                          </div>
+                          <div>
+                            {isVariantPurchased(license._id) ? (
+                              <div
+                                title="Purchased Product"
+                                className="p-2 items-center flex flex-row gap-1 bg-red-500 text-white rounded-full"
+                              >
+                                <LuIndianRupee /> {license.price}{" "}
+                                <BiSolidPurchaseTagAlt />
+                              </div>
+                            ) : (
+                              <div
+                                title={
+                                  isVariantInCart(license._id)
+                                    ? "Remove from cart"
+                                    : "Add to cart"
+                                }
+                                className={`p-2 items-center flex flex-row gap-1 text-black  rounded-full`}
+                              >
+                                <LuIndianRupee />
+                                {license.price}
+                                <span
+                                  className={`p-2 items-center  ${
+                                    isVariantInCart(license._id)
+                                      ? "bg-webred text-white cursor-pointer"
+                                      : " bg-white text-black cursor-pointer"
+                                  } rounded-full`}
+                                >
+                                  {product.isInCart ? (
+                                    <BsCartCheckFill />
+                                  ) : (
+                                    <BsCart2 />
+                                  )}
+                                </span>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                        <div className="items-center flex  flex-row">
+                          {license?.metadata?.resolution}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="flex flex-col vidbg  border-t border-t-gray-400  justify-end items-start">
+                    {product && (
+                      <div className=" p-8  rounded-md w-full">
+                        <h2 className="text-lg font-semibold ">Details</h2>
+                        <div className="space-y-1 text-base">
+                          <div className="flex lg:justify-start w-full md:justify-between ">
+                            <span className="font-medium w-[35%]">Title:</span>
+                            <span className="text-violet-600 text-sm w-[65%]    hover:underline">
+                              {capitalizeFirstLetter(product?.title || "")}
                             </span>
                           </div>
-                        )}
+                          <div className="flex  lg:justify-start w-full md:justify-between">
+                            <span className="font-medium w-[35%]">
+                              Upload date:
+                            </span>
+                            <span className="w-[65%] ">
+                              {new Date().toLocaleDateString()}
+                            </span>
+                          </div>
+                          <div className="flex  lg:justify-start w-full md:justify-between">
+                            <span className="font-medium w-[35%]">
+                              Location:
+                            </span>
+                            <span className="w-[65%] ">India</span>
+                          </div>
+                          <div className="flex  lg:justify-start w-full md:justify-between">
+                            <span className="font-medium w-[35%]">
+                              Category:
+                            </span>
+                            <p className="text-violet-600 w-[65%] ">
+                              {product?.category
+                                .map((cat: string) =>
+                                  capitalizeFirstLetter(cat)
+                                )
+                                .join(", ") + "."}
+                            </p>
+                          </div>
+                          <div className="flex  w-full lg:justify-start md:justify-between">
+                            <span className="font-medium w-[35%]">
+                              Format:{" "}
+                            </span>
+                            <span className="text-sm text-neutral-600 w-[65%]">
+                              6725 × 4286 px
+                            </span>
+                          </div>
+                        </div>
                       </div>
-                    </div>
-                    <div className="items-center flex  flex-row">
-                      
-                      {license?.metadata?.resolution}
-                       </div>
+                    )}
                   </div>
-                ))}
-
                 </div>
-                <div className="flex flex-col vidbg  border-t border-t-gray-400  justify-end items-start">
-            {product && (
-             <div className=" p-8  rounded-md w-full">
-             <h2 className="text-lg font-semibold ">Details</h2>
-             <div className="space-y-1 text-base">
-               <div className="flex lg:justify-start w-full md:justify-between ">
-                 <span className="font-medium w-[35%]">Title:</span>
-                 <span className="text-violet-600 text-sm w-[65%]    hover:underline">
-                 {capitalizeFirstLetter(product?.title || '')}
-                 </span>
-               </div>
-               <div className="flex  lg:justify-start w-full md:justify-between">
-                 <span className="font-medium w-[35%]">Upload date:</span>
-                 <span className="w-[65%] ">{new Date().toLocaleDateString()}</span>
-               </div>
-               <div className="flex  lg:justify-start w-full md:justify-between">
-                 <span className="font-medium w-[35%]">Location:</span>
-                 <span className="w-[65%] ">India</span>
-               </div>
-               <div className="flex  lg:justify-start w-full md:justify-between">
-                 <span className="font-medium w-[35%]">Category:</span>
-                 <p className="text-violet-600 w-[65%] ">
-                  {product?.category.map((cat: string) => capitalizeFirstLetter(cat)).join(", ") + "."}
-                </p>      
-               </div>
-               <div className="flex  w-full lg:justify-start md:justify-between">
-               <span className="font-medium w-[35%]">Format: </span>
-               <span className="text-sm text-neutral-600 w-[65%]">6725 × 4286 px</span>
-               </div>
-             </div>
-           </div>
-
+              </>
             )}
+          </div>
+        </div>
+
+        <div className="py-10 lg:mx-24 md:mx-4 mx-4">
+          <h2 className="text-xl font-semibold">Similar Videos</h2>
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 mt-5">
+            {similarProducts.map((data, index: number) => (
+              <Trending key={index} data={data} productType="similarProducts" />
+            ))}
+          </div>
+          {product && (
+            <div>
+              <div className="mt-8">
+                <h2 className="font-bold text-lg">Related keywords</h2>
+                <div className="flex gap-3 mt-2">
+                  {product.tags.map((keyword, index) => (
+                    <span key={index} className="">
+                      <button className="border capitalize rounded-md py-1 px-4 flex gap-1 items-center">
+                        <IoSearchOutline className="h-5 w-5" />
+                        {keyword}
+                      </button>
+                    </span>
+                  ))}
                 </div>
               </div>
-            </>
+              <div className="mt-8 mb-3">
+                <h1 className="font-semibold text-lg">Category</h1>
+                <div className="flex gap-3">
+                  {product.category.map((keyword, index) => (
+                    <span key={index} className="">
+                      <button className="border capitalize rounded-md py-1 px-4 mt-2">
+                        {keyword}
+                      </button>
+                    </span>
+                  ))}
+                </div>
+                {/* <p>Upload date: {new Date().toLocaleDateString()}</p> */}
+              </div>
+            </div>
           )}
         </div>
-      </div>
-      
-      <div className="py-10 lg:mx-24 md:mx-4 mx-4">
-        <h2 className="text-xl font-semibold">Similar Videos</h2>
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 mt-5">
-              {videoData.map((data, index: number) => (
-                <Trending key={index} data={data} />
-              ))}
-        </div>
-        {product && (
-          <div>
-            <div className="mt-8">
-              <h2 className="font-bold text-lg">Related keywords</h2>
-              <div className="flex gap-3 mt-2">
-                {product.tags.map((keyword, index) => (
-                  <span key={index} className="">
-                    <button className="border rounded-md py-1 px-4 flex gap-1 items-center">
-                      <IoSearchOutline className="h-5 w-5" />
-                      {keyword}
-                    </button>
-                  </span>
-                ))}
-              </div>
-            </div>
-            <div className="mt-8 mb-3">
-              <h1 className="font-semibold text-lg">Category</h1>
-              <button className="border rounded-md py-1 px-4 mt-2">
-                {product.category}
-              </button>
-              {/* <p>Upload date: {new Date().toLocaleDateString()}</p> */}
-            </div>
-          </div>
-        )}
 
-        </div>
-       
-      <Footer />
-    </div>
+        <Footer />
+      </div>
     </>
   );
 };

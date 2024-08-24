@@ -7,7 +7,7 @@ import {
   removeProductFromCart,
   removeProductFromWishlist,
 } from "@/app/redux/feature/product/api";
-import {} from "@/app/redux/feature/product/image/api";
+import ImageGallery from "@/components/Home/homeImage";
 import { useAppDispatch, useAppSelector } from "@/app/redux/hooks";
 import Footer from "@/components/Footer";
 import { useParams } from "next/navigation";
@@ -114,6 +114,7 @@ const Home = () => {
     singleProduct: product,
     loading,
     cart,
+    similarProducts,
   } = useAppSelector((state) => state.product);
   const { user } = useAppSelector((state) => state.user);
 
@@ -152,10 +153,9 @@ const Home = () => {
 
   return (
     <>
-    <Searchbar/>
+      <Searchbar />
       <div className="main ">
-        <hr className="mt-5"/>
-
+        <hr className="mt-5" />
 
         <div className=" m-auto mt-4 bg w-[90%] ">
           <div className="flex  m-auto lg:flex-row lg:justify-between sm:flex-col flex-col gap-1">
@@ -213,58 +213,56 @@ const Home = () => {
                     discounts available
                   </p>
                   <div className="py-4">
-                  {product.variants.map((license, index) => (
-                    <div
-                      key={index}
-                      className="border p-4 mt-2 flex justify-between items-center hover:bg-[#F4F4F4] cursor-pointer"
-                    >
-                      <div>
-                        <label
-                          htmlFor={`license-${index}`}
-                          className="block text-gray-600"
-                        >
-                          ${license.price}
-                        </label>
-                        <div>{license.size}</div>
+                    {product.variants.map((license, index) => (
+                      <div
+                        key={index}
+                        className="border p-4 mt-2 flex justify-between items-center hover:bg-[#F4F4F4] cursor-pointer"
+                      >
+                        <div>
+                          <label
+                            htmlFor={`license-${index}`}
+                            className="block text-gray-600"
+                          >
+                            ${license.price}
+                          </label>
+                          <div>{license.size}</div>
+                        </div>
+                        <div className=" flex justify-between ">
+                          {isVariantPurchased(license._id) ? (
+                            <>
+                              <div
+                                title={"Purchased Product"}
+                                className={` p-2 bg-red-500 text-white rounded-full`}
+                              >
+                                <BiSolidPurchaseTagAlt />
+                              </div>
+                            </>
+                          ) : (
+                            <>
+                              <div
+                                title={
+                                  isVariantInCart(license._id)
+                                    ? "Remove from cart"
+                                    : "Add to cart"
+                                }
+                                className={` p-2 ${
+                                  isVariantInCart(license._id)
+                                    ? "bg-red-500 text-white"
+                                    : "bg-white text-black"
+                                } rounded-full`}
+                                onClick={() => handleCart(license._id)}
+                              >
+                                {product.isInCart ? (
+                                  <BsCartCheckFill />
+                                ) : (
+                                  <BsCart2 />
+                                )}
+                              </div>
+                            </>
+                          )}
+                        </div>
                       </div>
-                      <div className=" flex justify-between ">
-                        {isVariantPurchased(license._id) ? (
-                          <>
-                            <div
-                              title={"Purchased Product"}
-                              className={` p-2 bg-red-500 text-white rounded-full`}
-                            >
-                              <BiSolidPurchaseTagAlt />
-                            </div>
-                          </>
-                        ) : (
-                          <>
-                            <div
-                              title={
-                                isVariantInCart(license._id)
-                                  ? "Remove from cart"
-                                  : "Add to cart"
-                              }
-                              className={` p-2 ${
-                                isVariantInCart(license._id)
-                                  ? "bg-red-500 text-white"
-                                  : "bg-white text-black"
-                              } rounded-full`}
-                              onClick={() => handleCart(license._id)}
-                            >
-                              {product.isInCart ? (
-                                <BsCartCheckFill />
-                              ) : (
-                                <BsCart2 />
-                              )}
-                            </div>
-                          </>
-                        )}
-                      </div>
-                    </div>
-
-                    
-                  ))}
+                    ))}
                   </div>
                   <div className="flex justify-between mt-3">
                     {/* <div
@@ -301,87 +299,54 @@ const Home = () => {
                 </div>
               )}
               {/* pendeing */}
-                
-              <div className="py-6">
-              {product && (
-              <div className="bg-white p-4 border rounded-md w-full">
-              <h2 className="text-lg font-semibold mb-4">Details</h2>
-              <div className="space-y-2">
-                <div className="flex lg:justify-start md:justify-between">
-                  <span className="font-medium w-32">Title:</span>
-                  <p className="text-blue-600 hover:underline">{product.title}</p>
-                </div>
-                <div className="flex  lg:justify-start md:justify-between">
-                  <span className="font-medium w-32">Category:</span>
-                  <p className="">{product.category}</p>
-                </div>
-                <div className="flex  lg:justify-start md:justify-between">
-                  <span className="font-medium w-32">Upload date:</span>
-                  <span>{new Date().toLocaleDateString()}</span>
-                </div>
-                <div className="flex  lg:justify-start md:justify-between">
-                  <span className="font-medium w-32">Location:</span>
-                  <span>India</span>
-                </div>
-                <div className="flex  lg:justify-start md:justify-between">
-                <span className="font-medium w-32">Format: </span>
-                <span className="text-sm text-neutral-600">6725 × 4286 px</span>
-                </div>
-              </div>
-            </div>
 
-              )}
+              <div className="py-6">
+                {product && (
+                  <div className="bg-white p-4 border rounded-md w-full">
+                    <h2 className="text-lg font-semibold mb-4">Details</h2>
+                    <div className="space-y-2">
+                      <div className="flex lg:justify-start md:justify-between">
+                        <span className="font-medium w-32">Title:</span>
+                        <p className="text-blue-600 hover:underline">
+                          {product.title}
+                        </p>
+                      </div>
+                      <div className="flex  lg:justify-start md:justify-between">
+                        <span className="font-medium w-32">Category:</span>
+                        <p className="">{product.category}</p>
+                      </div>
+                      <div className="flex  lg:justify-start md:justify-between">
+                        <span className="font-medium w-32">Upload date:</span>
+                        <span>{new Date().toLocaleDateString()}</span>
+                      </div>
+                      <div className="flex  lg:justify-start md:justify-between">
+                        <span className="font-medium w-32">Location:</span>
+                        <span>India</span>
+                      </div>
+                      <div className="flex  lg:justify-start md:justify-between">
+                        <span className="font-medium w-32">Format: </span>
+                        <span className="text-sm text-neutral-600">
+                          6725 × 4286 px
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
-              
             </div>
           </div>
-          
+
           <div className="mt-4">
             <h1 className="font-semibold text-lg">Similar Images</h1>
-          <div className="grid grid-cols-1 gap-2 md:grid-cols-2 lg:grid-cols-4 mt-2">
-            {ImgageData.map((data: any, index: number) => (
-              <div key={index}>
-                <div className="relative rounded-md overflow-hidden group cursor-pointer">
-                  <div className="aspect-w-1 aspect-h-1">
-                    <img
-                      src={data.imageUrl}
-                      alt="Image"
-                      className="w-full h-56 object-cover"
-                    />
-                  </div>
-
-                  <div className="absolute top-0 left-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    <p className="text-white px-2 py-2 rounded">
-                    {data.title}
-                    </p>
-                  </div>
-
-                  <div className="absolute top-0 right-0 m-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    <div
-                      title="Save Image"
-                      className="text-white bg-black bg-opacity-35 px-3 py-2 rounded-lg flex gap-1 items-center"
-                    >
-                      <CiHeart className="h-5 w-5" />
-                      <p className="text-sm">Save</p>
-                    </div>
-                  </div>
-
-                  <div className="absolute bottom-0 left-0 m-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    <div className="text-white bg-black bg-opacity-50 px-2 py-2 flex items-center gap-1 rounded-lg">
-                      <img src="/asset/Group 19.svg" alt="" />
-                      <p className="text-small">Similar</p>
-                    </div>
-                  </div>
-
-                  <div className="absolute bottom-0 right-0 m-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    <div className="p-2 bg-red-500 text-black rounded-full">
-                      <FiDownload className="text-white" />
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
+            <div className="columns-1 sm:columns-2 md:columns-3 lg:columns-4 gap-2 mt-2 relative">
+              {similarProducts?.map((data, index: number) => (
+                <ImageGallery
+                  key={index}
+                  data={data}
+                  productType="similarProducts"
+                />
+              ))}
+            </div>
           </div>
 
           {product && (
