@@ -306,6 +306,17 @@ const Form2: React.FC<Form2Props> = ({ onPrev, onNext, formData }) => {
           Browse File
         </button>
       </div>
+      {/* file name */}
+      {file && (
+        <div className="mt-4 text-sm text-gray-600">
+          <label
+            htmlFor="file"
+            className="block text-sm font-medium text-gray-700"
+          >
+            File Name: {file ? file.name : ""}
+          </label>
+        </div>
+      )}
 
       {loading && (
         <div className="mt-6">
@@ -328,7 +339,7 @@ const Form2: React.FC<Form2Props> = ({ onPrev, onNext, formData }) => {
           </div>
 
           {/* file name */}
-          <div className="text-sm text-gray-600 p-2">{file?.name || ""}</div>
+          {/* <div className="text-sm text-gray-600 p-2">{file?.name || ""}</div> */}
 
           <div className="w-full bg-gray-200 rounded-full h-2.5">
             <div
