@@ -20,6 +20,7 @@ interface Variant
   credit: number;
   key: string;
   _id: string;
+  metadata: any;
 }
 
 interface FormData
@@ -411,7 +412,7 @@ const Form4 = ( { formData }: any ) =>
     setIsPublishButtonDisabled( allVariantsValid );
   }, [] );
 
-  console.log( availableCategories );
+  console.log( data );
 
   return ( <>  { loading ?
     <div role="status" className='justify-center h-screen flex items-center m-auto'>
@@ -520,7 +521,8 @@ const Form4 = ( { formData }: any ) =>
                 { data.mediaType === 'audio' && data.variants.map( ( variant, index ) => (
                   <div key={ variant._id } className="bg-pageBg-light p-4 rounded-lg">
                     <div className="flex justify-between items-center mb-2">
-                      <h3 className="font-bold">{ variant.size }</h3>
+                      {/* <h3 className="font-bold">{ variant.size }</h3> */ }
+                      <h3 className="font-bold">Variant</h3> 
                       { editingVariantIndex === index ? (
                         <button type="button" onClick={ () => handleSaveVariant( index ) }><MdOutlineSave size={ 20 } /></button>
                       ) : (
@@ -573,7 +575,11 @@ const Form4 = ( { formData }: any ) =>
               { data.mediaType !== 'audio' && data.variants.map( ( variant, index ) => (
                 <div key={ variant._id } className="bg-pageBg-light p-4 rounded-lg shadow-sm">
                   <div className="flex justify-between items-center mb-4">
-                    <h3 className="text-lg font-semibold text-gray-700">{ variant.size }</h3>
+                    <div>
+
+                    <h3 className="font-bold">Variant { index+1}</h3>
+                    <p className=" text-gray-700">{ variant?.metadata?.dimension }</p>
+                    </div>
                     { editingVariantIndex === index ? (
                       <button type="button" onClick={ () => handleSaveVariant( index ) } className="text-gray-600 hover:text-gray-700 transition-colors">
                         <MdOutlineSave size={ 24 } />
