@@ -8,6 +8,7 @@ import {
   removeProductFromWishlist,
 } from "@/app/redux/feature/product/api";
 import { useAppDispatch, useAppSelector } from "@/app/redux/hooks";
+import Searchbar from "@/components/searchBar/search";
 import DetailWaveform from "@/components/Home/DetailWaveForm";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -102,23 +103,15 @@ const page = () => {
     return <div></div>;
   }
 
-  return (
-    <div className="bg-white">
-      <div className="flex items-center gap-4 px-4 py-0.5 bg-gray-100 border border-gray-300 rounded-md  mr-20 ml-20  my-4">
+  return (<>
+       <Searchbar/>
+       <div className="bg-white">
+      {/* <div className="flex items-center gap-4 px-4 py-0.5 bg-gray-100 border border-gray-300 rounded-md w-[90%] m-auto mt-4">
         <button className="md:flex items-center hidden  gap-2 text-black hover:bg-gray-200 rounded-md">
-          <img src="/asset/28-camera-1.svg" alt="" />
+        <img src="/asset/28-camera-1.svg" alt="" />
           <span>Photos</span>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-4 w-4 ml-1"
-            viewBox="0 0 20 20"
-            fill="currentColor"
-          >
-            <path
-              fillRule="evenodd"
-              d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-              clipRule="evenodd"
-            />
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-1" viewBox="0 0 20 20" fill="currentColor">
+            <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
           </svg>
         </button>
         <img src="/asset/Rectangle 15.png" alt="" />
@@ -127,13 +120,14 @@ const page = () => {
           placeholder="Search for Photos"
           className="flex-grow  py-2 bg-gray-100 rounded-md "
         />
-        <IoSearchOutline className="h-6 w-6 cursor-pointer text-gray-400" />
+        <IoSearchOutline className="h-6 w-6 cursor-pointer text-gray-400"/>
         <button className="md:flex items-center gap-4 text-gray-500 hidden  hover:text-black  rounded-md">
-          <img src="/asset/Rectangle 15.png" alt="" />
+        <img src="/asset/Rectangle 15.png" alt="" />
           <img src="/asset/Union.png" alt="" />
           <span>Search by image</span>
         </button>
-      </div>
+      </div> */}
+      <hr className="mt-5" />
       <div className="w-full border-y-[1px] flex lg:flex-row md:flex-col ">
         <div className="lg:w-8/12 md:w-full w-full border-e-[2px] px-20 pb-10   bg-gray-100">
           <div className="flex flex-row text-gray-700  mt-4 justify-between items-center">
@@ -321,6 +315,7 @@ const page = () => {
         <Footer />
       </div>
     </div>
+    </>
   );
 };
 

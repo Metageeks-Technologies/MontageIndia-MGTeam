@@ -18,11 +18,13 @@ function CartPopup() {
   const [isOpen, setIsOpen] = useState(false);
   const dispatch = useAppDispatch();
   const cart = useAppSelector((state) => state.product.cart);
-
   const handleRemoveCart = (id: string, variantId: string) => {
     removeItemFromCart(dispatch, id);
   };
   const limitWords = (text: string, limit: number) => {
+    if (!text){
+      return "..."
+    }
     const words = text.split(" ");
     if (words.length > limit) {
       return words.slice(0, limit).join(" ") + "...";
@@ -64,21 +66,21 @@ function CartPopup() {
                   className="flex justify-between items-center p-2 border-b border-slate-200"
                 >
                   <div className="flex w-[70%] items-center">
-                    {item?.productId.mediaType === "image" && (
+                    {item?.productId?.mediaType === "image" && (
                       <img
                         className="w-[74px] h-14 rounded-md mr-4"
                         src={`https://mi2-public.s3.ap-southeast-1.amazonaws.com/${item?.productId.thumbnailKey}`}
                         alt={item?.productId.title}
                       />
                     )}
-                    {item?.productId.mediaType === "audio" && (
+                    {item?.productId?.mediaType === "audio" && (
                       <img
                         className="w-[74px] h-14 rounded-md mr-4"
                         src="/images/audioImage.png"
                         alt={item?.productId.title}
                       />
                     )}
-                    {item?.productId.mediaType === "video" && (
+                    {item?.productId?.mediaType === "video" && (
                       <div>
                         <video
                           loop
@@ -91,29 +93,36 @@ function CartPopup() {
                         </video>
                       </div>
                     )}
-                    <span className="flex flex-col justify-start text-base font-normal ">
-                      <span>{limitWords(item.productId.title, 2)}</span>
+                    <span className="flex flex-col justify-start  capitalize  text-base font-normal ">
+                      <span>{limitWords(item.productId?.title, 2)}</span>
 
                       <span className="text-gray-500 flex flex-row items-center">
                         <LuIndianRupee />
                         {
-                          item.productId?.variants?.find((variant: any) =>
-                            item.variantId.includes(variant._id)
+                          item?.productId?.variants?.find((variant: any) =>
+                            item?.variantId?.includes(variant._id)
                           )?.price
                         }
                       </span>
                     </span>
                   </div>
-                  <div className="flex w-[30%] gap-2 flex-row justify-between font-light  items-center">
-                    <span className="px-5  ">
-                      {/* {
-                      capitalizeFirstLetter(
-                        item.productId?.variants?.find((variant: any) =>
-                          item.variantId.includes(variant._id)
-                        )?.
-                      )
-                    } */}
-                      coming soon..
+                  <div className="flex w-[30%] gap-2 text-sm flex-row justify-between font-light  items-center">
+                    <span className="px-4 capitalize ">
+                     {item?.productId?.mediaType === "image" && (
+                     item.productId?.variants?.find((variant: any) =>
+                      item.variantId.includes(variant._id)
+                    )?.size
+                    )}
+                    {item?.productId?.mediaType === "audio" && (
+                      item.productId?.variants?.find((variant: any) =>
+                        item.variantId.includes(variant._id)
+                      )?.size
+                    )}
+                    {item?.productId?.mediaType === "video" && (
+                     item.productId?.variants?.find((variant: any) =>
+                      item.variantId.includes(variant._id)
+                    )?.metadata?.resolution
+                    )}
                     </span>
                     <span
                       className="text-red-500   mr-1 cursor-pointer"

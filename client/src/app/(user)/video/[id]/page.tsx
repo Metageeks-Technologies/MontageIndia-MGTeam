@@ -24,16 +24,14 @@ import { BiSolidPurchaseTagAlt } from "react-icons/bi";
 import { LuIndianRupee } from "react-icons/lu";
 import { FaShareAlt } from "react-icons/fa";
 import CustomShareButton from "@/components/Home/gallary/share";
+import Searchbar from "@/components/searchBar/search";
 
 const Home = () => {
   const [selectedVariantId, setSelectedVariantId] = useState("");
   const { videoData } = useAppSelector((state) => state.product);
   const { user } = useAppSelector((state) => state.user);
-
-  console.log(selectedVariantId, "selectedVariantId");
   const params = useParams();
   const id = params.id as string | undefined;
-
   useEffect(() => {
     getVideo(dispatch, { mediaType: ["video"] });
 
@@ -92,9 +90,12 @@ const Home = () => {
       addProductToCart(dispatch, product._id, variant);
     }
   };
-  
+  console.log("sd",product)
+
   
   return (
+    <>
+    <Searchbar/>
     <div className="main">
       {/* <div className="flex items-center gap-4 px-4 py-0.5 bg-gray-100 border border-gray-300 rounded-md w-[90%] m-auto mt-4">
         <button className="md:flex items-center hidden  gap-2 text-black hover:bg-gray-200 rounded-md">
@@ -117,6 +118,7 @@ const Home = () => {
           <span>Search by image</span>
         </button>
       </div> */}
+      <hr className="mt-5" />
       <div className="border-t border-b border-b-gray-400 border-t-gray-400 m-auto mt-5">
         <div className="flex md:flex-row flex-col  ">
           {product && (
@@ -220,7 +222,7 @@ const Home = () => {
                     </div>
                     <div className="items-center flex  flex-row">
                       
-                      {license.label}
+                      {license?.metadata?.resolution}
                        </div>
                   </div>
                 ))}
@@ -302,7 +304,7 @@ const Home = () => {
        
       <Footer />
     </div>
-
+    </>
   );
 };
 
