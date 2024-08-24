@@ -90,7 +90,7 @@ const Page = () =>
           confirmButtonText: 'OK',
           showCancelButton: false, 
         } );
-      router.push( "auth/user/login" );
+      router.replace("/auth/user/login");
       }
     } catch ( error:any )
     {

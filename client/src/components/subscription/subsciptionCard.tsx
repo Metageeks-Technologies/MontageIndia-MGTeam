@@ -115,11 +115,11 @@ const SubscriptionCard: React.FC<Props> = ({ plan }) => {
     console.log(plan);
     return (
         <div className="flex-1 text-xl rounded-xl text-black border border-[#E3B4EF]/25 bg-[#FDF8FF] p-10">
-            <div className="text-center h-[10vh] font-semibold mb-4">{plan.item.name}</div>
+            <div className="text-center md:h-[10vh] font-semibold mb-2 md:mb-4">{plan.item.name}</div>
             <div className="flex justify-center items-center  mb-4 text-center text-[#7828c8]">
-              <span className="text-3xl font-bold mr-2"><FaRupeeSign/></span><span className='font-bold text-3xl'> {plan.item.amount / 100} {plan.item.currency}</span> 
+              <span className="md:text-3xl font-bold mr-2"><FaRupeeSign/></span><span className='font-bold md:text-3xl'> {plan.item.amount / 100}</span> 
             </div>
-             <ScrollShadow hideScrollBar size={0} className="h-[20vh] text-center mb-4">
+             <ScrollShadow hideScrollBar size={0} className="md:h-[20vh] text-sm md:text-md text-center mb-4">
         {plan.item.description}
         </ScrollShadow>
              

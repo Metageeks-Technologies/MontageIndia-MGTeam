@@ -37,6 +37,8 @@ type InitialState = {
   totalVideoNumOfPage: number;
   totalVideoData: number;
   cart: CartItem[];
+  relatedKeyword: string[];
+  similarProducts: TCustomerProduct[];
 };
 
 const initialState: InitialState = {
@@ -60,6 +62,9 @@ const initialState: InitialState = {
   totalVideoNumOfPage: 1,
   totalVideoData: 0,
   cart: [],
+
+  relatedKeyword: [],
+  similarProducts: [],
 };
 
 export const audioSlice = createSlice({
@@ -273,6 +278,12 @@ export const audioSlice = createSlice({
       state.loading = false;
       state.error = " ";
     },
+    setKeyWords: (state, action: PayloadAction<string[]>) => {
+      state.relatedKeyword = action.payload;
+    },
+    setSimilarProducts: (state, action: PayloadAction<TCustomerProduct[]>) => {
+      state.similarProducts = action.payload;
+    },
   },
 });
 
@@ -301,7 +312,8 @@ export const {
   removeFromVideoCart,
   setVideoPage,
   setCart,
-
+  setKeyWords,
+  setSimilarProducts,
 } = audioSlice.actions;
 
 export default audioSlice.reducer;

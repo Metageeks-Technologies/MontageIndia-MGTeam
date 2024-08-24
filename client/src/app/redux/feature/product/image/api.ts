@@ -6,6 +6,7 @@ import {
   addToImageWishlist,
   addToImageCart,
   removeFromImageCart,
+  setKeyWords,
 } from "../slice";
 import type { AppDispatch } from "@/app/redux/store";
 import type { AxiosError } from "axios";
@@ -25,6 +26,7 @@ export const getImage = async (dispatch: AppDispatch, params: any) => {
         totalData: data.totalData,
       })
     );
+    dispatch(setKeyWords(data.relatedKeywords));
   } catch (error) {
     const e = error as AxiosError;
     notifyError(e.message);

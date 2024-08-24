@@ -9,13 +9,14 @@ import {
   requestFail,
   requestStart,
   setAudioData,
+  setKeyWords,
 } from "../slice";
 
 export const getAudio = async (dispatch: AppDispatch, params: any) => {
   dispatch(requestStart());
   try {
     const { data } = await instance.get(`product/customer`, {
-      params: {...params },
+      params: { ...params },
     });
     console.log(data);
     dispatch(
@@ -25,6 +26,7 @@ export const getAudio = async (dispatch: AppDispatch, params: any) => {
         totalData: data.totalData,
       })
     );
+    dispatch(setKeyWords(data.relatedKeywords));
   } catch (error) {
     const e = error as AxiosError;
     notifyError(e.message);
