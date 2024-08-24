@@ -228,7 +228,7 @@ const Page = () =>
 
         { loading ? (
           <div className="h-screen justify-center flex">
-            <Spinner label="Loading..." color="danger" /> />
+            <Spinner label="Loading..." color="danger" /> 
           </div>
         ) : (
           <div className="columns-1 sm:columns-2 md:columns-3 lg:columns-4 gap-2 mt-2 relative">

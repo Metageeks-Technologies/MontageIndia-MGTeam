@@ -41,7 +41,7 @@ const Form2: React.FC<Form2Props> = ( { onPrev, onNext, formData } ) =>
     };
     return fileType.startsWith( mediaTypeMap[ data.mediaType ] || '' );
   }, [ data.mediaType ] );
-console.log(file)
+
   const onDrop = useCallback( ( acceptedFiles: File[] ) =>
   {
     const selectedFile = acceptedFiles[ 0 ];
@@ -276,7 +276,7 @@ console.log(file)
   const displayPercentage = loadingPer >= 98 ? 98 : loadingPer;
   return (
     <div className="w-full mx-auto p-6">
-     
+
 
       <h3 className="text-lg font-medium mb-4">Upload { data.mediaType }</h3>
 
@@ -291,25 +291,36 @@ console.log(file)
           Browse File
         </button>
       </div>
+      {/* file name */ }
+      { file &&
+        <div className="mt-4 text-sm text-gray-600">
+          <label htmlFor="file"
+            className="block text-sm font-medium text-gray-700"
+          >
+            File Name: { file ? file.name : '' }
+          </label>
+        </div> }
+
+
+
+
 
       { loading && (
         <div className="mt-6">
           <div className="mb-2 flex justify-between items-center">
             <span>{ displayPercentage }% Uploading...</span>
             <button className="text-red-500">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+              {/* <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                 <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
-              </svg>
+              </svg> */}
             </button>
           </div>
 
-          {/* file name */ } 
-          <div className="text-sm text-gray-600 p-2">{ file?.name || "" }</div>
-          
+
           <div className="w-full bg-gray-200 rounded-full h-2.5">
             <div className="bg-purple-600 h-2.5 rounded-full" style={ { width: `${ displayPercentage }%` } }></div>
           </div>
-        </div>  
+        </div>
       ) }
 
       { error && <p className="text-red-500 mt-4">{ error }</p> }
