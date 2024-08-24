@@ -6,6 +6,7 @@ import {Tabs, Tab, Input, Link, Button,Spinner} from "@nextui-org/react";
 import instance from "@/utils/axios";
 
 interface SubscriptionPlan {
+    _id:string;
     planId: string;
     entity: string;
     interval: number;
@@ -56,7 +57,7 @@ const SubscriptionTable=()=>{
   }, []);
     return (
         <div className="flex flex-col justify-start items-center min-h-screen rounded-lg overflow-hidden bg-white text-white">
-        <div className="w-full font-bold text-xl mb-8 rounded-lg bg-[#7828c8] text-white px-6 py-4" >
+        <div className="w-full font-bold text-md md:text-xl mb-8 rounded-lg bg-[#7828c8] text-white px-4 py-2 md:px-6 md:py-4" >
         Subscription Plan
         </div>
         {
