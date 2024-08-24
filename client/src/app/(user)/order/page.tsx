@@ -116,7 +116,7 @@ const PlaceOrder = () => {
   const orderOption = createOrderOption();
 
   return (
-    <div className="md:w-[70%] flex justify-center flex-col m-auto py-6 b">
+    <div className="md:w-[70%] min-h-screen flex justify-start flex-col m-auto py-6 b">
       <h1 className="text-2xl font-bold mb-4">Shopping Cart</h1>
       {loader && (
         <div className="flex justify-center items-center min-h-screen">

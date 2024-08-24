@@ -31,8 +31,8 @@ const WishListPage = () => {
     }, []);
 
   return (
-    <div className='w-full min-h-screen rounded-lg overflow-hidden bg-white px-6 py-4'>
-      <h1 className="text-xl font-semibold mb-6 text-gray-800">Faviorates</h1>
+    <div className='w-full min-h-screen rounded-lg overflow-hidden bg-white px-4 py-2 md:px-6 md:py-4'>
+      <h1 className="text-xl font-semibold md:mb-6 text-gray-800">Faviorates</h1>
       <hr className='mb-6' />
       <div className="flex flex-col gap-4 overflow-y-scroll">
         {loading && (
