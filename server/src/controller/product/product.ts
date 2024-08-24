@@ -163,9 +163,9 @@ export const addSizeAndKeysToVideo = catchAsyncError(
       size: 1,
     };
     const mediumMetadata: MetaData = {
-      resolution: "1920x1080", //Px
-      bitrate: 5, //Mbps
-      frameRate: "30", //Hz
+      resolution: "1280x720", //Px
+      bitrate: 2, //Mbps
+      frameRate: "24", //Hz
       format: "mp4",
       size: 1,
     };
@@ -344,10 +344,12 @@ export const getPurchasedProducts = catchAsyncError(
   async (req: any, res, next) => {
     try {
       const { id } = req.user;
-      const {searchTerm,currentPage=1,dataPerPage=6}=req.query;
-      console.log("searchTerm",searchTerm,currentPage,dataPerPage);
+      const { searchTerm, currentPage = 1, dataPerPage = 6 } = req.query;
+      console.log("searchTerm", searchTerm, currentPage, dataPerPage);
 
-      const customer = await Customer.findById(id).populate("purchasedProducts.productId").populate("purchasedProducts.variantId");
+      const customer = await Customer.findById(id)
+        .populate("purchasedProducts.productId")
+        .populate("purchasedProducts.variantId");
 
       if (!customer) {
         return next(new ErrorHandler(`customer not found`, 404));
@@ -357,16 +359,17 @@ export const getPurchasedProducts = catchAsyncError(
       let purchasedProducts = customer?.purchasedProducts?.map((item: any) => ({
         product: item.productId,
         variant: item.variantId,
-        createdAt: item.createdAt, 
+        createdAt: item.createdAt,
       }));
 
       if (searchTerm) {
-        const regex = new RegExp(searchTerm, 'i');
-        purchasedProducts = purchasedProducts.filter((item: any) =>
-          regex.test(item.product.title) ||
-          regex.test(item.variant.label) ||
-          regex.test(item.product.tags.join(" ")) ||
-          regex.test(item.product.mediaType)
+        const regex = new RegExp(searchTerm, "i");
+        purchasedProducts = purchasedProducts.filter(
+          (item: any) =>
+            regex.test(item.product.title) ||
+            regex.test(item.variant.label) ||
+            regex.test(item.product.tags.join(" ")) ||
+            regex.test(item.product.mediaType)
         );
       }
 
@@ -374,7 +377,7 @@ export const getPurchasedProducts = catchAsyncError(
         const dateA: number = new Date(a.createdAt).getTime();
         const dateB: number = new Date(b.createdAt).getTime();
         return dateA - dateB;
-    });
+      });
 
       // Pagination
       const totalPurchased = purchasedProducts.length;
@@ -384,12 +387,11 @@ export const getPurchasedProducts = catchAsyncError(
         currentPage * dataPerPage
       );
 
-
       res.send({
         success: true,
-        purchasedProducts:paginatedProducts,
+        purchasedProducts: paginatedProducts,
         totalPurchased,
-        totalPages
+        totalPages,
       });
     } catch (err) {
       console.log(err);
@@ -401,13 +403,14 @@ export const getPurchasedProducts = catchAsyncError(
 export const getProductForCustomer = catchAsyncError(
   async (req: any, res, next) => {
     const {
-      productsPerPage = "2",
+      productsPerPage = "10",
       page = "1",
       status = "published",
       category = [],
       mediaType = [],
       searchTerm = "",
       tags,
+      popular,
     } = req.query;
 
     const queryObject: any = {};
@@ -420,6 +423,7 @@ export const getProductForCustomer = catchAsyncError(
       queryObject.$or = [
         { title: { $regex: searchTerm, $options: "i" } },
         { tags: { $regex: searchTerm, $options: "i" } },
+        { category: { $regex: searchTerm, $options: "i" } },
       ];
     }
 
@@ -435,6 +439,28 @@ export const getProductForCustomer = catchAsyncError(
       const nTag = tags as string;
       const tagsArray = Array.isArray(nTag) ? nTag : nTag.split(","); // Ensure tags are in array format
       queryObject.tags = { $all: tagsArray };
+    }
+
+    if (popular) {
+      const popularProducts = await Customer.aggregate([
+        {
+          $project: {
+            allProducts: {
+              $concatArrays: [
+                "$wishlist.productId",
+                "$cart.productId",
+                "$purchasedProducts.productId",
+              ],
+            },
+          },
+        },
+        { $unwind: "$allProducts" },
+        { $group: { _id: "$allProducts" } },
+        { $project: { _id: 1 } },
+      ]);
+
+      const popularProductIds = popularProducts.map((p) => p._id);
+      queryObject._id = { $in: popularProductIds };
     }
 
     let isWhitelisted = false;
@@ -487,11 +513,30 @@ export const getProductForCustomer = catchAsyncError(
       };
     });
 
+    const relatedKeywords = new Set<string>();
+    products.forEach((product) => {
+      const { title, description, category, tags } = product;
+      const words = [
+        ...title.split(" "),
+        ...description.split(" "),
+        ...category,
+        ...tags,
+      ];
+      words.forEach((word) => {
+        if (word.length > 3) {
+          relatedKeywords.add(word.toLowerCase());
+        }
+      });
+    });
+
+    // let relatedKeywords = await getRelatedKeywords(searchTerm);
+
     res.status(200).json({
       success: true,
       totalData,
       numOfPages,
       products: result,
+      relatedKeywords: Array.from(relatedKeywords).slice(0, 16),
     });
   }
 );
@@ -546,9 +591,28 @@ export const getSingleProductForCustomer = catchAsyncError(
       isPurchased,
     };
 
+    // Find similar products
+    const similarProducts = await Product.find({
+      $text: {
+        $search:
+          product.title +
+          " " +
+          product.tags.join(" ") +
+          " " +
+          product.category.join(" ") +
+          " " +
+          product.description,
+      },
+      mediaType: product.mediaType,
+      _id: { $ne: product._id }, // Exclude the current product
+    })
+      .limit(16)
+      .exec();
+
     res.status(200).json({
       success: true,
       product: result,
+      similar: similarProducts,
     });
   }
 );
@@ -746,3 +810,73 @@ export const getProductFromAws = catchAsyncError(
     });
   }
 );
+
+export const getRelatedKeywords = async (searchTerm: string) => {
+  if (!searchTerm) {
+    return [];
+  }
+
+  const relatedKeywordsPipeline: any[] = [
+    {
+      $match: {
+        $text: { $search: searchTerm },
+      },
+    },
+    {
+      $project: {
+        title: 1,
+        tags: 1,
+        description: 1,
+        category: 1,
+      },
+    },
+    {
+      $unwind: {
+        path: "$tags",
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $group: {
+        _id: null,
+        keywords: {
+          $push: {
+            $concatArrays: [
+              { $ifNull: [{ $split: ["$title", " "] }, []] },
+              { $ifNull: [{ $split: ["$description", " "] }, []] },
+              { $ifNull: ["$tags", []] },
+              { $ifNull: [{ $split: ["$category", " "] }, []] },
+            ],
+          },
+        },
+      },
+    },
+    {
+      $unwind: "$keywords",
+    },
+    {
+      $unwind: "$keywords",
+    },
+    {
+      $group: {
+        _id: "$keywords",
+        count: { $sum: 1 },
+      },
+    },
+    {
+      $sort: { count: -1 },
+    },
+    {
+      $limit: 16,
+    },
+    {
+      $project: {
+        _id: 0,
+        keyword: "$_id",
+      },
+    },
+  ];
+
+  const relatedKeywords = await Product.aggregate(relatedKeywordsPipeline);
+  return relatedKeywords.map((k) => k.keyword);
+};
