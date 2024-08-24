@@ -46,6 +46,7 @@ export type TCustomerProduct = {
     price: number;
     credit: number;
     key?: string;
+    size: string;
     metadata: MetaData;
   }[];
   status: "published";
