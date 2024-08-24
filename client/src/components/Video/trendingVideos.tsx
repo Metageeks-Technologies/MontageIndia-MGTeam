@@ -23,7 +23,7 @@ const Trending = ({ data }: { data: TCustomerProduct }) => {
   const [loading, setLoading] = useState(false);
   const handleDownload = async () => {
     setLoading(true);
-    await downloadProduct(dispatch, data.publicKey, data.title);
+    await downloadProduct(dispatch, data?.publicKey, data?.title);
     setLoading(false);
   };
   const handleMouseEnter = (
@@ -42,9 +42,7 @@ const Trending = ({ data }: { data: TCustomerProduct }) => {
       video.pause();
     }
   };
-  const capitalizeFirstLetter = (string: string) => {
-    return string.charAt(0).toUpperCase() + string.slice(1);
-  };
+ 
   const router = useRouter();
   const dispatch = useAppDispatch();
 
@@ -76,27 +74,29 @@ const Trending = ({ data }: { data: TCustomerProduct }) => {
       >
         <video loop muted className="w-full h-64 object-cover">
           <source
-            src={`https://mi2-public.s3.ap-southeast-1.amazonaws.com/${data.thumbnailKey}`}
+            src={`https://mi2-public.s3.ap-southeast-1.amazonaws.com/${data?.thumbnailKey}`}
           />
         </video> 
       </div>
       <div className="absolute  justify-center  top-1 left-1 gap-1 flex flex-row text-white m-2 opacity-5 group-hover:opacity-100 transition-opacity duration-300">
-        <span className=" pt-1 "><img src="/asset/video.svg"  alt="Hd "/></span> 
-      <span className=" pt-[2px]">|</span>
-      <span className="px-1 items-center text-start flex ">{capitalizeFirstLetter(data.title)}</span>
+        <span className=" pt-1 "><img src="/asset/video.svg"  alt="Hd "/></span>
+        <span className=" pt-[2px]">|</span>
+        <span>{(parseFloat(data?.length) / 100).toFixed(2)}</span>
+        <span className=" pt-[2px]">|</span>
+      <span className="px-1 items-center text-start flex capitalize">{data?.title}</span>
       </div>
       <div className="absolute bottom-1 right-9 m-2 opacity-5 group-hover:opacity-100 transition-opacity duration-300">
         <div
           onClick={handleeWishlist}
-          title={data.isWhitelisted ? "Remove from Saved" : "Save Image"}
+          title={data?.isWhitelisted ? "Remove from Saved" : "Save Image"}
           className="text-white bg-black bg-opacity-35 px-2 py-1 rounded-full flex gap-1 items-center"
         >
-          {data.isWhitelisted ? (
+          {data?.isWhitelisted ? (
             <IoMdHeart className="h-6 w-5 text-red-500" />
           ) : (
             <FaRegHeart  className="h-6 w-5" />
           )}
-          {/* <p className="text-sm"> {data.isWhitelisted ? "" : ""} </p> */}
+          {/* <p className="text-sm"> {data?.isWhitelisted ? "" : ""} </p> */}
         </div>
       </div>
       <div
@@ -114,15 +114,15 @@ const Trending = ({ data }: { data: TCustomerProduct }) => {
         </div>
       </div>
       <div className="absolute bottom-1 right-20 m-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-        {!data.isPurchased ? (
+        {!data?.isPurchased ? (
           <div
-            title={data.isInCart ? "Remove from cart" : "Add to cart"}
+            title={data?.isInCart ? "Remove from cart" : "Add to cart"}
             className={` p-2 ${
-              data.isInCart ? "bg-red-500 text-white" : "bg-white text-black"
+              data?.isInCart ? "bg-red-500 text-white" : "bg-white text-black"
             } rounded-full`}
             onClick={handleCart}
           >
-            {data.isInCart ? <BsCartCheckFill /> : <BsCart2 />}
+            {data?.isInCart ? <BsCartCheckFill /> : <BsCart2 />}
           </div>
         ) : (
           <div

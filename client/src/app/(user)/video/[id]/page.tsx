@@ -180,7 +180,11 @@ const Home = () => {
                 {product.variants.map((license, index) => (
                   <div
                     key={index}
-                    className={`border w-[90%]  cursor-pointer hover:bg-[#F4F4F4] p-2 flex flex-col ${
+                    className={`border w-[90%]  cursor-pointer  ${
+                              isVariantInCart(license._id)
+                                ? 'bg-[#F4F4F4]'
+                                : '  '
+                            }  hover:bg-[#F4F4F4] p-2 flex flex-col ${
                       index === 0 ? 'rounded-t-md' : ''
                     } ${index === product.variants.length - 1 ? 'rounded-b-md' : ''}`}
                     onClick={() => handleCart(license._id)}

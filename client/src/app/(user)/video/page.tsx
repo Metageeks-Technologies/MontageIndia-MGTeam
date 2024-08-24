@@ -15,9 +15,11 @@ import { clearKeywords } from "@/app/redux/feature/product/api";
 
 const Page = () => {
   const searchParams = useSearchParams();
+  const searchTerm = searchParams.get("searchTerm") || "";
+
   const category = searchParams.get("category");
+
   const [currentPage, setCurrentPage] = useState(1);
-  const [searchTerm, setSearchTerm] = useState("");
   const dispatch = useAppDispatch();
   const {
     videoData: product,
@@ -36,7 +38,7 @@ const Page = () => {
   const handlePrevPage = () => {
     handlePageChange(videoPage === 1 ? totalVideoNumOfPage : videoPage - 1);
   };
-
+ 
   const categoryParam = category ? ["editor choice"] : "";
 
   const fetchData = (page: number) => {
@@ -46,7 +48,7 @@ const Page = () => {
       mediaType: ["video"],
       searchTerm,
       category: categoryParam,
-      productsPerPage: "6",
+      productsPerPage: "2",
     });
   };
 
@@ -63,26 +65,8 @@ const Page = () => {
 
       <div className="main items-center ">
         {/* Category Buttons */}
-        <hr className="mt-5" />
+        {/* <hr className="mt-5" /> */}
 
-        <div className="border-t bg-[#eeeeee] border-gray-300 px-[5%] py-5 flex flex-wrap justify-start space-x-2 space-y-2 md:space-y-0 sm:space-x-4">
-          {[
-            "Happy birthday",
-            "Thank You",
-            "Background",
-            "Congratulations",
-            "Business",
-            "Welcome",
-          ].map((category) => (
-            <button
-              key={category}
-              className="flex items-center px-3 py-2 sm:px-4 sm:py-2 border border-gray-300 rounded-md bg-transparent backdrop-blur-sm bg-opacity-20 hover:bg-opacity-30 transition duration-300"
-            >
-              <IoIosSearch className="h-5 w-5 mr-2" />
-              {category}
-            </button>
-          ))}
-        </div>
 
         {/* Trending Videos */}
         <div className="bg-[#eeeeee]">

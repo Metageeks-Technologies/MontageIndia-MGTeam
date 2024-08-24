@@ -18,10 +18,9 @@ const Page = () => {
   const dispatch = useAppDispatch();
   const searchParams = useSearchParams();
   const category = searchParams.get("category");
-
   const [totalPages, setTotalPages] = useState(1);
   const [currentPage, setCurrentPage] = useState(1);
-  const [searchTerm, setSearchTerm] = useState("");
+  const searchTerm = searchParams.get("searchTerm") || "";
   const [loading, setloading] = useState(false);
 
   const {
@@ -65,7 +64,7 @@ const Page = () => {
     <>
       <Searchbar />
       <div className="main ">
-        <hr className="mt-5" />
+        {/* <hr className="mt-5" /> */}
 
         <div className="m-auto mt-4 bg w-[90%]">
           <div className="flex flex-wrap gap-2 ">
