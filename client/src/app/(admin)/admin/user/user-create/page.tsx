@@ -108,10 +108,10 @@ const UserCreate: React.FC = () =>
             // notifySuccess( "New user created successfully" );
             Swal.fire( {
                 icon: 'success',
-                title: 'Published',
-                text: 'New user created successfully.',
-            } );
-            router.push( "/admin/dashboard" );
+                title: 'New user created successfully',
+                text: 'You can now login with the new user credentials',
+                 } );
+            router.push( "/admin/user/userList" );
         } catch ( error: any )
         {
             console.log( "error in creating the user :-", error );
@@ -204,15 +204,21 @@ const UserCreate: React.FC = () =>
                                 selectedValues={ selectedMediaTypes.map( ( type ) => ( { name: type } ) ) }
                                 onSelect={ ( selectedList ) => onSelectMediaType( selectedList.map( ( item: any ) => item.name ) ) }
                                 onRemove={ ( selectedList ) => onRemoveMediaType( selectedList.map( ( item: any ) => item.name ) ) }
+                                
                                 showCheckbox
                                 displayValue="name"
                                 style={ {
                                     chips: {
-                                        background: '#EFEBE9'
+                                        background: '#EFEBE9',
+                                        color: 'black',
+                                        padding: '0 10px',
+                                        border: '1px solid #ccc',
+                                        borderRadius: '10px',
                                     },
-                                    searchBox: {
+                                   searchBox: {
                                         background: '#EFEBE9',
                                         border: '1px solid #e5e7eb',
+
                                     }
                                 } }
                             />

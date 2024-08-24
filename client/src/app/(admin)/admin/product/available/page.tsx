@@ -100,9 +100,9 @@ const Home: React.FC = () =>
   };
 
   //  delete the product
-  const handleStatusUpdate = async ( uuid:string ) =>
+  const handleStatusUpdate = async ( uuid: string ) =>
   {
-    
+
     try
     {
       const updatedField = { status: "archived" };
@@ -188,7 +188,7 @@ const Home: React.FC = () =>
     <div className="container p-4 m-4 bg-pureWhite-light rounded-md">
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-2xl font-bold">Published Product</h1>
-        <button className="bg-red-500 text-white px-4 py-2 rounded" onClick={ () => router.push("/admin/product/create")}>+ Add Product</button>
+        <button className="bg-red-500 text-white px-4 py-2 rounded" onClick={ () => router.push( "/admin/product/create" ) }>+ Add Product</button>
       </div>
 
       {/* one horixonal line */ }
@@ -272,7 +272,7 @@ const Home: React.FC = () =>
               <th className="px-5 py-3 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                 Media Type
               </th>
-             
+
               <th className="px-5 py-3 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                 Product Title
               </th>
@@ -294,7 +294,7 @@ const Home: React.FC = () =>
             { loading ? (
               <tr>
                 <td colSpan={ 7 } className="text-center py-4">
-                  <Spinner label="Loading..." color="success" />
+                  <Spinner label="Loading..." color="danger" />
                 </td>
               </tr>
             ) : (
@@ -309,7 +309,20 @@ const Home: React.FC = () =>
                           { prod.mediaType === "video" && <img src="/images/videoIcon.png" alt="Video" className="w-8 h-8 rounded-full" /> }
                         </div>
                         <div className="flex items-center w-full p-3">
-                          { ( prod.mediaType === "image" || prod.mediaType === "video" ) &&
+                          { prod?.mediaType === "video" && (
+                            <div
+                            >
+                              <video 
+                                controls 
+                                className="w-full h-28 object-cover rounded">
+                                <source
+                                  src={ `https://mi2-public.s3.ap-southeast-1.amazonaws.com/${ prod?.thumbnailKey }` }
+                                />
+                              </video>
+                            </div>
+
+                          ) }
+                          { ( prod.mediaType === "image" ) &&
                             <img src={ `https://mi2-public.s3.ap-southeast-1.amazonaws.com/${ prod.thumbnailKey }` } alt={ prod.title } className="w-3/4 h-16 object-cover rounded" /> }
                           { prod.mediaType === "audio" && <img src='/images/audioImage.png' alt={ prod.title } className="w-3/4 h-16 object-cover rounded" /> }
                         </div>
@@ -337,9 +350,9 @@ const Home: React.FC = () =>
                         {/* <button className="text-green-600 hover:text-green-900">
                           <img src="/images/viewIcon.png" alt="View" className="w-6 h-6" />
                         </button> */}
-                        <button className="text-red-600 hover:text-red-900" title="Delete" onClick={ () => handleStatusUpdate (prod.uuid)}>
+                        <button className="text-red-600 hover:text-red-900" title="Delete" onClick={ () => handleStatusUpdate( prod.uuid ) }>
                           <img src="/images/deleteIcon.png" alt="Delete" className="w-6 h-6" />
-                        </button> 
+                        </button>
                       </div>
                     </td>
                   </tr>

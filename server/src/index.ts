@@ -17,6 +17,7 @@ import paymentRouter from '@src/routes/payment/payment';
 import userRouter from './routes/user/customer';
 import orderRouter from './routes/order/order';
 import subscriptionRouter from './routes/subscription/subscription';
+import s3Router from './routes/s3Services/s3services';
 
 const {mongoUrl,nodeEnv,clientUrl}=config;
  
@@ -43,6 +44,7 @@ app.use("/api/v1/payment", paymentRouter);
 app.use("/api/v1/field", fieldRouter);
 app.use("/api/v1/order", orderRouter);
 app.use("/api/v1/subscription", subscriptionRouter);
+app.use("/api/v1/aws",s3Router);
 
 
 app.get("/api/greet", (req,res,next)=>{

@@ -428,9 +428,18 @@ const Form4 = ( { formData }: any ) =>
         </div>
 
         <form onSubmit={ handleSubmit } className="bg-pureWhite shadow-lg rounded-lg overflow-hidden">
-          <div className="p-6 space-y-6">
+          <div className="p-6 ">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
+                <div className="flex items-center mb-4">
+                  <input
+                    type="checkbox"
+                    checked={ selected }
+                    onChange={ handleCheck }
+                    className="mr-2"
+                  />
+                  <span className="text-base font-semibold">Editor Choice</span>
+                </div>
                 <div className="mb-6">
                   <div className="flex justify-between items-center">
                     <label className="text-gray-700 text-sm font-bold mb-2" htmlFor="title">
@@ -449,7 +458,7 @@ const Form4 = ( { formData }: any ) =>
                         className={ `${ editMode.title ? 'hidden' : 'block' }` }
                         onClick={ () => handleEditToggle( 'title' ) }
                       >
-                        <FaRegEdit size={ 25 } />
+                        <FaRegEdit size={ 20 } />
                       </button>
                     </div>
                   </div>
@@ -467,7 +476,7 @@ const Form4 = ( { formData }: any ) =>
 
 
                 <div className="">
-                  <div className="flex justify-between items-center">
+                  <div className="flex justify-between items-center mb-3">
                     <label className="text-gray-700 text-sm font-bold" htmlFor="description">
                       Description
                     </label>
@@ -494,7 +503,7 @@ const Form4 = ( { formData }: any ) =>
                     placeholder="Product description"
                     value={ data.description }
                     readOnly={ !editMode.description }
-                    className="w-full p-2 border rounded h-32 bg-pageBg-light"
+                    className="w-full p-2 border rounded h-36 bg-pageBg-light"
                     onChange={ ( e ) => handleChange( e, 'description' ) }
                   />
                 </div>
@@ -502,7 +511,7 @@ const Form4 = ( { formData }: any ) =>
               </div>
 
               <div className="mb-6">
-                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="media">
+                <label className="text-gray-700 text-sm font-bold mb-2" htmlFor="media">
                   Media
                 </label>
                 <div className="border-dashed border-2 border-gray-300 p-4 rounded-lg mb-5">
@@ -559,33 +568,6 @@ const Form4 = ( { formData }: any ) =>
                 ) ) }
               </div>
             </div>
-
-            {/* Media Type & Editor's Choice */ }
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="mb-4">
-                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="mediaType">
-                  Media Type
-                </label>
-                <input
-                  id="mediaType"
-                  type="text"
-                  value={ data.mediaType }
-                  className="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none bg-pageBg-light"
-                  readOnly
-                />
-              </div>
-
-              <div className="flex items-center mb-4">
-                <input
-                  type="checkbox"
-                  checked={ selected }
-                  onChange={ handleCheck }
-                  className="mr-2"
-                />
-                <span className="text-base font-semibold">Editor Choice</span>
-              </div>
-            </div>
-
             {/* Variants */ }
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
               { data.mediaType !== 'audio' && data.variants.map( ( variant, index ) => (
@@ -641,12 +623,12 @@ const Form4 = ( { formData }: any ) =>
               ) ) }
             </div>
 
-            {/* Tags and Category */ }
-            <div className="flex flex-col space-y-6 md:flex-row md:space-y-0 md:space-x-6">
-              {/* Tags */ }
-              <div className="flex flex-col bg-pageBg-light p-6 rounded-lg shadow-md w-full">
-                <div className='text-xl flex items-center justify-between font-semibold mb-4'>
-                  <span>Tags</span>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+              <div>
+                <div className='text-xl flex items-center justify-between font-semibold mb-2'>
+                  <label className="text-gray-700 text-sm font-bold mb-2" htmlFor="tags">
+                    Tags
+                  </label>
                   <div>
                     { !editMode.tags ? (
                       <button
@@ -667,56 +649,61 @@ const Form4 = ( { formData }: any ) =>
                     ) }
                   </div>
                 </div>
-
-                <div className='flex py-2 flex-wrap gap-2 w-full'>
-                  { data.tags.map( ( tag, index ) => (
-                    tag.trim() !== '' && (
-                      <div key={ index } className='flex items-center gap-2 bg-pureWhite border border-gray-300 rounded-full px-4 py-2 shadow-sm'>
+                <div className="bg-pageBg-light p-4 rounded-lg shadow-sm">
+                  <div className='flex flex-wrap gap-2'>
+                    { data.tags.map( ( tag, index ) => (
+                      tag.trim() !== '' && (
+                        <div key={ index } className='flex items-center gap-2 bg-pureWhite-light border border-gray-300 rounded-lg px-3 py-1 shadow-sm'>
+                          { editMode.tags ? (
+                            <>
+                              <input
+                                type="text"
+                                value={ tag }
+                                required
+                                onChange={ ( e ) => handleTagChange( index, e.target.value ) }
+                                className="w-full bg-transparent text-sm font-semibold text-gray-700 focus:outline-none"
+                              />
+                              <button
+                                type="button"
+                                className="text-webred hover:bg-webred-light transition-colors"
+                                onClick={ () => handleDeleteTag( index ) }
+                              >
+                                <FaTrashAlt />
+                              </button>
+                            </>
+                          ) : (
+                            <span className="text-sm font-semibold text-gray-700">{ tag }</span>
+                          ) }
+                        </div>
+                      )
+                    ) ) }
+                    { editMode.tags && (
+                      <div className='flex gap-2 items-center'>
                         <input
                           type="text"
-                          value={ tag }
-                          required
-                          onChange={ ( e ) => handleTagChange( index, e.target.value ) }
-                          disabled={ !editMode.tags }
-                          className={ `w-full bg-transparent text-sm font-semibold text-gray-700 focus:outline-none ${ !editMode.tags ? 'cursor-default' : '' }` }
+                          value={ newTag }
+                          onChange={ ( e ) => setNewTag( e.target.value ) }
+                          className="w-24 rounded-lg px-2 py-1 bg-pureWhite border border-gray-300 shadow-sm text-sm font-semibold text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          placeholder="New tag"
                         />
-                        { editMode.tags && (
-                          <button
-                            type="button"
-                            className="text-webred hover:bg-webred-light transition-colors"
-                            onClick={ () => handleDeleteTag( index ) }
-                          >
-                            <FaTrashAlt />
-                          </button>
-                        ) }
+                        <button
+                          type="button"
+                          className="text-blue-600 hover:text-blue-800 transition-colors"
+                          onClick={ handleAddTag }
+                        >
+                          <IoIosAddCircleOutline size={ 22 } />
+                        </button>
                       </div>
-                    )
-                  ) ) }
-                  { editMode.tags && (
-                    <div className='flex gap-2 items-center mt-2'>
-                      <input
-                        type="text"
-                        value={ newTag }
-                        onChange={ ( e ) => setNewTag( e.target.value ) }
-                        className="w-36 rounded-full px-4 py-2 bg-pureWhite border border-gray-300 shadow-sm text-sm font-semibold text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        placeholder="Add new tag"
-                      />
-                      <button
-                        type="button"
-                        className="text-blue-600 hover:text-blue-800 transition-colors"
-                        onClick={ handleAddTag }
-                      >
-                        <IoIosAddCircleOutline size={ 22 } />
-                      </button>
-                    </div>
-                  ) }
+                    ) }
+                  </div>
                 </div>
               </div>
 
-              {/* Category */ }
-              <div className='flex flex-col bg-pageBg-light p-6 rounded-lg shadow-md w-full'>
-                <div className="flex items-center justify-between text-xl font-semibold mb-4">
-                  <label htmlFor="category">Category</label>
+              <div>
+                <div className="flex items-center justify-between text-xl font-semibold mb-2">
+                  <label className="text-gray-700 text-sm font-bold mb-2" htmlFor="category">
+                    Category
+                  </label>
                   <div>
                     { editMode.category ? (
                       <button
@@ -732,37 +719,58 @@ const Form4 = ( { formData }: any ) =>
                         className="text-gray-600 hover:text-gray-800 transition-colors"
                         onClick={ () => handleEditToggle( 'category' ) }
                       >
-                        <FaRegEdit size={ 25 } />
+                        <FaRegEdit size={ 20 } />
                       </button>
                     ) }
                   </div>
                 </div>
+                <div className="bg-pageBg-light p-2 rounded-lg shadow-sm">
+                  { editMode.category ? (
+                    <Select
+                      isMulti
+                      name="categories"
+                      options={ availableCategories }
+                      className='basic-multi-select'
+                      classNamePrefix="select"
+                      onChange={ handleCategoryChange }
+                      // value={ availableCategories.filter( option => data.category.includes( option.value ) ) }
+                    />
+                  ) : (
+                    <div className='flex flex-wrap gap-2'>
+                      { data.category
+                        .filter( cat => cat !== "editor choice" )
+                        .map( ( cat, index ) => (
+                          
+                          <span key={ index } className="text-sm  text-gray-700 p-2 rounded-lg font-semibold bg-pureWhite-light shadow-md">{ cat }</span>
 
-                { editMode.category ? (
-                  <Select
-                    isMulti
-                    name="categories"
-                    options={ availableCategories }
-                    className='basic-multi-select'
-                    classNamePrefix="select"
-                    onChange={ handleCategoryChange }
-                  />
-                ) : (
-                  <div className='flex flex-wrap gap-3'>
-                    { data.category
-                      .filter( cat => cat !== "editor choice" )
-                      .map( ( cat, index ) => (
-                        <span
-                          key={ index }
-                          className='p-2 rounded-full font-semibold bg-blue-100 text-blue-700 shadow-md'
-                        >
-                          { cat }
-                        </span>
-                      ) ) }
-                  </div>
-                ) }
+                        ) ) }
+                    </div>
+                  ) }
+                </div>
+              </div>
+
+              <div>
+                <label className="text-gray-700 text-sm font-bold mb-2" htmlFor="media type">
+                  Media Type
+                </label>
+                <div className="bg-pageBg-light p-4 my-2 rounded-lg shadow-sm"> 
+                  <span
+                  className="p-2 font-semibold px-3 py-2 text-gray-700 border rounded-lg focus:outline-none bg-pureWhite-light"
+                  >
+                    {data.mediaType}
+                  </span>
+                  {/* <input
+                    id="mediaType"
+                    type="text"
+                    value={ data.mediaType }
+                    readOnly
+                  /> */}
+                </div>
               </div>
             </div>
+
+
+           
 
           </div>
 

@@ -183,7 +183,7 @@ const Page = () =>
                <button
                  className="flex items-center rounded-md justify-center w-full px-4 py-2 mt-4  bg-webgreen"
                >
-                 <Spinner color="white"/>
+                 <Spinner color="danger"/>
               </button>:
             <button
               className="flex items-center rounded-md justify-center w-full px-4 py-2 mt-4 text-white bg-webgreen hover:bg-webgreenHover"

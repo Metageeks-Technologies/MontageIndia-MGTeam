@@ -2,7 +2,6 @@ import express from 'express';
 import {
     loginAdmin,
     signupAdmin,
-    deleteAdmin,
     logoutAdmin,
     getAllAdmin,
     getCurrentAdmin,
@@ -12,7 +11,8 @@ import {
     forgetPassword,
     updateAdminDetails,
     resetPassword,
-    getAdminById
+    getAdminById,
+    toggleDeleteAdmin
 } from '../../controller/user/admin.js';
 import { isAuthenticatedAdmin } from '@src/middleware/auth.js';
 import { clearActivity, getActivity } from '@src/controller/user/activity.js';
@@ -23,7 +23,7 @@ adminRouter.route("/login").post(loginAdmin);
 adminRouter.route("/logout").get(logoutAdmin)
 adminRouter.route("/getAllAdmin").get(isAuthenticatedAdmin,getAllAdmin);
 adminRouter.route("/signup").post(signupAdmin);
-adminRouter.route("/:id").delete(isAuthenticatedAdmin,deleteAdmin);
+adminRouter.route("/:id").delete(isAuthenticatedAdmin,toggleDeleteAdmin);
 adminRouter.route("/getCurrAdmin").get(isAuthenticatedAdmin,getCurrentAdmin);
 adminRouter.route("/createAdmin").post(isAuthenticatedAdmin,createAdmin);
 adminRouter.route("/updateAdmin/:id").patch(isAuthenticatedAdmin,updateAdmin);

@@ -30,7 +30,7 @@ const page = () =>
   console.log( "currenteuser:-", currentUser );
 
   return (
-    <div className="">
+    <div className="container p-4 m-4 bg-pureWhite-light rounded-md">
       {/* <Sidebar /> */ }
 
       <div className=" bg-white p-4">

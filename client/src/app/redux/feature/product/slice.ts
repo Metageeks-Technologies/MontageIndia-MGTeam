@@ -3,7 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import { removeProductFromCart } from "./api";
 
-type CartItem = {
+export type CartItem = {
   productId: TCustomerProduct;
   variantId: string;
 };
@@ -290,6 +290,7 @@ export const {
   removeFromImageCart,
   setImagePage,
   setSingleProduct,
+  setAudioPage,
   clearSingleProduct,
   addSingleProductToCart,
   addSingleProductToWishlist,
@@ -300,6 +301,7 @@ export const {
   removeFromVideoCart,
   setVideoPage,
   setCart,
+
 } = audioSlice.actions;
 
 export default audioSlice.reducer;

@@ -1,4 +1,14 @@
 import mongoose, { Document } from "mongoose";
+export type MetaData = {
+  format: string;
+  size: number;
+  length?: number;
+  dimension?: string;
+  dpi?: number;
+  bitrate?: number;
+  resolution?: string;
+  frameRate?: string;
+};
 export type TProduct = Document & {
   _id: string;
   uuid: string;
@@ -14,11 +24,12 @@ export type TProduct = Document & {
     label?: string;
     price?: number;
     credit?: number;
-    size: string;
     key: string;
+    metadata: MetaData;
   }[];
   status: "published" | "archived" | "unavailable" | "draft";
   mediaType: "image" | "video" | "audio";
+  length?: number;
   createdBy: mongoose.Types.ObjectId;
 };
 

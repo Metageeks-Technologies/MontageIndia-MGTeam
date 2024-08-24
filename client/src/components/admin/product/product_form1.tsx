@@ -232,7 +232,7 @@ const Form1 = ( { onNext }: any ) =>
             />
           </svg>
           <span className="sr-only">
-            <Spinner label="Loading..." color="success" />
+            <Spinner label="Loading..." color="danger" />
           </span>
         </div>
 
@@ -298,7 +298,7 @@ const Form1 = ( { onNext }: any ) =>
               <textarea
                 value={ description }
                 onChange={ handleChange }
-                  className="w-full bg-pageBg-light border border-gray-300 text-gray-900 text-sm rounded-b-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 h-32"
+                className="w-full bg-pageBg-light border border-gray-300 text-gray-900 text-sm rounded-b-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 h-32"
                 placeholder="Product description"
               />
             </div>
@@ -311,7 +311,7 @@ const Form1 = ( { onNext }: any ) =>
                 <div className="flex items-center">
                   <input
                     placeholder="Add tags..."
-                      className="flex-grow bg-pageBg-light border border-gray-300 text-gray-900 text-sm rounded-l-lg focus:ring-blue-500 focus:border-blue-500 p-2.5"
+                    className="flex-grow bg-pageBg-light border border-gray-300 text-gray-900 text-sm rounded-l-lg focus:ring-blue-500 focus:border-blue-500 p-2.5"
                     value={ tagInput }
                     onChange={ ( e ) => setTagInput( e.target.value ) }
                     onKeyDown={ handleTagKeyDown }

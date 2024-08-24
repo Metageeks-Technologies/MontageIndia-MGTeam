@@ -1,3 +1,13 @@
+export type MetaData = {
+  format: string;
+  size: number;
+  length?: number;
+  dimension?: string;
+  dpi?: number;
+  bitrate?: number;
+  resolution?: string;
+  frameRate?: string;
+};
 export type TProduct = {
   _id: string;
   uuid: string;
@@ -13,7 +23,6 @@ export type TProduct = {
     label?: string;
     price: number;
     credit: number;
-    size: string;
     key: string;
   }[];
   status: "published" | "archived" | "unavailable" | "draft";
@@ -36,11 +45,13 @@ export type TCustomerProduct = {
     label: string;
     price: number;
     credit: number;
-    size: string;
     key?: string;
+    size: string;
+    metadata: MetaData;
   }[];
   status: "published";
   mediaType: "image" | "video" | "audio";
+  length?: number;
   createdBy: string;
   isWhitelisted: boolean;
   isInCart: boolean;

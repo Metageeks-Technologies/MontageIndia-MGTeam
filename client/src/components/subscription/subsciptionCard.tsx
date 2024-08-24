@@ -5,6 +5,7 @@ import {ScrollShadow} from '@nextui-org/react'
 import { FaRupeeSign } from "react-icons/fa";
 import { useRouter } from 'next/navigation';
 interface SubscriptionPlan {
+    _id: string;
     planId: string;
     entity: string;
     interval: number;
@@ -73,6 +74,7 @@ const SubscriptionCard: React.FC<Props> = ({ plan }) => {
           customer_notify:plan.customer_notify?1:0,
           notes:{
             credits:plan.notes.credits,
+            subscriptionId:plan._id
           }
       }
       console.log("subsciptionOption",subsciptionOption);

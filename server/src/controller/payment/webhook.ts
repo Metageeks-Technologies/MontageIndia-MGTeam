@@ -13,6 +13,7 @@ const sendNotification = async (payload: any) => {
   console.log("for email", payload);
   const { email, order_id, amount, currency, created_at } =
     payload.payment.entity;
+  if (!email) return;
   const date = new Date(created_at * 1000);
   const formatedDate = date.toISOString().slice(0, 19).replace("T", " ");
 
@@ -110,20 +111,20 @@ const subscriptionCharged = async (payload: any) => {
     console.log("subscription charged", payload);
     const { start_at, end_at, status, expire_by, plan_id, id, notes } =
       payload.subscription.entity;
-
+      console.log("Notes",notes);
     const user = await customer.findOneAndUpdate(
       { "subscription.subscriptionId": id },
       {
         $set: {
           "subscription.status": status,
-          "subscription.PlanId": plan_id,
+          "subscription.PlanId": notes.subscriptionId as string,
         },
         $inc: { "subscription.credits": notes.credits },
       },
       { new: true } // Return the updated document
     );
     if (!user) return;
-    console.log("user", user);
+    // console.log("user",user);
     await SubscriptionHistory.create({
       userId: user?._id,
       planId: plan_id,
@@ -135,10 +136,9 @@ const subscriptionCharged = async (payload: any) => {
     console.log(error);
   }
 };
-
 const subscriptionHandler = async (payload: any) => {
   try {
-    console.log("subscription handler", payload);
+    // console.log("subscription handler",payload);
     const { start_at, end_at, status, expire_by, plan_id, id } =
       payload.subscription.entity;
 
@@ -186,23 +186,19 @@ const orderPaid = async (payload: any) => {
     for (const product of products) {
       const { productId, variantId } = product;
 
-      const productIdString = productId.toString();
-      const existingProductIndex = user.purchasedProducts.findIndex(
-        (p) => p.productId.toString() === productIdString
+      const existingProduct = user.purchasedProducts.find(
+        (item) => item.productId.toString() === productId.toString()
       );
 
-      if (existingProductIndex > -1) {
-        if (
-          !user.purchasedProducts[existingProductIndex].variantId.includes(
-            variantId
-          )
-        ) {
-          user.purchasedProducts[existingProductIndex].variantId.push(
-            variantId
-          );
+      if (existingProduct) {
+        const existingVariant = existingProduct.variantId.includes(variantId);
+
+        if (!existingVariant) {
+          // Add the variantId to the existing product
+          existingProduct.variantId.push(variantId);
         }
       } else {
-        // const productIdAsObject = new mongoose.Types.ObjectId(productIdString);
+        // Add the new product with variantId
         user.purchasedProducts.push({
           productId: productId,
           variantId: [variantId],
@@ -210,86 +206,17 @@ const orderPaid = async (payload: any) => {
       }
     }
 
+    // Clear the user's cart after purchase
     user.cart = [];
-
     await user.save();
 
+    // Send a notification (function call)
     await sendNotification(payload);
   } catch (error) {
     console.log(error);
   }
 };
 
-const invoicePaid = async (payload: any) => {
-  try {
-    console.log("invoice paid", payload);
-  } catch (error) {}
-};
-
-const paymentAuthorized = async (payload: any) => {
-  try {
-    console.log("payment handler", payload);
-    const { amount, contact, email, id, order_id, method, currency, status } =
-      payload.payment.entity;
-
-    const Order = await order.findOne({ razorpayOrderId: order_id });
-    if (!Order) return;
-    console.log(Order);
-    const userId = Order?.userId;
-
-    const newPayment = {
-      userId: userId ? userId : "",
-      amount,
-      email,
-      method,
-      currency,
-      status,
-      rp_payment_id: id,
-      rp_order_id: order_id ? order_id : "",
-      phone: contact,
-    };
-
-    await Transaction.create(newPayment);
-
-    const products = Order?.products;
-
-    const user = await customer.findById(userId);
-    if (!user) return;
-
-    console.log("user", user);
-
-    for (const product of products) {
-      const { productId, variantId } = product;
-
-      const productIdString = productId.toString();
-      const existingProductIndex = user.purchasedProducts.findIndex(
-        (p) => p.productId.toString() === productIdString
-      );
-
-      if (existingProductIndex > -1) {
-        if (
-          !user.purchasedProducts[existingProductIndex].variantId.includes(
-            variantId
-          )
-        ) {
-          user.purchasedProducts[existingProductIndex].variantId.push(
-            variantId
-          );
-        }
-      } else {
-        // const productId = new mongoose.Types.ObjectId(productIdString);
-        user.purchasedProducts.push({
-          productId: productId,
-          variantId: [variantId],
-        });
-      }
-    }
-
-    await user.save();
-  } catch (error) {
-    console.log(error);
-  }
-};
 const paymentHandler = async (payload: any) => {
   try {
     console.log("payment handler", payload);
@@ -345,11 +272,7 @@ export const paymentWebHook = catchAsyncError(async (req, res, next) => {
         orderPaid(payload);
         break;
       }
-      case "invoice.paid": {
-        console.log("invoice paid");
-        invoicePaid(payload);
-        break;
-      }
+
       case "subscription.charged": {
         subscriptionCharged(payload);
         break;

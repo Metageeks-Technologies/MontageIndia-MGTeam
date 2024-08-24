@@ -174,7 +174,7 @@ const Page: React.FC = () => {
     <div className="w-full h-full rounded-lg overflow-hidden">
       <img
         className="w-full h-full object-cover"
-        src={`${process.env.NEXT_PUBLIC_IMG_URL}${purchasedProduct.product.thumbnailKey}`}
+        src={`${process.env.NEXT_PUBLIC_AWS_PREFIX}${purchasedProduct.product.thumbnailKey}`}
         alt={purchasedProduct.product.title}
       />
     </div>

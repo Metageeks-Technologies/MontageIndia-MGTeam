@@ -5,6 +5,7 @@ import Activity from "@src/model/activity/activity";
 import type { TAdmin, TCustomer } from "@src/types/user";
 import Customer from "@src/model/user/customer.js";
 import { getObject } from "@src/lib/uploadToS3";
+import { MetaData } from "@src/types/product";
 
 export const createProduct = catchAsyncError(async (req: any, res, next) => {
   req.body.createdBy = req.user._id;
@@ -154,11 +155,24 @@ export const addSizeAndKeysToVideo = catchAsyncError(
     if (mediaType !== "video") {
       return next(new ErrorHandler("media type should be video", 400));
     }
+    const originalMetadata: MetaData = {
+      resolution: "1920x1080", //Px
+      bitrate: 5, //Mbps
+      frameRate: "30", //Hz
+      format: "mp4",
+      size: 1,
+    };
+    const mediumMetadata: MetaData = {
+      resolution: "1920x1080", //Px
+      bitrate: 5, //Mbps
+      frameRate: "30", //Hz
+      format: "mp4",
+      size: 1,
+    };
 
     const variants = [
-      { size: "original", key: `${uuid}/video/${uuid}-original.mp4` },
-      { size: "medium", key: `${uuid}/video/${uuid}-medium.mp4` },
-      { size: "small", key: `${uuid}/video/${uuid}-small.mp4` },
+      { metadata: originalMetadata, key: `${uuid}/video/${uuid}-original.mp4` },
+      { metadata: mediumMetadata, key: `${uuid}/video/${uuid}-medium.mp4` },
     ];
 
     const publicKey = `${uuid}/video/${uuid}-product_page.webm`;
@@ -258,34 +272,72 @@ export const getProductsByIds = catchAsyncError(async (req: any, res, next) => {
 
 export const buyWithCredits = catchAsyncError(async (req: any, res, next) => {
   const { id } = req.user;
-  const { productId } = req.params;
+  const { productBody } = req.body;
+  const { productId, variantId } = productBody;
+
   const user = await Customer.findById(id);
-  const product = await Product.findById(productId);
 
   if (!user) {
     return next(new ErrorHandler("User not found", 404));
   }
+
+  const product = await Product.findById(productId);
+
   if (!product) {
     return next(new ErrorHandler("Product not found", 404));
   }
 
-  console.log("user", user);
-  console.log("product", product);
+  const variantIndex = product.variants.findIndex(
+    (variant) => variant?._id?.toString() === variantId
+  );
 
-  const variantIndex = "0";
+  if (variantIndex === -1) {
+    return next(new ErrorHandler("Variant not found", 404));
+  }
+
   const userCredits = user.subscription.credits;
-  const productCredit = product.variants[variantIndex].credit || 10;
+  const productCredit = product.variants[variantIndex].credit;
+
   if (!productCredit || productCredit <= 0) {
     return next(new ErrorHandler("Product credit not found", 404));
   }
+
   if (userCredits < productCredit) {
     return next(new ErrorHandler("Insufficient credits", 400));
   }
+
+  const existingProduct = user.purchasedProducts.find(
+    (item) => item.productId.toString() === productId.toString()
+  );
+
+  if (existingProduct && existingProduct.variantId.includes(variantId)) {
+    return next(
+      new ErrorHandler("Product with this variant already purchased", 400)
+    );
+  }
+
+  // Add variantId if product exists but variant does not
+  if (existingProduct) {
+    existingProduct.variantId.push(variantId);
+  } else {
+    // Add both productId and variantId if neither exists
+    user.purchasedProducts.push({
+      productId,
+      variantId: [variantId],
+    });
+  }
+
+  // Deduct credits
   user.subscription.credits = userCredits - productCredit;
-  user.purchasedProducts.push({ productId, variantId: [variantIndex] });
-  console.log("updated user", user);
+
+  // Remove product from cart if it exists
+  user.cart = user.cart.filter(
+    (item) => item.productId.toString() !== productId.toString()
+  );
+
   await user.save();
-  res.send({ success: true, user, message: "purchased successfully" });
+
+  res.send({ success: true, user, message: "Purchased successfully" });
 });
 
 export const getPurchasedProducts = catchAsyncError(

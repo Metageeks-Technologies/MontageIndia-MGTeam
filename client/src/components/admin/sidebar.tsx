@@ -469,7 +469,7 @@ const Sidebar = () =>
               </div>
             </div>
             <ul>
-              <li className="mb-1 flex justify-between items-center hover:bg-gray-200">
+              {/* <li className="mb-1 flex justify-between items-center hover:bg-gray-200">
                 <a
                   href="/Not-Found"
                   className="flex items-center text-gray-800  px-4 py-2"
@@ -478,7 +478,7 @@ const Sidebar = () =>
                   Settings
                 </a>
                 <MdOutlineKeyboardArrowDown className="w-6 h-6 mr-3 cursor-pointer" />
-              </li>
+              </li> */}
               <li className="mb-1 cursor-pointer">
                 { currentUser ? (
                   <a

@@ -137,7 +137,7 @@ export default function UserDetails ( { params }: { params: { id: string; }; } )
         Swal.fire( {
           icon: 'success',
           title: 'Admin updated successfully',
-          text: response.data.message,  
+          text: response.data.message,
           confirmButtonColor: '#3085d6',
           confirmButtonText: 'OK',
 
@@ -163,6 +163,7 @@ export default function UserDetails ( { params }: { params: { id: string; }; } )
     setSelectedMediaTypes( user.mediaType );
     setIsEditing( true );
   };
+  
   const handleDelete = async () =>
   {
     if ( confirm( 'Are you sure you want to delete this user?' ) )
@@ -179,7 +180,7 @@ export default function UserDetails ( { params }: { params: { id: string; }; } )
             text: response.data.message,
             confirmButtonColor: '#3085d6',
             confirmButtonText: 'OK',
-            } );
+          } );
           router.back();
         }
       } catch ( error: any )
@@ -192,7 +193,7 @@ export default function UserDetails ( { params }: { params: { id: string; }; } )
           confirmButtonColor: '#3085d6',
           confirmButtonText: 'OK',
         } );
-        
+
         console.error( 'Error deleting user:', error );
       }
     }
@@ -205,22 +206,22 @@ export default function UserDetails ( { params }: { params: { id: string; }; } )
   };
 
   if ( !user ) return <div className="flex justify-center items-center h-screen">
-    <Spinner label="Loading..." color="success" />
+    <Spinner label="Loading..." color="danger" />
   </div>;
 
   return (
     <div className="container p-4 m-4 bg-pureWhite-light rounded-md">
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-2xl font-bold">Profile Setting</h1>
-        
+
       </div>
       <div>
 
-      {/* one horixonal line */ }
-      <hr className="border-t border-gray-300 mb-4" />
+        {/* one horixonal line */ }
+        <hr className="border-t border-gray-300 mb-4" />
 
         <div className="p-6">
-          { !user && <Spinner label='Loading..' color="success" /> }
+          { !user && <Spinner label='Loading..' color="danger" /> }
 
           <div className="flex justify-center mb-6 bg-pageBg-light">
             { user && <div className="mb-8 text-center">

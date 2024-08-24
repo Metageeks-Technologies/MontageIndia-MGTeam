@@ -2,14 +2,18 @@ import catchAsyncError from "@src/middleware/catchAsyncError";
 import ErrorHandler from "@src/utils/errorHandler";
 import Razorpay from "razorpay";
 import config from "@src/utils/config";
-import Order from "@src/model/product/order";
+import Order, { ProductItem } from "@src/model/product/order";
+import customer from "@src/model/user/customer";
+import { TProduct } from "@src/types/product";
 
 /*
 index
 
 order controllers
 1.createOrder
-2.paymentCapture
+2.fetchOrdersByCustomerId
+3.getOrders
+4.getOrderById
 
 */
 
@@ -22,12 +26,42 @@ const razorpayInstance = () => {
 
 export const createOrder = catchAsyncError(async (req: any, res, next) => {
   const razorpay = razorpayInstance();
-  console.log("step1:", req.body);
+
+  const { _id } = req.user;
+  const user = await customer.findById(_id).populate("cart.productId");
+
+  if (!user || !user.cart) {
+    throw new Error("User not found or cart is empty.");
+  }
+  // console.log("user ::", user);
+  let totalPrice = 0;
+
+  // console.log("user.cart", user.cart);
+  if (!user?.cart || user?.cart?.length === 0) {
+    return next(new ErrorHandler("Cart is empty", 404));
+  }
+
+  user?.cart?.forEach((item) => {
+    const product: any = item.productId;
+    const variantId = item.variantId;
+    console.log("product variants", product.variants);
+
+    const variant = product.variants.find(
+      (variant: any) => variant._id.toString() === variantId
+    );
+    console.log("variant", variant);
+    if (variant) {
+      console.log(typeof variant.price);
+
+      totalPrice += variant.price;
+    }
+  });
+
+  console.log(totalPrice, "totalPrice");
 
   const options = {
-    amount: req.body.amount,
-    currency: req.body.currency || "INR",
-    receipt: req.body?.receipt || "any unique id for every order",
+    amount: totalPrice * 100,
+    currency: "INR",
     payment_capture: "1",
   };
 
@@ -37,16 +71,14 @@ export const createOrder = catchAsyncError(async (req: any, res, next) => {
   if (!response) {
     return next(new ErrorHandler("Error occured while creating Order", 404));
   }
-  const amountString = req.body.amount.toString();
-  const trimmedAmount = parseInt(amountString.slice(0, -2));
-  const totalAmount = trimmedAmount;
+  const amountString = totalPrice.toString();
 
   const newOrder = await Order.create({
-    userId: req.user._id,
+    userId: user._id,
     razorpayOrderId: response.id,
-    products: req.body.notes.products,
-    totalAmount: totalAmount,
-    currency: req.body.currency,
+    products: user.cart,
+    totalAmount: amountString,
+    currency: "INR",
     status: "pending",
     method: "razorpay",
   });
