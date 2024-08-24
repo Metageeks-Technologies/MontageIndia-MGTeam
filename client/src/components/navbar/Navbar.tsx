@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { AiOutlineHeart, AiOutlineMenu, AiOutlineClose } from "react-icons/ai";
 import { IoIosArrowDropdown, IoMdArrowDropdown } from "react-icons/io";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import CartPopup from "../cart/cartPage";
 import { FaUserCircle } from "react-icons/fa";
 import instance from "@/utils/axios";
@@ -22,7 +22,9 @@ const Sidebar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const dispatch = useAppDispatch();
-
+  const searchParams = useSearchParams();
+  const category = searchParams.get('category');
+  const categoryParam = category ? ["editor choice"] : "";
   const [isUserOpen, setIsUserOpen] = useState(false);
   const user = useAppSelector((state: any) => state.user?.user?._id);
   const cart = useAppSelector((state) => state.product.cart);
@@ -59,6 +61,7 @@ const Sidebar = () => {
       page:1,
       mediaType: ["video"],
       productsPerPage: "6",
+      category: categoryParam,
     });};
   const fetchData = (page: number) => {
     if (!searchTerm.trim()) {
@@ -66,6 +69,7 @@ const Sidebar = () => {
       getVideo(dispatch, {
         page,
         mediaType: ["video"],
+        category: categoryParam,
         productsPerPage: "6",
       });
     } else {
@@ -74,6 +78,7 @@ const Sidebar = () => {
         page,
         mediaType: ["video"],
         searchTerm,
+        category: categoryParam,
         productsPerPage: "6",
       });
     }
@@ -89,7 +94,7 @@ const Sidebar = () => {
 
   return (
   <>
-    <div className="flex items-center justify-between bg-white px-6 py-4 shadow-md">
+    <div className="flex items-center justify-between border-b bg-white px-6 py-4 shadow-md">
       <div className="flex items-center gap-5">
         <img
           src="/images/logo.png"
@@ -258,7 +263,7 @@ const Sidebar = () => {
         </div>
       )}
     </div>
-          <div className="flex relative my-8 justify-between items-center flex-row gap-4  bg-gray-100 border border-gray-300 rounded-md w-[90%] m-auto">
+          <div className="flex relative my-6  justify-between items-center flex-row gap-4  bg-gray-100 border border-gray-300 rounded-md w-[90%] m-auto">
             <div className="flex flex-row px-3 w-full  gap-5">
           <button className="md:flex flex-row items-center px-4 py-2  hidden outline-none gap-2 text-black hover:bg-gray-200 rounded-md">
             <img src="/asset/28-camera-1.svg" alt="" />
