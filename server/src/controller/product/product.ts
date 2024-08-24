@@ -591,28 +591,14 @@ export const getSingleProductForCustomer = catchAsyncError(
       isPurchased,
     };
 
+    const similarResult = await getSimilarProduct(req.user, product);
+
     // Find similar products
-    const similarProducts = await Product.find({
-      $text: {
-        $search:
-          product.title +
-          " " +
-          product.tags.join(" ") +
-          " " +
-          product.category.join(" ") +
-          " " +
-          product.description,
-      },
-      mediaType: product.mediaType,
-      _id: { $ne: product._id }, // Exclude the current product
-    })
-      .limit(16)
-      .exec();
 
     res.status(200).json({
       success: true,
       product: result,
-      similar: similarProducts,
+      similar: similarResult,
     });
   }
 );
@@ -879,4 +865,64 @@ export const getRelatedKeywords = async (searchTerm: string) => {
 
   const relatedKeywords = await Product.aggregate(relatedKeywordsPipeline);
   return relatedKeywords.map((k) => k.keyword);
+};
+
+export const getSimilarProduct = async (user: any, product: any) => {
+  let isWhitelisted = false;
+  let isInCart = false;
+  let isPurchased = false;
+  let wishlist: any = [];
+  let cart: any = [];
+  let purchasedProducts: any = [];
+
+  if (user) {
+    const customerId = user._id;
+    const customer = await Customer.findById(customerId);
+    if (!customer) {
+      throw Error("customer not found");
+    }
+    wishlist = customer.wishlist;
+    cart = customer.cart;
+    purchasedProducts = customer.purchasedProducts;
+  }
+
+  const similarProducts = await Product.find({
+    $text: {
+      $search:
+        product.title +
+        " " +
+        product.tags.join(" ") +
+        " " +
+        product.category.join(" ") +
+        " " +
+        product.description,
+    },
+    mediaType: product.mediaType,
+    _id: { $ne: product._id }, // Exclude the current product
+  })
+    .limit(16)
+    .exec();
+  let similarResult = similarProducts.map((product) => {
+    if (user) {
+      isWhitelisted = wishlist?.some(
+        (p: any) => p.productId.toString() === product._id.toString()
+      );
+      isInCart = cart?.some(
+        (p: any) => p.productId.toString() === product._id.toString()
+      );
+      isPurchased = purchasedProducts?.some(
+        (p: any) => p.productId.toString() === product._id.toString()
+      );
+    }
+
+    const productObject = product.toObject();
+    return {
+      ...productObject,
+      isWhitelisted,
+      isInCart,
+      isPurchased,
+    };
+  });
+
+  return similarResult;
 };

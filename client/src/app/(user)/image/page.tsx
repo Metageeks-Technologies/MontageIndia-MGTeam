@@ -11,6 +11,7 @@ import { useAppDispatch, useAppSelector } from "@/app/redux/hooks";
 import { setImagePage } from "@/app/redux/feature/product/slice";
 import { IoSearchOutline } from "react-icons/io5";
 import { useSearchParams } from "next/navigation";
+import { clearKeywords } from "@/app/redux/feature/product/api";
 
 const Page = () => {
   const dispatch = useAppDispatch();
@@ -57,6 +58,9 @@ const Page = () => {
 
   useEffect(() => {
     fetchData(imagePage);
+    return () => {
+      clearKeywords(dispatch);
+    };
   }, [imagePage, searchParams, searchTerm]);
 
   return (

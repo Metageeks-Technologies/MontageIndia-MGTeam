@@ -32,22 +32,24 @@ const page = () => {
   const id = params.id as string | undefined;
 
   const dispatch = useAppDispatch();
-  const {audioData,page,totalNumOfPage} = useAppSelector((state) => state.product);
+  const { audioData, page, totalNumOfPage } = useAppSelector(
+    (state) => state.product
+  );
   useEffect(() => {
-    getAudio(dispatch,{
-        page:page,
-        productsPerPage: 4,
-        mediaType: ["audio"],
+    getAudio(dispatch, {
+      page: page,
+      productsPerPage: 4,
+      mediaType: ["audio"],
     });
   }, [page]);
 
   useEffect(() => {
     if (id) getSingleProduct(dispatch, id);
-    getAudio(dispatch,{
-      page:page,
+    getAudio(dispatch, {
+      page: page,
       productsPerPage: 4,
       mediaType: ["audio"],
-  });
+    });
     return () => {
       clearSingleProductData(dispatch);
     };
@@ -169,19 +171,21 @@ const page = () => {
           <div className="my-4">
             {product && <DetailWaveform product={product} />}
             <div className="lg:w-[50rem] md:w-[35rem] w-[22rem] mt-2">
-            <h2 className="font-bold">Description</h2>
-            <p className="text-sm text-neutral-700">
-              Stock Photo ID: {product._id}
-            </p>
-            <p className="text-sm">{product.description}</p>
-          </div>
+              <h2 className="font-bold">Description</h2>
+              <p className="text-sm text-neutral-700">
+                Stock Photo ID: {product._id}
+              </p>
+              <p className="text-sm">{product.description}</p>
+            </div>
           </div>
         </div>
         <div className="lg:w-4/12 md:w-full lg:px-0 md:px-16  flex   flex-col bg-gray-100">
           <div className="border-b-[2px]  w-full h-80 py-2 lg:px-8 bg-white">
             {product && (
               <div className="w-[26rem] mt-3 px-8">
-                <h3 className="font-semibold text-xl">Music Standard License</h3>
+                <h3 className="font-semibold text-xl">
+                  Music Standard License
+                </h3>
                 <p className=" mt-1 text-neutral-700">
                   All Royalty-Free licences include global use rights,
                   comprehensive protection, and simple pricing with volume
@@ -278,7 +282,6 @@ const page = () => {
         </div>
       </div>
 
-   
       {/* <div className=" overflow-y-auto mt-10 w-[90%] m-auto ">
         <h1 className="text-xl font-semibold mb-4">More item by MoosBeat</h1>
           {audioData.map((product, index) => (
@@ -289,7 +292,7 @@ const page = () => {
       </div> */}
 
       <div className="w-[90%] m-auto mb-4">
-      {product && (
+        {product && (
           <div>
             <div className="mt-8">
               <h2 className="font-bold text-lg">Related keywords</h2>
@@ -315,7 +318,7 @@ const page = () => {
       </div>
 
       <div className="mt-12">
-      <Footer />
+        <Footer />
       </div>
     </div>
   );

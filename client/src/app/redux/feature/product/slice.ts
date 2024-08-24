@@ -278,6 +278,12 @@ export const audioSlice = createSlice({
       state.loading = false;
       state.error = " ";
     },
+    setKeyWords: (state, action: PayloadAction<string[]>) => {
+      state.relatedKeyword = action.payload;
+    },
+    setSimilarProducts: (state, action: PayloadAction<TCustomerProduct[]>) => {
+      state.similarProducts = action.payload;
+    },
   },
 });
 
@@ -306,6 +312,8 @@ export const {
   removeFromVideoCart,
   setVideoPage,
   setCart,
+  setKeyWords,
+  setSimilarProducts,
 } = audioSlice.actions;
 
 export default audioSlice.reducer;

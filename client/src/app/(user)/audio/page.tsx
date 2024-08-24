@@ -10,20 +10,26 @@ import { useAppDispatch, useAppSelector } from "@/app/redux/hooks";
 import { getAudio } from "@/app/redux/feature/product/audio/api";
 import { IoSearchOutline } from "react-icons/io5";
 import { setAudioPage } from "@/app/redux/feature/product/slice";
+import { clearKeywords } from "@/app/redux/feature/product/api";
 
 const Page = () => {
   const dispatch = useAppDispatch();
-  const {audioData,page,totalNumOfPage} = useAppSelector((state) => state.product);
+  const { audioData, page, totalNumOfPage } = useAppSelector(
+    (state) => state.product
+  );
   useEffect(() => {
-    getAudio(dispatch,{
-        page:page,
-        productsPerPage: 4,
-        mediaType: ["audio"],
+    getAudio(dispatch, {
+      page: page,
+      productsPerPage: 4,
+      mediaType: ["audio"],
     });
-  }, [page]);
-  
 
-   const handlePageChange = (page: number) => {
+    return () => {
+      clearKeywords(dispatch);
+    };
+  }, [page]);
+
+  const handlePageChange = (page: number) => {
     // console.log(page);
     dispatch(setAudioPage(page));
   };
@@ -109,22 +115,19 @@ const Page = () => {
           </button>
         </div>
 
-        <h4 className="mt-5 text-lg text-neutral-700">
-          10 Result in audio
-        </h4>
+        <h4 className="mt-5 text-lg text-neutral-700">10 Result in audio</h4>
 
         <div className=" overflow-y-auto mt-2">
           {audioData.map((product, index) => (
             <>
-            <Waveform key={index} product={product} />
-          </>
+              <Waveform key={index} product={product} />
+            </>
           ))}
-          
         </div>
       </div>
 
-       {/* Pagination */}
-       {totalNumOfPage > 1 && (
+      {/* Pagination */}
+      {totalNumOfPage > 1 && (
         <div className="flex justify-center items-center gap-4 my-10">
           <Button
             size="sm"
@@ -142,7 +145,8 @@ const Page = () => {
             color="success"
             classNames={{
               item: "w-8 h-8 text-small bg-gray-100 hover:bg-gray-300 rounded-full",
-              cursor: "bg-webred hover:bg-red text-white rounded-full font-bold",
+              cursor:
+                "bg-webred hover:bg-red text-white rounded-full font-bold",
             }}
             total={totalNumOfPage}
             page={page}
@@ -167,9 +171,8 @@ const Page = () => {
         </div>
       )}
 
-
       <div className="mt-8">
-      <Footer />
+        <Footer />
       </div>
     </div>
   );
