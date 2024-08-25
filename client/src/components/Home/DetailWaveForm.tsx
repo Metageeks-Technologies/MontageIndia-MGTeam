@@ -63,15 +63,16 @@ const DetailWaveform = ({ product }: { product: TCustomerProduct }) => {
     });
 
     ws.on("audioprocess", () => {
-      setCurrentTime(ws.getCurrentTime() + 0.3);
+      setCurrentTime(ws.getCurrentTime());
     });
 
     ws.on("seeking", () => {
-      setCurrentTime(ws.getCurrentTime() + 0.3);
+      setCurrentTime(ws.getCurrentTime());
     });
 
     ws.on("finish", () => {
-      setCurrentTime(duration + 1);
+      setCurrentTime(duration);
+      setPlaying(false);
     });
 
     setWaveform(ws);
@@ -109,9 +110,6 @@ const DetailWaveform = ({ product }: { product: TCustomerProduct }) => {
   const url =
     `${process.env.NEXT_PUBLIC_AWS_PREFIX}/${product.publicKey}` || "";
 
-  const handleClick = (uuid: string) => {
-    router.push(`/audio/${uuid}`);
-  };
   const handleSeek = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (waveform) {
       const seekTo = parseFloat(e.target.value);

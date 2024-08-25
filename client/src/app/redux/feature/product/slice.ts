@@ -288,9 +288,33 @@ export const audioSlice = createSlice({
       const exitInSimilarProduct = state.similarProducts.find(
         (product) => product._id === productId
       );
+      const exitInAudioData = state.audioData.find(
+        (product) => product._id === productId
+      );
+      const exitInImageData = state.imageData.find(
+        (product) => product._id === productId
+      );
+      const exitInVideoData = state.videoData.find(
+        (product) => product._id === productId
+      );
 
       if (exitInSimilarProduct) {
         state.similarProducts = state.similarProducts.map((product) =>
+          product._id === productId ? { ...product, isInCart: false } : product
+        );
+      }
+      if (exitInAudioData) {
+        state.audioData = state.audioData.map((product) =>
+          product._id === productId ? { ...product, isInCart: false } : product
+        );
+      }
+      if (exitInImageData) {
+        state.imageData = state.imageData.map((product) =>
+          product._id === productId ? { ...product, isInCart: false } : product
+        );
+      }
+      if (exitInVideoData) {
+        state.videoData = state.videoData.map((product) =>
           product._id === productId ? { ...product, isInCart: false } : product
         );
       }

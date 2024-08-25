@@ -17,6 +17,7 @@ import { FaRegHeart } from "react-icons/fa";
 import { Spinner } from "@nextui-org/react";
 import { BiSolidPurchaseTagAlt } from "react-icons/bi";
 import { downloadProduct } from "@/app/redux/feature/product/api";
+import { formatSecToMin } from "@/utils/DateFormat";
 
 const Trending = ({
   data,
@@ -88,13 +89,15 @@ const Trending = ({
           />
         </video>
       </div>
-      <div className="absolute  justify-center  top-1 left-1 gap-1 flex flex-row text-white m-2 opacity-5 group-hover:opacity-100 transition-opacity duration-300">
+      <div className="absolute opacity-100  justify-center  top-1 left-1 gap-2 flex flex-row text-white m-2   transition-opacity duration-300">
         <span className=" pt-1 ">
           <img src="/asset/video.svg" alt="Hd " />
         </span>
-        <span className=" pt-[2px]">|</span>
-        <span className="px-1 items-center text-start flex ">
-          {capitalizeFirstLetter(data.title)}
+        <span>FHD</span>
+        <span>{formatSecToMin(Math.floor(data?.length || 0) || 0)}</span>
+        <span className="pt-[2px] opacity-5 group-hover:opacity-100 ">|</span>
+        <span className="opacity-5 group-hover:opacity-100 items-center text-start flex ">
+          {data.title.substring(0, 23)}...
         </span>
       </div>
       <div className="absolute bottom-1 right-9 m-2 opacity-5 group-hover:opacity-100 transition-opacity duration-300">

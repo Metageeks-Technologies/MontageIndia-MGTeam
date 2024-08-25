@@ -223,9 +223,11 @@ const Home = () => {
                             htmlFor={`license-${index}`}
                             className="block text-gray-600"
                           >
-                            ${license.price}
+                            ₹ {license.price}
                           </label>
-                          <div>{license.size}</div>
+                          <div className="text-sm ">
+                            {license.metadata.dimension} px
+                          </div>
                         </div>
                         <div className=" flex justify-between ">
                           {isVariantPurchased(license._id) ? (
@@ -312,22 +314,44 @@ const Home = () => {
                         </p>
                       </div>
                       <div className="flex  lg:justify-start md:justify-between">
-                        <span className="font-medium w-32">Category:</span>
-                        <p className="">{product.category}</p>
-                      </div>
-                      <div className="flex  lg:justify-start md:justify-between">
-                        <span className="font-medium w-32">Upload date:</span>
-                        <span>{new Date().toLocaleDateString()}</span>
-                      </div>
-                      <div className="flex  lg:justify-start md:justify-between">
-                        <span className="font-medium w-32">Location:</span>
-                        <span>India</span>
-                      </div>
-                      <div className="flex  lg:justify-start md:justify-between">
                         <span className="font-medium w-32">Format: </span>
                         <span className="text-sm text-neutral-600">
-                          6725 × 4286 px
+                          {product.variants[0].metadata?.format}
                         </span>
+                      </div>
+                      <div className="flex  lg:justify-start md:justify-between">
+                        <span className="font-medium w-32">Dimensions: </span>
+                        <div className="flex flex-col">
+                          {product.variants.map((variant, index) => (
+                            <span className="text-sm  whitespace-nowrap text-neutral-600">
+                              {variant.metadata?.dimension} px{" "}
+                              {index !== product.variants.length - 1 && ", "}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                      <div className="flex  lg:justify-start md:justify-between">
+                        <span className="font-medium w-32">Densities: </span>
+                        <span className="text-sm  whitespace-nowrap text-neutral-600">
+                          {product.variants[0].metadata?.dpi} Dpi
+                        </span>
+                      </div>
+                      <div className="flex  lg:justify-start md:justify-between">
+                        <span className="font-medium w-32">Max Size: </span>
+                        <span className="text-sm capitalize text-neutral-600">
+                          {product.variants[0].metadata?.size} Mb
+                        </span>
+                      </div>
+
+                      <div className="flex lg:justify-start md:justify-between">
+                        <span className="font-medium w-32">Categories:</span>
+                        <div className="flex gap-2">
+                          {product.category.map((category, index) => (
+                            <p className="text-blue-600 hover:underline">
+                              {category}
+                            </p>
+                          ))}
+                        </div>
                       </div>
                     </div>
                   </div>

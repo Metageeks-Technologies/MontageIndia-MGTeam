@@ -27,13 +27,14 @@ import { downloadProduct } from "@/app/redux/feature/product/api";
 import Footer from "@/components/Footer";
 import Waveform from "@/components/Home/AudioWaveForm";
 import { getAudio } from "@/app/redux/feature/product/audio/api";
+import { formatSecToMin } from "@/utils/DateFormat";
 
 const page = () => {
   const params = useParams();
   const id = params.id as string | undefined;
 
   const dispatch = useAppDispatch();
-  const { audioData,similarProducts, page, totalNumOfPage } = useAppSelector(
+  const { audioData, similarProducts, page, totalNumOfPage } = useAppSelector(
     (state) => state.product
   );
   useEffect(() => {
@@ -196,9 +197,9 @@ const page = () => {
                           htmlFor={`license-${index}`}
                           className="block text-gray-600"
                         >
-                          ${license.price}
+                          ₹ {license.price}
                         </label>
-                        <div>{license.size}</div>
+                        <div>{license.metadata.bitrate} Kbps</div>
                       </div>
                       <div className=" flex justify-between ">
                         {isVariantPurchased(license._id) ? (
@@ -252,22 +253,41 @@ const page = () => {
                         </p>
                       </div>
                       <div className="flex  lg:justify-start md:justify-between">
-                        <span className="font-medium w-32">Category:</span>
-                        <p className="">{product.category}</p>
+                        <span className="font-medium w-32">Audio Format:</span>
+                        <p className="text-sm capitalize text-neutral-600">
+                          {product.variants[0].metadata?.format}
+                        </p>
                       </div>
                       <div className="flex  lg:justify-start md:justify-between">
-                        <span className="font-medium w-32">Upload date:</span>
-                        <span>{new Date().toLocaleDateString()}</span>
-                      </div>
-                      <div className="flex  lg:justify-start md:justify-between">
-                        <span className="font-medium w-32">Location:</span>
-                        <span>India</span>
-                      </div>
-                      <div className="flex  lg:justify-start md:justify-between">
-                        <span className="font-medium w-32">Format: </span>
+                        <span className="font-medium w-32">Track Length:</span>
                         <span className="text-sm text-neutral-600">
-                          6725 × 4286 px
+                          {formatSecToMin(
+                            product.variants[0].metadata?.length || 0
+                          )}{" "}
+                          Min
                         </span>
+                      </div>
+                      <div className="flex  lg:justify-start md:justify-between">
+                        <span className="font-medium w-32">Bit Rate:</span>
+                        <span className="text-sm text-neutral-600">
+                          {product.variants[0].metadata?.bitrate} Kbps
+                        </span>
+                      </div>
+                      <div className="flex  lg:justify-start md:justify-between">
+                        <span className="font-medium w-32">Max Size </span>
+                        <span className="text-sm text-neutral-600">
+                          {product.variants[0].metadata?.size} Mb
+                        </span>
+                      </div>
+                      <div className="flex lg:justify-start md:justify-between">
+                        <span className="font-medium w-32">Categories:</span>
+                        <div className="flex gap-2">
+                          {product.category.map((w) => (
+                            <p className="text-blue-600 capitalize hover:underline">
+                              {w}
+                            </p>
+                          ))}
+                        </div>
                       </div>
                     </div>
                   </div>

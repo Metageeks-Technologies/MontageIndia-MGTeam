@@ -25,6 +25,7 @@ import { LuIndianRupee } from "react-icons/lu";
 import { FaShareAlt } from "react-icons/fa";
 import CustomShareButton from "@/components/Home/gallary/share";
 import Searchbar from "@/components/searchBar/search";
+import { formatSecToMin } from "@/utils/DateFormat";
 
 const Home = () => {
   const [selectedVariantId, setSelectedVariantId] = useState("");
@@ -245,7 +246,7 @@ const Home = () => {
                             )}
                           </div>
                         </div>
-                        <div className="items-center flex  flex-row">
+                        <div className="items-center flex text-xm flex-row">
                           {license?.metadata?.resolution}
                         </div>
                       </div>
@@ -258,43 +259,78 @@ const Home = () => {
                         <div className="space-y-1 text-base">
                           <div className="flex lg:justify-start w-full md:justify-between ">
                             <span className="font-medium w-[35%]">Title:</span>
-                            <span className="text-violet-600 text-sm w-[65%]    hover:underline">
-                              {capitalizeFirstLetter(product?.title || "")}
+                            <span className="text-violet-600 capitalize text-sm w-[65%]    hover:underline">
+                              {product?.title}
                             </span>
                           </div>
                           <div className="flex  lg:justify-start w-full md:justify-between">
                             <span className="font-medium w-[35%]">
-                              Upload date:
+                              Resolutions:
                             </span>
-                            <span className="w-[65%] ">
-                              {new Date().toLocaleDateString()}
+                            <span className="flex text-neutral-600 text-sm  gap-2">
+                              {product.variants.map((variant, index) => (
+                                <span className="w-[65%] whitespace-nowrap ">
+                                  {variant.metadata?.resolution} px{" "}
+                                  {index !== product.variants.length - 1 && ","}
+                                </span>
+                              ))}
                             </span>
                           </div>
                           <div className="flex  lg:justify-start w-full md:justify-between">
                             <span className="font-medium w-[35%]">
-                              Location:
+                              Bit Rate:
                             </span>
-                            <span className="w-[65%] ">India</span>
+                            <span className="flex text-neutral-600 text-sm  gap-2">
+                              {product.variants.map((variant, index) => (
+                                <span className="w-[65%] whitespace-nowrap ">
+                                  {variant.metadata?.bitrate} Mbps{" "}
+                                  {index !== product.variants.length - 1 && ","}
+                                </span>
+                              ))}
+                            </span>
                           </div>
                           <div className="flex  lg:justify-start w-full md:justify-between">
                             <span className="font-medium w-[35%]">
-                              Category:
+                              Frame Rate:
                             </span>
-                            <p className="text-violet-600 w-[65%] ">
-                              {product?.category
-                                .map((cat: string) =>
-                                  capitalizeFirstLetter(cat)
-                                )
-                                .join(", ") + "."}
-                            </p>
+                            <span className="flex text-neutral-600 text-sm  gap-2">
+                              {product.variants.map((variant, index) => (
+                                <span className="w-[65%] whitespace-nowrap">
+                                  {variant.metadata?.frameRate} Hz{" "}
+                                  {index !== product.variants.length - 1 && ","}
+                                </span>
+                              ))}
+                            </span>
+                          </div>
+                          <div className="flex  w-full lg:justify-start md:justify-between">
+                            <span className="font-medium w-[35%]">Format:</span>
+                            <span className="text-sm capitalize text-neutral-600 w-[65%]">
+                              {product?.variants[0].metadata?.format}
+                            </span>
                           </div>
                           <div className="flex  w-full lg:justify-start md:justify-between">
                             <span className="font-medium w-[35%]">
-                              Format:{" "}
+                              Video Length:
                             </span>
-                            <span className="text-sm text-neutral-600 w-[65%]">
-                              6725 × 4286 px
+                            <span className="text-sm capitalize text-neutral-600 w-[65%]">
+                              {formatSecToMin(
+                                Math.floor(product?.length || 0) || 0
+                              )}
                             </span>
+                          </div>
+                          <div className="flex lg:justify-start w-full md:justify-between ">
+                            <span className="font-medium w-[35%]">
+                              Categories:
+                            </span>
+                            <div className="flex flex-wrap gap-2">
+                              {product?.category.map((category, index) => (
+                                <span className="text-violet-600 whitespace-nowrap capitalize text-sm w-[65%]    hover:underline">
+                                  {category}{" "}
+                                 {" "}
+                                  {index !== product.variants.length - 1 && ","}
+                                </span>
+                              ))}
+                            </div>
                           </div>
                         </div>
                       </div>
