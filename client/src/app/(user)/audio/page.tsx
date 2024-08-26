@@ -12,9 +12,15 @@ import { IoSearchOutline } from "react-icons/io5";
 import { setAudioPage } from "@/app/redux/feature/product/slice";
 import { clearKeywords } from "@/app/redux/feature/product/api";
 import Searchbar from "@/components/searchBar/search";
+import { useSearchParams } from "next/navigation";
 
 const Page = () => {
   const dispatch = useAppDispatch();
+  const searchParams = useSearchParams();
+  const searchTerm = searchParams.get("searchTerm") || "";
+  const category = searchParams.get("category");
+  const categoryParam = category ? ["editor choice"] : "";
+
   const { audioData, page, totalNumOfPage } = useAppSelector(
     (state) => state.product
   );
@@ -23,12 +29,15 @@ const Page = () => {
       page: page,
       productsPerPage: 4,
       mediaType: ["audio"],
+      searchTerm,
+      category: categoryParam,
+   
     });
 
     return () => {
       clearKeywords(dispatch);
     };
-  }, [page]);
+  }, [page,searchParams]);
 
   const handlePageChange = (page: number) => {
     // console.log(page);
@@ -47,7 +56,7 @@ const Page = () => {
     <>
       <Searchbar />
       <div className="main">
-        <hr className="mt-5" />
+        {/* <hr className="mt-5" /> */}
 
         {/* <Waveform /> */}
 

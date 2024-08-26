@@ -29,7 +29,7 @@ const Trending = ({
   const [loading, setLoading] = useState(false);
   const handleDownload = async () => {
     setLoading(true);
-    await downloadProduct(dispatch, data.publicKey, data.title);
+    await downloadProduct(dispatch, data?.publicKey, data?.title);
     setLoading(false);
   };
   const handleMouseEnter = (
@@ -48,9 +48,7 @@ const Trending = ({
       video.pause();
     }
   };
-  const capitalizeFirstLetter = (string: string) => {
-    return string.charAt(0).toUpperCase() + string.slice(1);
-  };
+
   const router = useRouter();
   const dispatch = useAppDispatch();
 
@@ -109,12 +107,12 @@ const Trending = ({
           title={data.isWhitelisted ? "Remove from Saved" : "Save Image"}
           className="text-white bg-black bg-opacity-35 px-2 py-1 rounded-full flex gap-1 items-center"
         >
-          {data.isWhitelisted ? (
+          {data?.isWhitelisted ? (
             <IoMdHeart className="h-6 w-5 text-red-500" />
           ) : (
             <FaRegHeart className="h-6 w-5" />
           )}
-          {/* <p className="text-sm"> {data.isWhitelisted ? "" : ""} </p> */}
+          {/* <p className="text-sm"> {data?.isWhitelisted ? "" : ""} </p> */}
         </div>
       </div>
       <div
@@ -135,18 +133,18 @@ const Trending = ({
         </div>
       </div>
       <div className="absolute bottom-1 right-20 m-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-        {!data.isPurchased ? (
+        {!data?.isPurchased ? (
           <div
-            title={data.isInCart ? "Remove from cart" : "Add to cart"}
+            title={data?.isInCart ? "Remove from cart" : "Add to cart"}
             className={` p-2 ${
-              data.isInCart ? "bg-red-500 text-white" : "bg-white text-black"
+              data?.isInCart ? "bg-red-500 text-white" : "bg-white text-black"
             } rounded-full`}
             onClick={(e) => {
               e.stopPropagation();
               handleCart();
             }}
           >
-            {data.isInCart ? <BsCartCheckFill /> : <BsCart2 />}
+            {data?.isInCart ? <BsCartCheckFill /> : <BsCart2 />}
           </div>
         ) : (
           <div

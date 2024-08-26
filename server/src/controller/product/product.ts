@@ -412,6 +412,7 @@ export const getProductForCustomer = catchAsyncError(
       tags,
       popular,
     } = req.query;
+    console.log("dsd",category,searchTerm)
 
     const queryObject: any = {};
 

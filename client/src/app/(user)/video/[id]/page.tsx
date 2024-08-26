@@ -118,26 +118,92 @@ const Home = () => {
           <span>Search by image</span>
         </button>
       </div> */}
-        <hr className="mt-5" />
-        <div className="border-t border-b border-b-gray-400 border-t-gray-400 m-auto mt-5">
-          <div className="flex md:flex-row flex-col  ">
-            {product && (
-              <>
-                <div className="w-full md:w-[72%] pr-5 vidbg pl-5  md:pr-20 pt-10 gap-5 md:pl-20 border-r border-r-gray-400 flex flex-col">
-                  <div className="flex flex-row text-gray-700  justify-between items-center">
-                    <div className="font-semibold text-lg">{product.title}</div>
-                    <div className="flex-row flex gap-3">
-                      <span
-                        onClick={handleeWishlist}
-                        title={
-                          product.isWhitelisted
-                            ? "Remove from Saved"
-                            : "Save Image"
-                        }
-                        className=" bg-opacity-35 cursor-pointer px-3 py-2 border  border-gray-300 rounded-md flex gap-1 items-center"
-                      >
-                        {product.isWhitelisted ? (
-                          <IoMdHeart className="h-5 w-5 text-red-500" />
+      <hr className="mt-5" />
+      <div className="border-t border-b border-b-gray-400 border-t-gray-400 m-auto mt-5">
+        <div className="flex md:flex-row flex-col  ">
+          {product && (
+            <>
+              <div className="w-full md:w-[72%] pr-5 vidbg pl-5  md:pr-20 pt-10 gap-5 md:pl-20 border-r border-r-gray-400 flex flex-col">
+                <div className="flex flex-row text-gray-700  justify-between items-center">
+                  <div className="font-semibold text-lg">
+                  {product.title}
+                  </div>
+                  <div className="flex-row flex gap-3">
+                    <span
+                    onClick={handleeWishlist}
+                    title={
+                      product.isWhitelisted ? "Remove from Saved" : "Save Image"
+                    }
+                    className=" bg-opacity-35 cursor-pointer px-3 py-2 border  border-gray-300 rounded-md flex gap-1 items-center"
+                  >
+                    {product.isWhitelisted ? (
+                      <IoMdHeart className="h-5 w-5 text-red-500" />
+                    ) : (
+                      <IoMdHeartEmpty className="h-5 w-5" />
+                    )}
+                    <p className="text-sm">
+                      {" "}
+                      {product.isWhitelisted ? "Saved" : "Save"}{" "}
+                    </p>
+                    </span>
+                    <CustomShareButton/>
+                     <span className=" flex font-medium rounded-md gap-2 border-gray-300 flex-row text-center p-2 border items-center">
+                     <AiOutlineDownload size={20}/> Try
+                    </span>
+                  </div>
+                </div>
+                <video controls className="rounded-lg h-[20rem] md:h-[28rem] w-full object-cover">
+                <source
+                    src={`https://mi2-public.s3.ap-southeast-1.amazonaws.com/${product.thumbnailKey}`}
+                /> 
+                </video>
+               
+                <div className="lg:w-[50rem] pb-7 md:w-[35rem] w-[22rem] mt-2">
+                  <h2 className="font-bold">Description</h2>
+                  <p className="text-sm text-neutral-700">
+                    Stock Photo ID: {product._id}
+                  </p>
+                  <p className="text-sm">{product.description}</p>
+                </div>
+
+            
+              </div>
+              <div className="border-t vidbg border-t-gray-400 md:border-t-0 w-full md:w-[28%]  ">
+                <div className="p-8 bg-white ">
+                <h3 className="font-semibold  text-gray-700 text-xl">
+                  Purchase a License
+                </h3>
+                <div  className="text-xs py-2">
+                  All Royalty-Free licenses include global use rights,comprehensive protection, and simple 
+                  pricing with volume discounts available.
+                </div>
+                {product.variants.map((license, index) => (
+                  <div
+                    key={index}
+                    className={`border w-[90%]  cursor-pointer  ${
+                              isVariantInCart(license._id)
+                                ? 'bg-[#F4F4F4]'
+                                : '  '
+                            }  hover:bg-[#F4F4F4] p-2 flex flex-col ${
+                      index === 0 ? 'rounded-t-md' : ''
+                    } ${index === product.variants.length - 1 ? 'rounded-b-md' : ''}`}
+                    onClick={() => handleCart(license._id)}
+                  >
+                    <div className=" flex flex-row justify-between ">
+                      <div className="flex flex-row items-center gap-3">
+                        {/* Conditionally render the image */}
+                          
+                       {index === 0 ? (
+                          <img src="/asset/full-hd.svg" className="w-20" alt="Full HD" />
+                        ) : index === 1 ? (
+                          <img src="/asset/hd.svg" className="w-10 h-5" alt="HD" />
+                        ) : null}
+                      </div>
+                      <div>
+                        {isVariantPurchased(license._id) ? (
+                          <div title="Purchased Product" className="p-2 items-center flex flex-row gap-1 bg-red-500 text-white rounded-full">
+                           <LuIndianRupee /> {license.price} <BiSolidPurchaseTagAlt />
+                          </div>
                         ) : (
                           <IoMdHeartEmpty className="h-5 w-5" />
                         )}
