@@ -111,7 +111,7 @@ const subscriptionCharged = async (payload: any) => {
     console.log("subscription charged", payload);
     const { start_at, end_at, status, expire_by, plan_id, id, notes } =
       payload.subscription.entity;
-      console.log("Notes",notes);
+    console.log("Notes", notes);
     const user = await customer.findOneAndUpdate(
       { "subscription.subscriptionId": id },
       {
@@ -191,17 +191,22 @@ const orderPaid = async (payload: any) => {
       );
 
       if (existingProduct) {
-        const existingVariant = existingProduct.variantId.includes(variantId);
-
-        if (!existingVariant) {
-          // Add the variantId to the existing product
-          existingProduct.variantId.push(variantId);
+        const existingVariant =
+          existingProduct.variantId.toString() === variantId.toString();
+        if (existingVariant) {
+          throw new Error("Product with the same variant ID already exists.");
+        } else {
+          // Add a new entry with the product ID and new variant ID
+          user.purchasedProducts.push({
+            productId: productId,
+            variantId: variantId,
+          });
         }
       } else {
-        // Add the new product with variantId
+        // Add the new product with variant ID
         user.purchasedProducts.push({
           productId: productId,
-          variantId: [variantId],
+          variantId: variantId,
         });
       }
     }

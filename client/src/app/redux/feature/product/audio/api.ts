@@ -71,8 +71,9 @@ export const removeProductFromWishlist = async (
       data: { productId },
     });
     dispatch(addToWishlist({ productId, productType }));
+    console.log(productType, "productType");
     if (productType === "wishlist") {
-      removeFromWishlist(productId);
+      dispatch(removeFromWishlist(productId));
     }
   } catch (error: any) {
     const e = error as AxiosError;

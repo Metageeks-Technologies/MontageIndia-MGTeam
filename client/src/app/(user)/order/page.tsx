@@ -1,56 +1,72 @@
 "use client";
-import React, { useEffect, useState } from "react";
-import {
-  addCartItem,
-  getCartData,
-  getCurrCustomer,
-  removeCartItem,
-} from "@/app/redux/feature/user/api";
-import { useAppDispatch, useAppSelector } from "@/app/redux/hooks";
-import { OrderOption } from "@/types/order";
-import PayButton from "@/components/payment/payButton";
-import {
-  MdDeleteForever,
-  MdCurrencyRupee,
-  MdShoppingCart,
-} from "react-icons/md";
-import instance from "@/utils/axios";
-import { RxCross2 } from "react-icons/rx";
 import { removeItemFromCart } from "@/app/redux/feature/product/api";
-import { CartItem, removeCartProduct } from "@/app/redux/feature/product/slice";
+import { useAppDispatch, useAppSelector } from "@/app/redux/hooks";
+import PayButton from "@/components/payment/payButton";
+import { OrderOption } from "@/types/order";
+import instance from "@/utils/axios";
+import { useEffect, useState } from "react";
+import { MdCurrencyRupee } from "react-icons/md";
+import { RxCross2 } from "react-icons/rx";
+import { setCart } from "@/app/redux/feature/product/slice";
+import { removeCartProduct } from "@/app/redux/feature/product/slice";
 import { Spinner } from "@nextui-org/react";
+import { useRouter } from "next/navigation";
 import Swal from "sweetalert2";
+import { notifySuccess } from "@/utils/toast";
 
 const PlaceOrder = () => {
   const dispatch = useAppDispatch();
-  const [ amount, setAmount ] = useState( 0 );
-  const [ totalCredits, setTotalCredits ] = useState( 0 );
+  const [amount, setAmount] = useState(0);
+  const [totalCredits, setTotalCredits] = useState(0);
   const [loader, setLoader] = useState(true);
-  //   const cart = useAppSelector((state) => state.user.cartData);
+  const router = useRouter();
   const cart = useAppSelector((state) => state.product.cart);
-  const [ selectedVariants, setSelectedVariants ] = useState<{ [ key: string ]: { variantId: string, price: number,credit:number }; }>( {} );
-  const [ selectedSizes, setSelectedSizes ] = useState<{ [ key: string ]: string; }>( {} );
-  console.log("Cart data:-",cart)
+  const [selectedVariants, setSelectedVariants] = useState<{
+    [key: string]: { variantId: string; price: number; credit: number };
+  }>({});
+  const [selectedSizes, setSelectedSizes] = useState<{ [key: string]: string }>(
+    {}
+  );
+  console.log("Cart data:-", cart);
 
   useEffect(() => {
     if (cart) {
       setLoader(false);
     }
-  }, [ cart ] );
-  
+  }, [cart]);
 
-  const handleBuyWithCredits = async (id: string) => {
+  const handleBuyWithCredits = async (productId: string, variantId: string) => {
     try {
-      const response = await instance.post(`/product/buyWithCredits/${id}`, {
-        withCredentials: true,
+      const response = await instance.post(`/product/buyWithCredits`, {
+        productBody: {
+          productId,
+          variantId,
+        },
       });
       console.log(response);
       if (response.data.success) {
-        Swal.fire({
-          icon: "success",
-          title: "Product Purchased Successfully",
-        });
-        handleRemoveCart(id);
+        notifySuccess("Product Purchased Successfully");
+        dispatch(removeCartProduct(productId));
+      }
+    } catch (error: any) {
+      console.error(error);
+      Swal.fire({
+        icon: "error",
+        title: "Purchase Failed.Try Other Method of Purchase",
+        text:
+          error.response.data.message ||
+          "Something went wrong. Please try again later",
+      });
+    }
+  };
+
+  const handleAllBuyWithCredits = async () => {
+    try {
+      const response = await instance.post(`/product/cart/buyWithCredits`);
+      if (response.data.success) {
+        dispatch(setCart([]));
+        notifySuccess("Product Purchased Successfully");
+        router.push("/user-profile/purchased-product");
       }
     } catch (error: any) {
       console.error(error);
@@ -68,49 +84,38 @@ const PlaceOrder = () => {
     removeItemFromCart(dispatch, id);
   };
 
-  
-  const calculateTotalPrice = () =>
-  {
-    return cart.reduce( ( total: number, item ) =>
-    {
-      const selectedVariant = selectedVariants[ item.productId._id ];
-      if ( selectedVariant )
-      {
+  const calculateTotalPrice = () => {
+    return cart.reduce((total: number, item) => {
+      const selectedVariant = selectedVariants[item.productId._id];
+      if (selectedVariant) {
         return total + selectedVariant.price;
-      } else
-      {
-        const matchingVariant = item.productId?.variants?.find( ( variant: any ) =>
-          item.variantId.includes( variant._id )
+      } else {
+        const matchingVariant = item.productId?.variants?.find((variant: any) =>
+          item.variantId.includes(variant._id)
         );
-        return total + ( matchingVariant ? matchingVariant.price : 0 );
+        return total + (matchingVariant ? matchingVariant.price : 0);
       }
-    }, 0 );
+    }, 0);
   };
 
-  const calculateTotalCredit = () =>
-  {
-    return cart.reduce( ( total: number, item ) =>
-    {
-      const selectedVariant = selectedVariants[ item.productId._id ];
-      if ( selectedVariant )
-      {
+  const calculateTotalCredit = () => {
+    return cart.reduce((total: number, item) => {
+      const selectedVariant = selectedVariants[item.productId._id];
+      if (selectedVariant) {
         return total + selectedVariant?.credit;
-      } else
-      {
-        const matchingVariant = item.productId?.variants?.find( ( variant: any ) =>
-          item.variantId.includes( variant._id )
+      } else {
+        const matchingVariant = item.productId?.variants?.find((variant: any) =>
+          item.variantId.includes(variant._id)
         );
-        return total + ( matchingVariant ? matchingVariant.credit : 0 );
+        return total + (matchingVariant ? matchingVariant.credit : 0);
       }
-    }, 0 );
+    }, 0);
   };
 
-  
-  useEffect( () =>
-  {
-    setAmount( calculateTotalPrice() );
-    setTotalCredits( calculateTotalCredit() );
-  }, [ cart, selectedVariants ] );
+  useEffect(() => {
+    setAmount(calculateTotalPrice());
+    setTotalCredits(calculateTotalCredit());
+  }, [cart, selectedVariants]);
 
   const createOrderOption = (): OrderOption => {
     const products = cart.map((item) => ({
@@ -135,18 +140,21 @@ const PlaceOrder = () => {
     return text;
   };
 
-  const handleSizeChange = ( productId: string, variantId: string ) =>
-  {
-    const product = cart.find( item => item.productId._id === productId );
-    if ( product )
-    {
-      const variant = product.productId.variants.find( v => v._id === variantId );
-      if ( variant )
-      {
-        setSelectedVariants( prev => ( {
+  const handleSizeChange = (productId: string, variantId: string) => {
+    const product = cart.find((item) => item.productId._id === productId);
+    if (product) {
+      const variant = product.productId.variants.find(
+        (v) => v._id === variantId
+      );
+      if (variant) {
+        setSelectedVariants((prev) => ({
           ...prev,
-          [ productId ]: { variantId, price: variant.price, credit:variant.credit }
-        } ) );
+          [productId]: {
+            variantId,
+            price: variant.price,
+            credit: variant.credit,
+          },
+        }));
       }
     }
   };
@@ -178,8 +186,9 @@ const PlaceOrder = () => {
                 </th>
                 <th scope="col" className="px-6 py-3 text-center border-none">
                   Price
-                </th> <th scope="col" className="px-6 py-3 text-center border-none">
-                   Credit Price
+                </th>{" "}
+                <th scope="col" className="px-6 py-3 text-center border-none">
+                  Credit Price
                 </th>
                 <th scope="col" className="px-6 py-3  border-none"></th>
               </tr>
@@ -236,55 +245,55 @@ const PlaceOrder = () => {
                       </div>
                     </div>
                   </td>
-                  { item.productId.mediaType !== "audio" && (
+                  {item.productId.mediaType !== "audio" && (
                     <td className="w-1/6 px-6 py-4 border-none text-center">
                       <div className="text-md text-gray-600 mb-2 ">
                         <select
                           className="text-black border-1 border-gray-300 outline-none px-4 py-2 bg-gray-100 rounded-md"
                           value={
-                            selectedVariants[ item.productId._id ]?.variantId ||
-                            item.variantId[ 0 ]
+                            selectedVariants[item.productId._id]?.variantId ||
+                            item.variantId[0]
                           }
-                          onChange={ ( e ) =>
-                            handleSizeChange( item.productId._id, e.target.value )
+                          onChange={(e) =>
+                            handleSizeChange(item.productId._id, e.target.value)
                           }
                         >
-                          { item.productId.variants.map( ( variant ) => (
-                            <option key={ variant._id } value={ variant._id }>
-                              { item.productId.mediaType === "video"
+                          {item.productId.variants.map((variant) => (
+                            <option key={variant._id} value={variant._id}>
+                              {item.productId.mediaType === "video"
                                 ? variant.metadata.resolution
-                                : variant.metadata.dimension }{ " " }
+                                : variant.metadata.dimension}{" "}
                               px
                             </option>
-                          ) ) }
+                          ))}
                         </select>
                       </div>
                     </td>
-                  ) }
+                  )}
 
-                  { item.productId.mediaType == "audio" && (
-                    <td className="px-6 py-4 border-none text-center justify-center w-1/6 "> 
-                        <div className="text-black border-1 border-gray-300 outline-none mx-4 py-2 bg-gray-100 rounded-md"> 
+                  {item.productId.mediaType == "audio" && (
+                    <td className="px-6 py-4 border-none text-center justify-center w-1/6 ">
+                      <div className="text-black border-1 border-gray-300 outline-none mx-4 py-2 bg-gray-100 rounded-md">
                         <h2>Orignal</h2>
                       </div>
                     </td>
-                  ) }
+                  )}
                   <td className="w-1/6 px-6 py-4 border-none">
                     <div className="text-gray-600  justify-center items-center flex flex-row">
                       <span className="font-bold">
                         <MdCurrencyRupee />
                       </span>
-                      { selectedVariants[ item.productId._id ]?.price ||
-                        item.productId?.variants.find( ( variant: any ) =>
-                          item.variantId.includes( variant._id )
-                        )?.price }
+                      {selectedVariants[item.productId._id]?.price ||
+                        item.productId?.variants.find((variant: any) =>
+                          item.variantId.includes(variant._id)
+                        )?.price}
                     </div>
                   </td>
                   <td className="w-1/6 px-6 py-4 border-none">
                     <div className="text-gray-600  justify-center items-center flex flex-row">
                       {
-                        item.productId?.variants.find( ( variant: any ) =>
-                          item.variantId.includes( variant._id )
+                        item.productId?.variants.find((variant: any) =>
+                          item.variantId.includes(variant._id)
                         )?.credit
                       }
                     </div>
@@ -293,7 +302,10 @@ const PlaceOrder = () => {
                     <div className="w-full flex justify-between px-5 items-center gap-4">
                       <span
                         onClick={() =>
-                          handleBuyWithCredits(item?.productId._id)
+                          handleBuyWithCredits(
+                            item?.productId._id,
+                            item.variantId
+                          )
                         }
                         className=" hover:bg-webred hover:text-white text-webred border-1 border-webred cursor-pointer rounded-md px-4 py-2"
                       >
@@ -321,23 +333,27 @@ const PlaceOrder = () => {
                 <td className="px-6 py-4 border-none  "></td>
                 <td className="px-6 py-4 border-none  ">
                   <div className="flex justify-center items-center ">
-                    <span className="font-semibold mr-2 whitespace-nowrap">Total Price: </span>
+                    <span className="font-semibold mr-2 whitespace-nowrap">
+                      Total Price:{" "}
+                    </span>
                     <span className="font-bold">
                       <MdCurrencyRupee />
                     </span>
                     <span>{amount}</span>
                   </div>
                 </td>
-              
-                <td className="px-6 py-4 border-none justify-center text-center  ">{totalCredits} </td>
+
+                <td className="px-6 py-4 border-none justify-center text-center  ">
+                  {totalCredits}{" "}
+                </td>
 
                 <td className="px-6 py-4 border-none">
                   <div className="flex justify-start items-center gap-4 px-4 ">
-                  <button
-                    
-                    className="text-white px-4 py-2 rounded-md bg-webgreen text-md max-sm:text-lg hover:bg-webgreen-light transition-all whitespace-nowrap"
-                  >
-                    Pay With Credit
+                    <button
+                      onClick={handleAllBuyWithCredits}
+                      className="text-white px-4 py-2 rounded-md bg-webgreen text-md max-sm:text-lg hover:bg-webgreen-light transition-all whitespace-nowrap"
+                    >
+                      Pay With Credit
                     </button>
                     OR
                     <PayButton orderOption={orderOption} />

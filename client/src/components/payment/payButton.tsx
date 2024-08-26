@@ -29,7 +29,7 @@ const PayButton: React.FC<props> = ({ orderOption }) => {
       console.log("step 2:", response);
       if (response.data.success) {
         dispatch(setCart([]));
-        alert(response.data.message);
+        // alert(response.data.message);
 
         router.push("/user-profile/purchased-product");
       } else {

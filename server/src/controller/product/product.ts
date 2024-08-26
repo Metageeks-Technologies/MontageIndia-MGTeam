@@ -310,20 +310,24 @@ export const buyWithCredits = catchAsyncError(async (req: any, res, next) => {
     (item) => item.productId.toString() === productId.toString()
   );
 
-  if (existingProduct && existingProduct.variantId.includes(variantId)) {
-    return next(
-      new ErrorHandler("Product with this variant already purchased", 400)
-    );
-  }
-
-  // Add variantId if product exists but variant does not
   if (existingProduct) {
-    existingProduct.variantId.push(variantId);
+    const existingVariant =
+      existingProduct.variantId.toString() === variantId.toString();
+
+    if (existingVariant) {
+      throw new Error("Product with the same variant ID already exists.");
+    } else {
+      // Add a new entry with the product ID and new variant ID
+      user.purchasedProducts.push({
+        productId: productId,
+        variantId: variantId,
+      });
+    }
   } else {
-    // Add both productId and variantId if neither exists
+    // Add the new product with variant ID
     user.purchasedProducts.push({
-      productId,
-      variantId: [variantId],
+      productId: productId,
+      variantId: variantId,
     });
   }
 
@@ -339,6 +343,78 @@ export const buyWithCredits = catchAsyncError(async (req: any, res, next) => {
 
   res.send({ success: true, user, message: "Purchased successfully" });
 });
+
+export const buyAllCartWithCredits = catchAsyncError(
+  async (req: any, res, next) => {
+    if (!req.user) {
+      return next(new ErrorHandler("User not found", 404));
+    }
+    const { id } = req.user;
+    const user = await Customer.findById(id).populate("cart.productId");
+    if (!user) {
+      return next(new ErrorHandler("User not found or cart is empty.", 404));
+    }
+
+    let totalCredit = 0;
+
+    // console.log("user.cart", user.cart);
+    if (!user.cart || user?.cart?.length === 0) {
+      return next(new ErrorHandler("Cart is empty", 404));
+    }
+
+    user.cart.forEach((item) => {
+      const product: any = item.productId;
+      const variantId = item.variantId;
+
+      const variant = product.variants.find(
+        (variant: any) => variant._id.toString() === variantId
+      );
+      if (variant) {
+        totalCredit += variant.credit;
+      }
+    });
+
+    const totalUserCredit = user.subscription.credits;
+    if (totalUserCredit < totalCredit) {
+      return next(new ErrorHandler("Insufficient credits", 400));
+    }
+
+    for (const product of user.cart) {
+      const { productId, variantId } = product;
+
+      const existingProduct = user.purchasedProducts.find(
+        (item) => item.productId.toString() === productId.toString()
+      );
+
+      if (existingProduct) {
+        const existingVariant =
+          existingProduct.variantId.toString() === variantId.toString();
+
+        if (existingVariant) {
+          throw new Error("Product with the same variant ID already exists.");
+        } else {
+          // Add a new entry with the product ID and new variant ID
+          user.purchasedProducts.push({
+            productId: productId,
+            variantId: variantId,
+          });
+        }
+      } else {
+        // Add the new product with variant ID
+        user.purchasedProducts.push({
+          productId: productId,
+          variantId: variantId,
+        });
+      }
+    }
+    // Deduct credits
+    user.subscription.credits = totalUserCredit - totalCredit;
+
+    user.cart = [];
+    await user.save();
+    res.send({ success: true, user, message: "Purchased successfully" });
+  }
+);
 
 export const getPurchasedProducts = catchAsyncError(
   async (req: any, res, next) => {

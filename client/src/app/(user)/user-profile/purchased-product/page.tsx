@@ -11,9 +11,10 @@ import { IoSearchOutline } from "react-icons/io5";
 import { IoMdDownload } from "react-icons/io";
 import { IoEyeOutline } from "react-icons/io5";
 import Link from "next/link";
+import { downloadProduct } from "@/app/redux/feature/product/api";
 
 type Variant = {
-  size: string;
+  _id: string;
   key: string;
   price: number;
   credit: number;
@@ -36,7 +37,7 @@ type Product = {
 
 type PurchasedProduct = {
   product: Product;
-  variant: string[];
+  variant: string;
   _id: string;
 };
 
@@ -50,6 +51,8 @@ const Page: React.FC = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [totalPurchased, setTotalPurchased] = useState(0);
   const [loading, setLoading] = useState<boolean>(false);
+  const [downloading, setDownloading] = useState<boolean>(false);
+  const dispatch = useAppDispatch();
 
   const fetchProducts = async () => {
     setLoading(true);
@@ -89,6 +92,13 @@ const Page: React.FC = () => {
   useEffect(() => {
     fetchProducts();
   }, [currentPage, dataPerPage]);
+
+  const getVariant = (variants: Variant[], variantId: string) => {
+    console.log(variants, variantId, "variants");
+    const res = variants.find((variant) => variant._id === variantId);
+    console.log(res, "res");
+    return res;
+  };
 
   return (
     <div className="w-full rounded-lg overflow-hidden min-h-screen bg-white px-2 py-1 md:px-6 md:py-4">
@@ -136,7 +146,7 @@ const Page: React.FC = () => {
         </div>
       ) : (
         <>
-          <div className="overflow-x-auto shadow-md rounded-lg mb-4">
+          <div className="overflow-x-scroll shadow-md rounded-lg mb-4">
             <table className="w-full border-collapse">
               <thead className="bg-[#F1F1F1] text-black">
                 <tr>
@@ -189,12 +199,42 @@ const Page: React.FC = () => {
                             )}
                           </div>
                           {/* Image */}
-                          <div className="w-full h-full rounded-lg overflow-hidden">
-                            <img
+                          <div className=" h-full rounded-lg overflow-hidden">
+                            {/* <img
                               className="w-full h-full object-cover"
                               src={`${process.env.NEXT_PUBLIC_AWS_PREFIX}${purchasedProduct.product.thumbnailKey}`}
                               alt={purchasedProduct.product.title}
-                            />
+                            /> */}
+                            {purchasedProduct.product?.mediaType ===
+                              "image" && (
+                              <img
+                                className="w-full h-full rounded-lg object-cover"
+                                src={`${process.env.NEXT_PUBLIC_AWS_PREFIX}/${purchasedProduct.product.thumbnailKey}`}
+                                alt={purchasedProduct.product?.title}
+                              />
+                            )}
+                            {purchasedProduct.product?.mediaType ===
+                              "audio" && (
+                              <img
+                                className="w-full h-full rounded-lg object-cover"
+                                src="/images/audioImage.png"
+                                alt={purchasedProduct.product?.title}
+                              />
+                            )}
+                            {purchasedProduct.product?.mediaType ===
+                              "video" && (
+                              <div>
+                                <video
+                                  loop
+                                  muted
+                                  className="w-full h-full rounded-lg object-cover"
+                                >
+                                  <source
+                                    src={`${process.env.NEXT_PUBLIC_AWS_PREFIX}/${purchasedProduct.product.thumbnailKey}`}
+                                  />
+                                </video>
+                              </div>
+                            )}
                           </div>
                         </div>
                       </td>
@@ -212,7 +252,12 @@ const Page: React.FC = () => {
                             <FaRupeeSign />
                           </span>
                           <span>
-                            {purchasedProduct.product.variants[0].price}
+                            {
+                              getVariant(
+                                purchasedProduct?.product?.variants,
+                                purchasedProduct?.variant
+                              )?.price
+                            }
                           </span>
                         </div>
                       </td>
@@ -221,14 +266,10 @@ const Page: React.FC = () => {
                       </td>
                       <td className="md:px-6 md:py-4 ">
                         <div className="flex gap-2 justify-center items-center">
-                          <button className="px-2 py-1 border-1 border-[#22C55E] rounded-lg text-[#22C55E] hover:text-white hover:bg-[#22C55E]">
-                            <div className="flex gap-2 justify-center  items-center">
-                              <span>Download</span>
-                              <span>
-                                <IoMdDownload />
-                              </span>
-                            </div>
-                          </button>
+                          <DownloadButton
+                            product={purchasedProduct.product}
+                            variant={purchasedProduct.variant}
+                          />
                           <button className="px-2 py-1 border-1 border-[#8D529C] rounded-lg text-[#8D529C] hover:text-white hover:bg-[#8D529C]">
                             <Link
                               href={`/${purchasedProduct.product.mediaType}/${purchasedProduct.product.uuid}`}
@@ -307,6 +348,66 @@ const Page: React.FC = () => {
         </>
       )}
     </div>
+  );
+};
+
+const DownloadButton = ({
+  product,
+  variant,
+}: {
+  product: Product;
+  variant: string;
+}) => {
+  const dispatch = useAppDispatch();
+
+  const [downloading, setDownloading] = useState<boolean>(false);
+
+  const getVariantKey = (variants: Variant[], variantId: string) => {
+    console.log(variants, variantId, "variants and variantId");
+    if (!variants || variants.length === 0) {
+      console.error("Variants array is empty or undefined");
+      return undefined;
+    }
+    if (!variantId) {
+      console.error("Variant ID is undefined");
+      return undefined;
+    }
+    const res = variants.find((variant) => variant._id === variantId);
+    console.log(res, "found variant");
+    if (!res) {
+      console.error(`No variant found with ID: ${variantId}`);
+      return undefined;
+    }
+    if (!res.key) {
+      console.error(`Variant found but key is undefined: ${res}`);
+      return undefined;
+    }
+    return res.key;
+  };
+
+  const handleDownload = async () => {
+    const key = getVariantKey(product.variants, variant) || "";
+    setDownloading(true);
+    await downloadProduct(dispatch, key, product.title);
+    setDownloading(false);
+  };
+
+  return (
+    <button
+      onClick={handleDownload}
+      className="px-2 py-1 border-1 border-[#22C55E] rounded-lg text-[#22C55E] hover:text-white hover:bg-[#22C55E]"
+    >
+      <div className="flex gap-2 justify-center  items-center">
+        <span>Download</span>
+        {downloading ? (
+          <Spinner color="current" size="sm" />
+        ) : (
+          <span>
+            <IoMdDownload />
+          </span>
+        )}
+      </div>
+    </button>
   );
 };
 

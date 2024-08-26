@@ -34,7 +34,6 @@ interface ProductCardProps {
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({ product, status }) => {
-  console.log(product);
   const dispatch = useAppDispatch();
   const { loading } = useAppSelector((state) => state.product);
   const handleCart = () => {

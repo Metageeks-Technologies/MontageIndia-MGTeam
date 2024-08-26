@@ -26,7 +26,8 @@ const customerSchema = new mongoose.Schema<TCustomer>(
     },
     image: {
       type: String,
-      default: "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_640.png",
+      default:
+        "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_640.png",
     },
     email: {
       type: String,
@@ -55,7 +56,7 @@ const customerSchema = new mongoose.Schema<TCustomer>(
           type: mongoose.Schema.Types.ObjectId,
           ref: "Product",
         },
-        variantId: [{ type: String, required: true }],
+        variantId: { type: String, required: true },
       },
     ],
     cart: [
@@ -125,7 +126,7 @@ customerSchema.methods.comparePassword = async function (
   this: TCustomer,
   givenPassword: string
 ) {
-  if (this.password) { 
+  if (this.password) {
     const isMatch = await bcrypt.compare(givenPassword, this.password);
     return isMatch;
   } else {

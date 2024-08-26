@@ -13,6 +13,7 @@ import {
   getProductForCustomer,
   getSingleProductForCustomer,
   getProductFromAws,
+  buyAllCartWithCredits,
 } from "../../controller/product/product";
 import {
   isAuthorizedCustomer,
@@ -51,8 +52,11 @@ productRouter
   .route("/removeFromCart")
   .post(isAuthenticatedCustomer, removeProductFromCart);
 productRouter
-  .route("/buyWithCredits/")
+  .route("/buyWithCredits")
   .post(isAuthenticatedCustomer, buyWithCredits);
+productRouter
+  .route("/cart/buyWithCredits")
+  .post(isAuthenticatedCustomer, buyAllCartWithCredits);
 productRouter
   .route("/purchased")
   .get(isAuthenticatedCustomer, getPurchasedProducts);
