@@ -249,8 +249,8 @@ const Form3: React.FC<Form3Props> = ( { onNext, formData } ) =>
                   <div key={ variant._id } className="bg-pageBg-light p-4 rounded-lg shadow-sm">
                     <div className="flex justify-between items-center mb-4">
                       {/* <h3 className="text-lg font-semibold text-gray-700">{ variant.size }</h3> */ }
-                      <h3 className="font-bold">Variant { index + 1 }</h3>
-
+                      <h3 className="font-bold">Variant </h3> 
+                   
                       { updatedVariants.includes( variant._id ) && !editingVariants.includes( variant._id ) ? (
                         <button type="button" onClick={ () => handleEditVariant( variant._id ) } className="text-gray-600 hover:text-gray-700 transition-colors">
                           <FaRegEdit size={ 24 } />
@@ -395,6 +395,10 @@ const Form3: React.FC<Form3Props> = ( { onNext, formData } ) =>
                     <div className="flex justify-between items-center mb-4">
                       {/* <h3 className="text-lg font-semibold text-gray-700">{ variant.size }</h3> */ }
                       <h3 className="font-bold">Variant { index + 1 }</h3>
+                      { index === 0 && <h3 className="text-lg font-semibold text-gray-700">Large</h3> }
+                      { index === 1 && <h3 className="text-lg font-semibold text-gray-700">Medium</h3> }
+                      { index === 2 && <h3 className="text-lg font-semibold text-gray-700">Small</h3> }
+
 
                       { updatedVariants.includes( variant._id ) && !editingVariants.includes( variant._id ) ? (
                         <button type="button" onClick={ () => handleEditVariant( variant._id ) } className="text-gray-600 hover:text-gray-700 transition-colors">
@@ -409,7 +413,7 @@ const Form3: React.FC<Form3Props> = ( { onNext, formData } ) =>
                       ) }
                     </div>
                      
-                      <div className="flex flex-col sm:flex-row gap-4">
+                    <div className="flex flex-col">
                         <div>
                           <label className="block text-sm font-medium text-gray-600 mb-1">Label:</label>
                           <input
