@@ -37,6 +37,9 @@ const config: Config = {
           DEFAULT: "#BEF264",
           dark: "#BEF264",
         },
+        gray80:{
+          DEFAULT:"#eeeeee",
+        },
         webred: {
           light: "#FFE6E5",
           DEFAULT: "#FE423F",

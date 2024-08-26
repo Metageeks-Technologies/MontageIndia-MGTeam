@@ -17,13 +17,14 @@ import Searchbar from "@/components/searchBar/search";
 const Page = () => {
   const dispatch = useAppDispatch();
   const searchParams = useSearchParams();
-  const category = searchParams.get("category");
+  const category=searchParams.get("category")
   const [totalPages, setTotalPages] = useState(1);
   const [currentPage, setCurrentPage] = useState(1);
   const searchTerm = searchParams.get("searchTerm") || "";
-  const [loading, setloading] = useState(false);
+  const categoryParam = category ? ["editor choice"] : "";
 
-  const {
+  const [loading, setloading] = useState(false);
+  const { 
     imageData: product,
     imagePage,
     totalImageData,
@@ -41,16 +42,17 @@ const Page = () => {
     handlePageChange(imagePage === 1 ? totalImageNumOfPage : imagePage - 1);
   };
 
-  const categoryParam = category ? ["editor choice"] : "";
 
-  const fetchData = (page: number) => {
-    getImage(dispatch, {
+  const fetchData =async (page: number) => {
+    setloading(true);
+   const response=await getImage(dispatch, {
       page: imagePage,
       productsPerPage: 20,
       mediaType: ["image"],
       searchTerm,
-      category: categoryParam,
+      category:categoryParam,
     });
+    setloading(false);
   };
 
   useEffect(() => {
@@ -63,56 +65,34 @@ const Page = () => {
   return (
     <>
       <Searchbar />
-      <div className="main ">
+      <div className="main bg-gray80">
         {/* <hr className="mt-5" /> */}
 
-        <div className="m-auto mt-4 bg w-[90%]">
-          <div className="flex flex-wrap gap-2 ">
-            <button className="flex items-center hover:bg-[#c7c7c9] text-sm px-3 py-1 border border-gray-700 rounded text-gray-700 bg-transparent backdrop-blur-sm bg-opacity-20 hover:bg-opacity-30 transition duration-300">
-              <IoIosSearch className="h-5 w-5 mr-1" />
-              Nature
-            </button>
-            <button className="flex items-center text-sm hover:bg-[#c7c7c9] px-3 py-1 border border-gray-700 rounded text-gray-700 bg-transparent backdrop-blur-sm bg-opacity-20 hover:bg-opacity-30 transition duration-300">
-              <IoIosSearch className="h-5 w-5 mr-1" />
-              India Gate
-            </button>
-            <button className="flex items-center text-sm hover:bg-[#c7c7c9] px-3 py-1 border border-gray-700 rounded text-gray-700 bg-transparent backdrop-blur-sm bg-opacity-20 hover:bg-opacity-30 transition duration-300">
-              <IoIosSearch className="h-5 w-5 mr-1" />
-              Travel
-            </button>
-            <button className="flex items-center text-sm hover:bg-[#c7c7c9] px-3 py-1 border border-gray-700 rounded text-gray-700 bg-transparent backdrop-blur-sm bg-opacity-20 hover:bg-opacity-30 transition duration-300">
-              <IoIosSearch className="h-5 w-5 mr-1" />
-              Architecture
-            </button>
-            <button className="flex items-center text-sm hover:bg-[#c7c7c9] px-3 py-1 border border-gray-700 rounded text-gray-700 bg-transparent backdrop-blur-sm bg-opacity-20 hover:bg-opacity-30 transition duration-300">
-              <IoIosSearch className="h-5 w-5 mr-1" />
-              India Gate Delhi Night
-            </button>
-            <button className="flex items-center text-sm px-3 hover:bg-[#c7c7c9] py-1 border border-gray-700 rounded text-gray-700 bg-transparent backdrop-blur-sm bg-opacity-20 hover:bg-opacity-30 transition duration-300">
-              <IoIosSearch className="h-5 w-5 mr-1" />
-              Nature
-            </button>
-            <button className="flex items-center text-sm px-3 py-1 hover:bg-[#c7c7c9] border border-gray-700 rounded text-gray-700 bg-transparent backdrop-blur-sm bg-opacity-20 hover:bg-opacity-30 transition duration-300">
-              <IoIosSearch className="h-5 w-5 mr-1" />
-              India
-            </button>
-          </div>
+        <div className="m-auto  bg w-[90%]">
+       
 
-          <h4 className="mt-6 text-lg text-neutral-700">
+          <h4 className="text-lg text-neutral-700">
             20 Product stock Photos and High-res Pictures
           </h4>
-
+      
           {loading ? (
             <div className="h-screen justify-center flex">
               <Spinner label="Loading..." color="danger" />
             </div>
           ) : (
-            <div className="columns-1 sm:columns-2 md:columns-3 lg:columns-4 gap-2 mt-2 relative">
-              {product.map((data, index: number) => (
-                <ImageGallery key={index} data={data} />
-              ))}
-            </div>
+            <>
+              {product.length > 0 ? (
+                <div className="columns-1 sm:columns-2 md:columns-3 lg:columns-4 gap-2 mt-2 relative">
+                  {product.map((data, index: number) => (
+                    <ImageGallery key={index} data={data} />
+                  ))}
+                </div>
+              ) : (
+                <p>No videos found.</p>
+              )}
+            </>
           )}
+
         </div>
         {totalImageNumOfPage > 1 && (
           <div className="flex justify-center items-center gap-4 my-12">

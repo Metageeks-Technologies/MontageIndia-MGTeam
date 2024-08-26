@@ -374,3 +374,9 @@ input[type="range"].progress-bar::-moz-range-thumb {
   align-items: center;
   justify-content: center;
 }
+
+/* Container for sidebar and main content */
+.sidebar-container {
+  display: flex;
+  height: 100vh;
+}

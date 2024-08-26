@@ -6,7 +6,7 @@ import Footer from "@/components/Footer";
 import Searchbar from "@/components/searchBar/search";
 import FAQ from "@/components/Video/fag";
 import Trending from "@/components/Video/trendingVideos";
-import { Button, Pagination } from "@nextui-org/react";
+import { Button, Pagination, Spinner } from "@nextui-org/react";
 import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -16,10 +16,9 @@ import { clearKeywords } from "@/app/redux/feature/product/api";
 const Page = () => {
   const searchParams = useSearchParams();
   const searchTerm = searchParams.get("searchTerm") || "";
-
   const category = searchParams.get("category");
-  console.log("category",category)
-
+  const categoryParam = category ? ["editor choice"] : "";
+  const [loading, setloading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const dispatch = useAppDispatch();
   const {
@@ -41,15 +40,19 @@ const Page = () => {
   };
  
 
-  const fetchData = (page: number) => {
+  const fetchData =async (page: number) => {
+    setloading(true);
+
     // setLoading(true);
-    getVideo(dispatch, {
+    const response=await getVideo(dispatch, {
       page,
       mediaType: ["video"],
       searchTerm,
-      category: category,
-      productsPerPage: "2",
+      category:categoryParam,
+      productsPerPage: "9",
     });
+    setloading(false);
+
   };
 
   useEffect(() => {
@@ -76,11 +79,16 @@ const Page = () => {
             </h1>
             <div className="mx-auto mt-4">
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 mt-5">
-                {product.length > 0 ? (
+              {loading ? (
+            <div className="h-screen justify-center flex">
+              <Spinner label="Loading..." color="danger" />
+            </div>):(<>
+              {product.length > 0 ? (
                   product.map((data) => <Trending key={data._id} data={data} />)
                 ) : (
                   <p>No videos found.</p>
-                )}
+                )}</>)}
+               
               </div>
             </div>
           </div>

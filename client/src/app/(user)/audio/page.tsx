@@ -20,12 +20,17 @@ const Page = () => {
   const searchTerm = searchParams.get("searchTerm") || "";
   const category = searchParams.get("category");
   const categoryParam = category ? ["editor choice"] : "";
+  const [loading, setloading] = useState(false);
 
   const { audioData, page, totalNumOfPage } = useAppSelector(
     (state) => state.product
   );
-  useEffect(() => {
-    getAudio(dispatch, {
+
+
+  const fetchData =async (page: number) => {
+    setloading(true);
+    // setLoading(true);
+    const response=await   getAudio(dispatch, {
       page: page,
       productsPerPage: 4,
       mediaType: ["audio"],
@@ -33,6 +38,19 @@ const Page = () => {
       category: categoryParam,
    
     });
+    setloading(false);
+
+  };
+
+  useEffect(() => {
+    fetchData(page,);
+    return () => {
+      clearKeywords(dispatch);
+    };
+  }, [page,, searchParams]);
+
+  useEffect(() => {
+
 
     return () => {
       clearKeywords(dispatch);
@@ -95,11 +113,17 @@ const Page = () => {
           <h4 className="mt-5 text-lg text-neutral-700">10 Result in audio</h4>
 
           <div className=" overflow-y-auto mt-2">
-            {audioData.map((product, index) => (
-              <>
-                <Waveform key={index} product={product} />
-              </>
-            ))}
+          {loading ? (
+            <div className="h-screen justify-center flex">
+              <Spinner label="Loading..." color="danger" />
+            </div>):(<>
+          {audioData.length > 0 ? (
+                  audioData.map((product, index) =><Waveform key={index} product={product} />
+                )
+                ) : (
+                  <p>No videos found.</p>
+                )}
+             </>)}
           </div>
         </div>
 

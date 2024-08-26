@@ -10,13 +10,12 @@ import { BiLogInCircle, BiLogOutCircle } from "react-icons/bi";
 import { useAppDispatch, useAppSelector } from "@/app/redux/hooks";
 import Link from "next/link";
 import Swal from "sweetalert2";
-import { notifySuccess } from "@/utils/toast";
 
 const Sidebar = () => {
   const router = useRouter();
   const [menuOpen, setMenuOpen] = useState(false);
   const [isUserOpen, setIsUserOpen] = useState(false);
-  const { user } = useAppSelector((state) => state.user);
+  const user = useAppSelector((state: any) => state.user?.user?._id);
   const cart = useAppSelector((state) => state.product.cart);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const toggleDropdown = () => setIsDropdownOpen(!isDropdownOpen);
@@ -24,28 +23,15 @@ const Sidebar = () => {
 
   const handleLogout = async () => {
     try {
-      const response = await instance.get( "/user/logout" );
-      console.log("Response for logout:-",response)
-      if ( response.status === 200 )
-      {
-        notifySuccess( "Logged out successfully" );
-        // Swal.fire({
-        //   title: "Logged out successfully",
-        //   icon: "success",
-        //   timer: 2000,
-        // });
-        router.push( "/auth/user/login" );
-      } else
-      {
-        Swal.fire( {
-          title: "Error",
-          text: "Failed to logout",
-          icon: "error",
-          timer: 2000,
-        } );
-      }
-    } catch ( error )
-    {
+      const response = await instance.get("/user/logout");
+      // notifySuccess(response.data.message);
+      Swal.fire({
+        title: "Logged out successfully",
+        icon: "success",
+        timer: 2000,
+      });
+      router.push("/auth/user/login");
+    } catch (error) {
       console.error("Error in logout:", error);
     }
   };
@@ -115,7 +101,7 @@ const Sidebar = () => {
                         href={{
                           pathname: "/image",
                           query: {
-                            category: "editorchoice",
+                            category: "editor choice",
                             mediaType: "image",
                           },
                         }}
@@ -127,7 +113,7 @@ const Sidebar = () => {
                         href={{
                           pathname: "/video",
                           query: {
-                            category: "editorchoice",
+                            category: "editor choice",
                             mediaType: "video",
                           },
                         }}
@@ -139,7 +125,7 @@ const Sidebar = () => {
                         href={{
                           pathname: "/audio",
                           query: {
-                            category: "editorchoice",
+                            category: "editor choice",
                             mediaType: "audio",
                           },
                         }}
@@ -157,33 +143,20 @@ const Sidebar = () => {
 
         <div className="lg:block md:hidden hidden">
           <div className="flex items-center space-x-6">
-            {user?.subscription.status === "active" && (
-              <div className="flex items-center text-gray-700">
-                <span>
-                  {user?.subscription?.credits || 0} Credits Available
-                </span>
-              </div>
-            )}
+            <div className="flex items-center text-gray-700">
+              <span>0 Credits Available</span>
+              <IoMdArrowDropdown className="ml-1" />
+            </div>
             <Link href="/user-profile/favorites">
               <AiOutlineHeart className="text-gray-700 hover:text-webred cursor-pointer w-7 h-7 transition-transform duration-200 ease-in-out hover:scale-110" />
             </Link>
 
             <CartPopup />
             <div className="relative">
-              {user ? (
-                <img
-                  src={user.image}
-                  alt="user"
-                  className="w-10 h-10 rounded-full cursor-pointer"
-                  onClick={handleUserIconClick}
-                />
-              ) : (
-                <FaUserCircle
-                  className="w-10 h-10 text-gray-700 cursor-pointer"
-                  onClick={handleUserIconClick}
-                />
-              )}
-
+              <FaUserCircle
+                onClick={handleUserIconClick}
+                className="text-gray-700 w-10 h-10 cursor-pointer hover:text-black transition duration-300 ease-in-out"
+              />
               {isUserOpen && (
                 <div className="absolute right-0 z-30 mt-2 w-48 bg-white shadow-lg rounded-lg py-2 transition-all duration-200 ease-in-out transform origin-top-right">
                   {user ? (
