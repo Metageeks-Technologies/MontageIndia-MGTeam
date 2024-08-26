@@ -55,13 +55,13 @@ const Sidebar = () =>
     try
     {
       const response = await instance.get( "/auth/admin/logout" );
-      // notifySuccess( response.data.message );
-      Swal.fire( {
-        icon: 'success',
-        title: 'Logged out successfully',
-        showConfirmButton: false,
-        timer: 1500
-      } );
+      notifySuccess( response.data.message  );
+      // Swal.fire( {
+      //   icon: 'success',
+      //   title: 'Logged out successfully',
+      //   showConfirmButton: false,
+      //   timer: 1500
+      // } );
       setCurrentUser( "" );
       router.push( "/auth/admin/login" );
     } catch ( error )

@@ -54,14 +54,14 @@ const Page = () =>
       if(response.status===200){
       console.log( "Login successful:", response.data.token );
         setloading(false)
-        // notifySuccess( "Login Successful" );
-        Swal.fire( {
-          title: "Login Successful",
-          text: "You have been logged in successfully",
-          icon: "success",
-          timer: 2000,
-          showConfirmButton: false
-        } );
+        notifySuccess( "Login Successful" );
+        // Swal.fire( {
+        //   title: "Login Successful",
+        //   text: "You have been logged in successfully",
+        //   icon: "success",
+        //   timer: 2000,
+        //   showConfirmButton: false
+        // } );
         
       router.push( "/" );
       setUsernameOrEmail( "" );

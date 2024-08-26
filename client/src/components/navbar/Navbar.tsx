@@ -10,6 +10,7 @@ import { BiLogInCircle, BiLogOutCircle } from "react-icons/bi";
 import { useAppDispatch, useAppSelector } from "@/app/redux/hooks";
 import Link from "next/link";
 import Swal from "sweetalert2";
+import { notifySuccess } from "@/utils/toast";
 
 const Sidebar = () => {
   const router = useRouter();
@@ -23,15 +24,28 @@ const Sidebar = () => {
 
   const handleLogout = async () => {
     try {
-      const response = await instance.get("/user/logout");
-      // notifySuccess(response.data.message);
-      Swal.fire({
-        title: "Logged out successfully",
-        icon: "success",
-        timer: 2000,
-      });
-      router.push("/auth/user/login");
-    } catch (error) {
+      const response = await instance.get( "/user/logout" );
+      console.log("Response for logout:-",response)
+      if ( response.status === 200 )
+      {
+        notifySuccess( "Logged out successfully" );
+        // Swal.fire({
+        //   title: "Logged out successfully",
+        //   icon: "success",
+        //   timer: 2000,
+        // });
+        router.push( "/auth/user/login" );
+      } else
+      {
+        Swal.fire( {
+          title: "Error",
+          text: "Failed to logout",
+          icon: "error",
+          timer: 2000,
+        } );
+      }
+    } catch ( error )
+    {
       console.error("Error in logout:", error);
     }
   };
