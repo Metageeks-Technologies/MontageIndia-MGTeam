@@ -17,14 +17,14 @@ import Searchbar from "@/components/searchBar/search";
 const Page = () => {
   const dispatch = useAppDispatch();
   const searchParams = useSearchParams();
-  const category=searchParams.get("category")
+  const category = searchParams.get("category");
   const [totalPages, setTotalPages] = useState(1);
   const [currentPage, setCurrentPage] = useState(1);
   const searchTerm = searchParams.get("searchTerm") || "";
   const categoryParam = category ? ["editor choice"] : "";
 
   const [loading, setloading] = useState(false);
-  const { 
+  const {
     imageData: product,
     imagePage,
     totalImageData,
@@ -42,15 +42,14 @@ const Page = () => {
     handlePageChange(imagePage === 1 ? totalImageNumOfPage : imagePage - 1);
   };
 
-
-  const fetchData =async (page: number) => {
+  const fetchData = async (page: number) => {
     setloading(true);
-   const response=await getImage(dispatch, {
+    const response = await getImage(dispatch, {
       page: imagePage,
-      productsPerPage: 20,
+      productsPerPage: 10,
       mediaType: ["image"],
       searchTerm,
-      category:categoryParam,
+      category: categoryParam,
     });
     setloading(false);
   };
@@ -69,12 +68,10 @@ const Page = () => {
         {/* <hr className="mt-5" /> */}
 
         <div className="m-auto  bg w-[90%]">
-       
-
           <h4 className="text-lg text-neutral-700">
             20 Product stock Photos and High-res Pictures
           </h4>
-      
+
           {loading ? (
             <div className="h-screen justify-center flex">
               <Spinner label="Loading..." color="danger" />
@@ -88,11 +85,10 @@ const Page = () => {
                   ))}
                 </div>
               ) : (
-                <p>No videos found.</p>
+                <p>No Images found.</p>
               )}
             </>
           )}
-
         </div>
         {totalImageNumOfPage > 1 && (
           <div className="flex justify-center items-center gap-4 my-12">
