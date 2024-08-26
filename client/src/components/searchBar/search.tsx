@@ -73,30 +73,26 @@ const Searchbar = () => {
   const handleCategoryClick = (categories: any) => {
     // Get the current category from searchParams
     const category = searchParams.get('category');
-    console.log("Current category:", category);
 
     // Convert categories to an array if it's a string
     const categoriesArray = typeof categories === 'string'
         ? categories.split(',').map(cat => cat.trim())
         : Array.isArray(categories) ? categories : [];
+    console.log("sas",categoriesArray)
+    // Check if 'editor choice' is included in the current searchParams category
+    const includesEditorChoice = category && category.includes('editor choice');
+    console.log("isinclude",includesEditorChoice)
+    // Determine the updated category list
+    let updatedCategory = includesEditorChoice
+        ? ['editor choice', ...categoriesArray] // Keep 'editor choice' and add the new category
+        : categoriesArray; // Just use the new category
 
-    console.log("Categories array:", categoriesArray);
-
-    // Check if 'editor choice' is included in categoriesArray
-    const includesEditorChoice = categoriesArray.includes('editor choice');
-    console.log("Includes 'editor choice':", includesEditorChoice);
-
-    // Determine the updated category based on the presence of 'editor choice'
-    const updatedCategory = includesEditorChoice
-        ? Array.from(new Set([...(category ? [category] : []), 'editor choice'])) // Combine with 'editor choice'
-        : [category || ''].concat(categoriesArray.filter(cat => cat !== 'editor choice')).filter(Boolean); // Replace previous category if 'editor choice' is not included
-
-    console.log("Updated category:", updatedCategory);
-
+    // Ensure that 'editor choice' is only included once and at the start
+    updatedCategory = Array.from(new Set(updatedCategory));
+    console.log("updatecategory",updatedCategory)
     // Update the URL search parameters with the new category
     const updatedSearchParams = new URLSearchParams(searchParams.toString());
     updatedSearchParams.set('category', updatedCategory.join(','));
-
     // Construct the new URL with updated search params
     const newUrl = `${window.location.pathname}?${updatedSearchParams.toString()}`;
 
@@ -111,6 +107,7 @@ const Searchbar = () => {
         productsPerPage: '2',
     });
 };
+
 
 
   const fetchData = (page: number) => {

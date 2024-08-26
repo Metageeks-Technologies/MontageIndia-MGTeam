@@ -18,6 +18,7 @@ const Page = () => {
   const searchTerm = searchParams.get("searchTerm") || "";
 
   const category = searchParams.get("category");
+  console.log("category",category)
 
   const [currentPage, setCurrentPage] = useState(1);
   const dispatch = useAppDispatch();
@@ -39,7 +40,6 @@ const Page = () => {
     handlePageChange(videoPage === 1 ? totalVideoNumOfPage : videoPage - 1);
   };
  
-  const categoryParam = category ? ["editor choice"] : "";
 
   const fetchData = (page: number) => {
     // setLoading(true);
@@ -47,7 +47,7 @@ const Page = () => {
       page,
       mediaType: ["video"],
       searchTerm,
-      category: categoryParam,
+      category: category,
       productsPerPage: "2",
     });
   };
