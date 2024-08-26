@@ -172,7 +172,7 @@ const PlaceOrder = () => {
                             className="w-full h-full object-cover"
                           >
                             <source
-                              src={`https://mi2-public.s3.ap-southeast-1.amazonaws.com/${item?.productId.thumbnailKey}`}
+                              src={`${process.env.NEXT_PUBLIC_AWS_PREFIX}/${item?.productId.thumbnailKey}`}
                             />
                           </video>
                         )}
@@ -197,27 +197,33 @@ const PlaceOrder = () => {
                       </div>
                     </div>
                   </td>
+                  {item.productId.mediaType !== "audio" && (
+                    <td className="w-1/6 px-6 py-4 border-none">
+                      <div className="text-md text-gray-600 mb-2 ">
+                        <select
+                          className="text-black border-1 border-gray-300 outline-none px-4 py-2 bg-gray-100 rounded-md"
+                          value={
+                            selectedSizes[item.productId._id] ||
+                            item.variantId[0]
+                          }
+                          onChange={(e) =>
+                            handleSizeChange(item.productId._id, e.target.value)
+                          }
+                        >
+                          {item.productId.variants.map((variant) => (
+                            <option key={variant._id} value={variant._id}>
+                              {item.productId.mediaType === "video"
+                                ? variant.metadata.resolution
+                                : variant.metadata.dimension}{" "}
+                              px
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    </td>
+                  )}
                   <td className="w-1/6 px-6 py-4 border-none">
-                    <div className="text-md text-gray-600 mb-2 ">
-                      <select
-                        className="text-black border-1 border-gray-300 outline-none px-4 py-2 bg-gray-100 rounded-md"
-                        value={
-                          selectedSizes[item.productId._id] || item.variantId[0]
-                        }
-                        onChange={(e) =>
-                          handleSizeChange(item.productId._id, e.target.value)
-                        }
-                      >
-                        {item.productId.variants.map((variant: any) => (
-                          <option key={variant._id} value={variant._id}>
-                            {variant.size}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                  </td>
-                  <td className="w-1/6 px-6 py-4 border-none">
-                    <div className="text-gray-600 justify-center items-center flex flex-row">
+                    <div className="text-gray-600  justify-center items-center flex flex-row">
                       <span className="font-bold">
                         <MdCurrencyRupee />
                       </span>
@@ -237,7 +243,7 @@ const PlaceOrder = () => {
                         }
                         className=" hover:bg-webred hover:text-white text-webred border-1 border-webred cursor-pointer rounded-md px-4 py-2"
                       >
-                        <div className="text-md font-semibold">
+                        <div className="text-md whitespace-nowrap font-semibold">
                           Buy with credits
                         </div>
                       </span>

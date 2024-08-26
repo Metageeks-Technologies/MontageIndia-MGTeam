@@ -189,7 +189,7 @@ const Home = () => {
                     </div>
                   </div>
                   <img
-                    src={`https://mi2-public.s3.ap-southeast-1.amazonaws.com/${product.thumbnailKey}`}
+                    src={`${process.env.NEXT_PUBLIC_AWS_PREFIX}/${product.publicKey}`}
                     alt="Main Image"
                     className="lg:w-[56rem] md:w-[44rem] w-[27rem] h-[32rem] mt-2 rounded"
                   />

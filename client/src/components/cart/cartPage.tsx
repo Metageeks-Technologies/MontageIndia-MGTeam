@@ -22,8 +22,8 @@ function CartPopup() {
     removeItemFromCart(dispatch, id);
   };
   const limitWords = (text: string, limit: number) => {
-    if (!text){
-      return "..."
+    if (!text) {
+      return "...";
     }
     const words = text.split(" ");
     if (words.length > limit) {
@@ -37,12 +37,16 @@ function CartPopup() {
 
   return (
     <>
-      <Badge color="danger" content={cart.length} shape="circle">
-        <AiOutlineShoppingCart
-          className="text-gray-700  cursor-pointer w-7 h-7 transition-transform duration-200 ease-in-out hover:scale-110"
-          onClick={() => setIsOpen(true)}
-        />
-      </Badge>
+      <div onClick={() => setIsOpen(true)}>
+        <Badge
+          color="danger"
+          className={`${cart.length > 0 ? " text-sm" : "hidden"}`}
+          content={cart.length}
+          shape="circle"
+        >
+          <AiOutlineShoppingCart className="text-gray-700  cursor-pointer w-7 h-7 transition-transform duration-200 ease-in-out hover:scale-110" />
+        </Badge>
+      </div>
       <div
         className={`${
           !isOpen
@@ -107,23 +111,34 @@ function CartPopup() {
                     </span>
                   </div>
                   <div className="flex w-[30%] gap-2 text-sm flex-row justify-between font-light  items-center">
-                    <span className="px-4 capitalize ">
-                     {item?.productId?.mediaType === "image" && (
-                     item.productId?.variants?.find((variant: any) =>
-                      item.variantId.includes(variant._id)
-                    )?.size
+                    {item?.productId?.mediaType === "image" && (
+                      <span className=" whitespace-nowrap">
+                        {item.productId?.variants?.find((variant: any) =>
+                          item.variantId.includes(variant._id)
+                        )?.metadata?.dimension +
+                          " " +
+                          "px"}
+                      </span>
                     )}
                     {item?.productId?.mediaType === "audio" && (
-                      item.productId?.variants?.find((variant: any) =>
-                        item.variantId.includes(variant._id)
-                      )?.size
+                      <span className=" whitespace-nowrap">
+                        {item.productId?.variants?.find((variant: any) =>
+                          item.variantId.includes(variant._id)
+                        )?.metadata.bitrate +
+                          " " +
+                          "kbps"}
+                      </span>
                     )}
                     {item?.productId?.mediaType === "video" && (
-                     item.productId?.variants?.find((variant: any) =>
-                      item.variantId.includes(variant._id)
-                    )?.metadata?.resolution
+                      <span className=" whitespace-nowrap">
+                        {item.productId?.variants?.find((variant: any) =>
+                          item.variantId.includes(variant._id)
+                        )?.metadata?.resolution +
+                          " " +
+                          "px"}
+                      </span>
                     )}
-                    </span>
+
                     <span
                       className="text-red-500   mr-1 cursor-pointer"
                       onClick={() => {

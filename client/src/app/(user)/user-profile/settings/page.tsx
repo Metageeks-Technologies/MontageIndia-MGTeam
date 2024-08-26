@@ -2,7 +2,7 @@
 import { FC, useState, useEffect } from "react";
 import instance from "@/utils/axios";
 import { useRouter } from "next/navigation";
-import Swal from 'sweetalert2';
+import Swal from "sweetalert2";
 import { useAppDispatch, useAppSelector } from "@/app/redux/hooks";
 import { getCurrCustomer } from "@/app/redux/feature/user/api";
 import { Spinner } from "@nextui-org/react";
@@ -21,7 +21,7 @@ interface Subscription {
 interface User {
   id: string;
   name: string;
-  image:string;
+  image: string;
   email: string;
   phone: string;
   username: string;
@@ -51,11 +51,10 @@ const ProfileSetting: FC = () => {
     newPassword: "",
     confirmPassword: "",
   });
-  const dispatch=useAppDispatch()
+  const dispatch = useAppDispatch();
   const users = useAppSelector((state: any) => state.user);
-  console.log("cuurent",users);
+  console.log("cuurent", users);
 
-  
   const handleChange = (file: File) => {
     setFile(file);
     if (file) {
@@ -90,91 +89,95 @@ const ProfileSetting: FC = () => {
         icon: "error",
         title: "Failed to fetch user data",
         text: "",
-      })
+      });
     }
   };
 
-   const getUploadUrl = async ( fileName: string ): Promise<string> =>
-    {
-      if(!file){
-        return '';
-      }
-      console.log("file",file);
-        try
+  const getUploadUrl = async (fileName: string): Promise<string> => {
+    if (!file) {
+      return "";
+    }
+    console.log("file", file);
+    try {
+      const response = await instance.post<{ url: string }>(
+        `/aws/getUploadRrl`,
         {
-            const response = await instance.post<{ url: string; }>( `/aws/getUploadRrl`, {
-                folder: "userProfile", 
-                fileName: `${user?._id}`,        
-            } );
-            return response.data.url;
-        } catch ( error )
-        {
-            console.error( 'Error getting upload URL:', error );
-            throw error;
+          folder: "userProfile",
+          fileName: `${user?._id}`,
         }
-    };
+      );
+      return response.data.url;
+    } catch (error) {
+      console.error("Error getting upload URL:", error);
+      throw error;
+    }
+  };
 
+  const handleUpload = async (): Promise<boolean> => {
+    if (!file) return false;
+    try {
+      const uploadUrl = await getUploadUrl(file.name);
+      if (!uploadUrl || uploadUrl === "") return false;
 
-    const handleUpload = async (): Promise<boolean> =>
-    {
-        if ( !file ) return false;
-        try
-        {
-            const uploadUrl = await getUploadUrl( file.name );
-            if ( !uploadUrl || uploadUrl === '' ) return false;
+      const res = await axios.put(uploadUrl, file, {
+        headers: { "Content-Type": file.type },
+      });
 
-
-            const res = await axios.put( uploadUrl, file, {
-                headers: { 'Content-Type': file.type },
-            } );
-
-
-            return res.status === 200;
-        } catch ( error )
-        {
-            console.error( 'Error uploading file:', error );
-            return false;
-        }
-    };
+      return res.status === 200;
+    } catch (error) {
+      console.error("Error uploading file:", error);
+      return false;
+    }
+  };
 
   const updateProfile = async () => {
-    
-    if(!formData.currentPassword && !file && !imagePreview && formData.name===user?.name && !formData.newPassword && !formData.confirmPassword){
-     return ;
+    if (
+      !formData.currentPassword &&
+      !file &&
+      !imagePreview &&
+      formData.name === user?.name &&
+      !formData.newPassword &&
+      !formData.confirmPassword
+    ) {
+      return;
     }
 
     setUpdateLoader(true);
     try {
-      let payload ={}
-      if(formData.currentPassword && formData.newPassword && formData.confirmPassword){
-        if(formData.newPassword === formData.confirmPassword){
+      let payload = {};
+      if (
+        formData.currentPassword &&
+        formData.newPassword &&
+        formData.confirmPassword
+      ) {
+        if (formData.newPassword === formData.confirmPassword) {
           payload = {
             ...payload,
             name: formData.name,
             currentPassword: formData.currentPassword,
-            newPassword: formData.newPassword
-          }
-        }else{
+            newPassword: formData.newPassword,
+          };
+        } else {
           setUpdateLoader(false);
-          Swal.fire( {
-            icon: 'error',
-            title: 'Confirm password does not match',
-            text: 'Please enter matching passwords',
-        } );
+          Swal.fire({
+            icon: "error",
+            title: "Confirm password does not match",
+            text: "Please enter matching passwords",
+          });
           return;
         }
-      }else{
-        payload = {...payload,name: formData.name,}
+      } else {
+        payload = { ...payload, name: formData.name };
       }
-      
-      if(file){
+
+      if (file) {
         await handleUpload();
-        let path=`${process.env.NEXT_PUBLIC_AWS_PREFIX}userProfile/${user?._id}`;
-        console.log("path",path);
-        payload={...payload,image:path}
+        let path = `${process.env.NEXT_PUBLIC_AWS_PREFIX}/userProfile/${user?._id}`;
+        console.log("path", path);
+        payload = { ...payload, image: path };
       }
-      
-      const response = await instance.patch(`/user/update`,{...payload});
+
+      const response = await instance.patch(`/user/update`, { ...payload });
       if (response.data && response.data.success) {
         fetchUser();
         Swal.fire({
@@ -195,95 +198,164 @@ const ProfileSetting: FC = () => {
     }
   };
 
-   useEffect(() => {
+  useEffect(() => {
     fetchUser();
     getCurrCustomer(dispatch);
-    
   }, []);
 
   return (
     <>
-    <div className="w-full md:px-6 md:py-4 min-h-full flex flex-col rounded-lg overflow-hidden bg-white">
-      <div className="mb-8">
-      {/* Sidebar */}
-        <h2 className="md:text-xl font-bold mb-2">Profile Settings</h2>
-        <hr className="mb-4" />
-        {loading && (<div className="flex justify-center items-center min-h-screen">
-        <Spinner color="danger" size="lg" />
-        </div>) }
+      <div className="w-full md:px-6 md:py-4 min-h-full flex flex-col rounded-lg overflow-hidden bg-white">
+        <div className="mb-8">
+          {/* Sidebar */}
+          <h2 className="md:text-xl font-bold mb-2">Profile Settings</h2>
+          <hr className="mb-4" />
+          {loading && (
+            <div className="flex justify-center items-center min-h-screen">
+              <Spinner color="danger" size="lg" />
+            </div>
+          )}
           {!loading && user && (
             <>
-            <div className="w-full min-h-fit mb-8 flex flex-col gap-4 justify-between items-center">
-            <div className="w-full">
-             <div className=" md:bg-[#F1F1F1] min-h-fit flex flex-col md:flex-row gap-4 p-8 rounded-lg justify-start items-center">
-            <div className="relative z-10 flex justify-center items-center">
-              {file && imagePreview ? (
-                <div className="w-40 h-40 rounded-full overflow-hidden">
-                  <img className="w-full h-full" src={imagePreview} alt="image" />
-              </div>
-              ):(
-                <div className="w-40 h-40 rounded-full overflow-hidden">
-                  <img className="w-full h-full" src={user?.image} alt="" />
+              <div className="w-full min-h-fit mb-8 flex flex-col gap-4 justify-between items-center">
+                <div className="w-full">
+                  <div className=" md:bg-[#F1F1F1] min-h-fit flex flex-col md:flex-row gap-4 p-8 rounded-lg justify-start items-center">
+                    <div className="relative z-10 flex justify-center items-center">
+                      {file && imagePreview ? (
+                        <div className="w-40 h-40 rounded-full overflow-hidden">
+                          <img
+                            className="w-full h-full"
+                            src={imagePreview}
+                            alt="image"
+                          />
+                        </div>
+                      ) : (
+                        <div className="w-40 h-40 rounded-full overflow-hidden">
+                          <img
+                            className="w-full h-full"
+                            src={user?.image}
+                            alt=""
+                          />
+                        </div>
+                      )}
+                      <div className="absolute bottom-2 right-2 cursor-pointer border-2 border-[#F1F1F1] px-2 py-2 rounded-full bg-webred text-white">
+                        <FileUploader
+                          handleChange={handleChange}
+                          name="file"
+                          types={fileTypes}
+                        >
+                          <FaCamera className="cursor-pointer" />
+                        </FileUploader>
+                      </div>
+                    </div>
+                    <div className="flex flex-col md:gap-2">
+                      <div className="font-bold text-center md:text-start md:text-xl">
+                        {user?.name}
+                      </div>
+                      <div className="text-gray-500 text-center md:text-start md:text-md ">
+                        {user?.email}
+                      </div>
+                    </div>
+                  </div>
                 </div>
-              )}
-              <div className="absolute bottom-2 right-2 cursor-pointer border-2 border-[#F1F1F1] px-2 py-2 rounded-full bg-webred text-white">
-               
-                  <FileUploader handleChange={handleChange} name="file" types={fileTypes}>
-                       <FaCamera className="cursor-pointer" />
-                  </FileUploader>
+                <div className="w-full  rounded-lg overflow-hidden">
+                  <div className="w-full flex flex-col md:flex-row justify-between md:gap-4 items-center ">
+                    <div className="w-full flex flex-col gap-2 justify-start items-start px-4 py-3 ">
+                      <label className="text-black">Full Name</label>
+                      <input
+                        value={formData.name}
+                        onChange={(e) =>
+                          setForm({ ...formData, name: e.target.value })
+                        }
+                        type="text"
+                        className="w-full border bg-[#F1F1F1] border-gray-300 rounded-lg px-4 py-2"
+                      />
+                    </div>
+                    <div className="w-full flex flex-col gap-2 justify-start items-start px-4 py-3">
+                      <label className="text-black text-xm md:text-md">
+                        User Name
+                      </label>
+                      <input
+                        disabled={true}
+                        value={user.username}
+                        type="text"
+                        className="w-full border bg-[#F1F1F1] border-gray-300 rounded-lg px-4 py-2"
+                      />
+                    </div>
+                  </div>
+                  <div className="w-full flex flex-col md:flex-row justify-between md:gap-4 items-center ">
+                    <div className="w-full flex flex-col gap-2 justify-start items-start px-4 py-3 ">
+                      <label className="text-black">Email</label>
+                      <input
+                        disabled={true}
+                        value={user.email}
+                        onChange={(e) =>
+                          setForm({ ...formData, email: e.target.value })
+                        }
+                        type="email"
+                        className="w-full border bg-[#F1F1F1] border-gray-300 rounded-lg px-4 py-2"
+                      />
+                    </div>
+                    <div className="w-full flex flex-col gap-2 justify-start items-start px-4 py-3 ">
+                      <label className="text-black">Current Password</label>
+                      <input
+                        value={formData.currentPassword}
+                        type="password"
+                        onChange={(e) =>
+                          setForm({
+                            ...formData,
+                            currentPassword: e.target.value,
+                          })
+                        }
+                        className="w-full border bg-[#F1F1F1] border-gray-300 rounded-lg px-4 py-2"
+                      />
+                    </div>
+                  </div>
+                  <div className="w-full flex flex-col md:flex-row justify-between md:gap-4 items-center ">
+                    <div className="w-full flex flex-col gap-2 justify-start items-start px-4 py-3 ">
+                      <label className="text-black">New Password</label>
+                      <input
+                        value={formData.newPassword}
+                        type="password"
+                        onChange={(e) =>
+                          setForm({ ...formData, newPassword: e.target.value })
+                        }
+                        className="w-full border bg-[#F1F1F1] border-gray-300 rounded-lg px-4 py-2"
+                      />
+                    </div>
+                    <div className="w-full flex flex-col gap-2 justify-start items-start px-4 py-3 ">
+                      <label className="text-black">Confirm Password</label>
+                      <input
+                        value={formData.confirmPassword}
+                        type="password"
+                        onChange={(e) =>
+                          setForm({
+                            ...formData,
+                            confirmPassword: e.target.value,
+                          })
+                        }
+                        className="w-full border bg-[#F1F1F1] border-gray-300 rounded-lg px-4 py-2"
+                      />
+                    </div>
+                  </div>
+                </div>
               </div>
-          </div>
-            <div className="flex flex-col md:gap-2">
-            <div className="font-bold text-center md:text-start md:text-xl">{user?.name}</div>
-            <div className="text-gray-500 text-center md:text-start md:text-md ">{user?.email}</div>
-            </div>
-            </div>
-            </div>
-            <div className="w-full  rounded-lg overflow-hidden">
-              <div className="w-full flex flex-col md:flex-row justify-between md:gap-4 items-center ">
-               <div className="w-full flex flex-col gap-2 justify-start items-start px-4 py-3 ">
-                <label className="text-black">Full Name</label>
-                <input value={formData.name} onChange={(e) => setForm({ ...formData, name: e.target.value })} type="text" className="w-full border bg-[#F1F1F1] border-gray-300 rounded-lg px-4 py-2" />
+              <div className="flex justify-end items-center w-full px-4">
+                <button
+                  type="submit"
+                  onClick={() => {
+                    updateProfile();
+                  }}
+                  className="bg-webred hover:bg-red-400 text-white px-4 py-2 rounded-lg"
+                >
+                  {updateLoader ? "Updating..." : "Update Profile"}{" "}
+                </button>
               </div>
-              <div className="w-full flex flex-col gap-2 justify-start items-start px-4 py-3">
-                <label className="text-black text-xm md:text-md">User Name</label>
-                <input disabled={true} value={user.username} type="text" className="w-full border bg-[#F1F1F1] border-gray-300 rounded-lg px-4 py-2" />
-              </div>
-              </div>
-               <div className="w-full flex flex-col md:flex-row justify-between md:gap-4 items-center ">
-               <div className="w-full flex flex-col gap-2 justify-start items-start px-4 py-3 ">
-                <label className="text-black">Email</label>
-                <input disabled={true} value={user.email} onChange={(e) => setForm({ ...formData, email: e.target.value })} type="email" className="w-full border bg-[#F1F1F1] border-gray-300 rounded-lg px-4 py-2" />
-              </div>
-              <div className="w-full flex flex-col gap-2 justify-start items-start px-4 py-3 ">
-                <label className="text-black">Current Password</label>
-                <input value={formData.currentPassword} type="password" onChange={(e) => setForm({ ...formData, currentPassword: e.target.value })} className="w-full border bg-[#F1F1F1] border-gray-300 rounded-lg px-4 py-2" />
-              </div>
-              </div>
-              <div className="w-full flex flex-col md:flex-row justify-between md:gap-4 items-center ">
-               <div className="w-full flex flex-col gap-2 justify-start items-start px-4 py-3 ">
-                <label className="text-black">New Password</label>
-                <input value={formData.newPassword} type="password" onChange={(e) => setForm({ ...formData, newPassword: e.target.value })} className="w-full border bg-[#F1F1F1] border-gray-300 rounded-lg px-4 py-2" />
-              </div>
-              <div className="w-full flex flex-col gap-2 justify-start items-start px-4 py-3 ">
-                <label className="text-black">Confirm Password</label>
-                <input value={formData.confirmPassword} type="password" onChange={(e) => setForm({ ...formData, confirmPassword: e.target.value })} className="w-full border bg-[#F1F1F1] border-gray-300 rounded-lg px-4 py-2" />
-              </div>
-              </div>
-            </div>
-            </div>
-            <div className="flex justify-end items-center w-full px-4">
-                <button type="submit" onClick={() =>{ updateProfile()}} className="bg-webred hover:bg-red-400 text-white px-4 py-2 rounded-lg" >{updateLoader ? "Updating..." : "Update Profile"} </button>
-            </div>
             </>
           )}
         </div>
-       
-    </div>
-      
-        
-        </>
-  
+      </div>
+    </>
   );
 };
 
