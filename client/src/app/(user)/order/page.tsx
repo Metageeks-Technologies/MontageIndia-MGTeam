@@ -23,20 +23,21 @@ import Swal from "sweetalert2";
 
 const PlaceOrder = () => {
   const dispatch = useAppDispatch();
-  const [amount, setAmount] = useState(0);
+  const [ amount, setAmount ] = useState( 0 );
+  const [ totalCredits, setTotalCredits ] = useState( 0 );
   const [loader, setLoader] = useState(true);
   //   const cart = useAppSelector((state) => state.user.cartData);
   const cart = useAppSelector((state) => state.product.cart);
-
-  const [selectedSizes, setSelectedSizes] = useState<{ [key: string]: string }>(
-    {}
-  );
+  const [ selectedVariants, setSelectedVariants ] = useState<{ [ key: string ]: { variantId: string, price: number,credit:number }; }>( {} );
+  const [ selectedSizes, setSelectedSizes ] = useState<{ [ key: string ]: string; }>( {} );
+  console.log("Cart data:-",cart)
 
   useEffect(() => {
     if (cart) {
       setLoader(false);
     }
-  }, [cart]);
+  }, [ cart ] );
+  
 
   const handleBuyWithCredits = async (id: string) => {
     try {
@@ -67,21 +68,49 @@ const PlaceOrder = () => {
     removeItemFromCart(dispatch, id);
   };
 
-  const calculateTotalPrice = () => {
-    const total = cart.reduce((total: number, item) => {
-      const matchingVariant = item.productId?.variants?.find((variant: any) =>
-        item.variantId.includes(variant._id)
-      );
-      const price = matchingVariant ? matchingVariant.price : 0;
-      return total + price;
-    }, 0);
-
-    return total; // Return total as a number
+  
+  const calculateTotalPrice = () =>
+  {
+    return cart.reduce( ( total: number, item ) =>
+    {
+      const selectedVariant = selectedVariants[ item.productId._id ];
+      if ( selectedVariant )
+      {
+        return total + selectedVariant.price;
+      } else
+      {
+        const matchingVariant = item.productId?.variants?.find( ( variant: any ) =>
+          item.variantId.includes( variant._id )
+        );
+        return total + ( matchingVariant ? matchingVariant.price : 0 );
+      }
+    }, 0 );
   };
 
-  useEffect(() => {
-    setAmount(calculateTotalPrice());
-  }, [cart]);
+  const calculateTotalCredit = () =>
+  {
+    return cart.reduce( ( total: number, item ) =>
+    {
+      const selectedVariant = selectedVariants[ item.productId._id ];
+      if ( selectedVariant )
+      {
+        return total + selectedVariant?.credit;
+      } else
+      {
+        const matchingVariant = item.productId?.variants?.find( ( variant: any ) =>
+          item.variantId.includes( variant._id )
+        );
+        return total + ( matchingVariant ? matchingVariant.credit : 0 );
+      }
+    }, 0 );
+  };
+
+  
+  useEffect( () =>
+  {
+    setAmount( calculateTotalPrice() );
+    setTotalCredits( calculateTotalCredit() );
+  }, [ cart, selectedVariants ] );
 
   const createOrderOption = (): OrderOption => {
     const products = cart.map((item) => ({
@@ -97,6 +126,7 @@ const PlaceOrder = () => {
       },
     };
   };
+
   const limitWords = (text: string, limit: number) => {
     const words = text.split(" ");
     if (words.length > limit) {
@@ -104,19 +134,26 @@ const PlaceOrder = () => {
     }
     return text;
   };
-  const handleSizeChange = (productId: string, variantId: string) => {
-    setSelectedSizes((prevSizes) => ({
-      ...prevSizes,
-      [productId]: variantId,
-    }));
-    console.log(`Selected size for product ${productId}: ${variantId}`);
-    addCartItem(dispatch, productId);
-  };
 
+  const handleSizeChange = ( productId: string, variantId: string ) =>
+  {
+    const product = cart.find( item => item.productId._id === productId );
+    if ( product )
+    {
+      const variant = product.productId.variants.find( v => v._id === variantId );
+      if ( variant )
+      {
+        setSelectedVariants( prev => ( {
+          ...prev,
+          [ productId ]: { variantId, price: variant.price, credit:variant.credit }
+        } ) );
+      }
+    }
+  };
   const orderOption = createOrderOption();
 
   return (
-    <div className="md:w-[70%] min-h-screen flex justify-start flex-col m-auto py-6 b">
+    <div className="mx-24 min-h-screen flex justify-start flex-col  py-6 b">
       <h1 className="text-2xl font-bold mb-4">Shopping Cart</h1>
       {loader && (
         <div className="flex justify-center items-center min-h-screen">
@@ -132,15 +169,17 @@ const PlaceOrder = () => {
         <div className="relative overflow-x-auto shadow-md rounded-lg">
           <table className="w-full text-sm text-left rtl:text-right text-black ">
             <thead className="text-md py-2 text-black rounded-lg capitalize bg-[#F1F1F1] border-b border-gray-200 border-1 ">
-              <tr>
-                <th scope="col" className="px-6 py-3 border-none">
+              <tr className="">
+                <th scope="col" className="px-6 py-3 border-none text-center">
                   Product
                 </th>
-                <th scope="col" className="px-6 py-3  border-none">
+                <th scope="col" className="px-6 py-3  border-none text-center">
                   Size
                 </th>
                 <th scope="col" className="px-6 py-3 text-center border-none">
                   Price
+                </th> <th scope="col" className="px-6 py-3 text-center border-none">
+                   Credit Price
                 </th>
                 <th scope="col" className="px-6 py-3  border-none"></th>
               </tr>
@@ -161,7 +200,7 @@ const PlaceOrder = () => {
                         {item?.productId.mediaType === "audio" && (
                           <img
                             className="w-full h-full object-cover"
-                            src="/asset/audio.svg"
+                            src="/images/audioImage.png"
                             alt={item?.productId.title}
                           />
                         )}
@@ -179,7 +218,7 @@ const PlaceOrder = () => {
                       </div>
                       <div className="md:w-2/3 overflow-hidden">
                         <div className="flex flex-col justify-start items-start ">
-                          <div className="text-md font-bold">
+                          <div className="text-md font-bold whitespace-nowrap">
                             {limitWords(
                               item?.productId.title?.toUpperCase(),
                               4
@@ -197,41 +236,56 @@ const PlaceOrder = () => {
                       </div>
                     </div>
                   </td>
-                  {item.productId.mediaType !== "audio" && (
-                    <td className="w-1/6 px-6 py-4 border-none">
+                  { item.productId.mediaType !== "audio" && (
+                    <td className="w-1/6 px-6 py-4 border-none text-center">
                       <div className="text-md text-gray-600 mb-2 ">
                         <select
                           className="text-black border-1 border-gray-300 outline-none px-4 py-2 bg-gray-100 rounded-md"
                           value={
-                            selectedSizes[item.productId._id] ||
-                            item.variantId[0]
+                            selectedVariants[ item.productId._id ]?.variantId ||
+                            item.variantId[ 0 ]
                           }
-                          onChange={(e) =>
-                            handleSizeChange(item.productId._id, e.target.value)
+                          onChange={ ( e ) =>
+                            handleSizeChange( item.productId._id, e.target.value )
                           }
                         >
-                          {item.productId.variants.map((variant) => (
-                            <option key={variant._id} value={variant._id}>
-                              {item.productId.mediaType === "video"
+                          { item.productId.variants.map( ( variant ) => (
+                            <option key={ variant._id } value={ variant._id }>
+                              { item.productId.mediaType === "video"
                                 ? variant.metadata.resolution
-                                : variant.metadata.dimension}{" "}
+                                : variant.metadata.dimension }{ " " }
                               px
                             </option>
-                          ))}
+                          ) ) }
                         </select>
                       </div>
                     </td>
-                  )}
+                  ) }
+
+                  { item.productId.mediaType == "audio" && (
+                    <td className="px-6 py-4 border-none text-center justify-center w-1/6 "> 
+                        <div className="text-black border-1 border-gray-300 outline-none mx-4 py-2 bg-gray-100 rounded-md"> 
+                        <h2>Orignal</h2>
+                      </div>
+                    </td>
+                  ) }
                   <td className="w-1/6 px-6 py-4 border-none">
                     <div className="text-gray-600  justify-center items-center flex flex-row">
                       <span className="font-bold">
                         <MdCurrencyRupee />
                       </span>
-
+                      { selectedVariants[ item.productId._id ]?.price ||
+                        item.productId?.variants.find( ( variant: any ) =>
+                          item.variantId.includes( variant._id )
+                        )?.price }
+                    </div>
+                  </td>
+                  <td className="w-1/6 px-6 py-4 border-none">
+                    <div className="text-gray-600  justify-center items-center flex flex-row">
                       {
-                        item.productId?.variants.find((variant: any) =>
-                          item.variantId.includes(variant._id)
-                        )?.price
+                        item.productId?.variants.find( ( variant: any ) =>
+                          item.variantId.includes( variant._id )
+                        )?.credit
                       }
                     </div>
                   </td>
@@ -267,15 +321,25 @@ const PlaceOrder = () => {
                 <td className="px-6 py-4 border-none  "></td>
                 <td className="px-6 py-4 border-none  ">
                   <div className="flex justify-center items-center ">
-                    <span className="font-semibold mr-2">Total Price: </span>
+                    <span className="font-semibold mr-2 whitespace-nowrap">Total Price: </span>
                     <span className="font-bold">
                       <MdCurrencyRupee />
                     </span>
                     <span>{amount}</span>
                   </div>
                 </td>
+              
+                <td className="px-6 py-4 border-none justify-center text-center  ">{totalCredits} </td>
+
                 <td className="px-6 py-4 border-none">
-                  <div className="flex justify-start items-center gap-4 px-4">
+                  <div className="flex justify-start items-center gap-4 px-4 ">
+                  <button
+                    
+                    className="text-white px-4 py-2 rounded-md bg-webgreen text-md max-sm:text-lg hover:bg-webgreen-light transition-all whitespace-nowrap"
+                  >
+                    Pay With Credit
+                    </button>
+                    OR
                     <PayButton orderOption={orderOption} />
                   </div>
                 </td>

@@ -284,7 +284,7 @@ export default function UserDetails ( { params }: { params: { id: string; }; } )
                         displayValue="name"
                         style={ {
                           chips: {
-                            background: '#BEF264'
+                            background: 'red'
                           },
                           searchBox: {
                             background: 'white',
@@ -311,7 +311,7 @@ export default function UserDetails ( { params }: { params: { id: string; }; } )
                         displayValue="name"
                         style={ {
                           chips: {
-                            background: '#BEF264'
+                            background: 'red'
                           },
                           searchBox: {
                             background: 'white',

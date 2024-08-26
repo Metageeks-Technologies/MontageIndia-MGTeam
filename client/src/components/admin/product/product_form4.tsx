@@ -20,6 +20,7 @@ interface Variant
   credit: number;
   key: string;
   _id: string;
+  metadata: any;
 }
 
 interface FormData
@@ -411,7 +412,7 @@ const Form4 = ( { formData }: any ) =>
     setIsPublishButtonDisabled( allVariantsValid );
   }, [] );
 
-  console.log( availableCategories );
+  console.log( data );
 
   return ( <>  { loading ?
     <div role="status" className='justify-center h-screen flex items-center m-auto'>
@@ -520,7 +521,8 @@ const Form4 = ( { formData }: any ) =>
                 { data.mediaType === 'audio' && data.variants.map( ( variant, index ) => (
                   <div key={ variant._id } className="bg-pageBg-light p-4 rounded-lg">
                     <div className="flex justify-between items-center mb-2">
-                      <h3 className="font-bold">{ variant.size }</h3>
+                      {/* <h3 className="font-bold">{ variant.size }</h3> */ }
+                      <h3 className="font-bold">Variant</h3>
                       { editingVariantIndex === index ? (
                         <button type="button" onClick={ () => handleSaveVariant( index ) }><MdOutlineSave size={ 20 } /></button>
                       ) : (
@@ -573,7 +575,11 @@ const Form4 = ( { formData }: any ) =>
               { data.mediaType !== 'audio' && data.variants.map( ( variant, index ) => (
                 <div key={ variant._id } className="bg-pageBg-light p-4 rounded-lg shadow-sm">
                   <div className="flex justify-between items-center mb-4">
-                    <h3 className="text-lg font-semibold text-gray-700">{ variant.size }</h3>
+                    <div>
+
+                      <h3 className="font-bold">Variant { index + 1 }</h3>
+                      <p className=" text-gray-700">{ variant?.metadata?.dimension }</p>
+                    </div>
                     { editingVariantIndex === index ? (
                       <button type="button" onClick={ () => handleSaveVariant( index ) } className="text-gray-600 hover:text-gray-700 transition-colors">
                         <MdOutlineSave size={ 24 } />
@@ -733,14 +739,14 @@ const Form4 = ( { formData }: any ) =>
                       className='basic-multi-select'
                       classNamePrefix="select"
                       onChange={ handleCategoryChange }
-                      // value={ availableCategories.filter( option => data.category.includes( option.value ) ) }
+                    // value={ availableCategories.filter( option => data.category.includes( option.value ) ) }
                     />
                   ) : (
                     <div className='flex flex-wrap gap-2'>
                       { data.category
                         .filter( cat => cat !== "editor choice" )
                         .map( ( cat, index ) => (
-                          
+
                           <span key={ index } className="text-sm  text-gray-700 p-2 rounded-lg font-semibold bg-pureWhite-light shadow-md">{ cat }</span>
 
                         ) ) }
@@ -753,11 +759,11 @@ const Form4 = ( { formData }: any ) =>
                 <label className="text-gray-700 text-sm font-bold mb-2" htmlFor="media type">
                   Media Type
                 </label>
-                <div className="bg-pageBg-light p-4 my-2 rounded-lg shadow-sm"> 
+                <div className="bg-pageBg-light p-4 my-2 rounded-lg shadow-sm">
                   <span
-                  className="p-2 font-semibold px-3 py-2 text-gray-700 border rounded-lg focus:outline-none bg-pureWhite-light"
+                    className="p-2 font-semibold px-3 py-2 text-gray-700 border rounded-lg focus:outline-none bg-pureWhite-light"
                   >
-                    {data.mediaType}
+                    { data.mediaType }
                   </span>
                   {/* <input
                     id="mediaType"
@@ -770,15 +776,15 @@ const Form4 = ( { formData }: any ) =>
             </div>
 
 
-           
+
 
           </div>
 
           {/* Save Buttons */ }
           <div className="bg-gray-50 px-6 py-4 flex justify-end space-x-4">
-            <button type="button" className="px-4 py-2 bg-gray-200 rounded">
+            {/* <button type="button" className="px-4 py-2 bg-gray-200 rounded" onClick={()=>window.location.reload()}>
               Save as Draft
-            </button>
+            </button> */}
             <button
               type="submit"
               disabled={

@@ -163,7 +163,7 @@ const Home: React.FC = () => {
             placeholder="category"
             style={{
               chips: {
-                background: "#BEF264",
+                background: "red",
               },
               searchBox: {
                 background: "white",
@@ -204,7 +204,7 @@ const Home: React.FC = () => {
             displayValue="name"
             style={{
               chips: {
-                background: "#BEF264",
+                background: "red",
               },
               searchBox: {
                 background: "white",
