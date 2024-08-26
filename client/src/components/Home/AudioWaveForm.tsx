@@ -2,10 +2,10 @@ import React, { useState, useEffect } from "react";
 import WaveSurfer from "wavesurfer.js";
 import type { TCustomerProduct } from "@/types/product";
 import {
-  addAudioToWishlist,
-  removeAudioFromWishlist,
-  addAudioToCart,
-  removeAudioFromCart,
+  addProductToCart,
+  addProductToWishlist,
+  removeProductFromCart,
+  removeProductFromWishlist,
 } from "@/app/redux/feature/product/audio/api";
 import { BiSolidPurchaseTagAlt } from "react-icons/bi";
 import { useAppDispatch } from "@/app/redux/hooks";
@@ -13,10 +13,16 @@ import { useRouter } from "next/navigation";
 import { downloadProduct } from "@/app/redux/feature/product/api";
 import { Spinner } from "@nextui-org/react";
 import { FiDownload } from "react-icons/fi";
-
+import { formatSecToMin } from "@/utils/DateFormat";
 let currentPlayingWaveform: WaveSurfer | null = null;
 
-const Waveform = ({ product }: { product: TCustomerProduct }) => {
+const Waveform = ({
+  product,
+  productType = "audioData",
+}: {
+  product: TCustomerProduct;
+  productType?: "audioData" | "imageData" | "videoData" | "similarProducts";
+}) => {
   const [playing, setPlaying] = useState(false);
   const [loading, setLoading] = useState(true);
   const [waveform, setWaveform] = useState<WaveSurfer | null>(null);
@@ -99,23 +105,34 @@ const Waveform = ({ product }: { product: TCustomerProduct }) => {
     }
   };
 
-  const handleAddToWishlist = () => {
+  const handleeWishlist = () => {
     if (product.isWhitelisted) {
-      removeAudioFromWishlist(dispatch, product._id);
+      removeProductFromWishlist(dispatch, product._id, productType);
     } else {
-      addAudioToWishlist(dispatch, product._id, product.variants[0]._id);
+      addProductToWishlist(
+        dispatch,
+        product._id,
+        product.variants[0]._id,
+        productType
+      );
     }
   };
 
-  const handleAddToCart = () => {
+  const handleCart = () => {
     if (product.isInCart) {
-      removeAudioFromCart(dispatch, product._id);
+      removeProductFromCart(dispatch, product._id, productType);
     } else {
-      addAudioToCart(dispatch, product._id, product.variants[0]._id);
+      addProductToCart(
+        dispatch,
+        product._id,
+        product.variants[0]._id,
+        productType
+      );
     }
   };
 
-  const url = process.env.NEXT_PUBLIC_AWS_PREFIX + product.publicKey || "";
+  const url =
+    `${process.env.NEXT_PUBLIC_AWS_PREFIX}/${product.publicKey}` || "";
 
   const handleClick = (uuid: string) => {
     router.push(`/audio/${uuid}`);
@@ -190,9 +207,12 @@ const Waveform = ({ product }: { product: TCustomerProduct }) => {
         <audio id={`track-${product._id}`} src={url} />
       </div>
       <div className="w-4/12 lg:gap-9 md:gap-5 gap-3 items-center justify-end flex text-right text-gray-400">
-        <div className="flex items-center gap-2 text-right text-white">
-          <p>{"2:30"}</p>
-          <p>mp3</p>
+        <div className="flex items-center  gap-2 text-right text-white">
+          <p>{formatSecToMin(product.variants[0].metadata?.length || 0)} min</p>
+          <p className=" capitalize">
+            {" "}
+            {product.variants[0].metadata?.format}{" "}
+          </p>
         </div>
         <div className="text-white items-center flex gap-4">
           {!product.isPurchased ? (
@@ -200,7 +220,7 @@ const Waveform = ({ product }: { product: TCustomerProduct }) => {
               className="cursor-pointer "
               onClick={(e) => {
                 e.stopPropagation();
-                handleAddToCart();
+                handleCart();
               }}
             >
               <svg
@@ -231,7 +251,7 @@ const Waveform = ({ product }: { product: TCustomerProduct }) => {
             className="cursor-pointer "
             onClick={(e) => {
               e.stopPropagation();
-              handleAddToWishlist();
+              handleeWishlist();
             }}
           >
             <svg

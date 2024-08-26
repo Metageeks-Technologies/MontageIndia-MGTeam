@@ -8,17 +8,23 @@ import { useAppDispatch, useAppSelector } from "@/app/redux/hooks";
 import { TCustomerProduct } from "@/types/product";
 import { FaRegHeart } from "react-icons/fa";
 import {
-  addAudioToCart,
-  addImageToWishlist,
-  removeAudioFromCart,
-  removeAudioFromWishlist,
-} from "@/app/redux/feature/product/image/api";
+  addProductToCart,
+  addProductToWishlist,
+  removeProductFromCart,
+  removeProductFromWishlist,
+} from "@/app/redux/feature/product/audio/api";
 import { downloadProduct } from "@/app/redux/feature/product/api";
 import { BiSolidPurchaseTagAlt } from "react-icons/bi";
 import { useState } from "react";
 import { Spinner } from "@nextui-org/react";
 
-const ImageGallery = ({ data }: { data: TCustomerProduct }) => {
+const ImageGallery = ({
+  data,
+  productType = "imageData",
+}: {
+  data: TCustomerProduct;
+  productType?: "audioData" | "imageData" | "videoData" | "similarProducts";
+}) => {
   function truncateText(text: string, wordLimit: number): string {
     const words = text.split(" ");
     if (words.length > wordLimit) {
@@ -39,17 +45,22 @@ const ImageGallery = ({ data }: { data: TCustomerProduct }) => {
 
   const handleeWishlist = () => {
     if (data.isWhitelisted) {
-      removeAudioFromWishlist(dispatch, data._id);
+      removeProductFromWishlist(dispatch, data._id, productType);
     } else {
-      addImageToWishlist(dispatch, data._id, data.variants[0]._id);
+      addProductToWishlist(
+        dispatch,
+        data._id,
+        data.variants[0]._id,
+        productType
+      );
     }
   };
 
   const handleCart = () => {
     if (data.isInCart) {
-      removeAudioFromCart(dispatch, data._id);
+      removeProductFromCart(dispatch, data._id, productType);
     } else {
-      addAudioToCart(dispatch, data._id, data.variants[0]._id);
+      addProductToCart(dispatch, data._id, data.variants[0]._id, productType);
     }
   };
 
@@ -60,7 +71,7 @@ const ImageGallery = ({ data }: { data: TCustomerProduct }) => {
         onClick={() => router.push(`/image/${data?.uuid}`)}
       >
         <img
-          src={`https://mi2-public.s3.ap-southeast-1.amazonaws.com/${data?.thumbnailKey}`}
+          src={`${process.env.NEXT_PUBLIC_AWS_PREFIX}/${data?.thumbnailKey}`}
           alt={`Image`}
           className="w-auto h-auto object-cover rounded"
         />
@@ -79,29 +90,35 @@ const ImageGallery = ({ data }: { data: TCustomerProduct }) => {
 
       <div className="absolute bottom-1 right-9 m-2 opacity-5 group-hover:opacity-100 transition-opacity duration-300">
         <div
-          onClick={handleeWishlist}
+          onClick={(e) => {
+            e.stopPropagation();
+            handleeWishlist();
+          }}
           title={data.isWhitelisted ? "Remove from Saved" : "Save Image"}
           className="text-white bg-black bg-opacity-35 px-2 py-1 rounded-full flex gap-1 items-center"
         >
           {data.isWhitelisted ? (
             <IoMdHeart className="h-6 w-5 text-red-500" />
           ) : (
-            <FaRegHeart  className="h-6 w-5" />
+            <FaRegHeart className="h-6 w-5" />
           )}
           {/* <p className="text-sm"> {data.isWhitelisted ? "" : ""} </p> */}
         </div>
       </div>
       <div
-        onClick={handleDownload}
+        onClick={(e) => {
+          e.stopPropagation();
+          handleDownload();
+        }}
         className="absolute bottom-1 right-0 m-2 opacity-5 group-hover:opacity-100 transition-opacity duration-300"
       >
-        <div className="text-white bg-red-500 p-2 flex items-center gap-1 rounded-full">
+        <div className="text-white h-8 w-8 bg-red-500 p-2 flex items-center gap-1 rounded-full">
           {!loading ? (
             <>
               <TfiDownload className="font-semibold" />
             </>
           ) : (
-            <Spinner label="" color="danger" />
+            <Spinner className="w-4" color="current" />
           )}
         </div>
       </div>
@@ -112,7 +129,10 @@ const ImageGallery = ({ data }: { data: TCustomerProduct }) => {
             className={` p-2 ${
               data.isInCart ? "bg-red-500 text-white" : "bg-white text-black"
             } rounded-full`}
-            onClick={handleCart}
+            onClick={(e) => {
+              e.stopPropagation();
+              handleCart();
+            }}
           >
             {data.isInCart ? <BsCartCheckFill /> : <BsCart2 />}
           </div>

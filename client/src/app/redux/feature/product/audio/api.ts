@@ -9,13 +9,14 @@ import {
   requestFail,
   requestStart,
   setAudioData,
+  setKeyWords,
 } from "../slice";
 
 export const getAudio = async (dispatch: AppDispatch, params: any) => {
   dispatch(requestStart());
   try {
     const { data } = await instance.get(`product/customer`, {
-      params: {...params },
+      params: { ...params },
     });
     console.log(data);
     dispatch(
@@ -25,6 +26,7 @@ export const getAudio = async (dispatch: AppDispatch, params: any) => {
         totalData: data.totalData,
       })
     );
+    dispatch(setKeyWords(data.relatedKeywords));
   } catch (error) {
     const e = error as AxiosError;
     notifyError(e.message);
@@ -33,10 +35,11 @@ export const getAudio = async (dispatch: AppDispatch, params: any) => {
   }
 };
 
-export const addAudioToWishlist = async (
+export const addProductToWishlist = async (
   dispatch: AppDispatch,
   productId: string,
-  variantId: string
+  variantId: string,
+  productType: "audioData" | "imageData" | "videoData" | "similarProducts"
 ) => {
   dispatch(requestStart());
   try {
@@ -44,33 +47,35 @@ export const addAudioToWishlist = async (
       productId,
       variantId,
     });
-    dispatch(addToWishlist(productId));
+    dispatch(addToWishlist({ productId, productType }));
   } catch (error: any) {
     const e = error as AxiosError;
     dispatch(requestFail(e.message));
   }
 };
 
-export const removeAudioFromWishlist = async (
+export const removeProductFromWishlist = async (
   dispatch: AppDispatch,
-  productId: string
+  productId: string,
+  productType: "audioData" | "imageData" | "videoData" | "similarProducts"
 ) => {
   dispatch(requestStart());
   try {
     const { data } = await instance.delete(`/user/wishlist`, {
       data: { productId },
     });
-    dispatch(addToWishlist(productId));
+    dispatch(addToWishlist({ productId, productType }));
   } catch (error: any) {
     const e = error as AxiosError;
     dispatch(requestFail(e.message));
   }
 };
 
-export const addAudioToCart = async (
+export const addProductToCart = async (
   dispatch: AppDispatch,
   productId: string,
-  variantId: string
+  variantId: string,
+  productType: "audioData" | "imageData" | "videoData" | "similarProducts"
 ) => {
   dispatch(requestStart());
   try {
@@ -78,23 +83,24 @@ export const addAudioToCart = async (
       productId,
       variantId,
     });
-    dispatch(addToCart({ productId, variantId }));
+    dispatch(addToCart({ productId, variantId, productType }));
   } catch (error: any) {
     const e = error as AxiosError;
     dispatch(requestFail(e.message));
   }
 };
 
-export const removeAudioFromCart = async (
+export const removeProductFromCart = async (
   dispatch: AppDispatch,
-  productId: string
+  productId: string,
+  productType: "audioData" | "imageData" | "videoData" | "similarProducts"
 ) => {
   dispatch(requestStart());
   try {
     const { data } = await instance.delete(`/user/cart`, {
       data: { productId },
     });
-    dispatch(removeFromCart(productId));
+    dispatch(removeFromCart({ productId, productType }));
   } catch (error: any) {
     const e = error as AxiosError;
     dispatch(requestFail(e.message));

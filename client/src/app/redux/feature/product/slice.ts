@@ -1,21 +1,32 @@
 import { TCustomerProduct } from "@/types/product";
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
-import { removeProductFromCart } from "./api";
 
 export type CartItem = {
   productId: TCustomerProduct;
   variantId: string;
 };
-type Payload = {
-  productId: string;
-  variantId: string;
-};
+
 type DataPayload = {
   data: TCustomerProduct[];
   totalNumOfPage: number;
   totalData: number;
 };
+
+type productPayload = {
+  productId: string;
+  productType: "audioData" | "imageData" | "videoData" | "similarProducts";
+};
+
+type CartPayload = productPayload & {
+  variantId: string;
+};
+
+type Payload = {
+  productId: string;
+  variantId: string;
+};
+
 type InitialState = {
   audioData: TCustomerProduct[];
   imageData: TCustomerProduct[];
@@ -37,6 +48,8 @@ type InitialState = {
   totalVideoNumOfPage: number;
   totalVideoData: number;
   cart: CartItem[];
+  relatedKeyword: string[];
+  similarProducts: TCustomerProduct[];
 };
 
 const initialState: InitialState = {
@@ -60,6 +73,9 @@ const initialState: InitialState = {
   totalVideoNumOfPage: 1,
   totalVideoData: 0,
   cart: [],
+
+  relatedKeyword: [],
+  similarProducts: [],
 };
 
 export const audioSlice = createSlice({
@@ -80,41 +96,116 @@ export const audioSlice = createSlice({
       state.totalNumOfPage = action.payload.totalNumOfPage;
       state.totalAudioData = action.payload.totalData;
     },
-    addToWishlist: (state, action: PayloadAction<string>) => {
-      const productId = action.payload;
-      state.audioData = state.audioData.map((product) =>
-        product._id === productId
-          ? { ...product, isWhitelisted: !product.isWhitelisted }
-          : product
-      );
+    addToWishlist: (state, action: PayloadAction<productPayload>) => {
+      const { productId, productType } = action.payload;
+
+      const updateWishlistStatus = (products: any[]) => {
+        return products.map((product) =>
+          product._id === productId
+            ? { ...product, isWhitelisted: !product.isWhitelisted }
+            : product
+        );
+      };
+
+      switch (productType) {
+        case "audioData":
+          state.audioData = updateWishlistStatus(state.audioData);
+          break;
+        case "imageData":
+          state.imageData = updateWishlistStatus(state.imageData);
+          break;
+        case "videoData":
+          state.videoData = updateWishlistStatus(state.videoData);
+          break;
+        case "similarProducts":
+          state.similarProducts = updateWishlistStatus(state.similarProducts);
+          break;
+        default:
+          break;
+      }
+
       state.loading = false;
       state.error = " ";
     },
-    addToCart: (state, action: PayloadAction<Payload>) => {
-      const productId = action.payload.productId;
-      state.audioData = state.audioData.map((product) =>
-        product._id === productId ? { ...product, isInCart: true } : product
-      );
-      const product = state.audioData.find(
-        (product) => product._id === productId
-      );
+    addToCart: (state, action: PayloadAction<CartPayload>) => {
+      const { productId, productType, variantId } = action.payload;
+
+      const updateCartStatus = (products: any[]) => {
+        return products.map((product) =>
+          product._id === productId ? { ...product, isInCart: true } : product
+        );
+      };
+
+      let product;
+      switch (productType) {
+        case "audioData":
+          state.audioData = updateCartStatus(state.audioData);
+          product = state.audioData.find(
+            (product) => product._id === productId
+          );
+          break;
+        case "imageData":
+          state.imageData = updateCartStatus(state.imageData);
+          product = state.imageData.find(
+            (product) => product._id === productId
+          );
+          break;
+        case "videoData":
+          state.videoData = updateCartStatus(state.videoData);
+          product = state.videoData.find(
+            (product) => product._id === productId
+          );
+          break;
+        case "similarProducts":
+          state.similarProducts = updateCartStatus(state.similarProducts);
+          product = state.similarProducts.find(
+            (product) => product._id === productId
+          );
+          break;
+        default:
+          break;
+      }
+
       if (product) {
         state.cart.push({
           productId: product,
-          variantId: action.payload.variantId,
+          variantId: variantId,
         });
       }
+
       state.loading = false;
       state.error = " ";
     },
-    removeFromCart: (state, action: PayloadAction<string>) => {
-      const productId = action.payload;
+    removeFromCart: (state, action: PayloadAction<productPayload>) => {
+      const { productId, productType } = action.payload;
+
+      const updateCartStatus = (products: any[]) => {
+        return products.map((product) =>
+          product._id === productId ? { ...product, isInCart: false } : product
+        );
+      };
+
       state.cart = state.cart.filter(
         (product) => product.productId._id !== productId
       );
-      state.audioData = state.audioData.map((product) =>
-        product._id === productId ? { ...product, isInCart: false } : product
-      );
+
+      switch (productType) {
+        case "audioData":
+          state.audioData = updateCartStatus(state.audioData);
+          break;
+        case "imageData":
+          state.imageData = updateCartStatus(state.imageData);
+          break;
+        case "videoData":
+          state.videoData = updateCartStatus(state.videoData);
+          break;
+        case "similarProducts":
+          state.similarProducts = updateCartStatus(state.similarProducts);
+          break;
+        default:
+          break;
+      }
+
       state.loading = false;
       state.error = " ";
     },
@@ -128,44 +219,6 @@ export const audioSlice = createSlice({
       state.totalImageNumOfPage = action.payload.totalNumOfPage;
       state.totalImageData = action.payload.totalData;
     },
-    addToImageWishlist: (state, action: PayloadAction<string>) => {
-      const productId = action.payload;
-      state.imageData = state.imageData.map((product) =>
-        product._id === productId
-          ? { ...product, isWhitelisted: !product.isWhitelisted }
-          : product
-      );
-      state.loading = false;
-      state.error = " ";
-    },
-    addToImageCart: (state, action: PayloadAction<Payload>) => {
-      const productId = action.payload.productId;
-      state.imageData = state.imageData.map((product) =>
-        product._id === productId ? { ...product, isInCart: true } : product
-      );
-      const product = state.imageData.find(
-        (product) => product._id === productId
-      );
-      if (product) {
-        state.cart.push({
-          productId: product,
-          variantId: action.payload.variantId,
-        });
-      }
-      state.loading = false;
-      state.error = " ";
-    },
-    removeFromImageCart: (state, action: PayloadAction<string>) => {
-      const productId = action.payload;
-      state.cart = state.cart.filter(
-        (product) => product.productId._id !== productId
-      );
-      state.imageData = state.imageData.map((product) =>
-        product._id === productId ? { ...product, isInCart: false } : product
-      );
-      state.loading = false;
-      state.error = " ";
-    },
     setImagePage: (state, action: PayloadAction<number>) => {
       state.imagePage = action.payload;
     },
@@ -175,44 +228,6 @@ export const audioSlice = createSlice({
       state.videoData = action.payload.data;
       state.totalVideoNumOfPage = action.payload.totalNumOfPage;
       state.totalVideoData = action.payload.totalData;
-    },
-    addToVideoWishlist: (state, action: PayloadAction<string>) => {
-      const productId = action.payload;
-      state.videoData = state.videoData.map((product) =>
-        product._id === productId
-          ? { ...product, isWhitelisted: !product.isWhitelisted }
-          : product
-      );
-      state.loading = false;
-      state.error = " ";
-    },
-    addToVideoCart: (state, action: PayloadAction<Payload>) => {
-      const productId = action.payload.productId;
-      state.videoData = state.videoData.map((product) =>
-        product._id === productId ? { ...product, isInCart: true } : product
-      );
-      const product = state.videoData.find(
-        (product) => product._id === productId
-      );
-      if (product) {
-        state.cart.push({
-          productId: product,
-          variantId: action.payload.variantId,
-        });
-      }
-      state.loading = false;
-      state.error = " ";
-    },
-    removeFromVideoCart: (state, action: PayloadAction<string>) => {
-      const productId = action.payload;
-      state.cart = state.cart.filter(
-        (product) => product.productId._id !== productId
-      );
-      state.videoData = state.videoData.map((product) =>
-        product._id === productId ? { ...product, isInCart: false } : product
-      );
-      state.loading = false;
-      state.error = " ";
     },
     setVideoPage: (state, action: PayloadAction<number>) => {
       state.videoPage = action.payload;
@@ -270,8 +285,48 @@ export const audioSlice = createSlice({
       state.cart = state.cart.filter(
         (product) => product.productId._id !== productId
       );
+      const exitInSimilarProduct = state.similarProducts.find(
+        (product) => product._id === productId
+      );
+      const exitInAudioData = state.audioData.find(
+        (product) => product._id === productId
+      );
+      const exitInImageData = state.imageData.find(
+        (product) => product._id === productId
+      );
+      const exitInVideoData = state.videoData.find(
+        (product) => product._id === productId
+      );
+
+      if (exitInSimilarProduct) {
+        state.similarProducts = state.similarProducts.map((product) =>
+          product._id === productId ? { ...product, isInCart: false } : product
+        );
+      }
+      if (exitInAudioData) {
+        state.audioData = state.audioData.map((product) =>
+          product._id === productId ? { ...product, isInCart: false } : product
+        );
+      }
+      if (exitInImageData) {
+        state.imageData = state.imageData.map((product) =>
+          product._id === productId ? { ...product, isInCart: false } : product
+        );
+      }
+      if (exitInVideoData) {
+        state.videoData = state.videoData.map((product) =>
+          product._id === productId ? { ...product, isInCart: false } : product
+        );
+      }
+
       state.loading = false;
       state.error = " ";
+    },
+    setKeyWords: (state, action: PayloadAction<string[]>) => {
+      state.relatedKeyword = action.payload;
+    },
+    setSimilarProducts: (state, action: PayloadAction<TCustomerProduct[]>) => {
+      state.similarProducts = action.payload;
     },
   },
 });
@@ -285,9 +340,7 @@ export const {
   addToCart,
   removeFromCart,
   setImageData,
-  addToImageWishlist,
-  addToImageCart,
-  removeFromImageCart,
+
   setImagePage,
   setSingleProduct,
   setAudioPage,
@@ -296,12 +349,11 @@ export const {
   addSingleProductToWishlist,
   removeSingleProductFromCart,
   setVideoData,
-  addToVideoWishlist,
-  addToVideoCart,
-  removeFromVideoCart,
+
   setVideoPage,
   setCart,
-
+  setKeyWords,
+  setSimilarProducts,
 } = audioSlice.actions;
 
 export default audioSlice.reducer;

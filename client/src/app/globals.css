@@ -138,17 +138,164 @@ td {
   background: transparent;
 }
 
-
-.description-truncate {
-    display: -webkit-box;
-    -webkit-line-clamp: 2; /* Limit to 2 lines */
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    text-overflow: ellipsis;
+.progress-bar {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 8px;
+  background: #666666;
+  outline: none;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+  border-radius: 4px; /* Add border-radius for rounded corners */
 }
 
-.vidbg{
-  background-color: #F4F6F6;
+.progress-bar::-webkit-slider-runnable-track {
+  width: 100%;
+  height: 8px;
+  cursor: pointer;
+  background: #666666;
+  border-radius: 4px; /* Add border-radius for rounded corners */
+}
+
+.progress-bar::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  background: #bbe445;
+  cursor: pointer;
+  border-radius: 50%;
+  margin-top: -4px; /* Adjust to align thumb with track */
+}
+
+.progress-bar::-moz-range-track {
+  width: 100%;
+  height: 8px;
+  cursor: pointer;
+  background: #666666;
+  border-radius: 4px; /* Add border-radius for rounded corners */
+}
+
+.progress-bar::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  background: #bbe445;
+  cursor: pointer;
+  border-radius: 50%;
+}
+
+.progress-bar::-ms-track {
+  width: 100%;
+  height: 8px;
+  cursor: pointer;
+  background: transparent; /* Required for proper track styling */
+  border-color: transparent;
+  color: transparent;
+  border-radius: 4px; /* Add border-radius for rounded corners */
+}
+
+.progress-bar::-ms-fill-lower {
+  background: #bbe445;
+  border-radius: 4px; /* Add border-radius for rounded corners */
+}
+
+.progress-bar::-ms-fill-upper {
+  background: #666666;
+  border-radius: 4px; /* Add border-radius for rounded corners */
+}
+
+/* Custom styling for the filled portion */
+.progress-bar::-webkit-slider-runnable-track {
+  background: linear-gradient(
+    to right,
+    #bbe445 0%,
+    #bbe445 var(--value),
+    #666666 var(--value),
+    #666666 100%
+  );
+}
+
+.progress-container {
+  position: relative;
+  width: 100%;
+}
+
+input[type="range"].progress-bar {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 8px;
+  background: transparent;
+  outline: none;
+  position: relative;
+}
+
+input[type="range"].progress-bar::-webkit-slider-runnable-track {
+  width: 100%;
+  height: 8px;
+  background: linear-gradient(
+    to right,
+    #bbe445 0%,
+    #bbe445 var(--progress),
+    #666666 var(--progress),
+    #666666 100%
+  );
+  border-radius: 4px;
+}
+
+input[type="range"].progress-bar::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 0;
+  height: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+input[type="range"].progress-bar::-moz-range-track {
+  width: 100%;
+  height: 8px;
+  background: linear-gradient(
+    to right,
+    #bbe445 0%,
+    #bbe445 var(--progress),
+    #666666 var(--progress),
+    #666666 100%
+  );
+  border-radius: 4px;
+}
+
+input[type="range"].progress-bar::-moz-range-thumb {
+  width: 0;
+  height: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+/* Custom circular thumb */
+.custom-thumb {
+  position: absolute;
+  top: 60%; /* Center vertically */
+  right: 5%;
+  transform: translateY(-50%); /* Adjust to align with the track */
+  width: 16px;
+  height: 16px;
+  background: #bbe445;
+  border-radius: 50%;
+  pointer-events: none; /* Make it non-interactive */
+}
+
+/* wave form end */
+
+.description-truncate {
+  display: -webkit-box;
+  -webkit-line-clamp: 2; /* Limit to 2 lines */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.vidbg {
+  background-color: #f4f6f6;
 }
 /* cart scroll bar css start */
 
@@ -158,13 +305,11 @@ td {
 
 /* Track */
 
- 
 /* Handle */
 ::-webkit-scrollbar-thumb {
-  background: #d65b59; 
+  background: #d65b59;
   border-radius: 10px;
 }
-
 
 /* cart scroll bar css end */
 
@@ -221,7 +366,7 @@ td {
 }
 
 .custom-share-button > div {
-  background-color: #FE423F; /* Custom button color */
+  background-color: #fe423f; /* Custom button color */
   color: #fff; /* Text color */
   padding: 8px;
   border-radius: 50%;

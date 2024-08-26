@@ -8,7 +8,17 @@ export interface ProductItem {
   variantId: string;
 }
 
+interface Subscription {
+  PlanId: string;
+  credits: number;
+  planValidity: string;
+  status: string;
+  subscriptionId: string;
+}
+
 export type TCustomer = {
+  id: string;
+  image: string;
   username: string;
   email: string;
   name: string; // Customer's full name
@@ -17,12 +27,7 @@ export type TCustomer = {
   purchasedProducts: purchasedProductItem[];
   cart: ProductItem[]; // References to products in the cart
   wishlist: ProductItem[]; // References to products in the wishlist
-  subscription: {
-    subscriptionId: string;
-    PlanId: string;
-    credits: number;
-    planValidity: Date;
-  }; // References to subscription
+  subscription: Subscription; // References to subscription
   purchaseHistory?: string[]; // References to orders
   subscriptionHistory?: string[]; // References to subscriptions
   phone?: string;

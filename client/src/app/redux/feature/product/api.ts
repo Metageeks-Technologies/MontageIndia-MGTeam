@@ -12,6 +12,8 @@ import {
   removeSingleProductFromCart,
   setCart,
   removeCartProduct,
+  setSimilarProducts,
+  setKeyWords,
 } from "./slice";
 import axios from "axios";
 
@@ -20,6 +22,7 @@ export const getSingleProduct = async (dispatch: AppDispatch, uuid: string) => {
   try {
     const { data } = await instance(`/product/customer/${uuid}`);
     dispatch(setSingleProduct(data.product));
+    dispatch(setSimilarProducts(data.similar));
   } catch (error) {
     const e = error as AxiosError;
     notifyError(e.message);
@@ -98,6 +101,11 @@ export const removeProductFromCart = async (
 
 export const clearSingleProductData = (dispatch: AppDispatch) => {
   dispatch(clearSingleProduct());
+  dispatch(setSimilarProducts([]));
+};
+
+export const clearKeywords = (dispatch: AppDispatch) => {
+  dispatch(setKeyWords([]));
 };
 
 export const getCartData = async (dispatch: AppDispatch) => {

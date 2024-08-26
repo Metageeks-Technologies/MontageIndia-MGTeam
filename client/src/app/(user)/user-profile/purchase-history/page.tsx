@@ -83,9 +83,9 @@ const ProductList: React.FC = () => {
   }, [currentPage, dataPerPage,user]);
 
   return (
-    <div className="w-full rounded-lg overflow-hidden bg-white px-6 py-4">
-      <h1 className="text-xl font-semibold mb-6 text-gray-800">Purchase History</h1>
-      <div className="flex justify-between items-center gap-4 flex-wrap my-6">
+    <div className="w-full rounded-lg min-h-screen overflow-hidden bg-white px-2 py-1 md:px-6 md:py-4">
+      <h1 className="md:text-xl text-md font-semibold mb-6 text-gray-800">Purchase History</h1>
+      <div className="flex justify-between items-center gap-4 flex-wrap my-6 ">
       <div className="flex">
         <input
           type="text"
@@ -121,16 +121,16 @@ const ProductList: React.FC = () => {
             </div>
             ):(
               <>
-               <div className="overflow-x-auto shadow-md rounded-lg">
+               <div className="overflow-x-auto mb-4 shadow-md rounded-lg">
         <table className="w-full border-collapse">
           <thead className="bg-[#F1F1F1] text-black">
             <tr>
-              <th className="px-6 py-3 border-b text-sm font-medium tracking-wider">Order id</th>
-              <th className="px-6 py-3 border-b text-sm font-medium tracking-wider">Amount</th>
-              <th className="px-6 py-3 border-b text-sm font-medium tracking-wider">Method</th>
-              <th className="px-6 py-3 border-b text-sm font-medium tracking-wider">Date</th>
-              <th className="px-6 py-3 border-b text-sm font-medium tracking-wider">Status</th>
-              <th className="px-6 py-3 border-b text-center text-sm font-medium tracking-wider">Order Details</th>
+              <th className="md:px-6 md:py-3 border-b text-sm font-medium tracking-wider">Order id</th>
+              <th className="md:px-6 md:py-3 border-b text-sm font-medium tracking-wider">Amount</th>
+              <th className="md:px-6 md:py-3 border-b text-sm font-medium tracking-wider">Method</th>
+              <th className="md:px-6 md:py-3 border-b text-sm font-medium tracking-wider">Date</th>
+              <th className="md:px-6 md:py-3 border-b text-sm font-medium tracking-wider">Status</th>
+              <th className="md:px-6 md:py-3 border-b text-center text-sm font-medium tracking-wider">Order Details</th>
             </tr>
           </thead>
           <tbody className="bg-white">
@@ -140,20 +140,20 @@ const ProductList: React.FC = () => {
                 key={order._id}
                 className="border-b hover:bg-gray-100 transition duration-200"
               >
-                <td className="px-6 py-4 text-gray-700">{order.razorpayOrderId}</td>
-                <td className="px-6 py-4 text-gray-700"><div className="flex gap-1 justify-start items-center"><span><FaRupeeSign /></span> <span>{order.totalAmount}</span></div></td>
-                <td className="px-6 py-4 text-gray-700">{order.method}</td>
-                <td className="px-6 py-4 text-gray-600">
+                <td className="md:px-6 md:py-4 text-gray-700">{order.razorpayOrderId}</td>
+                <td className="md:px-6 md:py-4 text-gray-700"><div className="flex gap-1 justify-start items-center"><span><FaRupeeSign /></span> <span>{order.totalAmount}</span></div></td>
+                <td className="md:px-6 md:py-4 text-gray-700">{order.method}</td>
+                <td className="md:px-6 md:py-4 text-gray-600">
                   {formatDateTime(order.createdAt)}
                 </td>
                 <td
-                  className={`px-6 py-4 font-semibold ${
+                  className={`md:px-6 md:py-4 font-semibold ${
                     order.status === "paid" ? "text-green-600" : "text-red-600"
                   }`}
                 >
                   {order.status}
                 </td>
-                <td className="px-6 py-4 flex justify-center items-center" > <button onClick={()=>{router.push(`/user-profile/purchase-history/${order._id}`);}} className="px-4 py-2 border-1 border-[#8D529C] rounded-lg text-[#8D529C] hover:text-white hover:bg-[#8D529C]"><div className="flex gap-2 justify-start items-center"><span>View Order</span> <span><IoEyeOutline/></span></div> </button> </td>
+                <td className="md:px-6 md:py-4 flex justify-center items-center" > <button onClick={()=>{router.push(`/user-profile/purchase-history/${order._id}`);}} className="px-4 py-2 border-1 border-[#8D529C] rounded-lg text-[#8D529C] hover:text-white hover:bg-[#8D529C]"><div className="flex gap-2 justify-start items-center"><span>View Order</span> <span><IoEyeOutline/></span></div> </button> </td>
               </tr>
             ))}
           </tbody>
@@ -161,9 +161,9 @@ const ProductList: React.FC = () => {
       </div>
 
       {totalPages > 0 && (
-        <div className="flex justify-between items-center">
-        <div className="text-[#999999] w-1/3 ">Showing {((currentPage-1)*dataPerPage)+1} to {((currentPage-1)*dataPerPage+dataPerPage)>totalOrder?totalOrder:((currentPage-1)*dataPerPage+dataPerPage)}  of {totalOrder} Entries </div>
-        <div className="w-1/3 flex justify-center items-center gap-4 my-4">
+        <div className="z-index-1 flex flex-wrap md:flex-nowrap justify-center md:justify-between items-center">
+        <div className="text-[#999999] md:w-1/3 ">Showing {((currentPage-1)*dataPerPage)+1} to {((currentPage-1)*dataPerPage+dataPerPage)>totalOrder?totalOrder:((currentPage-1)*dataPerPage+dataPerPage)}  of {totalOrder} Entries </div>
+        <div className="md:w-1/3 flex justify-center items-center gap-4 my-4">
           <Button
             size="sm"
             disabled={currentPage === 1}
@@ -205,7 +205,7 @@ const ProductList: React.FC = () => {
             Next
           </Button>
         </div>
-        <div className="w-1/3"></div>
+        <div className="md:w-1/3"></div>
         </div>
       )}
 </>
