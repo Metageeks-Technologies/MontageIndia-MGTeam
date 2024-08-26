@@ -10,6 +10,7 @@ import {
   requestStart,
   setAudioData,
   setKeyWords,
+  removeFromWishlist,
 } from "../slice";
 
 export const getAudio = async (dispatch: AppDispatch, params: any) => {
@@ -57,7 +58,12 @@ export const addProductToWishlist = async (
 export const removeProductFromWishlist = async (
   dispatch: AppDispatch,
   productId: string,
-  productType: "audioData" | "imageData" | "videoData" | "similarProducts"
+  productType:
+    | "audioData"
+    | "imageData"
+    | "videoData"
+    | "similarProducts"
+    | "wishlist"
 ) => {
   dispatch(requestStart());
   try {
@@ -65,6 +71,9 @@ export const removeProductFromWishlist = async (
       data: { productId },
     });
     dispatch(addToWishlist({ productId, productType }));
+    if (productType === "wishlist") {
+      removeFromWishlist(productId);
+    }
   } catch (error: any) {
     const e = error as AxiosError;
     dispatch(requestFail(e.message));
@@ -75,7 +84,12 @@ export const addProductToCart = async (
   dispatch: AppDispatch,
   productId: string,
   variantId: string,
-  productType: "audioData" | "imageData" | "videoData" | "similarProducts"
+  productType:
+    | "audioData"
+    | "imageData"
+    | "videoData"
+    | "similarProducts"
+    | "wishlist"
 ) => {
   dispatch(requestStart());
   try {
@@ -93,7 +107,12 @@ export const addProductToCart = async (
 export const removeProductFromCart = async (
   dispatch: AppDispatch,
   productId: string,
-  productType: "audioData" | "imageData" | "videoData" | "similarProducts"
+  productType:
+    | "audioData"
+    | "imageData"
+    | "videoData"
+    | "similarProducts"
+    | "wishlist"
 ) => {
   dispatch(requestStart());
   try {

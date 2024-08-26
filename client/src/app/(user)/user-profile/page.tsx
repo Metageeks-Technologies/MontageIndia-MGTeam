@@ -145,7 +145,7 @@ const Home: FC = () => {
             )}
           </div>
         </div>
-        <div className="mt-10 pb-2">
+        {/* <div className="mt-10 pb-2">
           <h1 className="text-lg font-bold mb-1">Delete my Account</h1>
           <div className="w-full flex flex-col">
             <p className="text-sm text-black">
@@ -155,7 +155,7 @@ const Home: FC = () => {
               Delete my Account
             </p>
           </div>
-        </div>
+        </div> */}
       </div>
     </>
   );

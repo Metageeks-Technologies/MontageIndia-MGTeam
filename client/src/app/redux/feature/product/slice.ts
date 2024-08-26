@@ -15,7 +15,12 @@ type DataPayload = {
 
 type productPayload = {
   productId: string;
-  productType: "audioData" | "imageData" | "videoData" | "similarProducts";
+  productType:
+    | "audioData"
+    | "imageData"
+    | "videoData"
+    | "similarProducts"
+    | "wishlist";
 };
 
 type CartPayload = productPayload & {
@@ -50,6 +55,7 @@ type InitialState = {
   cart: CartItem[];
   relatedKeyword: string[];
   similarProducts: TCustomerProduct[];
+  wishlist: TCustomerProduct[];
 };
 
 const initialState: InitialState = {
@@ -76,6 +82,7 @@ const initialState: InitialState = {
 
   relatedKeyword: [],
   similarProducts: [],
+  wishlist: [],
 };
 
 export const audioSlice = createSlice({
@@ -121,6 +128,8 @@ export const audioSlice = createSlice({
           state.similarProducts = updateWishlistStatus(state.similarProducts);
           break;
         default:
+        case "wishlist":
+          state.wishlist = updateWishlistStatus(state.wishlist);
           break;
       }
 
@@ -162,6 +171,10 @@ export const audioSlice = createSlice({
             (product) => product._id === productId
           );
           break;
+        case "wishlist":
+          state.wishlist = updateCartStatus(state.wishlist);
+          product = state.wishlist.find((product) => product._id === productId);
+          break;
         default:
           break;
       }
@@ -201,6 +214,9 @@ export const audioSlice = createSlice({
           break;
         case "similarProducts":
           state.similarProducts = updateCartStatus(state.similarProducts);
+          break;
+        case "wishlist":
+          state.wishlist = updateCartStatus(state.wishlist);
           break;
         default:
           break;
@@ -298,6 +314,10 @@ export const audioSlice = createSlice({
         (product) => product._id === productId
       );
 
+      const exitInWishlist = state.wishlist.find(
+        (product) => product._id === productId
+      );
+
       if (exitInSimilarProduct) {
         state.similarProducts = state.similarProducts.map((product) =>
           product._id === productId ? { ...product, isInCart: false } : product
@@ -319,6 +339,12 @@ export const audioSlice = createSlice({
         );
       }
 
+      if (exitInWishlist) {
+        state.wishlist = state.wishlist.map((product) =>
+          product._id === productId ? { ...product, isInCart: false } : product
+        );
+      }
+
       state.loading = false;
       state.error = " ";
     },
@@ -327,6 +353,19 @@ export const audioSlice = createSlice({
     },
     setSimilarProducts: (state, action: PayloadAction<TCustomerProduct[]>) => {
       state.similarProducts = action.payload;
+    },
+    // wishlist reducers
+    setWishlist: (state, action: PayloadAction<TCustomerProduct[]>) => {
+      state.wishlist = action.payload;
+    },
+
+    removeFromWishlist: (state, action: PayloadAction<string>) => {
+      const productId = action.payload;
+      state.wishlist = state.wishlist.filter(
+        (product) => product._id !== productId
+      );
+      state.loading = false;
+      state.error = " ";
     },
   },
 });
@@ -354,6 +393,8 @@ export const {
   setCart,
   setKeyWords,
   setSimilarProducts,
+  setWishlist,
+  removeFromWishlist,
 } = audioSlice.actions;
 
 export default audioSlice.reducer;

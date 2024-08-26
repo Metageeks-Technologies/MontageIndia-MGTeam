@@ -412,7 +412,7 @@ export const getProductForCustomer = catchAsyncError(
       tags,
       popular,
     } = req.query;
-    console.log("dsd",category,searchTerm)
+    console.log("dsd", category, searchTerm);
 
     const queryObject: any = {};
 
@@ -680,17 +680,55 @@ export const removeFromWishlist = catchAsyncError(
 
 export const getWishlist = catchAsyncError(async (req: any, res, next) => {
   const customerId = req.user._id;
+  if (!customerId) {
+    return next(new ErrorHandler(`customer not found`, 404));
+  }
 
-  const customer = await Customer.findById(customerId).populate(
-    "wishlist.productId"
-  );
+  let isWhitelisted = false;
+  let isInCart = false;
+  let isPurchased = false;
+  let wishlist: any = [];
+  let cart: any = [];
+  let purchasedProducts: any = [];
+
+  const customer = await Customer.findById(customerId);
   if (!customer) {
     return next(new ErrorHandler(`customer not found`, 404));
   }
 
+  const products = await Product.find({
+    _id: { $in: customer.wishlist.map((item) => item.productId) },
+  });
+
+  // console.log("products", products);
+
+  wishlist = customer.wishlist;
+  cart = customer.cart;
+  purchasedProducts = customer.purchasedProducts;
+
+  let result = products.map((product) => {
+    isWhitelisted = wishlist?.some(
+      (p: any) => p.productId.toString() === product._id.toString()
+    );
+    isInCart = cart?.some(
+      (p: any) => p.productId.toString() === product._id.toString()
+    );
+    isPurchased = purchasedProducts?.some(
+      (p: any) => p.productId.toString() === product._id.toString()
+    );
+
+    const productObject = product.toObject();
+    return {
+      ...productObject,
+      isWhitelisted,
+      isInCart,
+      isPurchased,
+    };
+  });
+
   res.status(200).json({
     success: true,
-    products: customer.wishlist,
+    products: result,
   });
 });
 

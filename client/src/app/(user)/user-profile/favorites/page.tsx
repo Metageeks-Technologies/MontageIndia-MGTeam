@@ -3,22 +3,20 @@ import { useEffect, useState } from "react";
 import instance from "@/utils/axios";
 import ProductCard from "@/components/product/productCard";
 import { Spinner } from "@nextui-org/react";
+import { useAppDispatch, useAppSelector } from "@/app/redux/hooks";
+import { getWishlist } from "@/app/redux/feature/product/api";
 
 const WishListPage = () => {
   const [loading, setLoading] = useState(false);
-  const [products, setProducts] = useState<any>([]);
+
+  const dispatch = useAppDispatch();
+  const { wishlist } = useAppSelector((state) => state.product);
+  // console.log(wishlist);
 
   const fetchWishList = async () => {
     setLoading(true);
-    try {
-      const response: any = await instance.get(`/user/wishlist`);
-      setProducts(response.data.products);
-      console.log("data", response);
-      setLoading(false);
-    } catch (error) {
-      console.error("Error fetching order by user ID:", error);
-      setLoading(false);
-    }
+    await getWishlist(dispatch);
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -38,12 +36,12 @@ const WishListPage = () => {
           </div>
         )}
         {!loading &&
-          products &&
-          products.length > 0 &&
-          products.map((product: any) => (
+          wishlist &&
+          wishlist.length > 0 &&
+          wishlist.map((product: any) => (
             <ProductCard
               key={product._id}
-              product={product.productId}
+              product={product}
               status="wishlist"
             />
           ))}

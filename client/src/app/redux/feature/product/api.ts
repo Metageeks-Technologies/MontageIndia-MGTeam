@@ -14,6 +14,7 @@ import {
   removeCartProduct,
   setSimilarProducts,
   setKeyWords,
+  setWishlist,
 } from "./slice";
 import axios from "axios";
 
@@ -165,6 +166,18 @@ export const downloadProduct = async (
 
     link.remove();
     setTimeout(() => window.URL.revokeObjectURL(downloadUrl), 100);
+  } catch (error: any) {
+    const e = error as AxiosError;
+    dispatch(requestFail(e.message));
+  }
+};
+
+export const getWishlist = async (dispatch: AppDispatch) => {
+  dispatch(requestStart());
+  try {
+    const { data } = await instance.get(`/user/wishlist`);
+    dispatch(setWishlist(data.products));
+    console.log(data, "data");
   } catch (error: any) {
     const e = error as AxiosError;
     dispatch(requestFail(e.message));
