@@ -1,15 +1,14 @@
 "use client";
-import
-  {
-    addProductToCart,
-    addProductToWishlist,
-    clearSingleProductData,
-    downloadProduct,
-    getSingleProduct,
-    removeProductFromCart,
-    removeProductFromWishlist,
-  } from "@/app/redux/feature/product/api";
-import { } from "@/app/redux/feature/product/image/api";
+import {
+  addProductToCart,
+  addProductToWishlist,
+  clearSingleProductData,
+  downloadProduct,
+  getSingleProduct,
+  removeProductFromCart,
+  removeProductFromWishlist,
+} from "@/app/redux/feature/product/api";
+import {} from "@/app/redux/feature/product/image/api";
 import { useAppDispatch, useAppSelector } from "@/app/redux/hooks";
 import Footer from "@/components/Footer";
 import { useParams } from "next/navigation";
@@ -27,131 +26,110 @@ import { LuIndianRupee } from "react-icons/lu";
 import { FaShareAlt } from "react-icons/fa";
 import CustomShareButton from "@/components/Home/gallary/share";
 import Searchbar from "@/components/searchBar/search";
+import { formatSecToMin } from "@/utils/DateFormat";
 
-const Home = () =>
-{
-  const [ selectedVariantId, setSelectedVariantId ] = useState( "" );
-  const [ cartLoadingMap, setCartLoadingMap ] = useState<{ [ key: string ]: boolean; }>( {} );
-  const [ wishlistLoading, setWishlistLoading ] = useState( false );
-  const [ tryLoading, setTryLoading ] = useState( false );
-  const { videoData } = useAppSelector( ( state ) => state.product );
-  const { user } = useAppSelector( ( state ) => state.user );
+const Home = () => {
+  const [selectedVariantId, setSelectedVariantId] = useState("");
+  const [cartLoadingMap, setCartLoadingMap] = useState<{
+    [key: string]: boolean;
+  }>({});
+  const [wishlistLoading, setWishlistLoading] = useState(false);
+  const [tryLoading, setTryLoading] = useState(false);
+  const { videoData } = useAppSelector((state) => state.product);
+  const { user } = useAppSelector((state) => state.user);
 
-  console.log( selectedVariantId, "selectedVariantId" );
+  console.log(selectedVariantId, "selectedVariantId");
   const params = useParams();
   const id = params.id as string | undefined;
 
-  useEffect( () =>
-  {
-    getVideo( dispatch, { mediaType: [ "video" ] } );
+  useEffect(() => {
+    getVideo(dispatch, { mediaType: ["video"] });
 
-    if ( id ) getSingleProduct( dispatch, id );
-    return () =>
-    {
-      clearSingleProductData( dispatch );
+    if (id) getSingleProduct(dispatch, id);
+    return () => {
+      clearSingleProductData(dispatch);
     };
-  }, [ id ] );
+  }, [id]);
 
   const dispatch = useAppDispatch();
   const {
     singleProduct: product,
     loading,
     cart,
-  } = useAppSelector( ( state ) => state.product );
+  } = useAppSelector((state) => state.product);
 
-  const existId = cart.filter( ( item ) => item.productId._id === product?._id );
+  const existId = cart.filter((item) => item.productId._id === product?._id);
 
-  const handleVariantChange = ( variantId: string ) =>
-  {
-    setSelectedVariantId( variantId );
+  const handleVariantChange = (variantId: string) => {
+    setSelectedVariantId(variantId);
   };
 
-  const handleeWishlist = async () =>
-  {
-    if ( wishlistLoading || !product || loading ) return;
+  const handleeWishlist = async () => {
+    if (wishlistLoading || !product || loading) return;
 
-    setWishlistLoading( true );
-    try
-    {
-      if ( product.isWhitelisted )
-      {
-        await removeProductFromWishlist( dispatch, product._id );
-      } else
-      {
+    setWishlistLoading(true);
+    try {
+      if (product.isWhitelisted) {
+        await removeProductFromWishlist(dispatch, product._id);
+      } else {
         await addProductToWishlist(
           dispatch,
           product._id,
-          selectedVariantId ? selectedVariantId : product.variants[ 0 ]._id
+          selectedVariantId ? selectedVariantId : product.variants[0]._id
         );
       }
-    } catch ( error )
-    {
-      console.error( "Error updating wishlist:", error );
-    } finally
-    {
-      setWishlistLoading( false );
+    } catch (error) {
+      console.error("Error updating wishlist:", error);
+    } finally {
+      setWishlistLoading(false);
     }
   };
 
-  const handleCart = async ( variantId: string ) =>
-  {
-    if ( cartLoadingMap[ variantId ] || !product || loading ) return;
+  const handleCart = async (variantId: string) => {
+    if (cartLoadingMap[variantId] || !product || loading) return;
 
-    setCartLoadingMap( prev => ( { ...prev, [ variantId ]: true } ) );
-    try
-    {
-      if ( product.isInCart && isVariantInCart( variantId ) )
-      {
-        await removeProductFromCart( dispatch, product._id );
-      } else
-      {
-        await addProductToCart( dispatch, product._id, variantId );
+    setCartLoadingMap((prev) => ({ ...prev, [variantId]: true }));
+    try {
+      if (product.isInCart && isVariantInCart(variantId)) {
+        await removeProductFromCart(dispatch, product._id);
+      } else {
+        await addProductToCart(dispatch, product._id, variantId);
       }
-    } catch ( error )
-    {
-      console.error( "Error updating cart:", error );
-    } finally
-    {
-      setCartLoadingMap( prev => ( { ...prev, [ variantId ]: false } ) );
+    } catch (error) {
+      console.error("Error updating cart:", error);
+    } finally {
+      setCartLoadingMap((prev) => ({ ...prev, [variantId]: false }));
     }
   };
 
-  const handleTry = async () =>
-  {
-    if ( tryLoading ) return;
+  const handleTry = async () => {
+    if (tryLoading) return;
 
-    setTryLoading( true );
-    try
-    {
-      if ( product ) await downloadProduct( dispatch, product.publicKey, product.title );
-    } catch ( error )
-    {
-      console.error( "Error trying the product:", error );
-    } finally
-    {
-      setTryLoading( false );
+    setTryLoading(true);
+    try {
+      if (product)
+        await downloadProduct(dispatch, product.publicKey, product.title);
+    } catch (error) {
+      console.error("Error trying the product:", error);
+    } finally {
+      setTryLoading(false);
     }
   };
 
-  const isVariantInCart = ( variantId: string ) =>
-  {
-    return cart.some( ( item ) => item.variantId.includes( variantId ) );
+  const isVariantInCart = (variantId: string) => {
+    return cart.some((item) => item.variantId.includes(variantId));
   };
-  const capitalizeFirstLetter = ( str: string | null | undefined ): string =>
-  {
-    if ( !str )
-    {
+  const capitalizeFirstLetter = (str: string | null | undefined): string => {
+    if (!str) {
       return ""; // Return an empty string if str is null or undefined
     }
-    return str.charAt( 0 ).toUpperCase() + str.slice( 1 );
+    return str.charAt(0).toUpperCase() + str.slice(1);
   };
-  const isVariantPurchased = ( variantId: string ) =>
-  {
-    return user?.purchasedProducts.some( ( item ) =>
-      item.variantId.includes( variantId )
+  const isVariantPurchased = (variantId: string) => {
+    return user?.purchasedProducts.some((item) =>
+      item.variantId.includes(variantId)
     );
   };
-
 
   return (
     <>
@@ -180,38 +158,42 @@ const Home = () =>
       </div> */}
         <div className="border-t border-b border-b-gray-400 border-t-gray-400 m-auto mt-5">
           <div className="flex md:flex-row flex-col  ">
-            { product && (
+            {product && (
               <>
                 <div className="w-full md:w-[72%] pr-5 vidbg pl-5  md:pr-20 pt-10 gap-5 md:pl-20 border-r border-r-gray-400 flex flex-col">
                   <div className="flex flex-row text-gray-700  justify-between items-center">
-                    <div className="font-semibold text-lg">{ product.title }</div>
-                    <div className="flex flex-grow gap-3 ">
+                    <div className="font-semibold text-lg">{product.title}</div>
+                    <div className="flex gap-3 ">
                       <button
-                        onClick={ handleeWishlist }
-                        disabled={ wishlistLoading }
-                        title={ product.isWhitelisted ? "Remove from Saved" : "Save Image" }
+                        onClick={handleeWishlist}
+                        disabled={wishlistLoading}
+                        title={
+                          product.isWhitelisted
+                            ? "Remove from Saved"
+                            : "Save Image"
+                        }
                         className="flex gap-2 border py-1 items-center rounded bg-white px-3"
                       >
-                        { wishlistLoading ? (
+                        {wishlistLoading ? (
                           <span className="h-5 w-5 border-t-2 border-b-2 border-gray-900 rounded-full animate-spin"></span>
                         ) : product.isWhitelisted ? (
                           <IoMdHeart className="h-5 w-5 text-red-500" />
                         ) : (
                           <IoMdHeartEmpty className="h-5 w-5" />
-                        ) }
-                        <span>{ product.isWhitelisted ? "Saved" : "Save" }</span>
+                        )}
+                        <span>{product.isWhitelisted ? "Saved" : "Save"}</span>
                       </button>
                       <CustomShareButton />
                       <button
-                        onClick={ handleTry }
-                        disabled={ tryLoading }
+                        onClick={handleTry}
+                        disabled={tryLoading}
                         className="flex gap-2 border py-1 items-center rounded bg-white px-3"
                       >
-                        { tryLoading ? (
+                        {tryLoading ? (
                           <span className="h-5 w-5 border-t-2 border-b-2 border-gray-900 rounded-full animate-spin"></span>
                         ) : (
                           <AiOutlineDownload className="h-5 w-5" />
-                        ) }
+                        )}
                         <span>Try</span>
                       </button>
                     </div>
@@ -221,16 +203,16 @@ const Home = () =>
                     className="rounded-lg h-[20rem] md:h-[28rem] w-full object-cover"
                   >
                     <source
-                      src={ `https://mi2-public.s3.ap-southeast-1.amazonaws.com/${ product.thumbnailKey }` }
+                      src={` ${process.env.NEXT_PUBLIC_AWS_PREFIX}/${product.publicKey}`}
                     />
                   </video>
 
                   <div className="lg:w-[50rem] pb-7 md:w-[35rem] w-[22rem] mt-2">
                     <h2 className="font-bold">Description</h2>
                     <p className="text-sm text-neutral-700">
-                      Stock Photo ID: { product._id }
+                      Stock Photo ID: {product._id}
                     </p>
-                    <p className="text-sm">{ product.description }</p>
+                    <p className="text-sm">{product.description}</p>
                   </div>
                 </div>
                 <div className="border-t vidbg border-t-gray-400 md:border-t-0 w-full md:w-[28%]  ">
@@ -243,49 +225,62 @@ const Home = () =>
                       rights,comprehensive protection, and simple pricing with
                       volume discounts available.
                     </div>
-                    { product.variants.map( ( license, index ) => (
+                    {product.variants.map((license, index) => (
                       <div
-                        key={ index }
-                        className={ `border w-[90%] cursor-pointer hover:bg-[#F4F4F4] p-2 flex flex-col ${ index === 0 ? "rounded-t-md" : ""
-                          } ${ index === product.variants.length - 1 ? "rounded-b-md" : ""
-                          }` }
-                        onClick={ () => handleCart( license._id ) }
+                        key={index}
+                        className={`border w-[90%] cursor-pointer hover:bg-[#F4F4F4] p-2 flex flex-col ${
+                          index === 0 ? "rounded-t-md" : ""
+                        } ${
+                          index === product.variants.length - 1
+                            ? "rounded-b-md"
+                            : ""
+                        }`}
+                        onClick={() => handleCart(license._id)}
                       >
                         <div className="flex flex-row justify-between ">
                           <div className="flex flex-row items-center gap-3">
-                            { index === 0 ? (
-                              <img src="/asset/full-hd.svg" className="w-20" alt="Full HD" />
+                            {index === 0 ? (
+                              <img
+                                src="/asset/full-hd.svg"
+                                className="w-20"
+                                alt="Full HD"
+                              />
                             ) : (
-                              <img src="/asset/hd.svg" className="w-10 h-5" alt="HD" />
-                            ) }
+                              <img
+                                src="/asset/hd.svg"
+                                className="w-10 h-5"
+                                alt="HD"
+                              />
+                            )}
                           </div>
                           <div>
-                            { isVariantPurchased( license._id ) ? (
+                            {isVariantPurchased(license._id) ? (
                               <div
                                 title="Purchased Product"
                                 className="p-2 items-center flex flex-row gap-1 bg-red-500 text-white rounded-full"
                               >
-                                <LuIndianRupee /> { license.price }{ " " }
+                                <LuIndianRupee /> {license.price}{" "}
                                 <BiSolidPurchaseTagAlt />
                               </div>
                             ) : (
                               <div
                                 title={
-                                  isVariantInCart( license._id )
+                                  isVariantInCart(license._id)
                                     ? "Remove from cart"
                                     : "Add to cart"
                                 }
-                                className={ `p-2 items-center flex flex-row gap-1 text-black rounded-full` }
+                                className={`p-2 items-center flex flex-row gap-1 text-black rounded-full`}
                               >
                                 <LuIndianRupee />
-                                { license.price }
+                                {license.price}
                                 <span
-                                  className={ `p-2 items-center ${ isVariantInCart( license._id )
+                                  className={`p-2 items-center ${
+                                    isVariantInCart(license._id)
                                       ? "bg-webred text-white"
                                       : "bg-white text-black"
-                                    } rounded-full` }
+                                  } rounded-full`}
                                 >
-                                  { cartLoadingMap[ license._id ] ? (
+                                  {cartLoadingMap[license._id] ? (
                                     <span className="h-5 w-5 flex items-center justify-center">
                                       <svg
                                         className="animate-spin h-5 w-5 text-current"
@@ -308,108 +303,143 @@ const Home = () =>
                                         ></path>
                                       </svg>
                                     </span>
-                                  ) : isVariantInCart( license._id ) ? (
+                                  ) : isVariantInCart(license._id) ? (
                                     <BsCartCheckFill className="h-5 w-5" />
                                   ) : (
                                     <BsCart2 className="h-5 w-5" />
-                                  ) }
+                                  )}
                                 </span>
                               </div>
-                            ) }
+                            )}
                           </div>
                         </div>
-                        <div className="items-center flex flex-row">
-                          { license.label }
+                        <div className="items-center flex text-sm flex-row">
+                          {license?.metadata?.resolution} px
                         </div>
                       </div>
-                    ) ) }
+                    ))}
                   </div>
                   <div className="flex flex-col vidbg  border-t border-t-gray-400  justify-end items-start">
-                    { product && (
+                    {product && (
                       <div className=" p-8  rounded-md w-full">
                         <h2 className="text-lg font-semibold ">Details</h2>
                         <div className="space-y-1 text-base">
                           <div className="flex lg:justify-start w-full md:justify-between ">
                             <span className="font-medium w-[35%]">Title:</span>
-                            <span className="text-violet-600 text-sm w-[65%]    hover:underline">
-                              { capitalizeFirstLetter( product?.title || "" ) }
+                            <span className="text-violet-600 capitalize text-sm w-[65%]    hover:underline">
+                              {product?.title}
                             </span>
                           </div>
                           <div className="flex  lg:justify-start w-full md:justify-between">
                             <span className="font-medium w-[35%]">
-                              Upload date:
+                              Resolutions:
                             </span>
-                            <span className="w-[65%] ">
-                              { new Date().toLocaleDateString() }
+                            <span className="flex text-neutral-600 text-sm  gap-2">
+                              {product.variants.map((variant, index) => (
+                                <span className="w-[65%] whitespace-nowrap ">
+                                  {variant.metadata?.resolution} px{" "}
+                                  {index !== product.variants.length - 1 && ","}
+                                </span>
+                              ))}
                             </span>
                           </div>
                           <div className="flex  lg:justify-start w-full md:justify-between">
                             <span className="font-medium w-[35%]">
-                              Location:
+                              Bit Rate:
                             </span>
-                            <span className="w-[65%] ">India</span>
+                            <span className="flex text-neutral-600 text-sm  gap-2">
+                              {product.variants.map((variant, index) => (
+                                <span className="w-[65%] whitespace-nowrap ">
+                                  {variant.metadata?.bitrate} Mbps{" "}
+                                  {index !== product.variants.length - 1 && ","}
+                                </span>
+                              ))}
+                            </span>
                           </div>
                           <div className="flex  lg:justify-start w-full md:justify-between">
                             <span className="font-medium w-[35%]">
-                              Category:
+                              Frame Rate:
                             </span>
-                            <p className="text-violet-600 w-[65%] ">
-                              { product?.category
-                                .map( ( cat: string ) =>
-                                  capitalizeFirstLetter( cat )
-                                )
-                                .join( ", " ) + "." }
-                            </p>
+                            <span className="flex text-neutral-600 text-sm  gap-2">
+                              {product.variants.map((variant, index) => (
+                                <span className="w-[65%] whitespace-nowrap">
+                                  {variant.metadata?.frameRate} Hz{" "}
+                                  {index !== product.variants.length - 1 && ","}
+                                </span>
+                              ))}
+                            </span>
+                          </div>
+                          <div className="flex  w-full lg:justify-start md:justify-between">
+                            <span className="font-medium w-[35%]">Format:</span>
+                            <span className="text-sm capitalize text-neutral-600 w-[65%]">
+                              {product?.variants[0].metadata?.format}
+                            </span>
                           </div>
                           <div className="flex  w-full lg:justify-start md:justify-between">
                             <span className="font-medium w-[35%]">
-                              Format:{ " " }
+                              Video Length:
                             </span>
-                            <span className="text-sm text-neutral-600 w-[65%]">
-                              6725 × 4286 px
+                            <span className="text-sm capitalize text-neutral-600 w-[65%]">
+                              {formatSecToMin(
+                                Math.floor(product?.length || 0) || 0
+                              )} min
+
                             </span>
+                          </div>
+                          <div className="flex lg:justify-start w-full md:justify-between ">
+                            <span className="font-medium w-[35%]">
+                              Categories:
+                            </span>
+                            <div className="flex flex-wrap gap-2">
+                              {product?.category.map((category, index) => (
+                                <span className="text-violet-600 whitespace-nowrap capitalize text-sm w-[65%]    hover:underline">
+                                  {category}{" "}
+                                  {index !== product.variants.length - 1 && ","}
+                                </span>
+                              ))}
+                            </div>
                           </div>
                         </div>
                       </div>
-                    ) }
+                    )}
                   </div>
                 </div>
               </>
-            ) }
+            )}
           </div>
         </div>
 
         <div className="py-10 lg:mx-24 md:mx-4 mx-4">
           <h2 className="text-xl font-semibold">Similar Videos</h2>
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 mt-5">
-            { videoData.map( ( data, index: number ) => (
-              <Trending key={ index } data={ data } />
-            ) ) }
+            {videoData.map((data, index: number) => (
+              <Trending key={index} data={data} />
+            ))}
           </div>
-          { product && (
+          {product && (
             <div>
               <div className="mt-8">
                 <h2 className="font-bold text-lg">Related keywords</h2>
                 <div className="flex gap-3 mt-2">
-                  { product.tags.map( ( keyword, index ) => (
-                    <span key={ index } className="">
+                  {product.tags.map((keyword, index) => (
+                    <span key={index} className="">
                       <button className="border rounded-md py-1 px-4 flex gap-1 items-center">
                         <IoSearchOutline className="h-5 w-5" />
-                        { keyword }
+                        {keyword}
                       </button>
                     </span>
-                  ) ) }
+                  ))}
                 </div>
               </div>
               <div className="mt-8 mb-3">
                 <h1 className="font-semibold text-lg">Category</h1>
                 <button className="border rounded-md py-1 px-4 mt-2">
-                  { product.category }
+                  {product.category}
                 </button>
-                {/* <p>Upload date: {new Date().toLocaleDateString()}</p> */ }
+                {/* <p>Upload date: {new Date().toLocaleDateString()}</p> */}
               </div>
             </div>
-          ) }
+          )}
         </div>
 
         <Footer />

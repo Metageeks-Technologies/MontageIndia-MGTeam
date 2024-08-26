@@ -22,40 +22,35 @@ const Page = () => {
   const categoryParam = category ? ["editor choice"] : "";
   const [loading, setloading] = useState(false);
 
-  const { audioData, page, totalNumOfPage } = useAppSelector(
+  const { audioData, page, totalNumOfPage, totalAudioData } = useAppSelector(
     (state) => state.product
   );
 
-
-  const fetchData =async (page: number) => {
+  const fetchData = async (page: number) => {
     setloading(true);
     // setLoading(true);
-    const response=await   getAudio(dispatch, {
+    const response = await getAudio(dispatch, {
       page: page,
-      productsPerPage: 4,
+      productsPerPage: 8,
       mediaType: ["audio"],
       searchTerm,
       category: categoryParam,
-   
     });
     setloading(false);
-
   };
 
   useEffect(() => {
-    fetchData(page,);
+    fetchData(page);
     return () => {
       clearKeywords(dispatch);
     };
-  }, [page,, searchParams]);
+  }, [page, , searchParams]);
 
   useEffect(() => {
-
-
     return () => {
       clearKeywords(dispatch);
     };
-  }, [page,searchParams]);
+  }, [page, searchParams]);
 
   const handlePageChange = (page: number) => {
     // console.log(page);
@@ -79,7 +74,7 @@ const Page = () => {
         {/* <Waveform /> */}
 
         <div className="m-auto mt-4 bg w-[90%]">
-          <div className="flex flex-wrap gap-2 ">
+          {/* <div className="flex flex-wrap gap-2 ">
             <button className="flex items-center hover:bg-[#c7c7c9] text-sm px-3 py-1 border border-gray-700 rounded text-gray-700 bg-transparent backdrop-blur-sm bg-opacity-20 hover:bg-opacity-30 transition duration-300">
               <IoIosSearch className="h-5 w-5 mr-1" />
               Nature
@@ -108,22 +103,30 @@ const Page = () => {
               <IoIosSearch className="h-5 w-5 mr-1" />
               India
             </button>
-          </div>
+          </div> */}
 
-          <h4 className="mt-5 text-lg text-neutral-700">10 Result in audio</h4>
+          {totalAudioData > 0 && (
+            <h4 className="mt-5 text-lg text-neutral-700">
+              {totalAudioData} Audio Files
+            </h4>
+          )}
 
           <div className=" overflow-y-auto mt-2">
-          {loading ? (
-            <div className="h-screen justify-center flex">
-              <Spinner label="Loading..." color="danger" />
-            </div>):(<>
-          {audioData.length > 0 ? (
-                  audioData.map((product, index) =><Waveform key={index} product={product} />
-                )
+            {loading ? (
+              <div className="h-screen justify-center flex">
+                <Spinner label="Loading..." color="danger" />
+              </div>
+            ) : (
+              <>
+                {audioData.length > 0 ? (
+                  audioData.map((product, index) => (
+                    <Waveform key={index} product={product} />
+                  ))
                 ) : (
                   <p>No videos found.</p>
                 )}
-             </>)}
+              </>
+            )}
           </div>
         </div>
 

@@ -48,7 +48,7 @@ const AdminLoginPage = () =>
 
       console.log( "Login successful:", response.data.token ); 
 
-      notifySuccess( "Login Successful" );
+      
       
       // Swal.fire( {
       //   icon: 'success',
@@ -56,6 +56,7 @@ const AdminLoginPage = () =>
       //   text: 'You have been logged in successfully.', 
       // } );
       router.push( "/admin/dashboard" );
+      notifySuccess( "Login Successful" );
       setUsernameOrEmail( "" );
       setPassword( "" );
     } catch ( error )
