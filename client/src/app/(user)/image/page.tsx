@@ -18,17 +18,19 @@ const Page = () => {
   const dispatch = useAppDispatch();
   const searchParams = useSearchParams();
   const category = searchParams.get("category");
+  
   const [totalPages, setTotalPages] = useState(1);
   const [currentPage, setCurrentPage] = useState(1);
   const searchTerm = searchParams.get("searchTerm") || "";
   const [loading, setloading] = useState(false);
-
-  const {
+  console.log("fdf",category)
+  const { 
     imageData: product,
     imagePage,
     totalImageData,
     totalImageNumOfPage,
   } = useAppSelector((state) => state.product);
+  const categoryArray = category ? category.split(',').map(cat => cat.trim()) : [];
 
   const handlePageChange = (page: number) => {
     // console.log(page);
@@ -41,7 +43,6 @@ const Page = () => {
     handlePageChange(imagePage === 1 ? totalImageNumOfPage : imagePage - 1);
   };
 
-  const categoryParam = category ? ["editor choice"] : "";
 
   const fetchData = (page: number) => {
     getImage(dispatch, {
@@ -49,7 +50,7 @@ const Page = () => {
       productsPerPage: 20,
       mediaType: ["image"],
       searchTerm,
-      category: categoryParam,
+      category:categoryArray,
     });
   };
 
@@ -67,41 +68,12 @@ const Page = () => {
         {/* <hr className="mt-5" /> */}
 
         <div className="m-auto mt-4 bg w-[90%]">
-          <div className="flex flex-wrap gap-2 ">
-            <button className="flex items-center hover:bg-[#c7c7c9] text-sm px-3 py-1 border border-gray-700 rounded text-gray-700 bg-transparent backdrop-blur-sm bg-opacity-20 hover:bg-opacity-30 transition duration-300">
-              <IoIosSearch className="h-5 w-5 mr-1" />
-              Nature
-            </button>
-            <button className="flex items-center text-sm hover:bg-[#c7c7c9] px-3 py-1 border border-gray-700 rounded text-gray-700 bg-transparent backdrop-blur-sm bg-opacity-20 hover:bg-opacity-30 transition duration-300">
-              <IoIosSearch className="h-5 w-5 mr-1" />
-              India Gate
-            </button>
-            <button className="flex items-center text-sm hover:bg-[#c7c7c9] px-3 py-1 border border-gray-700 rounded text-gray-700 bg-transparent backdrop-blur-sm bg-opacity-20 hover:bg-opacity-30 transition duration-300">
-              <IoIosSearch className="h-5 w-5 mr-1" />
-              Travel
-            </button>
-            <button className="flex items-center text-sm hover:bg-[#c7c7c9] px-3 py-1 border border-gray-700 rounded text-gray-700 bg-transparent backdrop-blur-sm bg-opacity-20 hover:bg-opacity-30 transition duration-300">
-              <IoIosSearch className="h-5 w-5 mr-1" />
-              Architecture
-            </button>
-            <button className="flex items-center text-sm hover:bg-[#c7c7c9] px-3 py-1 border border-gray-700 rounded text-gray-700 bg-transparent backdrop-blur-sm bg-opacity-20 hover:bg-opacity-30 transition duration-300">
-              <IoIosSearch className="h-5 w-5 mr-1" />
-              India Gate Delhi Night
-            </button>
-            <button className="flex items-center text-sm px-3 hover:bg-[#c7c7c9] py-1 border border-gray-700 rounded text-gray-700 bg-transparent backdrop-blur-sm bg-opacity-20 hover:bg-opacity-30 transition duration-300">
-              <IoIosSearch className="h-5 w-5 mr-1" />
-              Nature
-            </button>
-            <button className="flex items-center text-sm px-3 py-1 hover:bg-[#c7c7c9] border border-gray-700 rounded text-gray-700 bg-transparent backdrop-blur-sm bg-opacity-20 hover:bg-opacity-30 transition duration-300">
-              <IoIosSearch className="h-5 w-5 mr-1" />
-              India
-            </button>
-          </div>
+       
 
           <h4 className="mt-6 text-lg text-neutral-700">
             20 Product stock Photos and High-res Pictures
           </h4>
-
+         
           {loading ? (
             <div className="h-screen justify-center flex">
               <Spinner label="Loading..." color="danger" />

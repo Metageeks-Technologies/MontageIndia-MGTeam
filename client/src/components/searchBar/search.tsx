@@ -19,11 +19,11 @@ const Searchbar = () => {
 
   useEffect(() => {
     if (pathname.includes('/video')) {
-      setSelectedOption(category === 'editorchoice' ? 'Editorial Video' : 'Video');
+      setSelectedOption(category === 'editor choice' ? 'Editorial Video' : 'Video');
     } else if (pathname.includes('/audio')) {
-      setSelectedOption(category === 'editorchoice' ? 'Editorial Audio' : 'Audio');
+      setSelectedOption(category === 'editor choice' ? 'Editorial Audio' : 'Audio');
     } else if (pathname.includes('/image')) {
-      setSelectedOption(category === 'editorchoice' ? 'Editorial Image' : 'All Image');
+      setSelectedOption(category === 'editor choice' ? 'Editorial Image' : 'All Image');
     }
   }, [pathname, category]);
 
@@ -47,7 +47,7 @@ const Searchbar = () => {
     }
 
     if (selectedOption.includes('Editorial')) {
-      query = { ...query, category: 'editorchoice' };
+      query = { ...query, category: 'editor choice' };
     }
     router.push(`${pathname}?${new URLSearchParams(query).toString()}`);
     fetchData(1);
@@ -71,41 +71,27 @@ const Searchbar = () => {
     });
   };
   const handleCategoryClick = (categories: any) => {
-    // Get the current category from searchParams
     const category = searchParams.get('category');
 
-    // Convert categories to an array if it's a string
     const categoriesArray = typeof categories === 'string'
         ? categories.split(',').map(cat => cat.trim())
         : Array.isArray(categories) ? categories : [];
     console.log("sas",categoriesArray)
-    // Check if 'editor choice' is included in the current searchParams category
     const includesEditorChoice = category && category.includes('editor choice');
     console.log("isinclude",includesEditorChoice)
-    // Determine the updated category list
     let updatedCategory = includesEditorChoice
-        ? ['editor choice', ...categoriesArray] // Keep 'editor choice' and add the new category
-        : categoriesArray; // Just use the new category
+        ? ['editor choice', ...categoriesArray]
+        : categoriesArray;
 
-    // Ensure that 'editor choice' is only included once and at the start
     updatedCategory = Array.from(new Set(updatedCategory));
     console.log("updatecategory",updatedCategory)
-    // Update the URL search parameters with the new category
     const updatedSearchParams = new URLSearchParams(searchParams.toString());
     updatedSearchParams.set('category', updatedCategory.join(','));
-    // Construct the new URL with updated search params
     const newUrl = `${window.location.pathname}?${updatedSearchParams.toString()}`;
 
-    // Update the browser's URL without reloading the page
     window.history.pushState({}, '', newUrl);
 
-    // Dispatch the action to fetch videos with the updated category
-    getVideo(dispatch, {
-        page: 1,
-        mediaType: [mediaType],
-        category: updatedCategory,
-        productsPerPage: '2',
-    });
+ 
 };
 
 
@@ -175,7 +161,7 @@ const Searchbar = () => {
      <div className="border-t mb-0 bg-[#eeeeee] border-gray-300 px-[5%] py-5 flex flex-wrap justify-start space-x-2  md:space-y-0 sm:space-x-4">
      {[
        "sports",
-       "Thank You",
+       "island",
        "Background",
        "Congratulations",
        "nature",

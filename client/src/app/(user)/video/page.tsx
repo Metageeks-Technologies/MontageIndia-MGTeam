@@ -18,7 +18,7 @@ const Page = () => {
   const searchTerm = searchParams.get("searchTerm") || "";
 
   const category = searchParams.get("category");
-  console.log("category",category)
+  const categoryArray = category ? category.split(',').map(cat => cat.trim()) : [];
 
   const [currentPage, setCurrentPage] = useState(1);
   const dispatch = useAppDispatch();
@@ -47,7 +47,7 @@ const Page = () => {
       page,
       mediaType: ["video"],
       searchTerm,
-      category: category,
+      category: categoryArray,
       productsPerPage: "2",
     });
   };

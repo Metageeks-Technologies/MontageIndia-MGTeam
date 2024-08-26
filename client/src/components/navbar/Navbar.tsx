@@ -93,7 +93,7 @@ const Sidebar = () => {
                 <Link
                      href={{
                       pathname: '/image',
-                      query: { category: 'editorchoice' ,mediaType:'image'},
+                      query: { category: 'editor choice' ,mediaType:'image'},
                     }}
                   className="text-gray-600 hover:text-gray-800 "
                 >
@@ -102,7 +102,7 @@ const Sidebar = () => {
                 <Link
                      href={{
                       pathname: '/video',
-                      query: { category: 'editorchoice' ,mediaType:'video'},
+                      query: { category: 'editor choice' ,mediaType:'video'},
                     }}
                   className="text-gray-600 hover:text-gray-800 "
                 >
@@ -111,7 +111,7 @@ const Sidebar = () => {
                 <Link
                      href={{
                       pathname: '/audio',
-                      query: { category: 'editorchoice',mediaType:'audio' },
+                      query: { category: 'editor choice',mediaType:'audio' },
                     }}
                   className="text-gray-600 hover:text-gray-800"
                 >
