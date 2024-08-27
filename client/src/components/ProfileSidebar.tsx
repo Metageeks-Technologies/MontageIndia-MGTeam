@@ -1,6 +1,6 @@
 "use client";
-import { useRouter } from "next/navigation";
-import React from "react";
+import { useRouter,usePathname } from "next/navigation";
+import React,{useEffect} from "react";
 import {
   AiOutlineUser,
   AiOutlineShoppingCart,
@@ -18,9 +18,28 @@ import { LuPanelRightOpen } from "react-icons/lu";
 import { LuPanelRightClose } from "react-icons/lu";
 import { BsBookmarkHeart } from "react-icons/bs";
 const ProfileSidebar = () => {
-  const router = useRouter();
+  const router= useRouter();
   const [active, setActive] = useState<string>("");
   const [isOpen, setIsOpen] = useState(false);
+
+  const pathname = usePathname();
+  console.log("pathname:::", pathname);
+
+  useEffect(() => {
+    if (pathname === "/user-profile") {
+      setActive("Profile");
+    } else if (pathname === "/user-profile/purchased-product") {
+      setActive("purchasedProduct");
+    } else if (pathname === "/user-profile/purchase-history") {
+      setActive("purchasedHistory");
+    } else if (pathname === "/user-profile/subscription") {
+      setActive("subscription");
+    } else if (pathname === "/user-profile/wishlist") {
+      setActive("wishlist");
+    } else if (pathname === "/user-profile/settings") {
+      setActive("settings");
+    }
+  }, [pathname]);
 
   const toggleSidebar = () => {
     setIsOpen(!isOpen);
@@ -124,11 +143,11 @@ const ProfileSidebar = () => {
             </div>
             <div
               onClick={() => {
-                setActive("favorites");
-                router.push(`/user-profile/favorites`);
+                setActive("wishlist");
+                router.push(`/user-profile/wishlist`);
               }}
               className={`flex mb-1 items-center px-4 py-2  hover:rounded-lg cursor-pointer ${
-                active === "favorites"
+                active === "wishlist"
                   ? "bg-webred text-white  rounded-lg"
                   : "text-black hover:bg-gray-300"
               }`}
@@ -136,7 +155,7 @@ const ProfileSidebar = () => {
               <div className="w-full flex justify-between items-center">
                 <div className="flex gap-2 justify-start items-center">
                   <BsBookmarkHeart className="h-6 w-6" />
-                  <span>Favorites</span>
+                  <span>Wishlist</span>
                 </div>
                 <IoIosArrowForward />
               </div>

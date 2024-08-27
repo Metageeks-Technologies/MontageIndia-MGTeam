@@ -101,8 +101,8 @@ export const getCustomerById = catchAsyncError(async (req, res, next) => {
 export const getCurrentCustomer = catchAsyncError(
   async (req: any, res, next) => {
     const { id } = req.user;
-    const user = await Customer.findOne({ _id: id });
-    // console.log(user);
+    const user = await Customer.findOne({ _id: id }).populate("subscription.PlanId");
+    console.log(user);
     res.status(200).json({
       success: true,
       user,

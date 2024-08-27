@@ -79,7 +79,7 @@ const customerSchema = new mongoose.Schema<TCustomer>(
     ],
     subscription: {
       subscriptionId: { type: String, default: "" },
-      PlanId: { type: String, default: "" },
+      PlanId: { type: mongoose.Types.ObjectId,ref:'SubscriptionPlan' },
       credits: { type: Number, default: 0 },
       planValidity: { type: Date, default: Date.now() },
       status: { type: String, default: "inactive" },

@@ -162,15 +162,17 @@ const processedEventIds = new Set();
 
 export const checkDuplicateEvent = catchAsyncError(
   async (req: any, res: any, next: any) => {
-    const eventId = req.headers["x-razorpay-event-id"];
+    
+    console.log("checkDuplicateEvent",processedEventIds);
 
+    const eventId = req.headers["x-razorpay-event-id"];
+    console.log("eventId",eventId);
     if (processedEventIds.has(eventId)) {
-      // Duplicate event, skip processing
       console.log(`Duplicate event with ID ${eventId}. Skipping processing.`);
       res.status(200).send();
     } else {
-      // Not a duplicate, continue with the next middleware or route handler
       processedEventIds.add(eventId);
+      setTimeout(() => processedEventIds.delete(eventId), 3600000);
       next();
     }
   }
