@@ -1,14 +1,15 @@
+import mongoose from "mongoose";
 export interface ProductItem {
   productId: string;
   variantId: string;
 }
 
 interface Subscription {
-  PlanId: string;
+  subscriptionId: string;
+  PlanId: mongoose.Types.ObjectId;
   credits: number;
   planValidity: string;
   status: string;
-  subscriptionId: string;
 }
 
 export type TCustomer = {
@@ -31,3 +32,21 @@ export type TCustomer = {
   createJWT(): string;
   comparePassword(givenPassword: string): Promise<boolean>;
 };
+
+
+export type UserSubscription={
+  name:string,
+  username:string,
+  email:string,
+  image:string,
+  subscription:{
+    PlanId:{
+      item:{
+        name:string
+      }
+    },
+    credits:number,
+    planValidity:string,
+    status:string
+  }
+}

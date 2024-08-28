@@ -5,7 +5,7 @@ import {
   getTransactions,
   paymentVerify,
 } from "@src/controller/payment/payment";
-import bodyParser from "body-parser";
+import { checkDuplicateEvent } from "@src/middleware/auth";
 
 const paymentRouter = express.Router();
 
@@ -13,8 +13,6 @@ const paymentRouter = express.Router();
 paymentRouter.get("/transactions", isAuthenticatedCustomer, getTransactions);
 paymentRouter.post("/verify", isAuthenticatedCustomer, paymentVerify);
 // webHook
-paymentRouter
-  .route("/webhook")
-  .post(bodyParser.raw({ type: "application/json" }), paymentWebHook);
+paymentRouter.route("/webhook").post(checkDuplicateEvent, paymentWebHook);
 
 export default paymentRouter;

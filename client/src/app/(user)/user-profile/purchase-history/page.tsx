@@ -162,7 +162,7 @@ const ProductList: React.FC = () => {
 
       {totalPages > 0 && (
         <div className="z-index-1 flex flex-wrap md:flex-nowrap justify-center md:justify-between items-center">
-        <div className="text-[#999999] md:w-1/3 ">Showing {((currentPage-1)*dataPerPage)+1} to {((currentPage-1)*dataPerPage+dataPerPage)>totalOrder?totalOrder:((currentPage-1)*dataPerPage+dataPerPage)}  of {totalOrder} Entries </div>
+        <div className="text-[#999999] md:w-1/3 ">Showing {(((currentPage-1)*dataPerPage)+1)} to {((currentPage-1)*dataPerPage+dataPerPage)>totalOrder?totalOrder:((currentPage-1)*dataPerPage+dataPerPage)}  of {totalOrder} Entries </div>
         <div className="md:w-1/3 flex justify-center items-center gap-4 my-4">
           <Button
             size="sm"

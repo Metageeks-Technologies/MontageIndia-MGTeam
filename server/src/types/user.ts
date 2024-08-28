@@ -28,7 +28,7 @@ export type TCustomer = Document & {
   wishlist: ProductItem[]; // References to products in the wishlist
   subscription: {
     subscriptionId: string;
-    PlanId: string;
+    PlanId: mongoose.Types.ObjectId;
     credits: number;
     planValidity: Date;
   }; // References to subscription
