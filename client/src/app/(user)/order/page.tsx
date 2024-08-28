@@ -1,130 +1,173 @@
 "use client";
-import { removeItemFromCart } from "@/app/redux/feature/product/api";
-import { useAppDispatch, useAppSelector } from "@/app/redux/hooks";
+import {removeItemFromCart} from "@/app/redux/feature/product/api";
+import {useAppDispatch, useAppSelector} from "@/app/redux/hooks";
 import PayButton from "@/components/payment/payButton";
-import { OrderOption } from "@/types/order";
+import {OrderOption} from "@/types/order";
 import instance from "@/utils/axios";
-import { useEffect, useState } from "react";
-import { MdCurrencyRupee } from "react-icons/md";
-import { RxCross2 } from "react-icons/rx";
-import { setCart } from "@/app/redux/feature/product/slice";
-import { removeCartProduct } from "@/app/redux/feature/product/slice";
-import { Spinner } from "@nextui-org/react";
-import { useRouter } from "next/navigation";
+import {useEffect, useState} from "react";
+import {MdCurrencyRupee} from "react-icons/md";
+import {RxCross2} from "react-icons/rx";
+import {setCart} from "@/app/redux/feature/product/slice";
+import {removeCartProduct} from "@/app/redux/feature/product/slice";
+import {Spinner} from "@nextui-org/react";
+import {useRouter} from "next/navigation";
 import Swal from "sweetalert2";
-import { notifySuccess } from "@/utils/toast";
+import {notifyInfo, notifySuccess} from "@/utils/toast";
 
 const PlaceOrder = () => {
   const dispatch = useAppDispatch();
-  const [amount, setAmount] = useState(0);
-  const [totalCredits, setTotalCredits] = useState(0);
-  const [loader, setLoader] = useState(true);
+  const [amount, setAmount] = useState( 0 );
+  const [totalCredits, setTotalCredits] = useState( 0 );
+  const [loader, setLoader] = useState( true );
   const router = useRouter();
-  const cart = useAppSelector((state) => state.product.cart);
+  const cart = useAppSelector( ( state ) => state.product.cart );
   const [selectedVariants, setSelectedVariants] = useState<{
-    [key: string]: { variantId: string; price: number; credit: number };
-  }>({});
-  const [selectedSizes, setSelectedSizes] = useState<{ [key: string]: string }>(
+    [key: string]: {variantId: string; price: number; credit: number;};
+  }>( {} );
+  const [selectedSizes, setSelectedSizes] = useState<{[key: string]: string;}>(
     {}
   );
-  console.log("Cart data:-", cart);
+  console.log( "Cart data:-", cart );
 
-  useEffect(() => {
-    if (cart) {
-      setLoader(false);
+  useEffect( () => {
+    if ( cart ) {
+      setLoader( false );
     }
-  }, [cart]);
+  }, [cart] );
 
-  const handleBuyWithCredits = async (productId: string, variantId: string) => {
-    try {
-      const response = await instance.post(`/product/buyWithCredits`, {
-        productBody: {
-          productId,
-          variantId,
-        },
-      });
-      console.log(response);
-      if (response.data.success) {
-        notifySuccess("Product Purchased Successfully");
-        dispatch(removeCartProduct(productId));
+  const handleBuyWithCredits = async ( productId: string, variantId: string ) => {
+    // swall confirmation
+    const isConfirm = await Swal.fire( {
+      title: "Confirm Purchase",
+      text: "Are you sure you want to purchase only this products in cart?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, Purchase All",
+    } );
+    if ( isConfirm.isConfirmed ) {
+
+      try {
+        const response = await instance.post( `/product/buyWithCredits`, {
+          productBody: {
+            productId,
+            variantId,
+          },
+        } );
+        console.log( response );
+        if ( response.data.success ) {
+          notifySuccess( "Product Purchased Successfully" );
+          dispatch( removeCartProduct( productId ) );
+        }
+      } catch ( error: any ) {
+        console.error( error );
+        Swal.fire( {
+          icon: "error",
+          title: "Purchase Failed.Try Other Method of Purchase",
+          text:
+            error.response.data.message ||
+            "Something went wrong. Please try again later",
+        } );
       }
-    } catch (error: any) {
-      console.error(error);
-      Swal.fire({
-        icon: "error",
-        title: "Purchase Failed.Try Other Method of Purchase",
-        text:
-          error.response.data.message ||
-          "Something went wrong. Please try again later",
-      });
+    } else {
+      console.log( "Purchase cancelled" );
+      notifyInfo( "Purchase cancelled" );
     }
   };
 
   const handleAllBuyWithCredits = async () => {
-    try {
-      const response = await instance.post(`/product/cart/buyWithCredits`);
-      if (response.data.success) {
-        dispatch(setCart([]));
-        notifySuccess("Product Purchased Successfully");
-        router.push("/user-profile/purchased-product");
+   
+    const isConfirm = await Swal.fire( {
+      title: "Confirm Purchase",
+      text: "Are you sure you want to purchase all products in cart?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, Purchase All",
+    } );
+
+    if ( isConfirm.isConfirmed ) {
+      try {
+        const response = await instance.post( `/product/cart/buyWithCredits` );
+        if ( response.data.success ) {
+          dispatch( setCart( [] ) );
+          notifySuccess( "Product Purchased Successfully" );
+          router.push( "/user-profile/purchased-product" );
+        }
+      } catch ( error: any ) {
+        console.error( error );
+        Swal.fire( {
+          icon: "error",
+          title: "Purchase Failed.Try Other Method of Purchase",
+          text:
+            error.response.data.message ||
+            "Something went wrong. Please try again later",
+        } );
       }
-    } catch (error: any) {
-      console.error(error);
-      Swal.fire({
-        icon: "error",
-        title: "Purchase Failed.Try Other Method of Purchase",
-        text:
-          error.response.data.message ||
-          "Something went wrong. Please try again later",
-      });
+    } else {
+      console.log( "Purchase cancelled" );
+      notifyInfo( "Purchase cancelled" );
     }
   };
 
-  const handleRemoveCart = (id: string) => {
-    removeItemFromCart(dispatch, id);
+  const handleRemoveCart = async ( id: string ) => {
+    // swall confirmation
+    const isConfirm = await Swal.fire( {
+      title: "Confirm Remove",
+      text: "Are you sure you want to remove this product from cart?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, Remove",
+    } );
+    if ( isConfirm.isConfirmed ) removeItemFromCart( dispatch, id );
+    
   };
 
   const calculateTotalPrice = () => {
-    return cart.reduce((total: number, item) => {
+    return cart.reduce( ( total: number, item ) => {
       const selectedVariant = selectedVariants[item.productId._id];
-      if (selectedVariant) {
+      if ( selectedVariant ) {
         return total + selectedVariant.price;
       } else {
-        const matchingVariant = item.productId?.variants?.find((variant: any) =>
-          item.variantId.includes(variant._id)
+        const matchingVariant = item.productId?.variants?.find( ( variant: any ) =>
+          item.variantId.includes( variant._id )
         );
-        return total + (matchingVariant ? matchingVariant.price : 0);
+        return total + ( matchingVariant ? matchingVariant.price : 0 );
       }
-    }, 0);
+    }, 0 );
   };
 
   const calculateTotalCredit = () => {
-    return cart.reduce((total: number, item) => {
+    return cart.reduce( ( total: number, item ) => {
       const selectedVariant = selectedVariants[item.productId._id];
-      if (selectedVariant) {
+      if ( selectedVariant ) {
         return total + selectedVariant?.credit;
       } else {
-        const matchingVariant = item.productId?.variants?.find((variant: any) =>
-          item.variantId.includes(variant._id)
+        const matchingVariant = item.productId?.variants?.find( ( variant: any ) =>
+          item.variantId.includes( variant._id )
         );
-        return total + (matchingVariant ? matchingVariant.credit : 0);
+        return total + ( matchingVariant ? matchingVariant.credit : 0 );
       }
-    }, 0);
+    }, 0 );
   };
 
-  useEffect(() => {
-    setAmount(calculateTotalPrice());
-    setTotalCredits(calculateTotalCredit());
-  }, [cart, selectedVariants]);
+  useEffect( () => {
+    setAmount( calculateTotalPrice() );
+    setTotalCredits( calculateTotalCredit() );
+  }, [cart, selectedVariants] );
 
   const createOrderOption = (): OrderOption => {
-    const products = cart.map((item) => ({
+    const products = cart.map( ( item ) => ( {
       productId: item.productId._id,
       variantId: item.variantId, // Assuming the first variant ID is needed
-    }));
+    } ) );
 
     return {
-      amount: amount.toString().concat("00"), // Convert the amount to a string
+      amount: amount.toString().concat( "00" ), // Convert the amount to a string
       currency: "INR",
       notes: {
         products,
@@ -132,29 +175,29 @@ const PlaceOrder = () => {
     };
   };
 
-  const limitWords = (text: string, limit: number) => {
-    const words = text.split(" ");
-    if (words.length > limit) {
-      return words.slice(0, limit).join(" ") + "...";
+  const limitWords = ( text: string, limit: number ) => {
+    const words = text.split( " " );
+    if ( words.length > limit ) {
+      return words.slice( 0, limit ).join( " " ) + "...";
     }
     return text;
   };
 
-  const handleSizeChange = (productId: string, variantId: string) => {
-    const product = cart.find((item) => item.productId._id === productId);
-    if (product) {
+  const handleSizeChange = ( productId: string, variantId: string ) => {
+    const product = cart.find( ( item ) => item.productId._id === productId );
+    if ( product ) {
       const variant = product.productId.variants.find(
-        (v) => v._id === variantId
+        ( v ) => v._id === variantId
       );
-      if (variant) {
-        setSelectedVariants((prev) => ({
+      if ( variant ) {
+        setSelectedVariants( ( prev ) => ( {
           ...prev,
           [productId]: {
             variantId,
             price: variant.price,
             credit: variant.credit,
           },
-        }));
+        } ) );
       }
     }
   };
@@ -169,10 +212,39 @@ const PlaceOrder = () => {
         </div>
       )}
       {!loader && cart.length === 0 && (
-        <div className="flex justify-center items-center min-h-screen">
-          <h1 className="text-2xl font-bold mb-4">Cart is Empty</h1>
+        <div className="flex flex-col justify-center items-center min-h-screen bg-gray-100">
+          <div className="p-6 bg-white shadow-lg rounded-lg text-center">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={2}
+              stroke="currentColor"
+              className="w-16 h-16 text-red-500 mb-4 mx-auto"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M3 3h18l-1.68 9.19a5.51 5.51 0 01-5.5 4.81H8.18a5.51 5.51 0 01-5.5-4.81L3 3z"
+              />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M16 16a4 4 0 01-8 0"
+              />
+            </svg>
+            <h1 className="text-3xl font-bold text-gray-800 mb-4">Your Cart is Empty</h1>
+            <p className="text-gray-600 mb-6">It looks like you haven't added anything to your cart yet.</p>
+            <button
+              className="bg-red-500 text-white px-6 py-3 rounded-full shadow-md hover:bg-red-600 transition"
+              onClick={() => window.location.href = '/'}
+            >
+              Continue Shopping
+            </button>
+          </div>
         </div>
       )}
+
       {!loader && cart.length > 0 && (
         <div className="relative overflow-x-auto shadow-md rounded-lg">
           <table className="w-full text-sm text-left rtl:text-right text-black ">
@@ -194,7 +266,7 @@ const PlaceOrder = () => {
               </tr>
             </thead>
             <tbody>
-              {cart?.map((item, index: number) => (
+              {cart?.map( ( item, index: number ) => (
                 <tr key={index} className="w-full bg-white border-b text-black">
                   <td className="w-2/6 px-6 py-4 border-none">
                     <div className="flex flex-row items-start justify-start gap-4">
@@ -254,18 +326,18 @@ const PlaceOrder = () => {
                             selectedVariants[item.productId._id]?.variantId ||
                             item.variantId[0]
                           }
-                          onChange={(e) =>
-                            handleSizeChange(item.productId._id, e.target.value)
+                          onChange={( e ) =>
+                            handleSizeChange( item.productId._id, e.target.value )
                           }
                         >
-                          {item.productId.variants.map((variant) => (
+                          {item.productId.variants.map( ( variant ) => (
                             <option key={variant._id} value={variant._id}>
                               {item.productId.mediaType === "video"
                                 ? variant.metadata.resolution
                                 : variant.metadata.dimension}{" "}
                               px
                             </option>
-                          ))}
+                          ) )}
                         </select>
                       </div>
                     </td>
@@ -284,16 +356,16 @@ const PlaceOrder = () => {
                         <MdCurrencyRupee />
                       </span>
                       {selectedVariants[item.productId._id]?.price ||
-                        item.productId?.variants.find((variant: any) =>
-                          item.variantId.includes(variant._id)
+                        item.productId?.variants.find( ( variant: any ) =>
+                          item.variantId.includes( variant._id )
                         )?.price}
                     </div>
                   </td>
                   <td className="w-1/6 px-6 py-4 border-none">
                     <div className="text-gray-600  justify-center items-center flex flex-row">
                       {
-                        item.productId?.variants.find((variant: any) =>
-                          item.variantId.includes(variant._id)
+                        item.productId?.variants.find( ( variant: any ) =>
+                          item.variantId.includes( variant._id )
                         )?.credit
                       }
                     </div>
@@ -316,7 +388,7 @@ const PlaceOrder = () => {
                       <span
                         className=" text-webred cursor-pointer"
                         onClick={() => {
-                          handleRemoveCart(item.productId?._id);
+                          handleRemoveCart( item.productId?._id );
                         }}
                       >
                         <RxCross2 size={30} />
@@ -324,7 +396,7 @@ const PlaceOrder = () => {
                     </div>
                   </td>
                 </tr>
-              ))}
+              ) )}
             </tbody>
 
             <tfoot className="text-md py-2 text-black rounded-lg capitalize bg-[#F1F1F1] border-b border-gray-200 border-1 ">

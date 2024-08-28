@@ -1,45 +1,45 @@
 "use client";
-import React, { useState } from "react";
-import { AiOutlineHeart, AiOutlineMenu, AiOutlineClose } from "react-icons/ai";
-import { IoIosArrowDropdown, IoMdArrowDropdown } from "react-icons/io";
-import { useRouter, useSearchParams } from "next/navigation";
+import React, {useState} from "react";
+import {AiOutlineHeart, AiOutlineMenu, AiOutlineClose} from "react-icons/ai";
+import {IoIosArrowDropdown, IoMdArrowDropdown} from "react-icons/io";
+import {useRouter, useSearchParams} from "next/navigation";
 import CartPopup from "../cart/cartPage";
-import { FaUserCircle } from "react-icons/fa";
+import {FaUserCircle} from "react-icons/fa";
 import instance from "@/utils/axios";
-import { BiLogInCircle, BiLogOutCircle } from "react-icons/bi";
-import { useAppDispatch, useAppSelector } from "@/app/redux/hooks";
+import {BiLogInCircle, BiLogOutCircle} from "react-icons/bi";
+import {useAppDispatch, useAppSelector} from "@/app/redux/hooks";
 import Link from "next/link";
 import Swal from "sweetalert2";
-import { notifySuccess } from "@/utils/toast";
+import {notifySuccess} from "@/utils/toast";
 //
 const Sidebar = () => {
   const router = useRouter();
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [isUserOpen, setIsUserOpen] = useState(false);
-  const { user } = useAppSelector((state) => state.user);
-  const cart = useAppSelector((state) => state.product.cart);
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const toggleDropdown = () => setIsDropdownOpen(!isDropdownOpen);
-  const closeDropdown = () => setIsDropdownOpen(false);
+  const [menuOpen, setMenuOpen] = useState( false );
+  const [isUserOpen, setIsUserOpen] = useState( false );
+  const {user} = useAppSelector( ( state ) => state.user );
+  const cart = useAppSelector( ( state ) => state.product.cart );
+  const [isDropdownOpen, setIsDropdownOpen] = useState( false );
+  const toggleDropdown = () => setIsDropdownOpen( !isDropdownOpen );
+  const closeDropdown = () => setIsDropdownOpen( false );
 
   const handleLogout = async () => {
     try {
-      const response = await instance.get("/user/logout");
+      const response = await instance.get( "/user/logout" );
 
-      router.push("/auth/user/login");
-      notifySuccess("Logout successfully");
-    } catch (error) {
-      console.error("Error in logout:", error);
+      router.push( "/auth/user/login" );
+      notifySuccess( "Logout successfully" );
+    } catch ( error ) {
+      console.error( "Error in logout:", error );
     }
   };
 
   const handleUserIconClick = () => {
-    setIsUserOpen(!isUserOpen);
+    setIsUserOpen( !isUserOpen );
   };
 
   const handleProfileClick = () => {
-    setIsUserOpen(false);
-    router.push("/user-profile");
+    setIsUserOpen( false );
+    router.push( "/user-profile" );
   };
 
   return (
@@ -50,25 +50,25 @@ const Sidebar = () => {
             src="/images/logo.png"
             alt="logo"
             className="w-44 h-10 cursor-pointer"
-            onClick={() => router.push("/")}
+            onClick={() => router.push( "/" )}
           />
           <div className="hidden lg:flex items-center space-x-4">
             <ul className="flex items-center space-x-4 cursor-pointer">
               <li
                 className="text-gray-700 hover:text-black transition duration-300 ease-in-out"
-                onClick={() => router.push("/image")}
-              >
-                Images
-              </li>
-              <li
-                className="text-gray-700 hover:text-black transition duration-300 ease-in-out"
-                onClick={() => router.push("/video")}
+                onClick={() => router.push( "/video" )}
               >
                 Video
               </li>
               <li
                 className="text-gray-700 hover:text-black transition duration-300 ease-in-out"
-                onClick={() => router.push("/audio")}
+                onClick={() => router.push( "/image" )}
+              >
+                Images
+              </li>
+              <li
+                className="text-gray-700 hover:text-black transition duration-300 ease-in-out"
+                onClick={() => router.push( "/audio" )}
               >
                 Audio
               </li>
@@ -78,34 +78,21 @@ const Sidebar = () => {
               >
                 Editor Choice{" "}
                 <span
-                  className={`${
-                    isDropdownOpen
+                  className={`${isDropdownOpen
                       ? "rotate-180 transform duration-75"
                       : "rotate-0 transform duration-75"
-                  }`}
+                    }`}
                 >
                   {" "}
                   <IoIosArrowDropdown />
                 </span>
                 {isDropdownOpen && (
                   <div
-                    className="absolute w-36 flex flex-col items-center gap-6 -left-4 justify-center  top-full  mt-2 bg-white border rounded shadow-xl p-4 z-50"
-                    onMouseEnter={() => setIsDropdownOpen(true)}
+                    className=" absolute w-36 flex flex-col items-center gap-6 -left-4 justify-center  top-full  mt-2 bg-white border rounded shadow-xl p-4 z-50"
+                    onMouseEnter={() => setIsDropdownOpen( true )}
                     onMouseLeave={closeDropdown}
                   >
                     <div className="flex flex-col gap-2">
-                      <Link
-                        href={{
-                          pathname: "/image",
-                          query: {
-                            category: "editor choice",
-                            mediaType: "image",
-                          },
-                        }}
-                        className="text-gray-600 hover:text-gray-800 "
-                      >
-                        Editor Image
-                      </Link>
                       <Link
                         href={{
                           pathname: "/video",
@@ -116,8 +103,21 @@ const Sidebar = () => {
                         }}
                         className="text-gray-600 hover:text-gray-800 "
                       >
-                        Editor Video
+                        Video
+                      </Link> 
+                      <Link
+                        href={{
+                          pathname: "/image",
+                          query: {
+                            category: "editor choice",
+                            mediaType: "image",
+                          },
+                        }}
+                        className="text-gray-600 hover:text-gray-800 "
+                      >
+                         Image
                       </Link>
+                     
                       <Link
                         href={{
                           pathname: "/audio",
@@ -128,7 +128,7 @@ const Sidebar = () => {
                         }}
                         className="text-gray-600 hover:text-gray-800"
                       >
-                        Editor Audio
+                         Audio
                       </Link>
                     </div>
                   </div>
@@ -188,7 +188,7 @@ const Sidebar = () => {
                     </>
                   ) : (
                     <a
-                      onClick={() => router.push("/auth/user/login")}
+                      onClick={() => router.push( "/auth/user/login" )}
                       className="flex items-center text-gray-800 hover:bg-gray-100 cursor-pointer px-3 py-2 transition-colors duration-200"
                     >
                       <BiLogInCircle className="w-6 h-6 mr-3" />
@@ -206,7 +206,7 @@ const Sidebar = () => {
           <CartPopup />
           <AiOutlineMenu
             className="text-gray-700 w-6 h-6 cursor-pointer hover:text-black transition-transform duration-200 ease-in-out hover:scale-110"
-            onClick={() => setMenuOpen(true)}
+            onClick={() => setMenuOpen( true )}
           />
         </div>
 
@@ -215,25 +215,25 @@ const Sidebar = () => {
             <div className="flex justify-between items-center">
               <AiOutlineClose
                 className="text-gray-700 w-6 h-6 cursor-pointer hover:text-black transition-transform duration-200 ease-in-out hover:scale-110"
-                onClick={() => setMenuOpen(false)}
+                onClick={() => setMenuOpen( false )}
               />
             </div>
             <ul className="mt-4 space-y-3">
               <li
                 className="block text-gray-700 hover:text-black py-2 transition-colors duration-300 ease-in-out"
-                onClick={() => router.push("/image")}
+                onClick={() => router.push( "/image" )}
               >
                 Images
               </li>
               <li
                 className="block text-gray-700 hover:text-black py-2 transition-colors duration-300 ease-in-out"
-                onClick={() => router.push("/video")}
+                onClick={() => router.push( "/video" )}
               >
                 Video
               </li>
               <li
                 className="block text-gray-700 hover:text-black py-2 transition-colors duration-300 ease-in-out"
-                onClick={() => router.push("/audio")}
+                onClick={() => router.push( "/audio" )}
               >
                 Music
               </li>

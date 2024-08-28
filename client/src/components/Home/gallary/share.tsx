@@ -27,7 +27,7 @@ const CustomShareButton: React.FC = () => {
   };
 
   return (
-    <div className="relative flex flex-row items-center gap-2">
+    <div className="relative flex flex-row items-center gap-2 bg-white">
       {/* Custom Share Button */}
       <span
         className="flex font-medium rounded-md gap-2 border-gray-300 flex-row text-center p-2 border items-center cursor-pointer"

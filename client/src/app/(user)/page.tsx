@@ -13,6 +13,7 @@ import CartPopup from "@/components/cart/cartPage";
 import { getCartData, getCurrCustomer } from "../redux/feature/user/api";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import Hero from "@/components/Home/gallary/Hero";
+import TopBanner from "@/components/navbar/TopBanner";
 
 // Collection data
 interface Card {
@@ -251,6 +252,12 @@ export default function Home() {
 
   return (
     <div className="main  ">
+      {/* <TopBanner
+        description="Summer Sale! Up to 50% off on selected items."
+        buttonText="Shop Now"
+        onClick={() => console.log( 'Redirecting to Sale Page' )}
+      /> */}
+
       {/*  Image Routes Banner Section */}
       {/* <div
         className="relative bg-cover bg-center h-[600px] md:h-[500px] sm:h-[400px]"
