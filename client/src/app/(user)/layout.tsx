@@ -8,6 +8,7 @@ import { ReduxProvider } from "@/app/redux/provider";
 import Script from "next/script";
 import Sidebar from "@/components/navbar/Navbar";
 import InitialLoad from "@/components/provider/InitialLoad";
+import TopBanner from "@/components/navbar/TopBanner";
 
 // import { Navbar } from "@nextui-org/react";
 
@@ -27,6 +28,7 @@ export default function RootLayout({
         <ToastContainer />
         <ReduxProvider>
           <InitialLoad>
+            <TopBanner /> 
             <Sidebar />
             {children}
           </InitialLoad>

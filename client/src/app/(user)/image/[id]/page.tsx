@@ -21,6 +21,7 @@ import { CiHeart } from "react-icons/ci";
 import { AiOutlineDownload } from "react-icons/ai";
 import { FiDownload } from "react-icons/fi";
 import Searchbar from "@/components/searchBar/search";
+import CustomShareButton from "@/components/Home/gallary/share";
 
 type ImageData = {
   title: string;
@@ -189,57 +190,55 @@ const Home = () => {
   return (
     <>
       <Searchbar />
-      <div className="main ">
+      <div className="main h-full">
         <hr className="mt-5" />
 
-        <div className=" m-auto mt-4 bg w-[90%] ">
-          <div className="flex  m-auto lg:flex-row lg:justify-between sm:flex-col flex-col gap-1">
-            <div className=" py-4">
+        <div className="bg-pageBg mx-auto">
+          <div className="flex flex-col lg:flex-row lg:space-x-8 px-4 sm:px-6 md:px-8 lg:px-24">
+            <div className="w-full lg:w-2/3">
               {product && (
-                <div className="relative ">
-                  <div className="flex justify-between items-center">
-                    <h1 className=" text-lg font-semibold">{product.title}</h1>
-                    <div className="flex gap-2">
+                <div className="relative">
+                  <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 pt-4 pr-6">
+                    <h1 className="text-xl sm:text-2xl font-semibold mb-2 sm:mb-0">{product.title}</h1>
+                    <div className="flex flex-wrap gap-2">
                       <button
                         onClick={handleeWishlist}
                         disabled={wishlistLoading}
-                        title={
-                          product.isWhitelisted
-                            ? "Remove from Saved"
-                            : "Save Image"
-                        }
-                        className="flex gap-2 border py-1 items-center rounded bg-white px-3"
+                        title={product.isWhitelisted ? "Remove from Saved" : "Save Image"}
+                        className="flex gap-2 border py-1 items-center rounded bg-white px-3 text-sm"
                       >
                         {wishlistLoading ? (
-                          <span className="h-5 w-5 border-t-2 border-b-2 border-gray-900 rounded-full animate-spin"></span>
+                          <span className="h-4 w-4 border-t-2 border-b-2 border-gray-900 rounded-full animate-spin"></span>
                         ) : product.isWhitelisted ? (
-                          <IoMdHeart className="h-5 w-5 text-red-500" />
+                          <IoMdHeart className="h-4 w-4 text-red-500" />
                         ) : (
-                          <IoMdHeartEmpty className="h-5 w-5" />
+                          <IoMdHeartEmpty className="h-4 w-4" />
                         )}
                         <span>{product.isWhitelisted ? "Saved" : "Save"}</span>
                       </button>
-
+                      <CustomShareButton />
                       <button
                         onClick={handleTry}
                         disabled={tryLoading}
-                        className="flex gap-2 border py-1 items-center rounded bg-white px-3"
+                        className="flex gap-2 border py-1 items-center rounded bg-white px-3 text-sm"
                       >
                         {tryLoading ? (
-                          <span className="h-5 w-5 border-t-2 border-b-2 border-gray-900 rounded-full animate-spin"></span>
+                          <span className="h-4 w-4 border-t-2 border-b-2 border-gray-900 rounded-full animate-spin"></span>
                         ) : (
-                          <AiOutlineDownload className="h-5 w-5" />
+                          <AiOutlineDownload className="h-4 w-4" />
                         )}
                         <span>Try</span>
                       </button>
                     </div>
                   </div>
-                  <img
-                    src={`${process.env.NEXT_PUBLIC_AWS_PREFIX}/${product.thumbnailKey}`}
-                    alt="Main Image"
-                    className="lg:w-[56rem] md:w-[44rem] w-[27rem] h-[32rem] mt-2 rounded"
-                  />
-                  <div className="lg:w-[50rem] md:w-[35rem] w-[22rem] mt-2">
+                  <div className="w-full h-48 sm:h-64 md:h-80 lg:h-[32rem]">
+                    <img
+                      src={`${process.env.NEXT_PUBLIC_AWS_PREFIX}/${product.thumbnailKey}`}
+                      alt={product.title}
+                      className="mx-auto object-contain h-full w-full rounded-lg"
+                    />
+                  </div>
+                  <div className="mt-2 w-full lg:w-[50rem]">
                     <h2 className="font-bold">Description</h2>
                     <p className="text-sm text-neutral-700">
                       Stock Photo ID: {product._id}
@@ -249,58 +248,43 @@ const Home = () => {
                 </div>
               )}
             </div>
-            <div className="border  lg:w-[27rem] md:w-full w-[23rem] py-4 px-8 bg-white">
+            <div className="w-full lg:w-1/3 mt-8 lg:mt-0 border-t lg:border-l lg:border-t-0 pt-8 lg:pt-0">
               {product && (
-                <div>
-                  <h3 className="font-bold text-lg">Purchase a Licence</h3>
-                  <p className="text-sm mt-1 text-neutral-700">
-                    All Royalty-Free licences include global use rights,
-                    comprehensive protection, and simple pricing with volume
-                    discounts available
+                <div className="border p-4 sm:p-6 bg-white">
+                  <h3 className="font-bold text-lg sm:text-xl mb-2">Purchase a License</h3>
+                  <p className="text-xs sm:text-sm text-gray-600 mb-4">
+                    All Royalty-Free licenses include global use rights, comprehensive protection, and simple pricing with volume discounts available
                   </p>
-                  <div className="py-4">
-                    {product.variants.map((license, index) => (
+                  <div className="space-y-4">
+                    {product.variants.map( ( license, index ) => (
                       <div
                         key={index}
-                        className="border p-4 mt-2 flex justify-between items-center hover:bg-[#F4F4F4] cursor-pointer"
+                        className="border p-3 sm:p-4 mt-2 flex justify-between items-center hover:bg-[#F4F4F4] cursor-pointer"
                       >
                         <div>
-                          <label
-                            htmlFor={`license-${index}`}
-                            className="block text-gray-600"
-                          >
+                          <label htmlFor={`license-${index}`} className="block text-sm sm:text-base text-gray-600">
                             ₹ {license.price}
                           </label>
-                          <div className="text-sm ">
+                          <div className="text-xs sm:text-sm">
                             {license.metadata.dimension} px
                           </div>
                         </div>
                         <div className="flex justify-between">
-                          {isVariantPurchased(license._id) ? (
-                            <div
-                              title={"Purchased Product"}
-                              className={`p-2 bg-red-500 text-white rounded-full`}
-                            >
-                              <BiSolidPurchaseTagAlt />
+                          {isVariantPurchased( license._id ) ? (
+                            <div title="Purchased Product" className="p-1 sm:p-2 bg-red-500 text-white rounded-full">
+                              <BiSolidPurchaseTagAlt className="h-4 w-4 sm:h-5 sm:w-5" />
                             </div>
                           ) : (
                             <div
-                              title={
-                                isVariantInCart(license._id)
-                                  ? "Remove from cart"
-                                  : "Add to cart"
-                              }
-                              className={`p-2 ${
-                                isVariantInCart(license._id)
-                                  ? "bg-red-500 text-white"
-                                  : "bg-white text-black"
-                              } rounded-full`}
-                              onClick={() => handleCart(license._id)}
+                              title={isVariantInCart( license._id ) ? "Remove from cart" : "Add to cart"}
+                              className={`p-1 sm:p-2 ${isVariantInCart( license._id ) ? "bg-red-500 text-white" : "bg-white text-black"
+                                } rounded-full`}
+                              onClick={() => handleCart( license._id )}
                             >
                               {cartLoadingMap[license._id] ? (
-                                <span className="h-5 w-5 flex items-center justify-center">
+                                <span className="h-4 w-4 sm:h-5 sm:w-5 flex items-center justify-center">
                                   <svg
-                                    className="animate-spin h-5 w-5 text-current"
+                                    className="animate-spin h-4 w-4 sm:h-5 sm:w-5 text-current"
                                     xmlns="http://www.w3.org/2000/svg"
                                     fill="none"
                                     viewBox="0 0 24 24"
@@ -320,102 +304,64 @@ const Home = () => {
                                     ></path>
                                   </svg>
                                 </span>
-                              ) : isVariantInCart(license._id) ? (
-                                <BsCartCheckFill className="h-5 w-5" />
+                              ) : isVariantInCart( license._id ) ? (
+                                <BsCartCheckFill className="h-4 w-4 sm:h-5 sm:w-5" />
                               ) : (
-                                <BsCart2 className="h-5 w-5" />
+                                <BsCart2 className="h-4 w-4 sm:h-5 sm:w-5" />
                               )}
                             </div>
                           )}
                         </div>
                       </div>
-                    ))}
-                  </div>
-                  <div className="flex justify-between mt-3">
-                    {/* <div
-                      title={
-                        product.isInCart ? "Remove from cart" : "Add to cart"
-                      }
-                      className={` p-2 ${
-                        product.isInCart
-                          ? "bg-red-500 text-white"
-                          : "bg-white text-black"
-                      } rounded-full`}
-                      onClick={handleCart}
-                    >
-                      {product.isInCart ? <BsCartCheckFill /> : <BsCart2 />}
-                    </div> */}
-                    {/* <div
-                      onClick={handleeWishlist}
-                      title={
-                        product.isWhitelisted ? "Remove from Saved" : "Save Image"
-                      }
-                      className="text-white bg-black bg-opacity-35 px-3 py-2 rounded-3xl flex gap-1 items-center"
-                    >
-                      {product.isWhitelisted ? (
-                        <IoMdHeart className="h-5 w-5 text-red-500" />
-                      ) : (
-                        <IoMdHeartEmpty className="h-5 w-5" />
-                      )}
-                      <p className="text-sm">
-                        {" "}
-                        {product.isWhitelisted ? "Saved" : "Save"}{" "}
-                      </p>
-                    </div> */}
+                    ) )}
                   </div>
                 </div>
               )}
-              {/* pendeing */}
 
               <div className="py-6">
                 {product && (
-                  <div className="bg-white p-4 border rounded-md w-full">
-                    <h2 className="text-lg font-semibold mb-4">Details</h2>
-                    <div className="space-y-2">
-                      <div className="flex lg:justify-start md:justify-between">
-                        <span className="font-medium w-32">Title:</span>
-                        <p className="text-blue-600 hover:underline">
-                          {product.title}
-                        </p>
+                  <div className="rounded-lg p-4 sm:p-6">
+                    <h2 className="text-base sm:text-lg font-semibold mb-4">Details</h2>
+                    <div className="space-y-2 text-sm sm:text-base">
+                      <div className="flex justify-between sm:justify-start">
+                        <span className="font-medium w-24 sm:w-32">Title:</span>
+                        <p className="text-blue-600 hover:underline">{product.title}</p>
                       </div>
-                      <div className="flex  lg:justify-start md:justify-between">
-                        <span className="font-medium w-32">Format: </span>
-                        <span className="text-sm text-neutral-600">
-                          {product.variants[0].metadata?.format}
-                        </span>
+                      <div className="flex justify-between sm:justify-start">
+                        <span className="font-medium w-24 sm:w-32">Format: </span>
+                        <span className="text-neutral-600">{product.variants[0].metadata?.format}</span>
                       </div>
-                      <div className="flex  lg:justify-start md:justify-between">
-                        <span className="font-medium w-32">Dimensions: </span>
+                      <div className="flex justify-between sm:justify-start">
+                        <span className="font-medium w-24 sm:w-32">Dimensions: </span>
                         <div className="flex flex-col">
-                          {product.variants.map((variant, index) => (
-                            <span className="text-sm  whitespace-nowrap text-neutral-600">
-                              {variant.metadata?.dimension} px{" "}
+                          {product.variants.map( ( variant, index ) => (
+                            <span key={index} className="text-neutral-600 whitespace-nowrap">
+                              {variant.metadata?.dimension} px
                               {index !== product.variants.length - 1 && ", "}
                             </span>
-                          ))}
+                          ) )}
                         </div>
                       </div>
-                      <div className="flex  lg:justify-start md:justify-between">
-                        <span className="font-medium w-32">Densities: </span>
-                        <span className="text-sm  whitespace-nowrap text-neutral-600">
+                      <div className="flex justify-between sm:justify-start">
+                        <span className="font-medium w-24 sm:w-32">Densities: </span>
+                        <span className="text-neutral-600 whitespace-nowrap">
                           {product.variants[0].metadata?.dpi} Dpi
                         </span>
                       </div>
-                      <div className="flex  lg:justify-start md:justify-between">
-                        <span className="font-medium w-32">Max Size: </span>
-                        <span className="text-sm capitalize text-neutral-600">
+                      <div className="flex justify-between sm:justify-start">
+                        <span className="font-medium w-24 sm:w-32">Max Size: </span>
+                        <span className="capitalize text-neutral-600">
                           {product.variants[0].metadata?.size} Mb
                         </span>
                       </div>
-
-                      <div className="flex lg:justify-start md:justify-between">
-                        <span className="font-medium w-32">Categories:</span>
-                        <div className="flex gap-2">
-                          {product.category.map((category, index) => (
-                            <p className="text-blue-600 hover:underline">
+                      <div className="flex justify-between sm:justify-start">
+                        <span className="font-medium w-24 sm:w-32">Categories:</span>
+                        <div className="flex flex-wrap gap-2">
+                          {product.category.map( ( category, index ) => (
+                            <p key={index} className="text-blue-600 hover:underline">
                               {category}
                             </p>
-                          ))}
+                          ) )}
                         </div>
                       </div>
                     </div>
@@ -425,40 +371,41 @@ const Home = () => {
             </div>
           </div>
 
-          <div className="mt-4">
-            <h1 className="font-semibold text-lg">Similar Images</h1>
+          <div className="pt-8 sm:pt-12 bg-pureWhite-light w-full px-4 sm:px-6 md:px-8 lg:px-24 py-8">
+            <h1 className="font-semibold text-lg sm:text-xl">Similar Images</h1>
             <div className="columns-1 sm:columns-2 md:columns-3 lg:columns-4 gap-2 mt-2 relative">
-              {similarProducts?.map((data, index: number) => (
-                <ImageGallery
-                  key={index}
-                  data={data}
-                  productType="similarProducts"
-                />
-              ))}
+              {similarProducts?.map( ( data, index ) => (
+                <ImageGallery key={index} data={data} productType="similarProducts" />
+              ) )}
             </div>
           </div>
 
           {product && (
-            <div>
-              <div className="mt-8">
-                <h2 className="font-bold text-lg">Related keywords</h2>
-                <div className="flex gap-3 mt-2">
-                  {product.tags.map((keyword, index) => (
-                    <span key={index} className="">
-                      <button className="border rounded-md py-1 px-4 flex gap-1 items-center">
-                        <IoSearchOutline className="h-5 w-5" />
+            <div className="px-4 sm:px-6 md:px-8 lg:px-24 bg-pureWhite-light">
+              <div className="pt-8">
+                <h2 className="font-bold text-lg sm:text-xl">Related keywords</h2>
+                <div className="flex flex-wrap gap-2 mt-2">
+                  {product.tags.map( ( keyword, index ) => (
+                    <span key={index}>
+                      <button className="border rounded-md py-1 px-3 sm:px-4 flex gap-1 items-center text-sm">
+                        <IoSearchOutline className="h-4 w-4 sm:h-5 sm:w-5" />
                         {keyword}
                       </button>
                     </span>
-                  ))}
+                  ) )}
                 </div>
               </div>
               <div className="mt-8 mb-3">
-                <h1 className="font-semibold text-lg">Category</h1>
-                <button className="border rounded-md py-1 px-4 mt-2">
-                  {product.category}
-                </button>
-                {/* <p>Upload date: {new Date().toLocaleDateString()}</p> */}
+                <h1 className="font-semibold text-lg sm:text-xl">Category</h1>
+                <div className="flex flex-wrap gap-2 mt-2">
+                  {product.category.map( ( keyword, index ) => (
+                    <span key={index}>
+                      <button className="border rounded-md py-1 px-3 sm:px-4 flex gap-1 items-center text-sm">
+                        {keyword}
+                      </button>
+                    </span>
+                  ) )}
+                </div> 
               </div>
             </div>
           )}
