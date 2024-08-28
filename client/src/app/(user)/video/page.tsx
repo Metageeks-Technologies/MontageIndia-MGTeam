@@ -1,73 +1,70 @@
 "use client";
-import {setVideoPage} from "@/app/redux/feature/product/slice";
-import {getVideo} from "@/app/redux/feature/product/video/api";
-import {useAppDispatch, useAppSelector} from "@/app/redux/hooks";
+import { setVideoPage } from "@/app/redux/feature/product/slice";
+import { getVideo } from "@/app/redux/feature/product/video/api";
+import { useAppDispatch, useAppSelector } from "@/app/redux/hooks";
 import Footer from "@/components/Footer";
 import Searchbar from "@/components/searchBar/search";
 import FAQ from "@/components/Video/fag";
 import Trending from "@/components/Video/trendingVideos";
-import {Button, Pagination, Spinner} from "@nextui-org/react";
-import {useSearchParams} from "next/navigation";
-import {useRouter} from "next/router";
-import {useEffect, useState} from "react";
-import {IoIosSearch} from "react-icons/io";
-import {clearKeywords} from "@/app/redux/feature/product/api";
-import Masonry from 'react-masonry-css';
+import { Button, Pagination, Spinner } from "@nextui-org/react";
+import { useSearchParams } from "next/navigation";
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
+import { IoIosSearch } from "react-icons/io";
+import { clearKeywords } from "@/app/redux/feature/product/api";
 
 const Page = () => {
   const searchParams = useSearchParams();
-  const searchTerm = searchParams.get( "searchTerm" ) || "";
-  const category = searchParams.get( "category" );
+  const searchTerm = searchParams.get("searchTerm") || "";
+  const category = searchParams.get("category");
   const categoryParam = category ? ["editor choice"] : "";
-  const [loading, setloading] = useState( false );
-  const [currentPage, setCurrentPage] = useState( 1 );
+  const [loading, setloading] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
   const dispatch = useAppDispatch();
   const {
     videoData: product,
     videoPage,
     totalVideoNumOfPage,
-  } = useAppSelector( ( state ) => state.product );
+  } = useAppSelector((state) => state.product);
 
-  const handlePageChange = ( page: number ) => {
-    dispatch( setVideoPage( page ) );
+  const handlePageChange = (page: number) => {
+    dispatch(setVideoPage(page));
   };
 
   const handleNextPage = () => {
-    handlePageChange( videoPage === totalVideoNumOfPage ? 1 : videoPage + 1 );
+    handlePageChange(videoPage === totalVideoNumOfPage ? 1 : videoPage + 1);
   };
 
   const handlePrevPage = () => {
-    handlePageChange( videoPage === 1 ? totalVideoNumOfPage : videoPage - 1 );
+    handlePageChange(videoPage === 1 ? totalVideoNumOfPage : videoPage - 1);
   };
 
-
-  const fetchData = async ( page: number ) => {
-    setloading( true );
+  const fetchData = async (page: number) => {
+    setloading(true);
 
     // setLoading(true);
-    const response = await getVideo( dispatch, {
+    const response = await getVideo(dispatch, {
       page,
       mediaType: ["video"],
       searchTerm,
       category: categoryParam,
       productsPerPage: "9",
-    } );
-    setloading( false );
-
+    });
+    setloading(false);
   };
 
-  useEffect( () => {
-    fetchData( videoPage );
+  useEffect(() => {
+    fetchData(videoPage);
     return () => {
-      clearKeywords( dispatch );
+      clearKeywords(dispatch);
     };
-  }, [videoPage, searchParams] );
+  }, [videoPage, searchParams]);
 
   const breakpointColumnsObj = {
     default: 4,
     1100: 3,
     700: 2,
-    500: 1
+    500: 1,
   };
 
   return (
@@ -78,7 +75,6 @@ const Page = () => {
         {/* Category Buttons */}
         {/* <hr className="mt-5" /> */}
 
-
         {/* Trending Videos */}
         <div className="bg-[#eeeeee]">
           <div className="py-10 lg:mx-24 md:mx-4 mx-4">
@@ -86,28 +82,21 @@ const Page = () => {
               Today's Trending Videos
             </h1>
             <div className="mx-auto mt-4">
-
-                {loading ? (
-                  <div className=" justify-center text-center m-auto ">
-                    <Spinner label="Loading..." color="danger" />
-                  </div> ) : (
-              <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 mt-5">
-                    {product.length > 0 ? (
-                      product.map( ( data ) => <Trending key={data._id} data={data} /> )
-                    ) : (
-                      <p>No videos found.</p>
+              {loading ? (
+                <div className=" justify-center text-center m-auto ">
+                  <Spinner label="Loading..." color="danger" />
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 mt-5">
+                  {product.length > 0 ? (
+                    product.map((data) => (
+                      <Trending key={data._id} data={data} />
+                    ))
+                  ) : (
+                    <p>No videos found.</p>
                   )}
-                  </div>
-                  // <Masonry
-                  //   breakpointCols={breakpointColumnsObj}
-                  //   className="my-masonry-grid"
-                  //   columnClassName="my-masonry-grid_column"
-                  // >
-                  //   {product.map( ( item ) => (
-                  //     <Trending key={item._id} data={item} />
-                  //   ) )}
-                  // </Masonry>
-                )} 
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -120,10 +109,11 @@ const Page = () => {
               type="button"
               disabled={videoPage === 1}
               variant="flat"
-              className={`${videoPage === 1
+              className={`${
+                videoPage === 1
                   ? "opacity-70 cursor-not-allowed"
                   : "hover:bg-webred"
-                } bg-webred text-white rounded-full font-bold`}
+              } bg-webred text-white rounded-full font-bold`}
               onPress={handlePrevPage}
             >
               Prev
@@ -146,10 +136,11 @@ const Page = () => {
               size="sm"
               disabled={videoPage === totalVideoNumOfPage}
               variant="flat"
-              className={`${videoPage === totalVideoNumOfPage
+              className={`${
+                videoPage === totalVideoNumOfPage
                   ? "opacity-70 cursor-not-allowed"
                   : "hover:bg-webred"
-                } bg-webred text-white rounded-full font-bold`}
+              } bg-webred text-white rounded-full font-bold`}
               onPress={handleNextPage}
             >
               Next
