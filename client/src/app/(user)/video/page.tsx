@@ -24,6 +24,7 @@ const Page = () => {
   const {
     videoData: product,
     videoPage,
+    totalVideoData,
     totalVideoNumOfPage,
   } = useAppSelector((state) => state.product);
 
@@ -81,6 +82,9 @@ const Page = () => {
             <h1 className="text-2xl font-bold lg:text-start md:text-center text-center">
               Today's Trending Videos
             </h1>
+            <h4 className="text-lg text-neutral-700">
+              {totalVideoData} Product stock Photos and High-res Pictures
+            </h4>
             <div className="mx-auto mt-4">
               {loading ? (
                 <div className=" justify-center text-center m-auto ">
