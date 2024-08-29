@@ -7,10 +7,10 @@ export function ChatProvider ( {children}: {children: React.ReactNode;} ) {
     return (
         <>
             <TawkMessengerReact 
-                siteDomain="http://localhost:3000/"
+                siteDomain={`${process.env.NEXT_PUBLIC_CLIENT_URL}`}
                 hideInitialMessage={true} 
-                propertyId="property_id"
-                widgetId="default" />       
+                propertyId={`${process.env.NEXT_PUBLIC_PROERTY_ID}`}
+                widgetId={`${process.env.NEXT_APP_WIDGET_ID}`} />       
             {children}
         </>
     );
