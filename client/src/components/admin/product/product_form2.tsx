@@ -5,8 +5,7 @@ import React, { useCallback, useMemo, useState } from "react";
 import { Accept, useDropzone } from "react-dropzone";
 import Swal from "sweetalert2";
 
-interface FormData
-{
+interface FormData {
   product: {
     uuid: string;
     mediaType: "image" | "audio" | "video";
@@ -14,200 +13,175 @@ interface FormData
   };
 }
 
-interface Form2Props
-{
+interface Form2Props {
   onPrev: () => void;
-  onNext: ( data: any ) => void;
+  onNext: (data: any) => void;
   formData: FormData;
 }
 
-const Form2: React.FC<Form2Props> = ( { onPrev, onNext, formData } ) =>
-{
-  const [ file, setFile ] = useState<File | null>( null );
-  const [ error, setError ] = useState( "" );
-  const [ loading, setLoading ] = useState( false );
-  const [ loadingPer, setLoadingPer ] = useState( 0 );
-  const [ videoDuration, setVideoDuration ] = useState<null | number>( null );
+const Form2: React.FC<Form2Props> = ({ onPrev, onNext, formData }) => {
+  const [file, setFile] = useState<File | null>(null);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [loadingPer, setLoadingPer] = useState(0);
+  const [videoDuration, setVideoDuration] = useState<null | number>(null);
 
   const data = formData?.product || {};
 
   const validateFileType = useCallback(
-    ( fileType: string ): boolean =>
-    {
-      if ( !data.mediaType ) return true;
+    (fileType: string): boolean => {
+      if (!data.mediaType) return true;
       const mediaTypeMap: Record<string, string> = {
         image: "image/",
         audio: "audio/",
         video: "video/",
       };
-      return fileType.startsWith( mediaTypeMap[ data.mediaType ] || "" );
+      return fileType.startsWith(mediaTypeMap[data.mediaType] || "");
     },
-    [ data.mediaType ]
+    [data.mediaType]
   );
 
   const onDrop = useCallback(
-    ( acceptedFiles: File[] ) =>
-    {
-      const selectedFile = acceptedFiles[ 0 ];
+    (acceptedFiles: File[]) => {
+      const selectedFile = acceptedFiles[0];
 
-      if ( selectedFile )
-      {
-        if ( validateFileType( selectedFile.type ) )
-        {
-          if ( selectedFile.type.startsWith( "video/" ) )
-          {
-            const videoElement = document.createElement( "video" );
+      if (selectedFile) {
+        if (validateFileType(selectedFile.type)) {
+          if (selectedFile.type.startsWith("video/")) {
+            const videoElement = document.createElement("video");
             videoElement.preload = "metadata";
 
             // Create a temporary URL for the video file
-            const videoURL = URL.createObjectURL( selectedFile );
+            const videoURL = URL.createObjectURL(selectedFile);
             videoElement.src = videoURL;
-            console.log( videoElement.duration, "duration" );
+            console.log(videoElement.duration, "duration");
 
             // Once metadata is loaded, extract the duration
-            videoElement.onloadedmetadata = () =>
-            {
-              setVideoDuration( videoElement.duration ); // Duration in seconds
+            videoElement.onloadedmetadata = () => {
+              setVideoDuration(videoElement.duration); // Duration in seconds
+              const width = videoElement.videoWidth;
+              const height = videoElement.videoHeight;
+
+              console.log(width, height, "width, height");
 
               // Clean up the object URL
-              URL.revokeObjectURL( videoURL );
+              URL.revokeObjectURL(videoURL);
             };
           }
-          setFile( selectedFile );
-          setError( "" );
-        } else
-        {
-          setError( `Please select a valid ${ data.mediaType } file.` );
+          setFile(selectedFile);
+          setError("");
+        } else {
+          setError(`Please select a valid ${data.mediaType} file.`);
         }
       }
     },
-    [ data.mediaType, validateFileType ]
+    [data.mediaType, validateFileType]
   );
 
-  const acceptableFileTypes: Accept = useMemo( () =>
-  {
+  const acceptableFileTypes: Accept = useMemo(() => {
     const typeMap: Record<string, Record<string, string[]>> = {
-      image: { "image/*": [ ".jpeg", ".jpg", ".png" ] },
-      audio: { "audio/*": [ ".mp3", ".wav" ] },
-      video: { "video/*": [ ".mp4", ".avi" ] },
+      image: { "image/*": [".jpeg", ".jpg", ".png"] },
+      audio: { "audio/*": [".mp3", ".wav"] },
+      video: { "video/*": [".mp4", ".avi"] },
     };
-    return data.mediaType ? typeMap[ data.mediaType ] : {};
-  }, [ data.mediaType ] );
+    return data.mediaType ? typeMap[data.mediaType] : {};
+  }, [data.mediaType]);
 
-  const { getRootProps, getInputProps } = useDropzone( {
+  const { getRootProps, getInputProps } = useDropzone({
     onDrop,
     accept: acceptableFileTypes,
     maxFiles: 1,
-  } );
+  });
 
-  const handleImageSubmit = async ( file: File, data: any ) =>
-  {
+  const handleImageSubmit = async (file: File, data: any) => {
     const formData = new FormData();
-    formData.append( "image", file );
-    formData.append( "uuid", JSON.stringify( data.uuid ) );
-    formData.append( "mediaType", JSON.stringify( data.mediaType ) );
+    formData.append("image", file);
+    formData.append("uuid", JSON.stringify(data.uuid));
+    formData.append("mediaType", JSON.stringify(data.mediaType));
 
     const url = `/media/image/reduce`;
 
-    try
-    {
-      const response = await instance.post( url, formData, {
+    try {
+      const response = await instance.post(url, formData, {
         headers: { "Content-Type": "multipart/form-data" },
-        onUploadProgress: ( progressEvent ) =>
-        {
-          if ( progressEvent.total )
-          {
+        onUploadProgress: (progressEvent) => {
+          if (progressEvent.total) {
             const percentCompleted = Math.round(
-              ( progressEvent.loaded * 100 ) / progressEvent.total
+              (progressEvent.loaded * 100) / progressEvent.total
             );
-            setLoadingPer( percentCompleted );
+            setLoadingPer(percentCompleted);
           }
         },
-      } );
-      if ( response.status === 200 )
-      {
-        notifySuccess( "Image upload successful" );
-        onNext( response.data );
+      });
+      if (response.status === 200) {
+        notifySuccess("Image upload successful");
+        onNext(response.data);
       }
-    } catch ( error: any )
-    {
-      handleError( error );
+    } catch (error: any) {
+      handleError(error);
     }
   };
 
-  const handleAudioSubmit = async ( file: File, data: any ) =>
-  {
+  const handleAudioSubmit = async (file: File, data: any) => {
     const formData = new FormData();
-    formData.append( "audio", file );
-    formData.append( "uuid", JSON.stringify( data.uuid ) );
-    formData.append( "mediaType", JSON.stringify( data.mediaType ) );
+    formData.append("audio", file);
+    formData.append("uuid", JSON.stringify(data.uuid));
+    formData.append("mediaType", JSON.stringify(data.mediaType));
 
     const url = `/media/audio/reduce`;
-    try
-    {
-      const response = await instance.post( url, formData, {
+    try {
+      const response = await instance.post(url, formData, {
         headers: { "Content-Type": "multipart/form-data" },
-        onUploadProgress: ( progressEvent ) =>
-        {
-          if ( progressEvent.total )
-          {
+        onUploadProgress: (progressEvent) => {
+          if (progressEvent.total) {
             const percentCompleted = Math.round(
-              ( progressEvent.loaded * 100 ) / progressEvent.total
+              (progressEvent.loaded * 100) / progressEvent.total
             );
-            setLoadingPer( percentCompleted );
+            setLoadingPer(percentCompleted);
           }
         },
-      } );
-      if ( response.status === 200 )
-      {
-        notifySuccess( "Audio file upload successful" );
-        onNext( response.data );
+      });
+      if (response.status === 200) {
+        notifySuccess("Audio file upload successful");
+        onNext(response.data);
       }
-    } catch ( error: any )
-    {
-      handleError( error );
+    } catch (error: any) {
+      handleError(error);
     }
   };
 
-  const handleVideoSubmit = async ( file: File, data: any ) =>
-  {
-    if ( !file || !data || !data.uuid )
-    {
-      setError( "Invalid input data." );
+  const handleVideoSubmit = async (file: File, data: any) => {
+    if (!file || !data || !data.uuid) {
+      setError("Invalid input data.");
       return;
     }
 
-    try
-    {
+    try {
       // Initiate the upload process
       const length = videoDuration ? videoDuration : 0;
       const response = await instance(
-        `/media/video/upload?uuid=${ data.uuid }&filename=${ file.name }&length=${ length }`
+        `/media/video/upload?uuid=${data.uuid}&filename=${file.name}&length=${length}`
       );
 
-      if ( response.status !== 200 )
-      {
-        throw new Error( "Failed to initiate the upload process." );
+      if (response.status !== 200) {
+        throw new Error("Failed to initiate the upload process.");
       }
 
       // Upload the video file
-      const uploadRes = await axios.put( response.data.url, file, {
+      const uploadRes = await axios.put(response.data.url, file, {
         headers: { "Content-Type": file.type },
-        onUploadProgress: ( progressEvent ) =>
-        {
-          if ( progressEvent.total )
-          {
+        onUploadProgress: (progressEvent) => {
+          if (progressEvent.total) {
             const percentCompleted = Math.round(
-              ( progressEvent.loaded * 100 ) / progressEvent.total
+              (progressEvent.loaded * 100) / progressEvent.total
             );
-            setLoadingPer( percentCompleted );
+            setLoadingPer(percentCompleted);
           }
         },
-      } );
+      });
 
-      if ( uploadRes.status !== 200 )
-      {
-        throw new Error( "Failed to upload the video file." );
+      if (uploadRes.status !== 200) {
+        throw new Error("Failed to upload the video file.");
       }
 
       // Get the job IDs
@@ -216,95 +190,84 @@ const Form2: React.FC<Form2Props> = ( { onPrev, onNext, formData } ) =>
       let elapsedTime = 0;
       let emcMediaJob = null;
 
-      while ( elapsedTime < maxPollTime )
-      {
+      while (elapsedTime < maxPollTime) {
         const jobResponse = await instance(
-          `/media/video/job-id/?uuid=${ data.uuid }`
+          `/media/video/job-id/?uuid=${data.uuid}`
         );
         emcMediaJob = jobResponse.data.emcMediaJob;
-        if ( emcMediaJob ) break;
-        await new Promise( ( resolve ) => setTimeout( resolve, pollInterval ) );
+        if (emcMediaJob) break;
+        await new Promise((resolve) => setTimeout(resolve, pollInterval));
         elapsedTime += pollInterval;
       }
 
-      if ( !emcMediaJob )
-      {
-        throw new Error( "Timeout: mcMediaJob not found" );
+      if (!emcMediaJob) {
+        throw new Error("Timeout: mcMediaJob not found");
       }
 
       const { mainJobId, watermarkJobId } = emcMediaJob;
 
       // Poll for transcoding progress
-      const id = setInterval( async () =>
-      {
-        try
-        {
+      const id = setInterval(async () => {
+        try {
           const res = await instance(
-            `/media/video/transcode/progress/?watermarkJobId=${ watermarkJobId }&mainJobId=${ mainJobId }`
+            `/media/video/transcode/progress/?watermarkJobId=${watermarkJobId}&mainJobId=${mainJobId}`
           );
 
-          if ( res.data.process.status === "complete" )
-          {
-            clearInterval( id );
-            const productRes = await instance.patch( `/product/video/`, {
+          if (res.data.process.status === "complete") {
+            clearInterval(id);
+            const productRes = await instance.patch(`/product/video/`, {
               uuid: data.uuid,
               mediaType: "video",
-            } );
-            notifySuccess( "Video upload and processing complete" );
-            onNext( productRes.data );
+            });
+            notifySuccess("Video upload and processing complete");
+            onNext(productRes.data);
           }
-        } catch ( error )
-        {
-          clearInterval( id );
-          handleError( error );
+        } catch (error) {
+          clearInterval(id);
+          handleError(error);
         }
-      }, 10000 );
-    } catch ( error: any )
-    {
-      handleError( error );
+      }, 10000);
+    } catch (error: any) {
+      handleError(error);
     }
   };
 
-  const handleError = ( error: any ) =>
-  {
+  const handleError = (error: any) => {
     const errorMessage =
       error.response?.data?.message ||
-      `An error occurred while uploading the ${ data.mediaType }.`;
+      `An error occurred while uploading the ${data.mediaType}.`;
     // notifyError( errorMessage );
-    setError( errorMessage );
-    Swal.fire( {
+    setError(errorMessage);
+    Swal.fire({
       icon: "error",
       title: "Upload Failed",
       text: errorMessage,
-    } );
-    setLoading( false );
+    });
+    setLoading(false);
   };
 
-  const handleSubmit = async () =>
-  {
-    if ( !file )
-    {
-      setError( "Please select a file before submitting." );
+  const handleSubmit = async () => {
+    if (!file) {
+      setError("Please select a file before submitting.");
       return;
     }
 
-    setLoading( true );
-    setError( "" );
+    setLoading(true);
+    setError("");
 
-    switch ( data.mediaType )
-    {
+    switch (data.mediaType) {
       case "image":
-        await handleImageSubmit( file, data );
+        await handleImageSubmit(file, data);
         break;
       case "audio":
-        await handleAudioSubmit( file, data );
+        await handleAudioSubmit(file, data);
         break;
       case "video":
-        await handleVideoSubmit( file, data );
+        await handleVideoSubmit(file, data);
         break;
       default:
-        setError( "Invalid media type." );
-        setLoading( false );
+        setError("Invalid media type.");
+        setLoading(false);
     }
   };
 
@@ -316,13 +279,13 @@ const Form2: React.FC<Form2Props> = ( { onPrev, onNext, formData } ) =>
   const displayPercentage = loadingPer >= 98 ? 98 : loadingPer;
   return (
     <div className="w-full mx-auto p-6">
-      <h3 className="text-lg font-medium mb-4">Upload { data.mediaType }</h3>
+      <h3 className="text-lg font-medium mb-4">Upload {data.mediaType}</h3>
 
       <div
-        { ...getRootProps() }
+        {...getRootProps()}
         className="border-2 border-dashed bg-pageBg-light border-gray-300 rounded-lg p-12 text-center cursor-pointer hover:bg-pageBg"
       >
-        <input { ...getInputProps() } />
+        <input {...getInputProps()} />
         <svg
           xmlns="http://www.w3.org/2000/svg"
           className="mx-auto h-12 w-12 text-gray-400"
@@ -333,7 +296,7 @@ const Form2: React.FC<Form2Props> = ( { onPrev, onNext, formData } ) =>
           <path
             strokeLinecap="round"
             strokeLinejoin="round"
-            strokeWidth={ 2 }
+            strokeWidth={2}
             d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
           />
         </svg>
@@ -341,28 +304,28 @@ const Form2: React.FC<Form2Props> = ( { onPrev, onNext, formData } ) =>
           Choose a file or drag & drop it here
         </p>
         <p className="mt-1 text-xs text-gray-500">
-          { acceptedFileTypes[ data.mediaType ] || "Any file" } formats, up to 5MB
+          {acceptedFileTypes[data.mediaType] || "Any file"} formats, up to 5MB
         </p>
         <button className="mt-4 px-4 py-2 bg-webred text-pureWhite-light rounded-md hover:bg-webred focus:outline-none focus:ring-2 focus:ring-webred focus:ring-opacity-50">
           Browse File
         </button>
       </div>
-      {/* file name */ }
-      { file && (
+      {/* file name */}
+      {file && (
         <div className="mt-4 text-sm text-gray-600">
           <label
             htmlFor="file"
             className="block text-sm font-medium text-gray-700"
           >
-            File Name: { file ? file.name : "" }
+            File Name: {file ? file.name : ""}
           </label>
         </div>
-      ) }
+      )}
 
-      { loading && (
+      {loading && (
         <div className="mt-6">
           <div className="mb-2 flex justify-between items-center">
-            <span>{ displayPercentage }% Uploading...</span>
+            <span>{displayPercentage}% Uploading...</span>
             {/* <button className="text-red-500">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -379,28 +342,29 @@ const Form2: React.FC<Form2Props> = ( { onPrev, onNext, formData } ) =>
             </button> */}
           </div>
 
-          {/* file name */ }
-          {/* <div className="text-sm text-gray-600 p-2">{file?.name || ""}</div> */ }
+          {/* file name */}
+          {/* <div className="text-sm text-gray-600 p-2">{file?.name || ""}</div> */}
 
           <div className="w-full bg-gray-200 rounded-full h-2.5">
             <div
               className="bg-purple-600 h-2.5 rounded-full"
-              style={ { width: `${ displayPercentage }%` } }
+              style={{ width: `${displayPercentage}%` }}
             ></div>
           </div>
         </div>
-      ) }
+      )}
 
-      { error && <p className="text-red-500 mt-4">{ error }</p> }
+      {error && <p className="text-red-500 mt-4">{error}</p>}
 
       <div className="mt-6">
         <button
-          onClick={ handleSubmit }
-          className={ `w-full p-3 font-semibold text-white rounded-lg ${ file && !loading
+          onClick={handleSubmit}
+          className={`w-full p-3 font-semibold text-white rounded-lg ${
+            file && !loading
               ? "bg-webred hover:bg-webred-light"
               : "bg-gray-400 cursor-not-allowed"
-            }` }
-          disabled={ !file || loading }
+          }`}
+          disabled={!file || loading}
         >
           Upload and Continue
         </button>

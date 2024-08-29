@@ -1,29 +1,61 @@
 "use client";
-import { useRouter } from "next/navigation";
-import React from "react";
+import {useRouter, usePathname} from "next/navigation";
+import React, {useEffect} from "react";
 import {
   AiOutlineUser,
   AiOutlineShoppingCart,
   AiOutlineLink,
 } from "react-icons/ai";
-import { useState } from "react";
-import { BsCartCheck } from "react-icons/bs";
-import { IoIosArrowForward } from "react-icons/io";
-import { MdHistory, MdLogout } from "react-icons/md";
-import { FiSettings } from "react-icons/fi";
-import { FaRegCreditCard } from "react-icons/fa";
-import { FiMenu } from "react-icons/fi";
-import { CgMenuGridR } from "react-icons/cg";
-import { LuPanelRightOpen } from "react-icons/lu";
-import { LuPanelRightClose } from "react-icons/lu";
-import { BsBookmarkHeart } from "react-icons/bs";
+import {useState} from "react";
+import {BsCartCheck} from "react-icons/bs";
+import {IoIosArrowForward} from "react-icons/io";
+import {MdHistory, MdLogout} from "react-icons/md";
+import {FiSettings} from "react-icons/fi";
+import {FaRegCreditCard} from "react-icons/fa";
+import {FiMenu} from "react-icons/fi";
+import {CgMenuGridR} from "react-icons/cg";
+import {LuPanelRightOpen} from "react-icons/lu";
+import {LuPanelRightClose} from "react-icons/lu";
+import {BsBookmarkHeart} from "react-icons/bs";
+import instance from "@/utils/axios";
+import {notifyError, notifySuccess} from "@/utils/toast";
 const ProfileSidebar = () => {
   const router = useRouter();
-  const [active, setActive] = useState<string>("");
-  const [isOpen, setIsOpen] = useState(false);
+  const [active, setActive] = useState<string>( "" );
+  const [isOpen, setIsOpen] = useState( false );
+
+  const pathname = usePathname();
+  console.log( "pathname:::", pathname );
+
+  useEffect( () => {
+    if ( pathname === "/user-profile" ) {
+      setActive( "Profile" );
+    } else if ( pathname === "/user-profile/purchased-product" ) {
+      setActive( "purchasedProduct" );
+    } else if ( pathname === "/user-profile/purchase-history" ) {
+      setActive( "purchasedHistory" );
+    } else if ( pathname === "/user-profile/subscription" ) {
+      setActive( "subscription" );
+    } else if ( pathname === "/user-profile/wishlist" ) {
+      setActive( "wishlist" );
+    } else if ( pathname === "/user-profile/settings" ) {
+      setActive( "settings" );
+    }
+  }, [pathname] );
 
   const toggleSidebar = () => {
-    setIsOpen(!isOpen);
+    setIsOpen( !isOpen );
+  };
+  const handleLogout = async () => {
+    try {
+      const response = await instance.get( "/user/logout" );
+
+      router.push( "/auth/user/login" );
+      notifySuccess( "Logout successfully" );
+    } catch ( error ) {
+      notifyError( "Some error in Logout " );
+      console.error( "Error in logout:", error );
+    }
   };
 
   return (
@@ -35,27 +67,25 @@ const ProfileSidebar = () => {
           onClick={toggleSidebar}
           className="text-black bg-white rounded-full p-2  focus:outline-none"
         >
-          <LuPanelRightClose size={30}  />
+          <LuPanelRightClose size={30} />
         </button>
       </div>
       <div
-        className={`bg-white h-[100vh] flex-col ${
-          isOpen ? "fixed bottom-0 left-0 flex rounded-tr-md " : "hidden"
-        } md:flex`}
+        className={`bg-white h-[100vh] flex-col ${isOpen ? "fixed bottom-0 left-0 flex rounded-tr-md " : "hidden"
+          } md:flex`}
       >
         <div className="px-2 py-6 md:py-12">
           <h1 className="text-md text-black px-4 font-medium">My Account</h1>
           <div className="mt-4">
             <div
               onClick={() => {
-                setActive("Profile");
-                router.push(`/user-profile`);
+                setActive( "Profile" );
+                router.push( `/user-profile` );
               }}
-              className={`flex items-center mb-1 px-4 py-2 hover:rounded-lg  cursor-pointer ${
-                active === "Profile"
-                  ? "bg-webred text-white rounded-lg"
-                  : "hover:bg-gray-300 text-black"
-              } `}
+              className={`flex items-center mb-1 px-4 py-2 hover:rounded-lg  cursor-pointer ${active === "Profile"
+                ? "bg-webred text-white rounded-lg"
+                : "hover:bg-gray-300 text-black"
+                } `}
             >
               <div className="w-full flex justify-between items-center">
                 <div className="flex gap-2 justify-start items-center">
@@ -67,14 +97,13 @@ const ProfileSidebar = () => {
             </div>
             <div
               onClick={() => {
-                setActive("purchasedProduct");
-                router.push(`/user-profile/purchased-product`);
+                setActive( "purchasedProduct" );
+                router.push( `/user-profile/purchased-product` );
               }}
-              className={`flex mb-1 items-center px-4 py-2   hover:rounded-lg cursor-pointer ${
-                active === "purchasedProduct"
-                  ? "bg-webred  text-white rounded-lg"
-                  : "hover:bg-gray-300 text-black"
-              }`}
+              className={`flex mb-1 items-center px-4 py-2   hover:rounded-lg cursor-pointer ${active === "purchasedProduct"
+                ? "bg-webred  text-white rounded-lg"
+                : "hover:bg-gray-300 text-black"
+                }`}
             >
               <div className="w-full flex justify-between items-center">
                 <div className="flex gap-2 justify-start items-center">
@@ -86,14 +115,13 @@ const ProfileSidebar = () => {
             </div>
             <div
               onClick={() => {
-                setActive("purchasedHistory");
-                router.push(`/user-profile/purchase-history`);
+                setActive( "purchasedHistory" );
+                router.push( `/user-profile/purchase-history` );
               }}
-              className={`flex mb-1 items-center px-4 py-2 hover:rounded-lg cursor-pointer ${
-                active === "purchasedHistory"
-                  ? "bg-webred text-white rounded-lg"
-                  : "hover:bg-gray-300 text-black"
-              }`}
+              className={`flex mb-1 items-center px-4 py-2 hover:rounded-lg cursor-pointer ${active === "purchasedHistory"
+                ? "bg-webred text-white rounded-lg"
+                : "hover:bg-gray-300 text-black"
+                }`}
             >
               <div className="w-full flex justify-between items-center">
                 <div className="flex gap-2 justify-start items-center">
@@ -105,14 +133,13 @@ const ProfileSidebar = () => {
             </div>
             <div
               onClick={() => {
-                setActive("subscription");
-                router.push(`/user-profile/subscription`);
+                setActive( "subscription" );
+                router.push( `/user-profile/subscription` );
               }}
-              className={`flex mb-1 items-center px-4 py-2   hover:rounded-lg cursor-pointer ${
-                active === "subscription"
-                  ? "bg-webred text-white  rounded-lg"
-                  : "text-black hover:bg-gray-300"
-              }`}
+              className={`flex mb-1 items-center px-4 py-2   hover:rounded-lg cursor-pointer ${active === "subscription"
+                ? "bg-webred text-white  rounded-lg"
+                : "text-black hover:bg-gray-300"
+                }`}
             >
               <div className="w-full flex justify-between items-center">
                 <div className="flex gap-2 justify-start items-center">
@@ -124,33 +151,31 @@ const ProfileSidebar = () => {
             </div>
             <div
               onClick={() => {
-                setActive("favorites");
-                router.push(`/user-profile/favorites`);
+                setActive( "wishlist" );
+                router.push( `/user-profile/wishlist` );
               }}
-              className={`flex mb-1 items-center px-4 py-2  hover:rounded-lg cursor-pointer ${
-                active === "favorites"
-                  ? "bg-webred text-white  rounded-lg"
-                  : "text-black hover:bg-gray-300"
-              }`}
+              className={`flex mb-1 items-center px-4 py-2  hover:rounded-lg cursor-pointer ${active === "wishlist"
+                ? "bg-webred text-white  rounded-lg"
+                : "text-black hover:bg-gray-300"
+                }`}
             >
               <div className="w-full flex justify-between items-center">
                 <div className="flex gap-2 justify-start items-center">
                   <BsBookmarkHeart className="h-6 w-6" />
-                  <span>Favorites</span>
+                  <span>Wishlist</span>
                 </div>
                 <IoIosArrowForward />
               </div>
             </div>
             <div
               onClick={() => {
-                setActive("settings");
-                router.push("/user-profile/settings");
+                setActive( "settings" );
+                router.push( "/user-profile/settings" );
               }}
-              className={`flex mb-1 items-center px-4 py-2  hover:rounded-lg cursor-pointer ${
-                active === "settings"
-                  ? "bg-webred text-white rounded-lg"
-                  : "text-black hover:bg-gray-300"
-              }`}
+              className={`flex mb-1 items-center px-4 py-2  hover:rounded-lg cursor-pointer ${active === "settings"
+                ? "bg-webred text-white rounded-lg"
+                : "text-black hover:bg-gray-300"
+                }`}
             >
               <div className="w-full flex justify-between items-center">
                 <div className="flex gap-2 justify-start items-center">
@@ -160,7 +185,7 @@ const ProfileSidebar = () => {
                 <IoIosArrowForward />
               </div>
             </div>
-            <div className="flex mb-1 items-center text-webred px-4 py-2 hover:bg-gray-300 hover:rounded-lg cursor-pointer">
+            <div className="flex mb-1 items-center text-webred px-4 py-2 hover:bg-gray-300 hover:rounded-lg cursor-pointer" onClick={handleLogout}>
               <div className="w-full flex justify-between items-center">
                 <div className="flex gap-2 justify-start items-center">
                   <MdLogout className="h-6 w-6" />
@@ -171,14 +196,14 @@ const ProfileSidebar = () => {
           </div>
         </div>
         <div className="fixed bottom-0 left-0 flex items-center justify-between p-1 md:hidden">
-        <button
-          onClick={toggleSidebar}
-          className="text-black bg-white rounded-full p-2  focus:outline-none"
-        >
-        <LuPanelRightOpen size={30}  />
-          
-        </button>
-      </div>
+          <button
+            onClick={toggleSidebar}
+            className="text-black bg-white rounded-full p-2  focus:outline-none"
+          >
+            <LuPanelRightOpen size={30} />
+
+          </button>
+        </div>
       </div>
     </div>
   );

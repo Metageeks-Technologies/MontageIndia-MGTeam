@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { useAppDispatch } from "@/app/redux/hooks";
 import { setCart } from "@/app/redux/feature/product/slice";
 import { Spinner } from "@nextui-org/react";
+import Swal from "sweetalert2";
 declare global {
   interface Window {
     Razorpay: any;
@@ -24,20 +25,16 @@ const PayButton: React.FC<props> = ({ orderOption }) => {
   const router = useRouter();
 
   const handlePaymentSuccess = async (res: any) => {
-    try {
-      const response: any = await instance.post("/payment/verify", res);
-      console.log("step 2:", response);
-      if (response.data.success) {
         dispatch(setCart([]));
-        // alert(response.data.message);
-
+        Swal.fire({
+          title: "Order Placed",
+          text: "Your order has been placed successfully",
+          icon: "success",
+          color: "green",
+          timer: 3000,
+          confirmButtonColor: "#2300a3",
+        });
         router.push("/user-profile/purchased-product");
-      } else {
-        alert("payment failed");
-      }
-    } catch (error) {
-      console.log(error);
-    }
   };
   const handlePayment = (options: any) => {
     if (!loaded || typeof window.Razorpay === "undefined") {

@@ -24,6 +24,7 @@ const Page = () => {
   const {
     videoData: product,
     videoPage,
+    totalVideoData,
     totalVideoNumOfPage,
   } = useAppSelector((state) => state.product);
 
@@ -38,21 +39,19 @@ const Page = () => {
   const handlePrevPage = () => {
     handlePageChange(videoPage === 1 ? totalVideoNumOfPage : videoPage - 1);
   };
- 
 
-  const fetchData =async (page: number) => {
+  const fetchData = async (page: number) => {
     setloading(true);
 
     // setLoading(true);
-    const response=await getVideo(dispatch, {
+    const response = await getVideo(dispatch, {
       page,
       mediaType: ["video"],
       searchTerm,
-      category:categoryParam,
+      category: categoryParam,
       productsPerPage: "9",
     });
     setloading(false);
-
   };
 
   useEffect(() => {
@@ -62,6 +61,13 @@ const Page = () => {
     };
   }, [videoPage, searchParams]);
 
+  const breakpointColumnsObj = {
+    default: 4,
+    1100: 3,
+    700: 2,
+    500: 1,
+  };
+
   return (
     <>
       <Searchbar />
@@ -70,26 +76,31 @@ const Page = () => {
         {/* Category Buttons */}
         {/* <hr className="mt-5" /> */}
 
-
         {/* Trending Videos */}
         <div className="bg-[#eeeeee]">
           <div className="py-10 lg:mx-24 md:mx-4 mx-4">
             <h1 className="text-2xl font-bold lg:text-start md:text-center text-center">
               Today's Trending Videos
             </h1>
+            <h4 className="text-lg text-neutral-700">
+              {totalVideoData} Product stock Photos and High-res Pictures
+            </h4>
             <div className="mx-auto mt-4">
-              <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 mt-5">
               {loading ? (
-            <div className="h-screen justify-center flex">
-              <Spinner label="Loading..." color="danger" />
-            </div>):(<>
-              {product.length > 0 ? (
-                  product.map((data) => <Trending key={data._id} data={data} />)
-                ) : (
-                  <p>No videos found.</p>
-                )}</>)}
-               
-              </div>
+                <div className=" justify-center text-center m-auto ">
+                  <Spinner label="Loading..." color="danger" />
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 mt-5">
+                  {product.length > 0 ? (
+                    product.map((data) => (
+                      <Trending key={data._id} data={data} />
+                    ))
+                  ) : (
+                    <p>No videos found.</p>
+                  )}
+                </div>
+              )}
             </div>
           </div>
         </div>

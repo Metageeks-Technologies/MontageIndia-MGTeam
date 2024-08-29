@@ -69,7 +69,7 @@ const Page = () => {
 
         <div className="m-auto  bg w-[90%]">
           <h4 className="text-lg text-neutral-700">
-            20 Product stock Photos and High-res Pictures
+            {totalImageData} Product stock Photos and High-res Pictures
           </h4>
 
           {loading ? (

@@ -231,27 +231,26 @@ const Waveform = ( {
 
   return (
     <div
-      onClick={ () => handleClick( product.uuid ) }
+      onClick={() => handleClick( product.uuid )}
       className="bg-gray-800 w-full justify-between rounded-lg px-4 py-2 mb-2 flex items-center cursor-pointer"
     >
       <div className="flex justify-start items-center lg:gap-3 md:gap-2 gap-1 w-4/12">
         <button
           className="play-button"
-          onClick={ ( e ) =>
-          {
+          onClick={( e ) => {
             e.stopPropagation();
             handlePlay();
-          } }
-          disabled={ loading }
+          }}
+          disabled={loading}
         >
-          { loading ? (
+          {loading ? (
             "Loading..."
           ) : !playing ? (
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="#EA403E"
               viewBox="0 0 24 24"
-              strokeWidth={ 1.5 }
+              strokeWidth={1.5}
               stroke="none"
               className="size-6"
             >
@@ -266,7 +265,7 @@ const Waveform = ( {
               xmlns="http://www.w3.org/2000/svg"
               fill="#EA403E"
               viewBox="0 0 24 24"
-              strokeWidth={ 1.5 }
+              strokeWidth={1.5}
               stroke="#EA403E"
               className="size-6"
             >
@@ -276,41 +275,39 @@ const Waveform = ( {
                 d="M15.75 5.25v13.5m-7.5-13.5v13.5"
               />
             </svg>
-          ) }
+          )}
         </button>
         <div>
-          <h3 className="text-white font-semibold">{ product.title || "" }</h3>
-          <p className="flex gap-2 text-[#999999]">
-            { product.tags.map( ( tag ) => (
-              <span className="text-[#999999] text-sm">{ tag }</span>
-            ) ) }
+          <h3 className="text-white font-semibold">{product.title || ""}</h3>
+          <p className="flex gap-2 text-[#999999] text-sm">
+            {product.tags.map( ( tag, idx ) => (
+              <span key={idx} className="text-[#999999]">{tag}</span>
+            ) )}
           </p>
         </div>
       </div>
-      <div className="lg:w-4/12 md:w-40 w-28 waveform-container ">
-        <div className="wave" id={ `waveform-${ product._id }` } />
-        <audio id={ `track-${ product._id }` } src={ url } />
+
+      <div className="lg:w-4/12 md:w-40 w-28 waveform-container hidden sm:block">
+        <div className="wave" id={`waveform-${product._id}`} />
+        <audio id={`track-${product._id}`} src={url} />
       </div>
+
       <div className="w-4/12 lg:gap-9 md:gap-5 gap-3 items-center justify-end flex text-right text-gray-400">
-        <div className="flex items-center  gap-2 text-right text-white">
-          <p>{ formatSecToMin( product.variants[ 0 ].metadata?.length || 0 ) } min</p>
-          <p className=" capitalize">
-            { " " }
-            { product.variants[ 0 ].metadata?.format }{ " " }
-          </p>
+        <div className="flex items-center gap-2 text-right text-white">
+          <p>{formatSecToMin( product.variants[0].metadata?.length || 0 )} min</p>
+          <p className="capitalize">{product.variants[0].metadata?.format}</p>
         </div>
-        <div className="text-white items-center flex gap-4">
-          { !product.isPurchased ? (
+        <div className="flex items-center gap-4 text-white">
+          {!product.isPurchased ? (
             <button
-              title={ product.isInCart ? "Remove from cart" : "Add to cart" }
-              className="cursor-pointer "
-              onClick={ ( e ) =>
-              {
+              title={product.isInCart ? "Remove from cart" : "Add to cart"}
+              className="cursor-pointer"
+              onClick={( e ) => {
                 e.stopPropagation();
                 handleCart();
-              } }
+              }}
             >
-              { cartLoading ? (
+              {cartLoading ? (
                 <svg
                   className="animate-spin h-5 w-5 text-current"
                   xmlns="http://www.w3.org/2000/svg"
@@ -331,12 +328,12 @@ const Waveform = ( {
                     d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                   ></path>
                 </svg>
-              ) :
+              ) : (
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  fill={ product.isInCart ? "currentColor" : "none" }
+                  fill={product.isInCart ? "currentColor" : "none"}
                   viewBox="0 0 24 24"
-                  strokeWidth={ 1.5 }
+                  strokeWidth={1.5}
                   stroke="currentColor"
                   className="size-6"
                 >
@@ -346,27 +343,27 @@ const Waveform = ( {
                     d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z"
                   />
                 </svg>
-              }
+              )}
             </button>
           ) : (
             <div
-              title={ "Purchased Product" }
-              className={ ` p-2 bg-red-500 text-white rounded-full` }
+              title={"Purchased Product"}
+              className={`p-2 bg-red-500 text-white rounded-full`}
             >
               <BiSolidPurchaseTagAlt />
             </div>
-          ) }
-
+          )}
           <button
-            title={ product?.isWhitelisted ? "Remove from Saved" : "Save Image" }
-            className="cursor-pointer "
-            onClick={ ( e ) =>
-            {
+            title={
+              product?.isWhitelisted ? "Remove from Saved" : "Save Image"
+            }
+            className="cursor-pointer"
+            onClick={( e ) => {
               e.stopPropagation();
               handleeWishlist();
-            } }
+            }}
           >
-            { wishlistLoading ? (
+            {wishlistLoading ? (
               <svg
                 className="animate-spin h-5 w-5 text-current"
                 xmlns="http://www.w3.org/2000/svg"
@@ -387,62 +384,60 @@ const Waveform = ( {
                   d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                 ></path>
               </svg>
-            ) : 
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill={ product.isWhitelisted ? "currentColor" : "none" }
-              viewBox="0 0 24 24"
-              strokeWidth={ 1.5 }
-              stroke="currentColor"
-              className="size-6"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z"
-              />
-            </svg>
-            }
-          </button> 
+            ) : (
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill={product.isWhitelisted ? "currentColor" : "none"}
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+                className="size-6"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z"
+                />
+              </svg>
+            )}
+          </button>
           <button
-            className="cursor-pointer "
-            onClick={ ( e ) =>
-            {
+            className="cursor-pointer"
+            onClick={( e ) => {
               e.stopPropagation();
               handleDownload();
-            } }
+            }}
           >
-            { !downloading ? (
-              <>
-                <FiDownload className=" h-6 w-6  font-semibold" />
-              </>
+            {!downloading ? (
+              <FiDownload className="h-6 w-6 font-semibold" />
             ) : (
-                <svg
-                  className="animate-spin h-5 w-5 text-current"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                >
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                  ></circle>
-                  <path
-                    className="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                  ></path>
-                </svg>
-            ) }
+              <svg
+                className="animate-spin h-5 w-5 text-current"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                ></circle>
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                ></path>
+              </svg>
+            )}
           </button>
         </div>
       </div>
     </div>
   );
+
 };
 
 export default Waveform;

@@ -380,3 +380,16 @@ input[type="range"].progress-bar::-moz-range-thumb {
   display: flex;
   height: 100vh;
 }
+
+/* for video layout */
+.my-masonry-grid {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  margin-left: -30px;
+  width: auto;
+}
+.my-masonry-grid_column {
+  padding-left: 30px;
+  background-clip: padding-box;
+}

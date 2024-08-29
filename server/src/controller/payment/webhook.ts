@@ -7,7 +7,14 @@ import { validateWebhookSignature } from "razorpay/dist/utils/razorpay-utils";
 import Transaction from "@src/model/transaction/transaction";
 import SubscriptionHistory from "@src/model/subscriptions/subscriptionHistory";
 import { sendEmail } from "@src/utils/nodemailer/mailer/mailer";
-import mongoose from "mongoose";
+import Razorpay from "razorpay";
+
+const razorpayInstance = () => {
+  return new Razorpay({
+    key_id: config.razorpayKey as string,
+    key_secret: config.razorpaySecret as string,
+  });
+};
 
 const sendNotification = async (payload: any) => {
   console.log("for email", payload);
@@ -112,16 +119,21 @@ const subscriptionCharged = async (payload: any) => {
     const { start_at, end_at, status, expire_by, plan_id, id, notes } =
       payload.subscription.entity;
     console.log("Notes", notes);
+    const razorpay=razorpayInstance();
+
+    const response:any =await razorpay.plans.fetch(plan_id);
+    console.log("response",response);
     const user = await customer.findOneAndUpdate(
       { "subscription.subscriptionId": id },
       {
         $set: {
           "subscription.status": status,
-          "subscription.PlanId": notes.subscriptionId as string,
+          "subscription.PlanId": notes.subscriptionId,
+          "subscription.planValidity": Date.now()+(response.period==='yearly'?365*24*60*60*1000:30*24*60*60*1000),
         },
-        $inc: { "subscription.credits": notes.credits },
+        $inc: { "subscription.credits": Number(notes.credits) },
       },
-      { new: true } // Return the updated document
+      { new: true }
     );
     if (!user) return;
     // console.log("user",user);
@@ -137,8 +149,8 @@ const subscriptionCharged = async (payload: any) => {
   }
 };
 const subscriptionHandler = async (payload: any) => {
+    console.log("subscription handler",payload);
   try {
-    // console.log("subscription handler",payload);
     const { start_at, end_at, status, expire_by, plan_id, id } =
       payload.subscription.entity;
 
@@ -161,6 +173,35 @@ const subscriptionHandler = async (payload: any) => {
   }
 };
 
+// const subscriptionCompleted = async (payload: any) => {
+//     console.log("subscription Completed",payload);
+//   try {
+//     const { start_at, end_at, status, plan_id, id } =
+//       payload.subscription.entity;
+
+//     const user = await customer.findOneAndUpdate(
+//   { "subscription.subscriptionId": id },
+//   {
+//     $set: {
+//       status: "active",
+//     }
+//   },
+//   { new: true }
+// );
+//     if (!user) return;
+//     console.log("user", user);
+//     await SubscriptionHistory.create({
+//       userId: user?._id,
+//       planId: plan_id,
+//       startDate: start_at,
+//       endDate: end_at,
+//       status: ,
+//     });
+//   } catch (error) {
+//     console.log(error);
+//   }
+// };
+
 const orderPaid = async (payload: any) => {
   try {
     console.log("order paid", payload);
@@ -171,7 +212,7 @@ const orderPaid = async (payload: any) => {
       { status: "paid" },
       { new: true } // Return the updated document
     );
-    console.log(Order);
+    console.log("Order not found",Order);
 
     if (!Order) return;
 
@@ -262,13 +303,12 @@ export const paymentWebHook = catchAsyncError(async (req, res, next) => {
   if (isValid) {
     const { event, payload } = req.body;
 
-    console.log(event, payload);
+    // console.log(event, payload);
 
     switch (event) {
       case "payment.authorized":
       case "payment.captured":
       case "payment.failed": {
-        console.log("payment");
         paymentHandler(payload);
         break;
       }
@@ -279,15 +319,25 @@ export const paymentWebHook = catchAsyncError(async (req, res, next) => {
       }
 
       case "subscription.charged": {
+        console.log("subscription charged");
         subscriptionCharged(payload);
         break;
       }
-      case "subscription.authenticated":
-      case "subscription.cancelled":
-      case "subscription.completed": {
+      // case "subscription.authenticated":{
+      //   console.log("subscription authenticated");
+      //   subscriptionHandler(payload);
+      //   break;
+      // }
+      case "subscription.cancelled": {
+        console.log("subscription cancelled");
         subscriptionHandler(payload);
         break;
       }
+      // case "subscription.completed": {
+      //   console.log("subscription completed");
+      //   subscriptionCompleted(payload);
+      //   break;
+      // }
       default:
         console.log(`Unhandled event: ${event}`);
         break;

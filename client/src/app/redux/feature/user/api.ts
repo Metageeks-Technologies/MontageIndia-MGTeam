@@ -8,7 +8,6 @@ import {
 } from "./slice";
 import type { AppDispatch } from "@/app/redux/store";
 import type { AxiosError } from "axios";
-import { notifySuccess } from "@/utils/toast";
 import Swal from "sweetalert2";
 
 export const getCurrCustomer = async (dispatch: AppDispatch) => {
