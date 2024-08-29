@@ -68,12 +68,12 @@ const Page = () => {
   return (
     <>
       <Searchbar />
-      <div className="main">
+      <div className="main bg-pageBg-light">
         {/* <hr className="mt-5" /> */}
 
         {/* <Waveform /> */}
 
-        <div className="m-auto mt-4 bg w-[90%]">
+        <div className="m-auto  w-[90%]">
           {/* <div className="flex flex-wrap gap-2 ">
             <button className="flex items-center hover:bg-[#c7c7c9] text-sm px-3 py-1 border border-gray-700 rounded text-gray-700 bg-transparent backdrop-blur-sm bg-opacity-20 hover:bg-opacity-30 transition duration-300">
               <IoIosSearch className="h-5 w-5 mr-1" />
@@ -106,7 +106,7 @@ const Page = () => {
           </div> */}
 
           {totalAudioData > 0 && (
-            <h4 className="mt-5 text-lg text-neutral-700">
+            <h4 className=" text-lg text-neutral-700">
               {totalAudioData} Audio Files
             </h4>
           )}

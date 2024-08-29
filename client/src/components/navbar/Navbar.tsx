@@ -44,7 +44,7 @@ const Sidebar = () => {
 
   return (
     <>
-      <div className="flex items-center justify-between   bg-white px-6 py-4 shadow-md">
+      <div className="flex items-center justify-between bg-white px-6 py-4 shadow-md">
         <div className="flex items-center gap-5">
           <img
             src="/images/logo.png"
@@ -134,6 +134,12 @@ const Sidebar = () => {
                   </div>
                 )}
               </li>
+              <li
+                className="text-gray-700 hover:text-black transition duration-300 ease-in-out"
+                onClick={() => router.push( "/ondemand" )}
+              >
+                On Demand
+              </li>
             </ul>
           </div>
         </div>
@@ -147,7 +153,7 @@ const Sidebar = () => {
                 </span>
               </div>
             )}
-            <Link href="/user-profile/favorites">
+            <Link href="/user-profile/wishlist">
               <AiOutlineHeart className="text-gray-700 hover:text-webred cursor-pointer w-7 h-7 transition-transform duration-200 ease-in-out hover:scale-110" />
             </Link>
 

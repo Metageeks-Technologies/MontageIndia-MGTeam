@@ -69,10 +69,6 @@ const Searchbar = () => {
     params.delete( 'searchTerm' );
     const newUrl = `${window.location.pathname}?${params.toString()}`;
     router.replace( newUrl );
-
-
-
-
   };
   const handleCategoryClick = ( category: string ) => {
     setSearchTerm( category );
@@ -100,58 +96,85 @@ const Searchbar = () => {
     const newUrl = `${window.location.pathname}?${updatedSearchParams.toString()}`;
 
     window.history.pushState( {}, '', newUrl );
-  }; 
+  };
 
 
   return (
     <>
-    <div className='transition-all duration-300 sticky top-0 z-10 bg-white shadow-md py-4 border-t-1'>
-      <div className="flex relative  justify-between items-center gap-4 bg-gray-100 border border-gray-300 rounded-md mx-6 lg:mx-24 px-4">
-        <div className="flex flex-row w-full gap-2">
-          <select
-            className="bg-gray-100 w-full md:w-40 sm:w-20 outline-none cursor-pointer text-gray-600 text-sm rounded-lg p-2.5"
-            value={selectedOption}
-            onChange={( e ) => setSelectedOption( e.target.value )}
-          >
-            <option>All Image</option>
-            <option>Audio</option>
-            <option>Video</option>
-            <option>Editorial Image</option>
-            <option>Editorial Audio</option>
-            <option>Editorial Video</option>
-          </select>
+      <div className='transition-all duration-300 sticky top-0 z-10 bg-white shadow-md py-4 border-t-1'>
+        <div className="flex relative  justify-between items-center gap-4 bg-gray-100 border border-gray-300 rounded-md mx-6 lg:mx-24 px-4">
+          <div className="flex flex-row w-full gap-2">
+            <select
+              className="bg-gray-100 w-full md:w-40 sm:w-20 outline-none cursor-pointer text-gray-600 text-sm rounded-lg p-2.5"
+              value={selectedOption}
+              onChange={( e ) => setSelectedOption( e.target.value )}
+            >
+              <option>All Image</option>
+              <option>Audio</option>
+              <option>Video</option>
+              <option>Editorial Image</option>
+              <option>Editorial Audio</option>
+              <option>Editorial Video</option>
+            </select>
 
-          <img src="/asset/Rectangle 15.png" className="hidden md:block " alt="" />
+            <img src="/asset/Rectangle 15.png" className="hidden md:block " alt="" />
 
-          <div className="relative w-full">
-            <input
-              type="text"
-              placeholder="Search "
-              value={searchTerm}
-              onChange={( e ) => setSearchTerm( e.target.value )}
-              onKeyDown={handleKeyDown}
-              className="w-full py-2 px-4 outline-none bg-gray-100 rounded-md"
-            />
-            {searchTerm && (
-              <span onClick={handleClear} className="absolute right-10 top-1/2 transform -translate-y-1/2 text-gray-400 cursor-pointer ">
-                <ImCross />
-              </span>
-            )}
+            <div className="relative w-full">
+              <input
+                type="text"
+                placeholder="Search "
+                value={searchTerm}
+                onChange={( e ) => setSearchTerm( e.target.value )}
+                onKeyDown={handleKeyDown}
+                className="w-full py-2 px-4 outline-none bg-gray-100 rounded-md"
+              />
+              {searchTerm && (
+                <span onClick={handleClear} className="absolute right-10 top-1/2 transform -translate-y-1/2 text-gray-400 cursor-pointer ">
+                  <ImCross />
+                </span>
+              )}
+            </div>
+          </div>
+
+          <div onClick={getData} className="cursor-pointer absolute top-0 bottom-0 right-0 flex justify-center items-center w-12 bg-[#8D529C] rounded-r-md">
+            <IoSearchOutline className="text-white w-6 h-6" />
           </div>
         </div>
-
-        <div onClick={getData} className="cursor-pointer absolute top-0 bottom-0 right-0 flex justify-center items-center w-12 bg-[#8D529C] rounded-r-md">
-          <IoSearchOutline className="text-white w-6 h-6" />
-        </div>
       </div>
-    </div>
 
+      {/* if we are on deltail page of any route than dont show this filteres. router will be video/id etc */}
+      {(window.location.pathname.match(/^\/(video|audio|image)\/[^/]+$/) ?   null :
+        <div className='bg-gray80  border-t flex flex-wrap items-center gap-5 justify-between border-gray-300 w-full'>
+          <div className='flex m-auto p-3 items-center flex-col md:flex-row  w-[90%] justify-between '>
+            <div className='flex flex-row gap-3 justify-between w-full md:w-fit'>
+              <Filter />
+              <div className=' md:hidden '>
+                <button
+                  onClick={handleClear}
+                  disabled={!searchRenderTerm}
+                  className={` ${searchRenderTerm ? "bg-red-500 cursor-pointer" : "bg-red-500 cursor-not-allowed bg-opacity-50"} py-2 text-white  border flex flex-row items-center gap-2 border-gray-300 px-5 rounded-md`}
+                >
+                  Clear <MdClear />
+                </button>
+              </div>
+            </div>
+            <div className="w-[80%]   rounded-md   flex flex-row scrollbar-hide overflow-x-scroll  items-center text-center bg-gray80  justify-start ">
+              {terms.map( ( category ) => {
+                return (
+                  <button
+                    key={category}
+                    onClick={() => handleCategoryClick( category )}
+                    className={`flex  items-center whitespace-nowrap m-3 px-3 py-2 sm:px-4 sm:py-2 border border-gray-300 rounded-md   capitalize backdrop-blur-sm  hover:bg-opacity-30 transition duration-300 ${searchRenderTerm === category ? ' bg-red-500 text-white' : 'bg-transparent'
+                      }`}
+                  >
+                    <IoIosSearch className="h-5 w-5 mr-2" />
+                    {category}
+                  </button>
+                );
+              } )}
 
-      <div className='bg-gray80  border-t flex flex-wrap items-center gap-5 justify-between border-gray-300 w-full'>
-        <div className='flex m-auto p-3 items-center flex-col md:flex-row  w-[90%] justify-between '>
-          <div className='flex flex-row gap-3 justify-between w-full md:w-fit'>
-            <Filter />
-            <div className=' md:hidden '>
+            </div>
+            <div className=' hidden md:block'>
               <button
                 onClick={handleClear}
                 disabled={!searchRenderTerm}
@@ -161,33 +184,8 @@ const Searchbar = () => {
               </button>
             </div>
           </div>
-          <div className="w-[80%]   rounded-md   flex flex-row scrollbar-hide overflow-x-scroll mb-0 items-center text-center bg-gray80     justify-start ">
-            {terms.map( ( category ) => {
-              return (
-                <button
-                  key={category}
-                  onClick={() => handleCategoryClick( category )}
-                  className={`flex  items-center whitespace-nowrap m-3 px-3 py-2 sm:px-4 sm:py-2 border border-gray-300 rounded-md   capitalize backdrop-blur-sm  hover:bg-opacity-30 transition duration-300 ${searchRenderTerm === category ? ' bg-red-500 text-white' : 'bg-transparent'
-                    }`}
-                >
-                  <IoIosSearch className="h-5 w-5 mr-2" />
-                  {category}
-                </button>
-              );
-            } )}
-
-          </div>
-          <div className=' hidden md:block'>
-            <button
-              onClick={handleClear}
-              disabled={!searchRenderTerm}
-              className={` ${searchRenderTerm ? "bg-red-500 cursor-pointer" : "bg-red-500 cursor-not-allowed bg-opacity-50"} py-2 text-white  border flex flex-row items-center gap-2 border-gray-300 px-5 rounded-md`}
-            >
-              Clear <MdClear />
-            </button>
-          </div>
-        </div>
-      </div>
+        </div> 
+      )}
     </>
 
   );

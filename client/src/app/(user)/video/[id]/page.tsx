@@ -135,7 +135,7 @@ const Home = () => {
     <>
       <Searchbar />
       <div className="main h-full">
-        <hr className="mt-5" />
+        <hr />
 
         <div className="bg-pageBg mx-auto">
           <div className="flex flex-col lg:flex-row lg:space-x-8 px-4 sm:px-6 md:px-8 lg:px-24">
@@ -175,11 +175,11 @@ const Home = () => {
                       </button>
                     </div>
                   </div>
-                  <div className="w-full h-48 sm:h-64 md:h-80 lg:h-[32rem]">
+                  <div className="w-full h-48 sm:h-64 md:h-80 lg:h-[32rem] rounded-lg">
 
                     <video
                       controls
-                      className="mx-auto object-contain h-full w-full rounded-lg"
+                      className=" object-cover h-full w-full rounded-lg"
 
                     >
                       <source
@@ -197,7 +197,7 @@ const Home = () => {
                 </div>
               )}
             </div>
-            <div className="w-full lg:w-1/3 mt-8 lg:mt-0 border-t lg:border-l lg:border-t-0 pt-8 lg:pt-0 lg:pl-8">
+            <div className="w-full lg:w-1/3 mt-8 lg:mt-0 border-t lg:border-l lg:border-t-0 pt-8 lg:pt-0 ">
               {product && (
                 <>
                   <div className="border p-4 sm:p-6 bg-white rounded-lg">
@@ -367,7 +367,7 @@ const Home = () => {
                       </button>
                     </span>
                   ) )}
-                </div> 
+                </div>
               </div>
             </div>
           )}
