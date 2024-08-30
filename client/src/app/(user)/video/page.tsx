@@ -72,14 +72,11 @@ const Page = () => {
     <>
       <Searchbar />
 
-      <div className="main items-center ">
-        {/* Category Buttons */}
-        {/* <hr className="mt-5" /> */}
-
+      <div className="main items-center">
         {/* Trending Videos */}
         <div className="bg-[#eeeeee]">
-          <div className="py-10 lg:mx-24 md:mx-4 mx-4">
-            <h1 className="text-2xl font-bold lg:text-start md:text-center text-center">
+          <div className="py-10 lg:mx-4 xl:mx-24 md:mx-4 mx-4">
+            <h1 className="text-2xl font-bold  text-start">
               Today's Trending Videos
             </h1>
             <h4 className="text-lg text-neutral-700">
@@ -87,15 +84,15 @@ const Page = () => {
             </h4>
             <div className="mx-auto mt-4">
               {loading ? (
-                <div className=" justify-center text-center m-auto ">
+                <div className="justify-center text-center m-auto">
                   <Spinner label="Loading..." color="danger" />
                 </div>
               ) : (
-                <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 mt-5">
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3  mt-5  lg:border">
                   {product.length > 0 ? (
-                    product.map((data) => (
+                    product.map( ( data ) => (
                       <Trending key={data._id} data={data} />
-                    ))
+                    ) )
                   ) : (
                     <p>No videos found.</p>
                   )}
@@ -105,6 +102,7 @@ const Page = () => {
           </div>
         </div>
 
+
         {/* Pagination */}
         {totalVideoNumOfPage > 1 && (
           <div className="flex justify-center items-center gap-4 my-4">
@@ -113,11 +111,10 @@ const Page = () => {
               type="button"
               disabled={videoPage === 1}
               variant="flat"
-              className={`${
-                videoPage === 1
+              className={`${videoPage === 1
                   ? "opacity-70 cursor-not-allowed"
                   : "hover:bg-webred"
-              } bg-webred text-white rounded-full font-bold`}
+                } bg-webred text-white rounded-full font-bold`}
               onPress={handlePrevPage}
             >
               Prev
@@ -140,11 +137,10 @@ const Page = () => {
               size="sm"
               disabled={videoPage === totalVideoNumOfPage}
               variant="flat"
-              className={`${
-                videoPage === totalVideoNumOfPage
+              className={`${videoPage === totalVideoNumOfPage
                   ? "opacity-70 cursor-not-allowed"
                   : "hover:bg-webred"
-              } bg-webred text-white rounded-full font-bold`}
+                } bg-webred text-white rounded-full font-bold`}
               onPress={handleNextPage}
             >
               Next
@@ -155,6 +151,7 @@ const Page = () => {
         <Footer />
       </div>
     </>
+
   );
 };
 

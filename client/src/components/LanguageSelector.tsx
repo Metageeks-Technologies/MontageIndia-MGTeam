@@ -95,10 +95,11 @@ export function GoogleTranslate (): JSX.Element {
             <select
                 onChange={changeLang}
                 value={currentLang}
-                className="notranslate bg-black text-white border border-gray-700 rounded-md px-2 py-1 w-full focus:outline-none focus:ring-2 focus:ring-gray-500"
+                className="notranslate bg-black text-white border border-gray-700 rounded-md px-2 py-1 focus:outline-none focus:ring-2 focus:ring-gray-500"
             >
                 {languages.map( ( lang ) => (
                     <option key={lang.value} value={lang.value}>
+                        <img src={lang.src} alt={lang.label} className="w-6 h-6 inline-block" />
                         {lang.label}
                     </option>
                 ) )}

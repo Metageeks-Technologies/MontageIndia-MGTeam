@@ -8,13 +8,12 @@ const Footer = () => {
     <div className="bg-black text-white pb-10 px-4 sm:px-10 lg:px-20">
       <div className="flex flex-col lg:flex-row">
         <div className="mt-5 lg:w-1/4 pr-4">
-          <div className='mb-4 bg-white mr-8 rounded-lg pl-4 p-4'>
+          <div className='mb-4  rounded-lg w-fit  '>
             <div>
               <img
-                src="/images/logo.png"
+                src="/images/logo-white.svg"
                 alt="logo"
-                className="w-44 h-10 cursor-pointer"
-              // onClick={() => router.push( "/" )}
+                className="w-44 h-10 cursor-pointer mb-4 sm:mb-0 sm:mr-4"
               />
             </div>
           </div>

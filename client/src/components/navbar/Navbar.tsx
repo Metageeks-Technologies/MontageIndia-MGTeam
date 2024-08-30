@@ -1,24 +1,52 @@
-"use client";
-import React, {useState} from "react";
-import {AiOutlineHeart, AiOutlineMenu, AiOutlineClose} from "react-icons/ai";
-import {IoIosArrowDropdown, IoMdArrowDropdown} from "react-icons/io";
-import {useRouter, useSearchParams} from "next/navigation";
-import CartPopup from "../cart/cartPage";
-import {FaUserCircle} from "react-icons/fa";
-import instance from "@/utils/axios";
-import {BiLogInCircle, BiLogOutCircle} from "react-icons/bi";
-import {useAppDispatch, useAppSelector} from "@/app/redux/hooks";
-import Link from "next/link";
-import Swal from "sweetalert2";
-import {notifySuccess} from "@/utils/toast";
-//
-const Sidebar = () => {
+"use client"
+import React, {useState, useEffect} from 'react';
+import {AiOutlineMenu, AiOutlineClose, AiOutlineHeart} from 'react-icons/ai';
+import {FaUserCircle} from 'react-icons/fa';
+import {IoIosArrowDropdown} from 'react-icons/io';
+import {BiLogInCircle, BiLogOutCircle} from 'react-icons/bi';
+import Link from 'next/link';
+import {useRouter} from 'next/navigation';
+import instance from '@/utils/axios';
+import {notifySuccess} from '@/utils/toast';
+import CartPopup from '../cart/cartPage';
+import {useAppSelector} from '@/app/redux/hooks';
+
+interface User {
+  subscription: {
+    status: string;
+    credits?: number;
+  };
+  image: string;
+  name: string;
+  email: string;
+}
+
+interface NavItemProps {
+  href: string;
+  children: React.ReactNode;
+  onClick?: () => void;
+}
+
+const Navbar: React.FC = () => {
+  const [menuOpen, setMenuOpen] = useState<boolean>( false );
+  const [isUserOpen, setIsUserOpen] = useState<boolean>( false );
+  const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>( false );
+  const [isMobile, setIsMobile] = useState<boolean>( false );
   const router = useRouter();
-  const [menuOpen, setMenuOpen] = useState( false );
-  const [isUserOpen, setIsUserOpen] = useState( false );
+
+  // Replace this with your actual user state management
   const {user} = useAppSelector( ( state ) => state.user );
   const cart = useAppSelector( ( state ) => state.product.cart );
-  const [isDropdownOpen, setIsDropdownOpen] = useState( false );
+
+  useEffect( () => {
+    const handleResize = () => {
+      setIsMobile( window.innerWidth < 760 );
+    };  
+    handleResize();
+    window.addEventListener( 'resize', handleResize );
+    return () => window.removeEventListener( 'resize', handleResize );
+  }, [] );
+
   const toggleDropdown = () => setIsDropdownOpen( !isDropdownOpen );
   const closeDropdown = () => setIsDropdownOpen( false );
 
@@ -42,213 +70,174 @@ const Sidebar = () => {
     router.push( "/user-profile" );
   };
 
-  return (
-    <>
-      <div className="flex items-center justify-between bg-white px-6 py-4 shadow-md">
-        <div className="flex items-center gap-5">
-          <img
-            src="/images/logo.png"
-            alt="logo"
-            className="w-44 h-10 cursor-pointer"
-            onClick={() => router.push( "/" )}
-          />
-          <div className="hidden lg:flex items-center space-x-4">
-            <ul className="flex items-center space-x-4 cursor-pointer">
-              <li
-                className="text-gray-700 hover:text-black transition duration-300 ease-in-out"
-                onClick={() => router.push( "/video" )}
-              >
-                Video
-              </li>
-              <li
-                className="text-gray-700 hover:text-black transition duration-300 ease-in-out"
-                onClick={() => router.push( "/image" )}
-              >
-                Images
-              </li>
-              <li
-                className="text-gray-700 hover:text-black transition duration-300 ease-in-out"
-                onClick={() => router.push( "/audio" )}
-              >
-                Audio
-              </li>
-              <li
-                className="text-gray-700 relative flex flex-row items-center gap-2 hover:text-black transition duration-300 ease-in-out"
-                onClick={toggleDropdown}
-              >
-                Editor Choice{" "}
-                <span
-                  className={`${isDropdownOpen
-                      ? "rotate-180 transform duration-75"
-                      : "rotate-0 transform duration-75"
-                    }`}
-                >
-                  {" "}
-                  <IoIosArrowDropdown />
-                </span>
-                {isDropdownOpen && (
-                  <div
-                    className=" absolute w-36 flex flex-col items-center gap-6 -left-4 justify-center  top-full  mt-2 bg-white border rounded shadow-xl p-4 z-50"
-                    onMouseEnter={() => setIsDropdownOpen( true )}
-                    onMouseLeave={closeDropdown}
-                  >
-                    <div className="flex flex-col gap-2">
-                      <Link
-                        href={{
-                          pathname: "/video",
-                          query: {
-                            category: "editor choice",
-                            mediaType: "video",
-                          },
-                        }}
-                        className="text-gray-600 hover:text-gray-800 "
-                      >
-                        Video
-                      </Link> 
-                      <Link
-                        href={{
-                          pathname: "/image",
-                          query: {
-                            category: "editor choice",
-                            mediaType: "image",
-                          },
-                        }}
-                        className="text-gray-600 hover:text-gray-800 "
-                      >
-                         Image
-                      </Link>
-                     
-                      <Link
-                        href={{
-                          pathname: "/audio",
-                          query: {
-                            category: "editor choice",
-                            mediaType: "audio",
-                          },
-                        }}
-                        className="text-gray-600 hover:text-gray-800"
-                      >
-                         Audio
-                      </Link>
-                    </div>
-                  </div>
-                )}
-              </li>
-              <li
-                className="text-gray-700 hover:text-black transition duration-300 ease-in-out"
-                onClick={() => router.push( "/ondemand" )}
-              >
-                On Demand
-              </li>
-            </ul>
-          </div>
-        </div>
+  const NavItem: React.FC<NavItemProps> = ( {href, onClick, children} ) => (
+    <li
+      className="text-gray-700 hover:text-black transition duration-300 ease-in-out cursor-pointer"
+      onClick={onClick}
+    >
+      <Link href={href}>{children}</Link>
+    </li>
+  );
 
-        <div className="lg:block md:hidden hidden">
-          <div className="flex items-center space-x-6">
+  const DropdownItem: React.FC<{href: string; children: React.ReactNode;}> = ( {href, children} ) => (
+    <Link
+      href={href}
+      className="text-gray-600 hover:text-gray-800 block py-2 px-4 hover:bg-gray-100 transition duration-200"
+    >
+      {children}
+    </Link>
+  );
+
+  return (
+    <div className="bg-white shadow-md">
+      <div className=" mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-16">
+          <div className="flex items-center">
+            <img
+              src="/images/logo.png"
+              alt="logo"
+              className="w-32 h-8 cursor-pointer"
+              onClick={() => router.push( "/" )}
+            />
+          </div>
+
+          {!isMobile && (
+            <nav className="hidden md:block">
+              <ul className="flex items-center space-x-4 cursor-pointer">
+                <NavItem href="/video">Video</NavItem>
+                <NavItem href="/image">Images</NavItem>
+                <NavItem href="/audio">Audio</NavItem>
+                <li className="relative group">
+                  <button
+                    onClick={toggleDropdown}
+                    className="flex items-center text-gray-700 hover:text-black"
+                  >
+                    Editor Choice
+                    <IoIosArrowDropdown className={`ml-1 transform ${isDropdownOpen ? 'rotate-180' : ''} transition-transform duration-200`} />
+                  </button>
+                  {isDropdownOpen && (
+                    <div className="absolute  mt-2 w-fit bg-white border rounded shadow-xl z-50 flex flex-col items-center justify-center  top-full  px-4 ">
+                      <DropdownItem href="/video?category=editor choice&mediaType=video">
+                        Video
+                      </DropdownItem>
+                      <DropdownItem href="/image?category=editor choice&mediaType=image">
+                        Image
+                      </DropdownItem>
+                      <DropdownItem href="/audio?category=editor choice&mediaType=audio">
+                        Audio
+                      </DropdownItem>
+                    </div>
+                  )}
+                </li>
+                <NavItem href="/ondemand">On Demand</NavItem>
+              </ul>
+            </nav>
+          )}
+
+          <div className="hidden md:flex items-center space-x-4">
             {user?.subscription.status === "completed" && (
-              <div className="flex items-center text-gray-700">
-                <span>
-                  {user?.subscription?.credits || 0} Credits Available
-                </span>
-              </div>
+              <span className="text-gray-700">{user.subscription.credits || 0} Credits Available</span>
             )}
             <Link href="/user-profile/wishlist">
-              <AiOutlineHeart className="text-gray-700 hover:text-webred cursor-pointer w-7 h-7 transition-transform duration-200 ease-in-out hover:scale-110" />
+              <AiOutlineHeart className="text-gray-700 hover:text-webred w-6 h-6" />
             </Link>
-
+            
             <CartPopup />
             <div className="relative">
               {user ? (
                 <img
                   src={user.image}
                   alt="user"
-                  className="w-10 h-10 rounded-full cursor-pointer"
+                  className="w-8 h-8 rounded-full cursor-pointer"
                   onClick={handleUserIconClick}
                 />
               ) : (
                 <FaUserCircle
-                  className="w-10 h-10 text-gray-700 cursor-pointer"
+                  className="w-8 h-8 text-gray-700 cursor-pointer"
                   onClick={handleUserIconClick}
                 />
               )}
               {isUserOpen && (
-                <div className="absolute right-0 z-30 mt-2 w-48 bg-white shadow-lg rounded-lg py-2 transition-all duration-200 ease-in-out transform origin-top-right">
+                <div className="absolute right-0 mt-2 w-48 bg-white border rounded shadow-xl z-10">
                   {user ? (
                     <>
-                      <a
-                        onClick={handleLogout}
-                        className="flex items-center text-gray-800 hover:bg-gray-100 px-3 py-2 cursor-pointer transition-colors duration-200"
-                      >
-                        <BiLogOutCircle className="w-6 h-6 mr-3" />
+                      <button onClick={handleLogout} className="flex items-center w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100">
+                        <BiLogOutCircle className="w-5 h-5 mr-3" />
                         Logout
-                      </a>
-
-                      <a
-                        onClick={handleProfileClick}
-                        className="flex items-center text-gray-800 hover:bg-gray-100 px-3 py-2 cursor-pointer transition-colors duration-200"
-                      >
-                        <FaUserCircle className="w-6 h-6 mr-3" />
+                      </button>
+                      <button onClick={handleProfileClick} className="flex items-center w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100">
+                        <FaUserCircle className="w-5 h-5 mr-3" />
                         User Profile
-                      </a>
+                      </button>
                     </>
                   ) : (
-                    <a
-                      onClick={() => router.push( "/auth/user/login" )}
-                      className="flex items-center text-gray-800 hover:bg-gray-100 cursor-pointer px-3 py-2 transition-colors duration-200"
-                    >
-                      <BiLogInCircle className="w-6 h-6 mr-3" />
+                    <button onClick={() => router.push( "/auth/user/login" )} className="flex items-center w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100">
+                      <BiLogInCircle className="w-5 h-5 mr-3" />
                       Log In
-                    </a>
+                    </button>
                   )}
                 </div>
               )}
             </div>
           </div>
-        </div>
 
-        <div className="flex lg:hidden items-center space-x-4">
-          <AiOutlineHeart className="text-gray-700 w-6 h-6 hover:text-black transition-transform duration-200 ease-in-out hover:scale-110" />
-          <CartPopup />
-          <AiOutlineMenu
-            className="text-gray-700 w-6 h-6 cursor-pointer hover:text-black transition-transform duration-200 ease-in-out hover:scale-110"
-            onClick={() => setMenuOpen( true )}
-          />
-        </div>
-
-        {menuOpen && (
-          <div className="fixed inset-0 bg-white z-50 flex flex-col p-4">
-            <div className="flex justify-between items-center">
-              <AiOutlineClose
-                className="text-gray-700 w-6 h-6 cursor-pointer hover:text-black transition-transform duration-200 ease-in-out hover:scale-110"
-                onClick={() => setMenuOpen( false )}
-              />
-            </div>
-            <ul className="mt-4 space-y-3">
-              <li
-                className="block text-gray-700 hover:text-black py-2 transition-colors duration-300 ease-in-out"
-                onClick={() => router.push( "/image" )}
-              >
-                Images
-              </li>
-              <li
-                className="block text-gray-700 hover:text-black py-2 transition-colors duration-300 ease-in-out"
-                onClick={() => router.push( "/video" )}
-              >
-                Video
-              </li>
-              <li
-                className="block text-gray-700 hover:text-black py-2 transition-colors duration-300 ease-in-out"
-                onClick={() => router.push( "/audio" )}
-              >
-                Music
-              </li>
-            </ul>
+          <div className="md:hidden flex items-center">
+            <button
+              onClick={() => setMenuOpen( !menuOpen )}
+              className="text-gray-700 hover:text-black focus:outline-none"
+            >
+              {menuOpen ? (
+                <AiOutlineClose className="h-6 w-6" />
+              ) : (
+                <AiOutlineMenu className="h-6 w-6" />
+              )}
+            </button>
           </div>
-        )}
+        </div>
       </div>
-    </>
+
+      {menuOpen && (
+        <div className="md:hidden">
+          <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+            <NavItem href="/video" onClick={() => setMenuOpen( false )}>Video</NavItem>
+            <NavItem href="/image" onClick={() => setMenuOpen( false )}>Images</NavItem>
+            <NavItem href="/audio" onClick={() => setMenuOpen( false )}>Audio</NavItem>
+            <NavItem href="/ondemand" onClick={() => setMenuOpen( false )}>On Demand</NavItem>
+          </div>
+          <div className="pt-4 pb-3 border-t border-gray-200">
+            <CartPopup />
+            <div className="flex items-center px-5">
+              {user ? (
+                <img src={user.image} alt="user" className="w-8 h-8 rounded-full" />
+              ) : (
+                <FaUserCircle className="w-8 h-8 text-gray-700" />
+              )}
+              <div className="ml-3">
+                <div className="text-base font-medium text-gray-800">{user?.name || 'Guest'}</div>
+                <div className="text-sm font-medium text-gray-500">{user?.email || ''}</div>
+              </div>
+            </div>
+            <div className="mt-3 px-2 space-y-1">
+              {user ? (
+                <>
+                  <button onClick={handleProfileClick} className="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-black hover:bg-gray-100">
+                    User Profile
+                  </button>
+                  <button onClick={handleLogout} className="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-black hover:bg-gray-100">
+                    Logout
+                  </button>
+                </>
+              ) : (
+                <button onClick={() => router.push( "/auth/user/login" )} className="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-black hover:bg-gray-100">
+                  Log In
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
   );
 };
 
-export default Sidebar;
+export default Navbar;

@@ -101,8 +101,8 @@ const Searchbar = () => {
 
   return (
     <>
-      <div className='transition-all duration-300 sticky top-0 z-10 bg-white shadow-md py-4 border-t-1'>
-        <div className="flex relative  justify-between items-center gap-4 bg-gray-100 border border-gray-300 rounded-md mx-6 lg:mx-24 px-4">
+      <div className='transition-all duration-300 sticky top-0 z-10 bg-white shadow-md py-4 border-t-1 '>
+        <div className="flex relative  justify-between items-center gap-4 bg-gray-100 border border-gray-300 rounded-md mx-6  px-4 lg:mx-4 xl:mx-24 md:mx-4">
           <div className="flex flex-row w-full gap-2">
             <select
               className="bg-gray-100 w-full md:w-40 sm:w-20 outline-none cursor-pointer text-gray-600 text-sm rounded-lg p-2.5"
@@ -143,28 +143,33 @@ const Searchbar = () => {
       </div>
 
       {/* if we are on deltail page of any route than dont show this filteres. router will be video/id etc */}
-      {(window.location.pathname.match(/^\/(video|audio|image)\/[^/]+$/) ?   null :
-        <div className='bg-gray80  border-t flex flex-wrap items-center gap-5 justify-between border-gray-300 w-full'>
-          <div className='flex m-auto p-3 items-center flex-col md:flex-row  w-[90%] justify-between '>
-            <div className='flex flex-row gap-3 justify-between w-full md:w-fit'>
+      {( window.location.pathname.match( /^\/(video|audio|image)\/[^/]+$/ ) ? null : (
+        <div className="bg-gray80 border-t flex flex-wrap items-center gap-5 justify-between border-gray-300 w-full">
+          <div className="flex py-3 items-center flex-col md:flex-row w-[90%] justify-between lg:mx-4 xl:mx-24 md:mx-4">
+            <div className="flex flex-row gap-3 justify-between w-full md:w-fit">
               <Filter />
-              <div className=' md:hidden '>
+              <div className="md:hidden">
                 <button
                   onClick={handleClear}
                   disabled={!searchRenderTerm}
-                  className={` ${searchRenderTerm ? "bg-red-500 cursor-pointer" : "bg-red-500 cursor-not-allowed bg-opacity-50"} py-2 text-white  border flex flex-row items-center gap-2 border-gray-300 px-5 rounded-md`}
+                  className={`${searchRenderTerm
+                      ? "bg-red-500 cursor-pointer"
+                      : "bg-red-500 cursor-not-allowed bg-opacity-50"
+                    } py-2 text-white border flex flex-row items-center gap-2 border-gray-300 px-5 rounded-md`}
                 >
                   Clear <MdClear />
                 </button>
               </div>
             </div>
-            <div className="w-[80%]   rounded-md   flex flex-row scrollbar-hide overflow-x-scroll  items-center text-center bg-gray80  justify-start ">
+            <div className=" rounded-md flex flex-row scrollbar-hide overflow-x-scroll items-center text-center w-[80%] bg-gray80 justify-start">
               {terms.map( ( category ) => {
                 return (
                   <button
                     key={category}
                     onClick={() => handleCategoryClick( category )}
-                    className={`flex  items-center whitespace-nowrap m-3 px-3 py-2 sm:px-4 sm:py-2 border border-gray-300 rounded-md   capitalize backdrop-blur-sm  hover:bg-opacity-30 transition duration-300 ${searchRenderTerm === category ? ' bg-red-500 text-white' : 'bg-transparent'
+                    className={`flex items-center whitespace-nowrap m-3 px-3 py-2 sm:px-4 sm:py-2 border border-gray-300 rounded-md capitalize backdrop-blur-sm hover:bg-opacity-30 transition duration-300 ${searchRenderTerm === category
+                        ? "bg-red-500 text-white"
+                        : "bg-transparent"
                       }`}
                   >
                     <IoIosSearch className="h-5 w-5 mr-2" />
@@ -172,20 +177,22 @@ const Searchbar = () => {
                   </button>
                 );
               } )}
-
             </div>
-            <div className=' hidden md:block'>
+            <div className=' hidden md:block lg:-mr-16 xl:mr-8 md:-mr-10'>
               <button
                 onClick={handleClear}
                 disabled={!searchRenderTerm}
-                className={` ${searchRenderTerm ? "bg-red-500 cursor-pointer" : "bg-red-500 cursor-not-allowed bg-opacity-50"} py-2 text-white  border flex flex-row items-center gap-2 border-gray-300 px-5 rounded-md`}
+                className={`${searchRenderTerm
+                    ? "bg-red-500 cursor-pointer"
+                    : "bg-red-500 cursor-not-allowed bg-opacity-50"
+                  } py-2 text-white border flex flex-row items-center gap-2 border-gray-300 px-5 rounded-md`}
               >
                 Clear <MdClear />
               </button>
             </div>
           </div>
-        </div> 
-      )}
+        </div>
+      ) )}
     </>
 
   );

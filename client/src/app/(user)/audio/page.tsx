@@ -73,7 +73,8 @@ const Page = () => {
 
         {/* <Waveform /> */}
 
-        <div className="m-auto  w-[90%]">
+        <div className="py-10 lg:mx-4 xl:mx-24 md:mx-4 mx-4">
+
           {/* <div className="flex flex-wrap gap-2 ">
             <button className="flex items-center hover:bg-[#c7c7c9] text-sm px-3 py-1 border border-gray-700 rounded text-gray-700 bg-transparent backdrop-blur-sm bg-opacity-20 hover:bg-opacity-30 transition duration-300">
               <IoIosSearch className="h-5 w-5 mr-1" />
@@ -123,7 +124,7 @@ const Page = () => {
                     <Waveform key={index} product={product} />
                   ))
                 ) : (
-                  <p>No videos found.</p>
+                  <p>No Audio found.</p>
                 )}
               </>
             )}
