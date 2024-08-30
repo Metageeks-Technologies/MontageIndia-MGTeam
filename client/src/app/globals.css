@@ -380,16 +380,23 @@ input[type="range"].progress-bar::-moz-range-thumb {
   display: flex;
   height: 100vh;
 }
-
-/* for video layout */
-.my-masonry-grid {
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  margin-left: -30px;
-  width: auto;
+body {
+  top: 0 !important;
+  position: static !important;
 }
-.my-masonry-grid_column {
-  padding-left: 30px;
-  background-clip: padding-box;
+
+.skiptranslate {
+  display: none !important;
+}
+
+.goog-te-banner-frame {
+  display: none !important;
+}
+
+#google_translate_element select {
+  background-color: #f6edfd;
+  color: #383ffa;
+  border: none;
+  border-radius: 3px;
+  padding: 6px 8px;
 }

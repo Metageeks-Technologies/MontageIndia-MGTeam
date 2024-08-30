@@ -9,12 +9,14 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@google-cloud/translate": "^8.5.0",
     "@heroicons/react": "^2.1.5",
     "@nextui-org/react": "^2.4.6",
     "@reduxjs/toolkit": "^2.2.7",
     "@tawk.to/tawk-messenger-react": "^2.0.2",
     "@wavesurfer/react": "^1.0.7",
     "axios": "^1.7.2",
+    "cookies-next": "^4.2.1",
     "crypto-js": "^4.2.0",
     "dotenv": "^16.4.5",
     "framer-motion": "^11.3.17",
