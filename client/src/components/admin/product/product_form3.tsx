@@ -162,7 +162,7 @@ const Form3: React.FC<Form3Props> = ( { onNext, formData } ) =>
   const allVariantsUpdated = product.variants.every( ( variant ) =>
     updatedVariants.includes( variant._id )
   );
-  console.log( "first", allVariantsUpdated, product );
+  console.log( "first", allVariantsUpdated,product );
 
   return (
     <>
@@ -243,239 +243,239 @@ const Form3: React.FC<Form3Props> = ( { onNext, formData } ) =>
             ) ) }
           </div> */}
 
-          { product?.mediaType === 'audio' ?
-            <div className="flex gap-6 mb-8">
-              { product.variants.map( ( variant: any, index ) => (
-                <div key={ variant._id } className="bg-pageBg-light p-4 rounded-lg shadow-sm">
-                  <div className="flex justify-between items-center mb-4">
-                    {/* <h3 className="text-lg font-semibold text-gray-700">{ variant.size }</h3> */ }
-                    <h3 className="font-bold">Variant </h3>
-
-                    { updatedVariants.includes( variant._id ) && !editingVariants.includes( variant._id ) ? (
-                      <button type="button" onClick={ () => handleEditVariant( variant._id ) } className="text-gray-600 hover:text-gray-700 transition-colors">
-                        <FaRegEdit size={ 24 } />
-                      </button>
-                    ) : (
-                      isVariantComplete( variant ) && (
-                        <button type="button" onClick={ () => handleSaveVariant( index ) } className="text-gray-600 hover:text-gray-700 transition-colors">
-                          <MdOutlineSave size={ 24 } />
+            { product?.mediaType === 'audio' ?
+              <div className="flex gap-6 mb-8">
+                { product.variants.map( ( variant: any, index ) => (
+                  <div key={ variant._id } className="bg-pageBg-light p-4 rounded-lg shadow-sm">
+                    <div className="flex justify-between items-center mb-4">
+                      {/* <h3 className="text-lg font-semibold text-gray-700">{ variant.size }</h3> */ }
+                      <h3 className="font-bold">Variant </h3> 
+                   
+                      { updatedVariants.includes( variant._id ) && !editingVariants.includes( variant._id ) ? (
+                        <button type="button" onClick={ () => handleEditVariant( variant._id ) } className="text-gray-600 hover:text-gray-700 transition-colors">
+                          <FaRegEdit size={ 24 } />
                         </button>
-                      )
-                    ) }
+                      ) : (
+                        isVariantComplete( variant ) && (
+                          <button type="button" onClick={ () => handleSaveVariant( index ) } className="text-gray-600 hover:text-gray-700 transition-colors">
+                            <MdOutlineSave size={ 24 } />
+                          </button>
+                        )
+                      ) }
+                    </div>
+                    { product?.mediaType === 'audio' ? (
+                      <div className="flex flex-col sm:flex-row gap-4">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-600 mb-1">Label:</label>
+                          <input
+                            type="text"
+                            className="w-full p-2 border border-gray-300 rounded-md"
+                            placeholder="Enter label"
+                            value={ variant.label }
+                            onChange={ ( e ) => handleVariantChange( index, 'label', e.target.value ) }
+                            ref={ ( el ) =>
+                            {
+                              if ( !inputRefs.current[ index ] )
+                              {
+                                inputRefs.current[ index ] = [];
+                              }
+                              inputRefs.current[ index ][ 0 ] = el;
+                            } }
+                            readOnly={ updatedVariants.includes( variant._id ) && !editingVariants.includes( variant._id ) }
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-600 mb-1">Price:</label>
+                          <input
+                            type="number"
+                            className="w-full p-2 border border-gray-300 rounded-md"
+                            placeholder="Enter price"
+                            value={ variant.price }
+                            onChange={ ( e ) => handleVariantChange( index, 'price', parseFloat( e.target.value ) ) }
+                            ref={ ( el ) =>
+                            {
+                              if ( !inputRefs.current[ index ] )
+                              {
+                                inputRefs.current[ index ] = [];
+                              }
+                              inputRefs.current[ index ][ 1 ] = el;
+                            } }
+                            readOnly={ updatedVariants.includes( variant._id ) && !editingVariants.includes( variant._id ) }
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-600 mb-1">Credit:</label>
+                          <input
+                            type="number"
+                            className="w-full p-2 border border-gray-300 rounded-md"
+                            placeholder="Enter Credit"
+                            value={ variant.credit }
+                            onChange={ ( e ) => handleVariantChange( index, 'credit', parseFloat( e.target.value ) ) }
+                            ref={ ( el ) =>
+                            {
+                              if ( !inputRefs.current[ index ] )
+                              {
+                                inputRefs.current[ index ] = [];
+                              }
+                              inputRefs.current[ index ][ 2 ] = el;
+                            } }
+                            readOnly={ updatedVariants.includes( variant._id ) && !editingVariants.includes( variant._id ) }
+                          />
+                        </div>
+                      </div>
+                    ) :
+                      <div className="grid grid-cols-1 gap-4">
+                        <div className="flex flex-col">
+                          <label className="block text-sm font-medium text-gray-600 mb-1">Label:</label>
+                          <input
+                            type="text"
+                            className="w-full p-2 border border-gray-300 rounded-md"
+                            placeholder="Enter label"
+                            value={ variant.label }
+                            onChange={ ( e ) => handleVariantChange( index, 'label', e.target.value ) }
+                            ref={ ( el ) =>
+                            {
+                              if ( !inputRefs.current[ index ] )
+                              {
+                                inputRefs.current[ index ] = [];
+                              }
+                              inputRefs.current[ index ][ 0 ] = el;
+                            } }
+                            readOnly={ updatedVariants.includes( variant._id ) && !editingVariants.includes( variant._id ) }
+                          />
+                        </div>
+                        <div className="">
+                          <label className="block text-sm font-medium text-gray-600 mb-1">Price:</label>
+                          <input
+                            type="number"
+                            className="w-full p-2 border border-gray-300 rounded-md"
+                            placeholder="Enter price"
+                            value={ variant.price }
+                            onChange={ ( e ) => handleVariantChange( index, 'price', parseFloat( e.target.value ) ) }
+                            ref={ ( el ) =>
+                            {
+                              if ( !inputRefs.current[ index ] )
+                              {
+                                inputRefs.current[ index ] = [];
+                              }
+                              inputRefs.current[ index ][ 1 ] = el;
+                            } }
+                            readOnly={ updatedVariants.includes( variant._id ) && !editingVariants.includes( variant._id ) }
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-600 mb-1">Credit:</label>
+                          <input
+                            type="number"
+                            className="w-full p-2 border border-gray-300 rounded-md"
+                            placeholder="Enter Credit"
+                            value={ variant.credit }
+                            onChange={ ( e ) => handleVariantChange( index, 'credit', parseFloat( e.target.value ) ) }
+                            ref={ ( el ) =>
+                            {
+                              if ( !inputRefs.current[ index ] )
+                              {
+                                inputRefs.current[ index ] = [];
+                              }
+                              inputRefs.current[ index ][ 2 ] = el;
+                            } }
+                            readOnly={ updatedVariants.includes( variant._id ) && !editingVariants.includes( variant._id ) }
+                          />
+                        </div>
+                      </div>
+                    }
                   </div>
-                  { product?.mediaType === 'audio' ? (
-                    <div className="flex flex-col sm:flex-row gap-4">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-600 mb-1">Label:</label>
-                        <input
-                          type="text"
-                          className="w-full p-2 border border-gray-300 rounded-md"
-                          placeholder="Enter label"
-                          value={ variant.label }
-                          onChange={ ( e ) => handleVariantChange( index, 'label', e.target.value ) }
-                          ref={ ( el ) =>
-                          {
-                            if ( !inputRefs.current[ index ] )
-                            {
-                              inputRefs.current[ index ] = [];
-                            }
-                            inputRefs.current[ index ][ 0 ] = el;
-                          } }
-                          readOnly={ updatedVariants.includes( variant._id ) && !editingVariants.includes( variant._id ) }
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-600 mb-1">Price:</label>
-                        <input
-                          type="number"
-                          className="w-full p-2 border border-gray-300 rounded-md"
-                          placeholder="Enter price"
-                          value={ variant.price }
-                          onChange={ ( e ) => handleVariantChange( index, 'price', parseFloat( e.target.value ) ) }
-                          ref={ ( el ) =>
-                          {
-                            if ( !inputRefs.current[ index ] )
-                            {
-                              inputRefs.current[ index ] = [];
-                            }
-                            inputRefs.current[ index ][ 1 ] = el;
-                          } }
-                          readOnly={ updatedVariants.includes( variant._id ) && !editingVariants.includes( variant._id ) }
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-600 mb-1">Credit:</label>
-                        <input
-                          type="number"
-                          className="w-full p-2 border border-gray-300 rounded-md"
-                          placeholder="Enter Credit"
-                          value={ variant.credit }
-                          onChange={ ( e ) => handleVariantChange( index, 'credit', parseFloat( e.target.value ) ) }
-                          ref={ ( el ) =>
-                          {
-                            if ( !inputRefs.current[ index ] )
-                            {
-                              inputRefs.current[ index ] = [];
-                            }
-                            inputRefs.current[ index ][ 2 ] = el;
-                          } }
-                          readOnly={ updatedVariants.includes( variant._id ) && !editingVariants.includes( variant._id ) }
-                        />
-                      </div>
-                    </div>
-                  ) :
-                    <div className="grid grid-cols-1 gap-4">
-                      <div className="flex flex-col">
-                        <label className="block text-sm font-medium text-gray-600 mb-1">Label:</label>
-                        <input
-                          type="text"
-                          className="w-full p-2 border border-gray-300 rounded-md"
-                          placeholder="Enter label"
-                          value={ variant.label }
-                          onChange={ ( e ) => handleVariantChange( index, 'label', e.target.value ) }
-                          ref={ ( el ) =>
-                          {
-                            if ( !inputRefs.current[ index ] )
-                            {
-                              inputRefs.current[ index ] = [];
-                            }
-                            inputRefs.current[ index ][ 0 ] = el;
-                          } }
-                          readOnly={ updatedVariants.includes( variant._id ) && !editingVariants.includes( variant._id ) }
-                        />
-                      </div>
-                      <div className="">
-                        <label className="block text-sm font-medium text-gray-600 mb-1">Price:</label>
-                        <input
-                          type="number"
-                          className="w-full p-2 border border-gray-300 rounded-md"
-                          placeholder="Enter price"
-                          value={ variant.price }
-                          onChange={ ( e ) => handleVariantChange( index, 'price', parseFloat( e.target.value ) ) }
-                          ref={ ( el ) =>
-                          {
-                            if ( !inputRefs.current[ index ] )
-                            {
-                              inputRefs.current[ index ] = [];
-                            }
-                            inputRefs.current[ index ][ 1 ] = el;
-                          } }
-                          readOnly={ updatedVariants.includes( variant._id ) && !editingVariants.includes( variant._id ) }
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-600 mb-1">Credit:</label>
-                        <input
-                          type="number"
-                          className="w-full p-2 border border-gray-300 rounded-md"
-                          placeholder="Enter Credit"
-                          value={ variant.credit }
-                          onChange={ ( e ) => handleVariantChange( index, 'credit', parseFloat( e.target.value ) ) }
-                          ref={ ( el ) =>
-                          {
-                            if ( !inputRefs.current[ index ] )
-                            {
-                              inputRefs.current[ index ] = [];
-                            }
-                            inputRefs.current[ index ][ 2 ] = el;
-                          } }
-                          readOnly={ updatedVariants.includes( variant._id ) && !editingVariants.includes( variant._id ) }
-                        />
-                      </div>
-                    </div>
-                  }
-                </div>
-              ) ) }
-            </div>
-
-            :
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-              { product.variants.map( ( variant: any, index ) => (
-                <div key={ variant._id } className="bg-pageBg-light p-4 rounded-lg shadow-sm">
-                  <div className="flex justify-between items-center mb-4">
-                    {/* <h3 className="text-lg font-semibold text-gray-700">{ variant.size }</h3> */ }
-                    <h3 className="font-bold">Variant { index + 1 }</h3>
-                    { index === 0 && <h3 className="text-lg font-semibold text-gray-700">Large</h3> }
-                    { index === 1 && <h3 className="text-lg font-semibold text-gray-700">Medium</h3> }
-                    { index === 2 && <h3 className="text-lg font-semibold text-gray-700">Small</h3> }
+                ) ) }
+              </div>
+              
+              :
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                { product.variants.map( ( variant: any, index ) => (
+                  <div key={ variant._id } className="bg-pageBg-light p-4 rounded-lg shadow-sm">
+                    <div className="flex justify-between items-center mb-4">
+                      {/* <h3 className="text-lg font-semibold text-gray-700">{ variant.size }</h3> */ }
+                      <h3 className="font-bold">Variant { index + 1 }</h3>
+                      { index === 0 && <h3 className="text-lg font-semibold text-gray-700">Large</h3> }
+                      { index === 1 && <h3 className="text-lg font-semibold text-gray-700">Medium</h3> }
+                      { index === 2 && <h3 className="text-lg font-semibold text-gray-700">Small</h3> }
 
 
-                    { updatedVariants.includes( variant._id ) && !editingVariants.includes( variant._id ) ? (
-                      <button type="button" onClick={ () => handleEditVariant( variant._id ) } className="text-gray-600 hover:text-gray-700 transition-colors">
-                        <FaRegEdit size={ 24 } />
-                      </button>
-                    ) : (
-                      isVariantComplete( variant ) && (
-                        <button type="button" onClick={ () => handleSaveVariant( index ) } className="text-gray-600 hover:text-gray-700 transition-colors">
-                          <MdOutlineSave size={ 24 } />
+                      { updatedVariants.includes( variant._id ) && !editingVariants.includes( variant._id ) ? (
+                        <button type="button" onClick={ () => handleEditVariant( variant._id ) } className="text-gray-600 hover:text-gray-700 transition-colors">
+                          <FaRegEdit size={ 24 } />
                         </button>
-                      )
-                    ) }
+                      ) : (
+                        isVariantComplete( variant ) && (
+                          <button type="button" onClick={ () => handleSaveVariant( index ) } className="text-gray-600 hover:text-gray-700 transition-colors">
+                            <MdOutlineSave size={ 24 } />
+                          </button>
+                        )
+                      ) }
+                    </div>
+                     
+                    <div className="flex flex-col">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-600 mb-1">Label:</label>
+                          <input
+                            type="text"
+                            className="w-full p-2 border border-gray-300 rounded-md"
+                            placeholder="Enter label"
+                            value={ variant.label }
+                            onChange={ ( e ) => handleVariantChange( index, 'label', e.target.value ) }
+                            ref={ ( el ) =>
+                            {
+                              if ( !inputRefs.current[ index ] )
+                              {
+                                inputRefs.current[ index ] = [];
+                              }
+                              inputRefs.current[ index ][ 0 ] = el;
+                            } }
+                            readOnly={ updatedVariants.includes( variant._id ) && !editingVariants.includes( variant._id ) }
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-600 mb-1">Price:</label>
+                          <input
+                            type="number"
+                            className="w-full p-2 border border-gray-300 rounded-md"
+                            placeholder="Enter price"
+                            value={ variant.price }
+                            onChange={ ( e ) => handleVariantChange( index, 'price', parseFloat( e.target.value ) ) }
+                            ref={ ( el ) =>
+                            {
+                              if ( !inputRefs.current[ index ] )
+                              {
+                                inputRefs.current[ index ] = [];
+                              }
+                              inputRefs.current[ index ][ 1 ] = el;
+                            } }
+                            readOnly={ updatedVariants.includes( variant._id ) && !editingVariants.includes( variant._id ) }
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-600 mb-1">Credit:</label>
+                          <input
+                            type="number"
+                            className="w-full p-2 border border-gray-300 rounded-md"
+                            placeholder="Enter Credit"
+                            value={ variant.credit }
+                            onChange={ ( e ) => handleVariantChange( index, 'credit', parseFloat( e.target.value ) ) }
+                            ref={ ( el ) =>
+                            {
+                              if ( !inputRefs.current[ index ] )
+                              {
+                                inputRefs.current[ index ] = [];
+                              }
+                              inputRefs.current[ index ][ 2 ] = el;
+                            } }
+                            readOnly={ updatedVariants.includes( variant._id ) && !editingVariants.includes( variant._id ) }
+                          />
+                        </div>
+                      </div>
+                   
                   </div>
-
-                  <div className="flex flex-col">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-600 mb-1">Label:</label>
-                      <input
-                        type="text"
-                        className="w-full p-2 border border-gray-300 rounded-md"
-                        placeholder="Enter label"
-                        value={ variant.label }
-                        onChange={ ( e ) => handleVariantChange( index, 'label', e.target.value ) }
-                        ref={ ( el ) =>
-                        {
-                          if ( !inputRefs.current[ index ] )
-                          {
-                            inputRefs.current[ index ] = [];
-                          }
-                          inputRefs.current[ index ][ 0 ] = el;
-                        } }
-                        readOnly={ updatedVariants.includes( variant._id ) && !editingVariants.includes( variant._id ) }
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-600 mb-1">Price:</label>
-                      <input
-                        type="number"
-                        className="w-full p-2 border border-gray-300 rounded-md"
-                        placeholder="Enter price"
-                        value={ variant.price }
-                        onChange={ ( e ) => handleVariantChange( index, 'price', parseFloat( e.target.value ) ) }
-                        ref={ ( el ) =>
-                        {
-                          if ( !inputRefs.current[ index ] )
-                          {
-                            inputRefs.current[ index ] = [];
-                          }
-                          inputRefs.current[ index ][ 1 ] = el;
-                        } }
-                        readOnly={ updatedVariants.includes( variant._id ) && !editingVariants.includes( variant._id ) }
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-600 mb-1">Credit:</label>
-                      <input
-                        type="number"
-                        className="w-full p-2 border border-gray-300 rounded-md"
-                        placeholder="Enter Credit"
-                        value={ variant.credit }
-                        onChange={ ( e ) => handleVariantChange( index, 'credit', parseFloat( e.target.value ) ) }
-                        ref={ ( el ) =>
-                        {
-                          if ( !inputRefs.current[ index ] )
-                          {
-                            inputRefs.current[ index ] = [];
-                          }
-                          inputRefs.current[ index ][ 2 ] = el;
-                        } }
-                        readOnly={ updatedVariants.includes( variant._id ) && !editingVariants.includes( variant._id ) }
-                      />
-                    </div>
-                  </div>
-
-                </div>
-              ) ) }
-            </div> }
+                ) ) }
+              </div>}
 
 
 

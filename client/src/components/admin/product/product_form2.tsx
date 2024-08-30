@@ -362,7 +362,7 @@ const Form2: React.FC<Form2Props> = ( { onPrev, onNext, formData } ) =>
       { loading && (
         <div className="mt-6">
           <div className="mb-2 flex justify-between items-center">
-            <span>{ displayPercentage }% Uploading...</span>
+            <span>{displayPercentage}% Uploading...</span>
             {/* <button className="text-red-500">
               <svg
                 xmlns="http://www.w3.org/2000/svg"

@@ -522,7 +522,7 @@ const Form4 = ( { formData }: any ) =>
                   <div key={ variant._id } className="bg-pageBg-light p-4 rounded-lg">
                     <div className="flex justify-between items-center mb-2">
                       {/* <h3 className="font-bold">{ variant.size }</h3> */ }
-                      <h3 className="font-bold">Variant</h3>
+                      <h3 className="font-bold">Variant</h3> 
                       { editingVariantIndex === index ? (
                         <button type="button" onClick={ () => handleSaveVariant( index ) }><MdOutlineSave size={ 20 } /></button>
                       ) : (
@@ -577,8 +577,8 @@ const Form4 = ( { formData }: any ) =>
                   <div className="flex justify-between items-center mb-4">
                     <div>
 
-                      <h3 className="font-bold">Variant { index + 1 }</h3>
-                      <p className=" text-gray-700">{ variant?.metadata?.dimension }</p>
+                    <h3 className="font-bold">Variant { index+1}</h3>
+                    <p className=" text-gray-700">{ variant?.metadata?.dimension }</p>
                     </div>
                     { editingVariantIndex === index ? (
                       <button type="button" onClick={ () => handleSaveVariant( index ) } className="text-gray-600 hover:text-gray-700 transition-colors">
