@@ -9,26 +9,17 @@ const Footer = () => {
       <div className="flex flex-col lg:flex-row">
         <div className="mt-5 lg:w-1/4 pr-4">
           <div className='mb-4 bg-white mr-8 rounded-lg pl-4 p-4'>
-            <div> 
-            <img
-              src="/images/logo.png"
-              alt="logo"
-              className="w-44 h-10 cursor-pointer"
+            <div>
+              <img
+                src="/images/logo.png"
+                alt="logo"
+                className="w-44 h-10 cursor-pointer"
               // onClick={() => router.push( "/" )}
               />
-              </div>
+            </div>
           </div>
           <div className="mb-4">
-            {/* <select
-              // onChange={changeLanguage}
-              // value={i18n.language}
-              className="bg-black text-white border border-gray-700 rounded-md px-2 py-1 w-full focus:outline-none focus:ring-2 focus:ring-gray-500"
-            >
-              <option value="en">English</option>
-              <option value="es">Spanish</option>
-              <option value="fr">French</option>
-              <option value="de">German</option>
-            </select> */}
+
             <GoogleTranslate />
           </div>
         </div>
