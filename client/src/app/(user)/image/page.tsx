@@ -64,41 +64,50 @@ const Page = () => {
   return (
     <>
       <Searchbar />
-      <div className="main bg-gray80">
-        {/* <hr className="mt-5" /> */}
 
-        <div className="m-auto  bg w-[90%]">
-          <h4 className="text-lg text-neutral-700">
-            {totalImageData} Product stock Photos and High-res Pictures
-          </h4>
-
-          {loading ? (
-            <div className="h-screen justify-center flex">
-              <Spinner label="Loading..." color="danger" />
-            </div>
-          ) : (
-            <>
-              {product.length > 0 ? (
-                <div className="columns-1 sm:columns-2 md:columns-3 lg:columns-4 gap-2 mt-2 relative">
-                  {product.map((data, index: number) => (
-                    <ImageGallery key={index} data={data} />
-                  ))}
+      <div className="main items-center">
+        {/* Trending Videos */}
+        <div className="bg-[#eeeeee]">
+          <div className="py-10 lg:mx-4 xl:mx-24 md:mx-4 mx-4">
+            <h1 className="text-2xl font-bold  text-start">
+              Today's Trending Images
+            </h1>
+            <h4 className="text-lg text-neutral-700">
+              {totalImageData} Product stock Photos and High-res Pictures
+            </h4>
+            <div className="mx-auto mt-4">
+              {loading ? (
+                <div className="justify-center text-center m-auto">
+                  <Spinner label="Loading..." color="danger" />
                 </div>
               ) : (
-                <p>No Images found.</p>
+                  <div className="columns-1 sm:columns-2 md:columns-3 lg:columns-4 gap-2 mt-2 relative">
+                   {product.length > 0 ? (
+                    product.map( ( data ) => (
+                      <ImageGallery key={data._id} data={data} />
+                    ) )
+                  ) : (
+                        <p>No Images found.</p>
+                  )}
+                </div>
               )}
-            </>
-          )}
+            </div>
+          </div>
         </div>
+
+
+        {/* Pagination */}
         {totalImageNumOfPage > 1 && (
-          <div className="flex justify-center items-center gap-4 my-12">
+          <div className="flex justify-center items-center gap-4 my-4">
             <Button
               size="sm"
               type="button"
+              disabled={currentPage === 1}
               variant="flat"
-              className={`${
-                currentPage === 1 ? "opacity-70" : "hover:bg-red-600"
-              } bg-red-500 text-white rounded-full font-bold`}
+              className={`${currentPage === 1
+                ? "opacity-70 cursor-not-allowed"
+                : "hover:bg-webred"
+                } bg-webred text-white rounded-full font-bold`}
               onPress={handlePrevPage}
             >
               Prev
@@ -108,30 +117,31 @@ const Page = () => {
               classNames={{
                 item: "w-8 h-8 text-small bg-gray-100 hover:bg-gray-300 rounded-full",
                 cursor:
-                  "bg-red-500 hover:bg-red-600 text-white rounded-full font-bold",
+                  "bg-webred hover:bg-red text-white rounded-full font-bold",
               }}
               total={totalImageNumOfPage}
               page={imagePage}
               onChange={handlePageChange}
               initialPage={1}
             />
-
+         
             <Button
               type="button"
               size="sm"
+              disabled={currentPage === totalPages}
               variant="flat"
-              className={`${
-                currentPage === totalPages ? "opacity-70" : "hover:bg-red-600"
-              } bg-red-600 text-white rounded-full font-bold`}
+              className={`${currentPage === totalPages
+                ? "opacity-70 cursor-not-allowed"
+                : "hover:bg-webred"
+                } bg-webred text-white rounded-full font-bold`}
               onPress={handleNextPage}
             >
               Next
             </Button>
           </div>
         )}
-        <div className="mt-8">
-          <Footer />
-        </div>
+
+        <Footer />
       </div>
     </>
   );

@@ -81,7 +81,7 @@ const CustomShareButton: React.FC = () => {
           <div>
           <button
               onClick={handleCopyUrl}
-              className="text-white bg-webred rounded-md w-36 justify-center p-2 px-3 flex items-center gap-2"
+              className="text-white bg-webred rounded-md w-36 justify-center p-2 px-3 flex items-center gap-2 whitespace-nowrap"
             >
               {!copySuccess?<><IoCopy />Copy Url</>:<>
                 <FaCheck /> copied</>}

@@ -137,8 +137,8 @@ const Home = () => {
       <div className="main h-full">
         <hr />
 
-        <div className="bg-pageBg mx-auto">
-          <div className="flex flex-col lg:flex-row lg:space-x-8 px-4 sm:px-6 md:px-8 lg:px-24">
+        <div className="bg-pageBg mx-auto ">
+          <div className="flex flex-col lg:flex-row lg:space-x-8 px-4 lg:px-4 xl:px-24 md:px-4 ">
             <div className="w-full lg:w-2/3">
               {product && (
                 <div className="relative">
@@ -333,17 +333,18 @@ const Home = () => {
 
           </div>
 
-          <div className="pt-8 sm:pt-12 bg-pureWhite-light w-full px-4 sm:px-6 md:px-8 lg:px-24 py-8">
+          <div className="pt-8 sm:pt-12 bg-pureWhite-light w-full px-4 sm:px-6 lg:px-4 xl:px-24 md:px-4 py-8">
             <h1 className="font-semibold text-lg sm:text-xl">Similar Videos</h1>
-            <div className="columns-1 sm:columns-2 md:columns-3 lg:columns-4 gap-2 mt-2 relative">
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3  mt-5  lg:border">
               {videoData.map( ( data, index: number ) => (
                 <Trending key={index} data={data} />
               ) )}
             </div>
+            
           </div>
 
           {product && (
-            <div className="px-4 sm:px-6 md:px-8 lg:px-24 bg-pureWhite-light">
+            <div className="px-4 sm:px-6 lg:px-4 xl:px-24 md:px-4 bg-pureWhite-light">
               <div className="pt-8">
                 <h2 className="font-bold text-lg sm:text-xl">Related keywords</h2>
                 <div className="flex flex-wrap gap-2 mt-2">

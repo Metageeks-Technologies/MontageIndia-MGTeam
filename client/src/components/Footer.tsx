@@ -1,25 +1,25 @@
 import React from 'react';
 import Image from 'next/image';
+import {GoogleTranslate} from './LanguageSelector';
+import {getPrefLangCookie} from '@/utils/cookies';
 
 const Footer = () => {
   return (
     <div className="bg-black text-white pb-10 px-4 sm:px-10 lg:px-20">
       <div className="flex flex-col lg:flex-row">
         <div className="mt-5 lg:w-1/4 pr-4">
-          <div className='mb-4 bg-white mr-8 rounded-lg pl-4 p-4'>
-            <div> 
-            <img
-              src="/images/logo.png"
-              alt="logo"
-              className="w-44 h-10 cursor-pointer"
-              // onClick={() => router.push( "/" )}
+          <div className='mb-4  rounded-lg w-fit  '>
+            <div>
+              <img
+                src="/images/logo-white.svg"
+                alt="logo"
+                className="w-44 h-10 cursor-pointer mb-4 sm:mb-0 sm:mr-4"
               />
-              </div>
+            </div>
           </div>
           <div className="mb-4">
-            <div className="text-sm border border-gray-700 px-4 py-2 rounded-md w-60">
-              <span className="mr-2">🌐</span> English
-            </div>
+
+            <GoogleTranslate />
           </div>
         </div>
         <div className="mt-5 w-full grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
