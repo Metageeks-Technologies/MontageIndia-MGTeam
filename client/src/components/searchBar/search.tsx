@@ -100,8 +100,8 @@ const Searchbar = () => {
 
 
   return (
-    <>
-      <div className='transition-all duration-300 sticky top-0 z-10 bg-white shadow-md py-4 border-t-1 '>
+    <div className='sticky top-0 z-10'>
+      <div className='transition-all duration-300   bg-white shadow-md py-4 border-t-1 '>
         <div className="flex relative  justify-between items-center gap-4 bg-gray-100 border border-gray-300 rounded-md mx-6  px-4 lg:mx-4 xl:mx-24 md:mx-4">
           <div className="flex flex-row w-full gap-2">
             <select
@@ -148,7 +148,7 @@ const Searchbar = () => {
         <div className="bg-gray80 border-t flex flex-wrap items-center gap-5 justify-between border-gray-300 w-full">
           <div className="flex py-3 items-center flex-col md:flex-row w-[90%] justify-between lg:mx-4 xl:mx-24 md:mx-4">
             <div className="flex flex-row gap-3 justify-between w-full md:w-fit">
-              <Filter />
+              {/* <Filter /> */}
               <div className="md:hidden">
                 <button
                   onClick={handleClear}
@@ -194,7 +194,7 @@ const Searchbar = () => {
           </div>
         </div>
       ) )}
-    </>
+    </div>
 
   );
 };
