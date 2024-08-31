@@ -30,6 +30,8 @@ export type TProduct = Document & {
   status: "published" | "archived" | "unavailable" | "draft";
   mediaType: "image" | "video" | "audio";
   length?: number;
+  height?: number;
+  width?: number;
   createdBy: mongoose.Types.ObjectId;
 };
 

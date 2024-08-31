@@ -41,6 +41,8 @@ const productSchema = new mongoose.Schema(
       required: true,
     },
     length: { type: Number },
+    height: { type: Number },
+    width: { type: Number },
     createdBy: { type: mongoose.Schema.Types.ObjectId },
   },
   { timestamps: true }

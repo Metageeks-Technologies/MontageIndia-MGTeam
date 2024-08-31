@@ -6,7 +6,7 @@ import { MetaData } from "@src/types/product";
 import Product from "@src/model/product/product";
 
 export const uploadVideo = catchAsyncError(async (req, res, next) => {
-  const { uuid, filename, length } = req.query;
+  const { uuid, filename, length, height, width } = req.query;
 
   const name = filename as string;
   const nameArr = name.split(".");
@@ -20,6 +20,8 @@ export const uploadVideo = catchAsyncError(async (req, res, next) => {
     { uuid },
     {
       length: videoLength,
+      height: height,
+      width: width,
     }
   );
   res.json({ success: true, url });

@@ -25,6 +25,10 @@ const Form2: React.FC<Form2Props> = ({ onPrev, onNext, formData }) => {
   const [loading, setLoading] = useState(false);
   const [loadingPer, setLoadingPer] = useState(0);
   const [videoDuration, setVideoDuration] = useState<null | number>(null);
+  const [videoDimension, setVideoDimension] = useState({
+    width: 0,
+    height: 0,
+  });
 
   const data = formData?.product || {};
 
@@ -61,9 +65,7 @@ const Form2: React.FC<Form2Props> = ({ onPrev, onNext, formData }) => {
               setVideoDuration(videoElement.duration); // Duration in seconds
               const width = videoElement.videoWidth;
               const height = videoElement.videoHeight;
-
-              console.log(width, height, "width, height");
-
+              setVideoDimension({ width, height });
               // Clean up the object URL
               URL.revokeObjectURL(videoURL);
             };
@@ -160,7 +162,7 @@ const Form2: React.FC<Form2Props> = ({ onPrev, onNext, formData }) => {
       // Initiate the upload process
       const length = videoDuration ? videoDuration : 0;
       const response = await instance(
-        `/media/video/upload?uuid=${data.uuid}&filename=${file.name}&length=${length}`
+        `/media/video/upload?uuid=${data.uuid}&filename=${file.name}&length=${length}&width=${videoDimension.width}&height=${videoDimension.height}`
       );
 
       if (response.status !== 200) {

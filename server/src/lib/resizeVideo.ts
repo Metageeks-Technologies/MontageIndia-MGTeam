@@ -11,10 +11,13 @@ const {
   awsMediaConvertQueue,
   awsMediaConvertRole,
   watermarkImgName,
+  watermarkWidth,
+  watermarkHeight,
 } = config;
 
 export const handleReduceVideos = async (inputFile: string, uuid: string) => {
   const destination = `s3://${awsBucketName}/${uuid}/video/`;
+
   const params: any = {
     Queue: awsMediaConvertQueue,
     UserMetadata: {},
@@ -110,9 +113,15 @@ export const handleReduceVideos = async (inputFile: string, uuid: string) => {
 
 export const handleVideoWithWaterMark = async (
   inputFile: string,
-  uuid: string
+  uuid: string,
+  width?: number,
+  height?: number
 ) => {
   const destination = `s3://${awsBucketName}/${uuid}/video/`;
+
+  const centerX = (width || 1500 - watermarkWidth) / 2;
+  const centerY = (height || 260 - watermarkHeight) / 2;
+
   const params: any = {
     Queue: awsMediaConvertQueue,
     UserMetadata: {},
@@ -153,8 +162,8 @@ export const handleVideoWithWaterMark = async (
           ImageInserter: {
             InsertableImages: [
               {
-                ImageX: 320,
-                ImageY: 240,
+                ImageX: centerX > 0 ? centerX : 320,
+                ImageY: centerY > 0 ? centerY : 240,
                 Layer: 1,
                 ImageInserterInput: `s3://${awsBucketName}/${watermarkImgName}`,
                 Opacity: 50,
