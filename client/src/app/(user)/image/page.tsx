@@ -70,7 +70,7 @@ const Page = () => {
         <div className="bg-[#eeeeee]">
           <div className="py-10 lg:mx-4 xl:mx-24 md:mx-4 mx-4">
             <h1 className="text-2xl font-bold  text-start">
-              Today's Trending Videos
+              Today's Trending Images
             </h1>
             <h4 className="text-lg text-neutral-700">
               {totalImageData} Product stock Photos and High-res Pictures

@@ -40,7 +40,7 @@ const Navbar: React.FC = () => {
 
   useEffect( () => {
     const handleResize = () => {
-      setIsMobile( window.innerWidth < 760 );
+      setIsMobile( window.innerWidth < 770 );
     };  
     handleResize();
     window.addEventListener( 'resize', handleResize );
@@ -92,6 +92,8 @@ const Navbar: React.FC = () => {
     <div className="bg-white shadow-md">
       <div className=" mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
+          <div className='flex items-center space-x-5'>
+
           <div className="flex items-center">
             <img
               src="/images/logo.png"
@@ -103,7 +105,7 @@ const Navbar: React.FC = () => {
 
           {!isMobile && (
             <nav className="hidden md:block">
-              <ul className="flex items-center space-x-4 cursor-pointer">
+              <ul className="flex items-start space-x-4 cursor-pointer">
                 <NavItem href="/video">Video</NavItem>
                 <NavItem href="/image">Images</NavItem>
                 <NavItem href="/audio">Audio</NavItem>
@@ -133,9 +135,10 @@ const Navbar: React.FC = () => {
               </ul>
             </nav>
           )}
+          </div>
 
           <div className="hidden md:flex items-center space-x-4">
-            {user?.subscription.status === "completed" && (
+            {user?.subscription.status === "active" && (
               <span className="text-gray-700">{user.subscription.credits || 0} Credits Available</span>
             )}
             <Link href="/user-profile/wishlist">
@@ -148,17 +151,17 @@ const Navbar: React.FC = () => {
                 <img
                   src={user.image}
                   alt="user"
-                  className="w-8 h-8 rounded-full cursor-pointer"
+                  className="w-7 h-7 rounded-full cursor-pointer"
                   onClick={handleUserIconClick}
                 />
               ) : (
                 <FaUserCircle
-                  className="w-8 h-8 text-gray-700 cursor-pointer"
+                  className="w-7 h-7 text-gray-700 cursor-pointer"
                   onClick={handleUserIconClick}
                 />
               )}
               {isUserOpen && (
-                <div className="absolute right-0 mt-2 w-48 bg-white border rounded shadow-xl z-10">
+                <div className="absolute right-0 mt-2 w-48 bg-white border rounded shadow-xl z-50">
                   {user ? (
                     <>
                       <button onClick={handleLogout} className="flex items-center w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100">

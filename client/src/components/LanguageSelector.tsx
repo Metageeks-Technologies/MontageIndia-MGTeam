@@ -11,12 +11,18 @@ interface Language {
 
 const languages: Language[] = [
     {label: "English", value: "en", src: "https://flagcdn.com/h60/us.png"},
+    {label: "Hindi", value: "hi", src: "https://flagcdn.com/h60/in.png"},
     {label: "Spanish", value: "es", src: "https://flagcdn.com/h60/es.png"},
     {label: "French", value: "fr", src: "https://flagcdn.com/h60/fr.png"},
     {label: "German", value: "de", src: "https://flagcdn.com/h60/de.png"},
     {label: "Italian", value: "it", src: "https://flagcdn.com/h60/it.png"},
     {label: "Portuguese", value: "pt", src: "https://flagcdn.com/h60/pt.png"},
     {label: "Russian", value: "ru", src: "https://flagcdn.com/h60/ru.png"},
+    {label: "Chinese", value: "zh-CN", src: "https://flagcdn.com/h60/cn.png"},
+    {label: "Japanese", value: "ja", src: "https://flagcdn.com/h60/jp.png"},
+    {label: "Korean", value: "ko", src: "https://flagcdn.com/h60/kr.png"},
+    {label: "Arabic", value: "ar", src: "https://flagcdn.com/h60/ae.png"},
+
     // Add more languages as needed
 ];
 
@@ -48,7 +54,7 @@ export function GoogleTranslate (): JSX.Element {
     useEffect( () => {
         // console.log( "Component mounted" );
         const savedLang = getPrefLangCookie().split( '/' ).pop() || "en";
-        // console.log( "Initial saved language:", savedLang );
+        console.log( "Initial saved language:", savedLang );
         setCurrentLang( savedLang );
 
         const script = document.createElement( "script" );

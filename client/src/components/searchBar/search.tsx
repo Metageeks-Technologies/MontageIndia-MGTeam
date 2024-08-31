@@ -143,7 +143,8 @@ const Searchbar = () => {
       </div>
 
       {/* if we are on deltail page of any route than dont show this filteres. router will be video/id etc */}
-      {( window.location.pathname.match( /^\/(video|audio|image)\/[^/]+$/ ) ? null : (
+      
+      {(window && window.location.pathname.match( /^\/(video|audio|image)\/[^/]+$/ ) ? null : (
         <div className="bg-gray80 border-t flex flex-wrap items-center gap-5 justify-between border-gray-300 w-full">
           <div className="flex py-3 items-center flex-col md:flex-row w-[90%] justify-between lg:mx-4 xl:mx-24 md:mx-4">
             <div className="flex flex-row gap-3 justify-between w-full md:w-fit">

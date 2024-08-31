@@ -37,14 +37,14 @@ function CartPopup() {
 
   return (
     <>
-      <div onClick={() => setIsOpen(true)}>
+      <div onClick={() => setIsOpen(true)} >
         <Badge
           color="danger"
           className={`${cart.length > 0 ? " text-xs" : "hidden"}`}
           content={cart.length}
           shape="circle"
         >
-          <AiOutlineShoppingCart className="text-gray-700 cursor-pointer w-6 h-6 transition-transform duration-200 ease-in-out hover:scale-110" />
+          <AiOutlineShoppingCart className="text-gray-700 cursor-pointer w-6 h-6 transition-transform duration-200 ease-in-out hover:scale-110 -700 mt-1" />
         </Badge>
       </div>
       <div
