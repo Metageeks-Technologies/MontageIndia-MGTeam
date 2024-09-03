@@ -37,10 +37,7 @@ interface FilterProps {
   filterOptions: {
     sortBy: string[];
     premiumImages: FilterOption[];
-    orientation: string[];
-    color: FilterOption[];
-    people: FilterOption[];
-    artists: FilterOption[];
+    orientation: string[]; 
     more: FilterOption[];
   };
 }
@@ -76,8 +73,8 @@ const Filter: React.FC<FilterProps> = ( {isOpen, onToggle, filterOptions} ) => {
   );
 
   return (
-    <div className={`fixed top-0 left-0  bg-white text-gray-800 overflow-y-auto transition-all duration-300 ease-in-out z-50
-      ${isOpen ? 'w-full md:w-80' : 'w-0'}
+    <div className={`h-fit sticky top-36 left-0  bg-white text-gray-800 overflow-y-auto transition-all duration-300 ease-in-out
+      ${isOpen ? 'w-80' : 'w-0'}
     `}>
       <div className="p-4">
         <div className="flex justify-between items-center mb-6">
@@ -144,7 +141,7 @@ const Filter: React.FC<FilterProps> = ( {isOpen, onToggle, filterOptions} ) => {
           </div>
         </FilterSection>
 
-        <div className="flex items-center justify-between mb-4">
+        {/* <div className="flex items-center justify-between mb-4">
           <span>AI Generated</span>
           <label className="relative inline-flex items-center cursor-pointer">
             <input
@@ -155,9 +152,9 @@ const Filter: React.FC<FilterProps> = ( {isOpen, onToggle, filterOptions} ) => {
             />
             <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
           </label>
-        </div>
+        </div> */}
 
-        {( ['Color', 'People', 'Artists', 'More'] as const ).map( ( section ) => (
+        {( ['More'] as const ).map( ( section ) => (
           <FilterSection
             key={section}
             title={section}

@@ -1,12 +1,19 @@
-"use client"
-import React, {useState} from 'react';
-import {Button, Pagination, Spinner} from '@nextui-org/react'; // Assuming you're using NextUI
-import {BsFilterLeft} from 'react-icons/bs';
-import Searchbar from '@/components/searchBar/search';
-import Filter from '@/components/searchBar/filtersidebar';
-import Trending from '@/components/Video/trendingVideos';
-import Footer from '@/components/Footer';
-
+"use client";
+import {setVideoPage} from "@/app/redux/feature/product/slice";
+import {getVideo} from "@/app/redux/feature/product/video/api";
+import {useAppDispatch, useAppSelector} from "@/app/redux/hooks";
+import Footer from "@/components/Footer";
+import Searchbar from "@/components/searchBar/search";
+import FAQ from "@/components/Video/fag";
+import Trending from "@/components/Video/trendingVideos";
+import {Button, Pagination, Spinner} from "@nextui-org/react";
+import {useSearchParams} from "next/navigation";
+import {useRouter} from "next/router";
+import {useEffect, useState} from "react";
+import {IoIosSearch} from "react-icons/io";
+import {clearKeywords} from "@/app/redux/feature/product/api";
+import Filter from "@/components/searchBar/filtersidebar";
+import {BsFilterLeft} from "react-icons/bs";
 
 const filterOptions = {
   sortBy: ['Popular', 'Most relevant'],
@@ -15,59 +22,79 @@ const filterOptions = {
     {label: 'Usage', options: ['Commercial', 'Editorial']},
   ],
   orientation: ['Horizontal', 'Vertical'],
-  color: [
-    {label: 'Color', options: ['Red', 'Blue', 'Green', 'Yellow']},
-    {label: 'Tone', options: ['Vibrant', 'Muted', 'Pastel']},
-  ],
-  people: [
-    {label: 'Age', options: ['Children', 'Teenagers', 'Adults', 'Seniors']},
-    {label: 'Ethnicity', options: ['Asian', 'Black', 'Caucasian', 'Hispanic']},
-  ],
-  artists: [
-    {label: 'Popular', options: ['John Doe', 'Jane Smith', 'Alex Johnson']},
-    {label: 'Style', options: ['Realism', 'Abstract', 'Pop Art']},
-  ],
+
   more: [
     {label: 'Category', options: ['Nature', 'Technology', 'Food', 'Travel']},
     {label: 'Resolution', options: ['4K', '1080p', '720p']},
   ],
 };
+const Page = () => {
+  const searchParams = useSearchParams();
 
-const MainPage: React.FC = () => {
-  const [isFilterOpen, setIsFilterOpen] = useState( false );
-  const [videoPage, setVideoPage] = useState( 1 );
-  const [loading, setLoading] = useState( false );
-  const [product, setProduct] = useState( [] );
-  const [totalVideoData, setTotalVideoData] = useState( 0 );
-  const [totalVideoNumOfPage, setTotalVideoNumOfPage] = useState( 0 );
+  const searchTerm = searchParams.get( "searchTerm" ) || "";
+  const category = searchParams.get( "category" );
+  const categoryParam = category ? ["editor choice"] : "";
+  const [loading, setloading] = useState( false );
+  const [currentPage, setCurrentPage] = useState( 1 );
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const dispatch = useAppDispatch();
+  const {
+    videoData: product,
+    videoPage,
+    totalVideoData,
+    totalVideoNumOfPage,
+  } = useAppSelector( ( state ) => state.product );
 
   const toggleFilter = () => {
     setIsFilterOpen( !isFilterOpen );
   };
 
   const handlePageChange = ( page: number ) => {
-    setVideoPage( page );
-    // Add your page change logic here
-  };
-
-  const handlePrevPage = () => {
-    if ( videoPage > 1 ) {
-      setVideoPage( videoPage - 1 );
-    }
+    dispatch( setVideoPage( page ) );
   };
 
   const handleNextPage = () => {
-    if ( videoPage < totalVideoNumOfPage ) {
-      setVideoPage( videoPage + 1 );
-    }
+    handlePageChange( videoPage === totalVideoNumOfPage ? 1 : videoPage + 1 );
+  };
+
+  const handlePrevPage = () => {
+    handlePageChange( videoPage === 1 ? totalVideoNumOfPage : videoPage - 1 );
+  };
+
+  const fetchData = async ( page: number ) => {
+    setloading( true );
+
+    // setLoading(true);
+    const response = await getVideo( dispatch, {
+      page,
+      mediaType: ["video"],
+      searchTerm,
+      category: categoryParam,
+      productsPerPage: "9",
+    } );
+    setloading( false );
+  };
+
+  useEffect( () => {
+    fetchData( videoPage );
+    return () => {
+      clearKeywords( dispatch );
+    };
+  }, [videoPage, searchParams] );
+
+  const breakpointColumnsObj = {
+    default: 4,
+    1100: 3,
+    700: 2,
+    500: 1,
   };
 
   return (
     <div className="flex flex-col min-h-screen">
       <Searchbar />
-      <div className="flex flex-col md:flex-row flex-1">
+      <div className="flex flex-1">
         <Filter isOpen={isFilterOpen} onToggle={toggleFilter} filterOptions={filterOptions} />
-        <div className={`flex-1 transition-all duration-300 ease-in-out ${isFilterOpen ? 'md:ml-80' : 'ml-0'}`}>
+        <div className={`flex-1 transition-all duration-300 ease-in-out `}>
           <div className="p-4">
             <button
               className="py-2 text-gray-800 bg-white border flex flex-row items-center gap-2 border-gray-300 px-5 rounded-md mb-4"
@@ -78,7 +105,7 @@ const MainPage: React.FC = () => {
             <div className="main items-center">
               {/* Trending Videos */}
               <div className="bg-[#eeeeee]">
-                <div className="py-10 lg:mx-4 xl:mx-24 md:mx-4 mx-4">
+                <div className={`py-10 lg:mx-4 ${!isFilterOpen ? 'xl:mx-24 md:mx-4' : 'ml-0'} `}>
                   <h1 className="text-2xl font-bold text-start">
                     Today's Trending Videos
                   </h1>
@@ -93,7 +120,7 @@ const MainPage: React.FC = () => {
                     ) : (
                       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 mt-5 lg:border">
                         {product.length > 0 ? (
-                          product.map( ( data:any ) => (
+                          product.map( ( data ) => (
                             <Trending key={data._id} data={data} />
                           ) )
                         ) : (
@@ -114,8 +141,8 @@ const MainPage: React.FC = () => {
                     disabled={videoPage === 1}
                     variant="flat"
                     className={`${videoPage === 1
-                        ? "opacity-70 cursor-not-allowed"
-                        : "hover:bg-webred"
+                      ? "opacity-70 cursor-not-allowed"
+                      : "hover:bg-webred"
                       } bg-webred text-white rounded-full font-bold`}
                     onPress={handlePrevPage}
                   >
@@ -140,8 +167,8 @@ const MainPage: React.FC = () => {
                     disabled={videoPage === totalVideoNumOfPage}
                     variant="flat"
                     className={`${videoPage === totalVideoNumOfPage
-                        ? "opacity-70 cursor-not-allowed"
-                        : "hover:bg-webred"
+                      ? "opacity-70 cursor-not-allowed"
+                      : "hover:bg-webred"
                       } bg-webred text-white rounded-full font-bold`}
                     onPress={handleNextPage}
                   >
@@ -158,4 +185,4 @@ const MainPage: React.FC = () => {
   );
 };
 
-export default MainPage;
+export default Page;

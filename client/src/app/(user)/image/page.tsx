@@ -13,6 +13,26 @@ import { IoSearchOutline } from "react-icons/io5";
 import { useSearchParams } from "next/navigation";
 import { clearKeywords } from "@/app/redux/feature/product/api";
 import Searchbar from "@/components/searchBar/search";
+import Filter from "@/components/searchBar/filtersidebar";
+import {BsFilterLeft} from "react-icons/bs";
+
+
+const filterOptions = {
+  sortBy: ['Most Popular', 'Most Relevant', 'Newest', 'Oldest'],
+  premiumImages: [
+    {label: 'License Type', options: ['Standard', 'Extended']},
+    {label: 'Usage Rights', options: ['Commercial', 'Editorial']},
+  ],
+  orientation: ['Landscape', 'Portrait', 'Square', 'Panorama'],
+  color: ['Color', 'Black & White'],
+  more: [
+    {label: 'Category', options: ['Nature', 'Technology', 'Food', 'Travel', 'People', 'Architecture', 'Animals', 'Sports', 'Business']},
+    {label: 'Resolution', options: ['4K', '1080p', '720p']},
+    {label: 'File Type', options: ['JPEG', 'PNG', 'GIF']},
+    {label: 'Date Added', options: ['Last 24 Hours', 'Last Week', 'Last Month']},
+  ],
+};
+
 
 const Page = () => {
   const dispatch = useAppDispatch();
@@ -22,6 +42,7 @@ const Page = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const searchTerm = searchParams.get("searchTerm") || "";
   const categoryParam = category ? ["editor choice"] : "";
+  const [isFilterOpen, setIsFilterOpen] = useState( false );
 
   const [loading, setloading] = useState(false);
   const {
@@ -30,6 +51,10 @@ const Page = () => {
     totalImageData,
     totalImageNumOfPage,
   } = useAppSelector((state) => state.product);
+
+  const toggleFilter = () => {
+    setIsFilterOpen( !isFilterOpen );
+  };
 
   const handlePageChange = (page: number) => {
     // console.log(page);
@@ -62,88 +87,102 @@ const Page = () => {
   }, [imagePage, searchParams]);
 
   return (
-    <>
+    <div className="flex flex-col min-h-screen">
       <Searchbar />
+      <div className="flex flex-1">
+        <Filter isOpen={isFilterOpen} onToggle={toggleFilter} filterOptions={filterOptions} />
+        <div className={`flex-1 transition-all duration-300 ease-in-out `}>
+          <div className="p-4">
+            <button
+              className="py-2 text-gray-800 bg-white border flex flex-row items-center gap-2 border-gray-300 px-5 rounded-md mb-4"
+              onClick={toggleFilter}
+            >
+              Filters <BsFilterLeft />
+            </button>
+            <div className="main items-center">
+              {/* Trending Videos */}
+              <div className="bg-[#eeeeee]">
+                <div className={`py-10 lg:mx-4 ${!isFilterOpen ? 'xl:mx-24 md:mx-4' : 'ml-0'} `}>
 
-      <div className="main items-center">
-        {/* Trending Videos */}
-        <div className="bg-[#eeeeee]">
-          <div className="py-10 lg:mx-4 xl:mx-24 md:mx-4 mx-4">
-            <h1 className="text-2xl font-bold  text-start">
-              Today's Trending Images
-            </h1>
-            <h4 className="text-lg text-neutral-700">
-              {totalImageData} Product stock Photos and High-res Pictures
-            </h4>
-            <div className="mx-auto mt-4">
-              {loading ? (
-                <div className="justify-center text-center m-auto">
-                  <Spinner label="Loading..." color="danger" />
+                  <h1 className="text-2xl font-bold  text-start">
+                    Today's Trending Images
+                  </h1>
+                  <h4 className="text-lg text-neutral-700">
+                    {totalImageData} Product stock Photos and High-res Pictures
+                  </h4>
+                  <div className="mx-auto mt-4">
+                    {loading ? (
+                      <div className="justify-center text-center m-auto">
+                        <Spinner label="Loading..." color="danger" />
+                      </div>
+                    ) : (
+                      <div className="columns-1 sm:columns-2 md:columns-3 lg:columns-4 gap-2 mt-2 relative">
+                        {product.length > 0 ? (
+                          product.map( ( data ) => (
+                            <ImageGallery key={data._id} data={data} />
+                          ) )
+                        ) : (
+                          <p>No Images found.</p>
+                        )}
+                      </div>
+                    )}
+                  </div>
                 </div>
-              ) : (
-                  <div className="columns-1 sm:columns-2 md:columns-3 lg:columns-4 gap-2 mt-2 relative">
-                   {product.length > 0 ? (
-                    product.map( ( data ) => (
-                      <ImageGallery key={data._id} data={data} />
-                    ) )
-                  ) : (
-                        <p>No Images found.</p>
-                  )}
+              </div>
+
+
+              {/* Pagination */}
+              {totalImageNumOfPage > 1 && (
+                <div className="flex justify-center items-center gap-4 my-4">
+                  <Button
+                    size="sm"
+                    type="button"
+                    disabled={currentPage === 1}
+                    variant="flat"
+                    className={`${currentPage === 1
+                      ? "opacity-70 cursor-not-allowed"
+                      : "hover:bg-webred"
+                      } bg-webred text-white rounded-full font-bold`}
+                    onPress={handlePrevPage}
+                  >
+                    Prev
+                  </Button>
+                  <Pagination
+                    color="success"
+                    classNames={{
+                      item: "w-8 h-8 text-small bg-gray-100 hover:bg-gray-300 rounded-full",
+                      cursor:
+                        "bg-webred hover:bg-red text-white rounded-full font-bold",
+                    }}
+                    total={totalImageNumOfPage}
+                    page={imagePage}
+                    onChange={handlePageChange}
+                    initialPage={1}
+                  />
+
+                  <Button
+                    type="button"
+                    size="sm"
+                    disabled={currentPage === totalPages}
+                    variant="flat"
+                    className={`${currentPage === totalPages
+                      ? "opacity-70 cursor-not-allowed"
+                      : "hover:bg-webred"
+                      } bg-webred text-white rounded-full font-bold`}
+                    onPress={handleNextPage}
+                  >
+                    Next
+                  </Button>
                 </div>
               )}
+
+              <Footer />
             </div>
           </div>
         </div>
-
-
-        {/* Pagination */}
-        {totalImageNumOfPage > 1 && (
-          <div className="flex justify-center items-center gap-4 my-4">
-            <Button
-              size="sm"
-              type="button"
-              disabled={currentPage === 1}
-              variant="flat"
-              className={`${currentPage === 1
-                ? "opacity-70 cursor-not-allowed"
-                : "hover:bg-webred"
-                } bg-webred text-white rounded-full font-bold`}
-              onPress={handlePrevPage}
-            >
-              Prev
-            </Button>
-            <Pagination
-              color="success"
-              classNames={{
-                item: "w-8 h-8 text-small bg-gray-100 hover:bg-gray-300 rounded-full",
-                cursor:
-                  "bg-webred hover:bg-red text-white rounded-full font-bold",
-              }}
-              total={totalImageNumOfPage}
-              page={imagePage}
-              onChange={handlePageChange}
-              initialPage={1}
-            />
-         
-            <Button
-              type="button"
-              size="sm"
-              disabled={currentPage === totalPages}
-              variant="flat"
-              className={`${currentPage === totalPages
-                ? "opacity-70 cursor-not-allowed"
-                : "hover:bg-webred"
-                } bg-webred text-white rounded-full font-bold`}
-              onPress={handleNextPage}
-            >
-              Next
-            </Button>
-          </div>
-        )}
-
-        <Footer />
       </div>
-    </>
+      <Footer />
+    </div>
   );
 };
 

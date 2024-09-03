@@ -49,7 +49,7 @@ app.use("/api/v1/aws",s3Router);
 
 app.get("/api/greet", (req,res,next)=>{
   res.send("Hello from server..")
-});
+}); 
 
 // dummy ci-cd commit 
 app.use(errorMiddleware);
