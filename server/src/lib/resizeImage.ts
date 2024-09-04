@@ -96,26 +96,20 @@ export const resizeToSmall = async (input: string, imgName: string) => {
 
 export const resizeForProductPage = async (input: string, imgName: string) => {
   try {
-    const { density, width, height } = await sharp(input, {
+    const { density, width } = await sharp(input, {
       limitInputPixels: 8585550069,
     }).metadata();
-    const { width: logoWidth, height: logoHeight } = await sharp(
-      "assets/logo.png",
-      { limitInputPixels: 8585550069 }
-    ).metadata();
-    if (!logoHeight || !height || !width || !logoWidth) return;
+    const { width: logoWidth } = await sharp("assets/logo.png", {
+      limitInputPixels: 8585550069,
+    }).metadata();
+    if (!width || !logoWidth) return;
 
-    const nWidth = Math.floor(width / 8);
-    const nHeight = Math.floor(height / 8);
+    const nWidth = Math.floor(width / 4);
     await sharp("assets/logo.png", { limitInputPixels: 8585550069 })
-      .resize(
-        logoHeight >= nHeight || logoWidth >= nWidth
-          ? { width: nWidth, height: nHeight }
-          : { width: logoWidth, height: logoHeight }
-      )
+      .resize(logoWidth >= nWidth ? { width: nWidth } : { width: logoWidth })
       .toFile(`assets/recused-logo.png`);
     await sharp(input, { limitInputPixels: 8585550069 })
-      .resize({ width: Math.floor(width / 8), height: Math.floor(height / 8) })
+      .resize({ width: Math.floor(nWidth) })
       .composite([{ input: "assets/recused-logo.png", gravity: "center" }])
       .withMetadata({ density: 72 })
       .toFile(`output/productPage-${imgName}`);

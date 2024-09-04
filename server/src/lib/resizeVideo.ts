@@ -66,11 +66,43 @@ export const handleReduceVideos = async (inputFile: string, uuid: string) => {
         },
         {
           Name: "File Group",
+          // Outputs: [
+          //   {
+          //     Preset: "System-Generic_Sd_Mp4_Avc_Aac_4x3_640x480p_24Hz_1.5Mbps",
+          //     Extension: ".webm",
+          //     NameModifier: "-thumbnail",
+          //   },
+          // ],
           Outputs: [
             {
-              Preset: "System-Generic_Sd_Mp4_Avc_Aac_4x3_640x480p_24Hz_1.5Mbps",
-              Extension: ".webm",
+              ContainerSettings: {
+                Container: "WEBM",
+                WebmSettings: {},
+              },
+              VideoDescription: {
+                Width: 640,
+                CodecSettings: {
+                  Codec: "VP9",
+                  Vp9Settings: {
+                    Bitrate: 1500000,
+                    RateControlMode: "VBR",
+                  },
+                },
+              },
+              AudioDescriptions: [
+                {
+                  CodecSettings: {
+                    Codec: "OPUS",
+                    OpusSettings: {
+                      Bitrate: 96000,
+                      Channels: 2,
+                      SampleRate: 48000,
+                    },
+                  },
+                },
+              ],
               NameModifier: "-thumbnail",
+              Extension: ".webm",
             },
           ],
 
@@ -119,8 +151,9 @@ export const handleVideoWithWaterMark = async (
 ) => {
   const destination = `s3://${awsBucketName}/${uuid}/video/`;
 
-  const centerX = (width || 1500 - watermarkWidth) / 2;
-  const centerY = (height || 260 - watermarkHeight) / 2;
+  if (!width || !height) return;
+  const centerX = (width - watermarkWidth) / 2;
+  const centerY = (height - watermarkHeight) / 2;
 
   const params: any = {
     Queue: awsMediaConvertQueue,
@@ -133,12 +166,44 @@ export const handleVideoWithWaterMark = async (
       OutputGroups: [
         {
           Name: "File Group",
+          // Outputs: [
+          //   {
+          //     Preset:
+          //       "System-Generic_Hd_Mp4_Av1_Aac_16x9_1280x720p_25Hz_2Mbps_Qvbr_Vq7",
+          //     Extension: ".webm",
+          //     NameModifier: "-product_page",
+          //   },
+          // ],
           Outputs: [
             {
-              Preset:
-                "System-Generic_Hd_Mp4_Av1_Aac_16x9_1280x720p_25Hz_2Mbps_Qvbr_Vq7",
-              Extension: ".webm",
+              ContainerSettings: {
+                Container: "WEBM",
+                WebmSettings: {},
+              },
+              VideoDescription: {
+                Width: 1280,
+                CodecSettings: {
+                  Codec: "VP9",
+                  Vp9Settings: {
+                    Bitrate: 1500000,
+                    RateControlMode: "VBR",
+                  },
+                },
+              },
+              AudioDescriptions: [
+                {
+                  CodecSettings: {
+                    Codec: "OPUS",
+                    OpusSettings: {
+                      Bitrate: 96000,
+                      Channels: 2,
+                      SampleRate: 48000,
+                    },
+                  },
+                },
+              ],
               NameModifier: "-product_page",
+              Extension: ".webm",
             },
           ],
 
@@ -194,11 +259,11 @@ export const getTranscodeStatus = async (jobId: string) => {
     Id: jobId,
   };
 
-  console.log(input);
+  // console.log(input);
 
   try {
     const data = await emcClient.send(new GetJobCommand(input));
-    console.log(data);
+    // console.log(data);
 
     return {
       status: data.Job?.Status,
