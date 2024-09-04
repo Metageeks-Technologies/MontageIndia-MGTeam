@@ -1,18 +1,47 @@
 "use client";
-import { getCurrCustomer } from "@/app/redux/feature/user/api";
-import { useEffect,useState } from "react";
-import { useAppDispatch,useAppSelector } from "@/app/redux/hooks";
+import { useAppSelector } from "@/app/redux/hooks";
 import { FaCoins } from "react-icons/fa";
 import { useRouter } from "next/navigation";
 import { MdOutlineDateRange } from "react-icons/md";
 import {Spinner} from "@nextui-org/react"
 import { FC } from "react";
+import { sendVerifyEmailLink } from "@/utils/loginOptions";
+import Swal from "sweetalert2";
 
 const Home: FC = () => {
 
   const router = useRouter();
   const { user }:{user:any} = useAppSelector((state) => state.user);
   console.log("user::::", user);
+
+  const handleVerifyEmail= async ()=>{
+    if(!user || !user.email){
+      Swal.fire({
+        icon: 'error',
+        title: 'Email not found!',
+        text: ' Please try again later',
+      })
+      return;
+    }
+    
+    const {status,response,error}=await sendVerifyEmailLink(user.email);
+
+    if(status==="fail"){
+      Swal.fire({
+        icon: 'error',
+        title: {error},
+        text: ' Please try again later',
+      });
+      return;
+    }
+
+      Swal.fire({
+        icon: 'success',
+        title: 'Email sent!',
+        text: ' Please check your email to verify',
+      });
+      return;
+  }
 
   return (
     <>
@@ -48,55 +77,36 @@ const Home: FC = () => {
                 </button>
                 </div> */}
                 </div>
-                {/* <div className="flex justify-between items-center px-4 py-3 border-b">
-                <div className="text-black w-1/3">User ID</div>
-                <div className="text-black w-1/3">{user._id}</div>
-                <div className="w-1/3"></div>
-              </div> */}
-                <div className="flex justify-between items-center px-4 py-3 border-b">
+                <div className="flex justify-between  items-center px-4 py-3 border-b">
                   <div className="text-black md:w-1/3 ">
-                    User Name
+                    Phone
                   </div>
-                  <div className="text-black md:w-1/3 ">
-                    {user.username}
+                  <div className="text-black md:w-1/3">
+                    +{user.phone || "Not Provided"}
                   </div>
-                  {/* <div className="w-1/3"></div> */}
                 </div>
-                <div className="flex justify-between bg-gray-100 border-gray-300 items-center px-4 py-3 border-b">
+                <div className="flex justify-between bg-gray-100 border-gray-30 items-center px-4 py-3 border-b">
                   <div className="text-black md:w-1/3 ">
                     E-mail
                   </div>
+                  {
+                    !user?.emailVerified && (
+                      <div className="text-blue-500 hover:underline cursor-pointer font-semibold md:w-1/3" onClick={handleVerifyEmail} >
+                        Verify email
+                      </div>
+                    )
+                  }
                   <div className="text-black md:w-1/3">
                     {user.email}
                   </div>
-                  {/* <div className="w-1/3 flex justify-end items-center">
-                <button
-                  onClick={() => {
-                    setCurrentField("Email");
-                    setUpdatedEmail(user.email);
-                    setIsPopupOpen(true);
-                  }}
-                  className=" bg-white px-2 py-1 rounded-lg border-1 border-gray-400 flex justify-end items-center gap-2"
-                >
-                <span className="text-black">Edit</span><span className="text-webred"><BiEdit /></span>
-                </button>
-                </div> */}
                 </div>
-                <div className="flex justify-between  items-center px-4 py-3 border-b">
+                <div className="flex justify-between items-center px-4 py-3 border-b">
                   <div className="text-black md:w-1/3 ">
                     Password
                   </div>
                   <div className="text-black md:w-1/3 ">
                     ********
                   </div>
-                  {/* <div className="w-1/3 flex justify-end items-center">
-                <button
-                  onClick={() => router.push(`/user-profile/change-password`)}
-                  className=" bg-white px-2 py-1 rounded-lg border-1 border-gray-400 flex justify-end items-center gap-2"
-                >
-                 <span className="text-black">Edit</span><span className="text-webred"><BiEdit /></span>
-                </button>
-                </div> */}
                 </div>
               </div>
               <div className="md:w-1/4 bg-gray-100 h-full p-4 rounded-lg flex justify-center items-center">
@@ -130,16 +140,22 @@ const Home: FC = () => {
           <div className="border rounded-lg border-gray-200 mt-2">
                 <div className="flex justify-between items-center px-4 py-4 border-b">
                   <div className="text-black">Plan Name</div>
-                  <div className="text-black">{user?.subscription?.PlanId?.item?.name}</div>
+                  {(user?.subscription?.PlanId) ? <div className="text-black">{user?.subscription?.PlanId?.item?.name}</div> : <div className="text-black">Free Plan </div>}
                 </div>
-                <div className="flex justify-between items-center px-4 py-4 border-b">
+                {
+                  user.subscription?.credits && 
+                  (
+<div className="flex justify-between items-center px-4 py-4 border-b">
                   <div className="text-black">Credits</div>
                   <div className="text-black">
-                  <div className="flex justify-center items-center gap-2"><span>{user.subscription?.credits}</span><span><FaCoins/></span></div>
-                  
+                  <div className="flex justify-center items-center gap-2"><span>{user.subscription?.credits} </span><span><FaCoins/></span></div>
                   </div>
                 </div>
-                <div className="flex justify-between items-center px-4 py-4 border-b">
+                  )
+                }
+                
+                {user.subscription?.planValidity && (
+                   <div className="flex justify-between items-center px-4 py-4 border-b">
                   <div className="text-black">Plan Validity</div>
                   <div className="text-black flex justify-center items-center gap-2">
                   <span>
@@ -154,12 +170,18 @@ const Home: FC = () => {
                     <span><MdOutlineDateRange/></span>
                   </div>
                 </div>
-                <div className="flex justify-between items-center px-4 py-4 border-b">
+                )}
+               {
+                user.subscription?.status && (
+                   <div className="flex justify-between items-center px-4 py-4 border-b">
                   <div className="text-black">Status</div>
                   <div className={`font-semibold capitalize ${user.subscription?.status==='active'?"text-green-500":""}`}>
                     {user.subscription?.status}
                   </div>
                 </div>
+                )
+               }
+               
           </div>
             
             

@@ -25,25 +25,63 @@ index
 13. remove the product id from user cart
 */
 
+export const googleLogin = catchAsyncError(async (req, res, next) => {
+  const { uid, name, email, image } = req.body;
+
+  if (!uid || !name || !email) {
+    return next(new ErrorHandler("Please provide all values", 400));
+  }
+
+  const user = await Customer.findOne({ uid });
+
+  if (user) {
+   return res.status(200).send({ status:'success', message: "User already exists" });
+  }
+
+  const newUser = await Customer.create({
+    uid,
+    name,
+    email,
+    image,
+  });
+
+  return res.status(201).send({ status:'success', message: "User created"});
+}
+);
+
+
 export const signupCustomer = catchAsyncError(async (req, res, next) => {
   if (!req.body) {
     return res.status(400).json({ error: "Invalid request body" });
   }
-  const { name, username, email, password } = req.body;
+  const { uid,name,phone, email, password,image } = req.body;
 
-  if (!name || !email || !username || !password) {
+  if (!uid) {
     return next(new ErrorHandler("please provide all values", 400));
   }
-
-  const userAlreadyExists = await Customer.findOne({
-    $or: [{ username }, { email }],
-  });
+  const query = {
+  $or: [
+    { uid },
+    ...(email ? [{ email }] : []),
+    ...(phone ? [{ phone }] : []),
+  ],
+};
+  const userAlreadyExists = await Customer.findOne(query);
 
   if (userAlreadyExists) {
-    return next(new ErrorHandler("Username already exists", 400));
+    return next(new ErrorHandler("User already exists", 400));
   }
 
-  const user = await Customer.create(req.body);
+  const updatedUser:any = {};
+
+  if(uid) updatedUser.uid = uid;
+  if(name) updatedUser.name = name;
+  if(phone) updatedUser.phone = phone.slice(1,phone.length);
+  if(email) updatedUser.email = email;
+  if(password) updatedUser.password = password;
+  if(image) updatedUser.image = image;
+
+  const user = await Customer.create(updatedUser);
 
   res.status(201).json({
     success: true,
@@ -162,9 +200,17 @@ export const getAllCustomer = catchAsyncError(async (req, res, next) => {
 
 export const updateCustomerDetails = catchAsyncError(
   async (req: any, res, next) => {
-    const { name,currentPassword,newPassword,image } = req.body;
+    const { name,currentPassword,newPassword,image,email } = req.body;
 
     console.log(name, currentPassword, newPassword,image);
+
+    if(email){
+      const isEmailExist= await Customer.findOne({email});
+      if(isEmailExist){
+        return next(new ErrorHandler("Email already exists",400));
+      }
+    }
+
     const { id } = req.user;
     const customerToUpdate = await Customer.findById(id).select('+password');;
 
@@ -175,7 +221,10 @@ export const updateCustomerDetails = catchAsyncError(
     const updates: Partial<typeof customerToUpdate> = {};
     if (name) updates.name = name ;
     if(image) updates.image = image;
-
+    if(email) {
+      updates.email = email;
+      updates.emailVerified = false;
+    }
     if (currentPassword && newPassword) {
       const verifyPassword = await customerToUpdate.comparePassword(
         currentPassword as string
@@ -379,3 +428,48 @@ export const removeProductFromCart = catchAsyncError(
     });
   }
 );
+
+export const isPhoneExist = catchAsyncError(async (req, res, next) => {
+  const phone= req.query.phone as string;
+  console.log("phone",phone);
+  if(!phone) {
+    return next(new ErrorHandler("Please provide phone", 400));
+  }
+  const updatedPhone= phone?.slice(1,phone.length);
+  console.log("updatedPhone",updatedPhone);
+  const user = await Customer.findOne({ phone: updatedPhone });
+  if (!user) {
+    return res.status(200).json({success:false, message: "Phone number not found" });
+  }
+  res.status(200).json({ success:true, message: "Phone number found" });
+}
+);
+
+export const isPhoneEmailExist = catchAsyncError(async (req, res, next) => {
+  const { phone, email } = req.query;
+  if(!phone && !email) {
+    return next(new ErrorHandler("Please provide phone or email", 400));
+  }
+
+  const user = await Customer.findOne({ $or: [{ phone }, { email }] });
+
+  if (user) {
+    return res.status(200).json({success:true, message: "User already exits with this email or PhoneNumber " });
+  }
+
+  res.status(200).json({success:false, message: "User not found" });
+});
+
+export const verifyEmail= catchAsyncError(async (req:any, res, next) => {
+   const {email}=req.body;
+   console.log("email",email);
+    const user =await Customer.findOne({email});
+    console.log("user",user);
+    if(!user){
+      return res.status(400).json({success:false,message:"User not found"});
+    }
+    user.emailVerified=true;
+    await user.save();
+    console.log("user",user);
+    res.status(200).json({success:true,message:"Email verified successfully"});
+});
