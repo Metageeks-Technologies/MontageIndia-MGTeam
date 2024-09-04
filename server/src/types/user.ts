@@ -17,8 +17,10 @@ export type TAdmin = Document & {
 };
 
 export type TCustomer = Document & {
+  uid: string;
   username: string;
   email: string;
+  emailVerified: boolean;
   image?: string;
   name: string; // Customer's full name
   password: string;

@@ -1,5 +1,5 @@
 import express from "express";
-import { isAuthenticatedCustomer } from "@src/middleware/auth";
+import { isAuthenticatedCustomer,firebaseAuth } from "@src/middleware/auth";
 import {
   addToWishlist,
   removeFromWishlist,
@@ -22,37 +22,46 @@ import {
   getCustomerById,
   addProductToCart,
   removeProductFromCart,
+  isPhoneExist,
+  googleLogin,
+  verifyEmail,
+  isPhoneEmailExist
 } from "@src/controller/user/customer";
+import { get } from "http";
 const userRouter = express.Router();
 
+userRouter.route("/verifyEmail").post(verifyEmail);
+userRouter.route("/phone/").get(isPhoneExist);
+userRouter.route("/phoneEmail").get(isPhoneEmailExist);
+userRouter.route("/googleLogin").post(googleLogin);
 userRouter.route("/signup").post(signupCustomer);
 userRouter.route("/login").post(loginCustomer);
 userRouter.route("/logout").get(logoutCustomer);
 userRouter.route("/getAll").get(getAllCustomer);
 userRouter
   .route("/getCurrent")
-  .get(isAuthenticatedCustomer, getCurrentCustomer);
-userRouter.route("/delete/:id").delete(isAuthenticatedCustomer, deleteCustomer);
+  .get(firebaseAuth, getCurrentCustomer);
+// userRouter.route("/delete/:id").delete(isAuthenticatedCustomer, deleteCustomer);
 userRouter
   .route("/update")
-  .patch(isAuthenticatedCustomer, updateCustomerDetails);
+  .patch(firebaseAuth, updateCustomerDetails);
 userRouter
   .route("/changePassword")
-  .patch(isAuthenticatedCustomer, changePassword);
+  .patch(firebaseAuth, changePassword);
 userRouter.route("/forgetPassword").post(forgetPassword);
 userRouter.route("/resetPassword").post(resetPassword);
 
 userRouter
   .route("/wishlist")
-  .get(isAuthenticatedCustomer, getWishlist)
-  .patch(isAuthenticatedCustomer, addToWishlist)
-  .delete(isAuthenticatedCustomer, removeFromWishlist);
+  .get(firebaseAuth, getWishlist)
+  .patch(firebaseAuth, addToWishlist)
+  .delete(firebaseAuth, removeFromWishlist);
 
 userRouter
   .route("/cart")
-  .get(isAuthenticatedCustomer, getCart)
-  .patch(isAuthenticatedCustomer, addToCart)
-  .delete(isAuthenticatedCustomer, removeFromCart);
+  .get(firebaseAuth, getCart)
+  .patch(firebaseAuth, addToCart)
+  .delete(firebaseAuth, removeFromCart);
 
-userRouter.route("/:id").get(isAuthenticatedCustomer, getCustomerById);
+userRouter.route("/:id").get(firebaseAuth, getCustomerById);
 export default userRouter;

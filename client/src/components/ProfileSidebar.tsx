@@ -17,6 +17,9 @@ import { CgMenuGridR } from "react-icons/cg";
 import { LuPanelRightOpen } from "react-icons/lu";
 import { LuPanelRightClose } from "react-icons/lu";
 import { BsBookmarkHeart } from "react-icons/bs";
+import { signOutUser } from "@/utils/loginOptions";
+import { notifySuccess } from "@/utils/toast";
+
 const ProfileSidebar = () => {
   const router= useRouter();
   const [active, setActive] = useState<string>("");
@@ -43,6 +46,12 @@ const ProfileSidebar = () => {
 
   const toggleSidebar = () => {
     setIsOpen(!isOpen);
+  };
+
+  const handleLogOut = async () => {
+    await signOutUser();
+    notifySuccess("Logout successfully");
+    router.push("/auth/user/login");
   };
 
   return (
@@ -181,7 +190,7 @@ const ProfileSidebar = () => {
             </div>
             <div className="flex mb-1 items-center text-webred px-4 py-2 hover:bg-gray-300 hover:rounded-lg cursor-pointer">
               <div className="w-full flex justify-between items-center">
-                <div className="flex gap-2 justify-start items-center">
+                <div onClick={handleLogOut} className="flex gap-2 justify-start items-center">
                   <MdLogout className="h-6 w-6" />
                   <span>Log Out</span>
                 </div>

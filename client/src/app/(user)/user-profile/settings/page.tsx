@@ -148,6 +148,7 @@ const ProfileSetting: FC = () => {
       !file &&
       !imagePreview &&
       formData.name === user?.name &&
+      formData.email === user?.email &&
       !formData.newPassword &&
       !formData.confirmPassword
     ) {
@@ -179,12 +180,12 @@ const ProfileSetting: FC = () => {
           return;
         }
       } else {
-        payload = { ...payload, name: formData.name };
+        payload = { ...payload, name: formData.name, email: formData.email };
       }
 
       if (file) {
         await handleUpload();
-        let path = `${process.env.NEXT_PUBLIC_AWS_PREFIX}userProfile/${user?._id}`;
+        let path = `${process.env.NEXT_PUBLIC_AWS_PREFIX}/userProfile/${user?._id}`;
         console.log("path", path);
         payload = { ...payload, image: path };
       }
@@ -285,11 +286,11 @@ const ProfileSetting: FC = () => {
                     </div>
                     <div className="w-full flex flex-col gap-2 justify-start items-start px-4 py-3">
                       <label className="text-black text-xm md:text-md">
-                        User Name
+                       Mobile
                       </label>
                       <input
                         disabled={true}
-                        value={user.username}
+                        value={user.phone}
                         type="text"
                         className="w-full border bg-[#F1F1F1] border-gray-300 rounded-lg px-4 py-2"
                       />
@@ -299,8 +300,7 @@ const ProfileSetting: FC = () => {
                     <div className="w-full flex flex-col gap-2 justify-start items-start px-4 py-3 ">
                       <label className="text-black">Email</label>
                       <input
-                        disabled={true}
-                        value={user.email}
+                        value={formData.email}
                         onChange={(e) =>
                           setForm({ ...formData, email: e.target.value })
                         }

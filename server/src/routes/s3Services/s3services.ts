@@ -1,9 +1,9 @@
 import express from 'express';
 import { generateUploadPresignedUrl, generateGetPresignedUrl } from '@src/controller/user/AwsS3Services';
-import { isAuthenticatedCustomer } from '@src/middleware/auth';
+import { firebaseAuth, isAuthenticatedCustomer } from '@src/middleware/auth';
 
 const s3Router = express.Router();
-s3Router.post('/getUploadRrl',isAuthenticatedCustomer, async (req, res) => {
+s3Router.post('/getUploadRrl',firebaseAuth, async (req, res) => {
     const { folder, fileName } = req.body;
     if (!folder || !fileName) {
       return res.status(400).json({ error: 'Folder and fileName are required' });

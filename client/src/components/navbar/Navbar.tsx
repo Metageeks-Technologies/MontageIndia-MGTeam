@@ -11,6 +11,7 @@ import { useAppDispatch, useAppSelector } from "@/app/redux/hooks";
 import Link from "next/link";
 import Swal from "sweetalert2";
 import { notifySuccess } from "@/utils/toast";
+import { signOutUser } from "@/utils/loginOptions";
 //
 const Sidebar = () => {
   const router = useRouter();
@@ -24,10 +25,10 @@ const Sidebar = () => {
 
   const handleLogout = async () => {
     try {
-      const response = await instance.get("/user/logout");
-
-      router.push("/auth/user/login");
+      // const response = await instance.get("/user/logout");
+      await signOutUser();
       notifySuccess("Logout successfully");
+      router.push("/auth/user/login");
     } catch (error) {
       console.error("Error in logout:", error);
     }
@@ -41,6 +42,8 @@ const Sidebar = () => {
     setIsUserOpen(false);
     router.push("/user-profile");
   };
+
+  console.log("user", user);
 
   return (
     <>
@@ -147,7 +150,7 @@ const Sidebar = () => {
                 </span>
               </div>
             )}
-            <Link href="/user-profile/favorites">
+            <Link href="/user-profile/wishlist">
               <AiOutlineHeart className="text-gray-700 hover:text-webred cursor-pointer w-7 h-7 transition-transform duration-200 ease-in-out hover:scale-110" />
             </Link>
 
@@ -156,7 +159,7 @@ const Sidebar = () => {
               {user ? (
                 <img
                   src={user.image}
-                  alt="user"
+                  alt={user.name}
                   className="w-10 h-10 rounded-full cursor-pointer"
                   onClick={handleUserIconClick}
                 />

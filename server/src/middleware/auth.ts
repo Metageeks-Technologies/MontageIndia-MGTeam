@@ -4,6 +4,8 @@ import Admin from "@src/model/user/admin.js";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import config from "@src/utils/config.js";
 import Customer from "@src/model/user/customer.js";
+import { auth } from "@src/utils/firebase/firebaseAdmin.js";
+import customer from "@src/model/user/customer.js";
 
 export const isAuthenticatedAdmin = catchAsyncError(
   async (req: any, res, next) => {
@@ -76,23 +78,39 @@ export const isAuthenticatedCustomer = catchAsyncError(
 
 export const isAuthorizedCustomer = catchAsyncError(
   async (req: any, res, next) => {
-    const { token } = req.cookies;
-    if (!token) {
-      return next();
-    }
+   const authHeader = req.headers.authorization;
 
-    const decodedData = jwt.verify(token, config.customerJwtSecret || "");
-    const requestedUser = await Customer.findById(
-      (decodedData as JwtPayload).id
-    );
-    if (!requestedUser) {
-      return next();
-    }
-
-    req.user = requestedUser;
-    next();
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return next();
   }
-);
+
+  const idToken = authHeader.split('Bearer ')[1];
+  if(!idToken){
+    return next();
+  }
+  // console.log("idToken",idToken);
+
+  auth
+    .auth()
+    .verifyIdToken(idToken)
+    .then(async (decodedToken) => {
+      // console.log("decodedToken",decodedToken);
+      const uid = decodedToken.uid;
+      
+      // console.log("req.user",uid);
+      const user=await customer.findOne({uid});
+      // console.log("user",user);
+      if(!user){
+        return res.status(401).json({ error: "Invalid or expired token" });
+      }
+      req.user=user;
+      // console.log("req.user",req.user);
+      next();
+    })
+    .catch((error) => {
+      return res.status(401).json({ error: "Invalid or expired token" });
+    });
+});
 
 export const checkProductAccess = catchAsyncError(
   async (req: any, res: any, next: any) => {
@@ -162,11 +180,10 @@ const processedEventIds = new Set();
 
 export const checkDuplicateEvent = catchAsyncError(
   async (req: any, res: any, next: any) => {
-    
-    console.log("checkDuplicateEvent",processedEventIds);
+    console.log("checkDuplicateEvent", processedEventIds);
 
     const eventId = req.headers["x-razorpay-event-id"];
-    console.log("eventId",eventId);
+    console.log("eventId", eventId);
     if (processedEventIds.has(eventId)) {
       console.log(`Duplicate event with ID ${eventId}. Skipping processing.`);
       res.status(200).send();
@@ -177,3 +194,36 @@ export const checkDuplicateEvent = catchAsyncError(
     }
   }
 );
+
+export const firebaseAuth = catchAsyncError(async (req: any, res, next) => {
+  const authHeader = req.headers.authorization;
+
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return res.status(401).json({ message: 'Unauthorized' });
+  }
+
+  const idToken = authHeader.split('Bearer ')[1];
+  console.log("idToken",idToken);
+
+  auth
+    .auth()
+    .verifyIdToken(idToken)
+    .then(async (decodedToken) => {
+      console.log("decodedToken",decodedToken);
+      const uid = decodedToken.uid;
+
+      // console.log("req.user",uid);
+      
+      const user=await customer.findOne({uid});
+      console.log("user",user);
+      if(!user){
+        return res.status(401).json({ error: "Invalid or expired token" });
+      }
+      req.user=user;
+      console.log("req.user",req.user);
+      next();
+    })
+    .catch((error) => {
+      return res.status(401).json({ error: "Invalid or expired token" });
+    });
+});
