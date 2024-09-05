@@ -25,7 +25,7 @@ interface FilterProps {
     sortBy: string[];
     orientation?: string[];
     more?: FilterOption[];
-    premiumImages?: FilterOption[];
+
     videoLength?: number;
     frameRate?: string[];
     audioLength?: number;
@@ -119,33 +119,7 @@ const Filter: React.FC<FilterProps> = ( {isOpen, onToggle, filterOptions, onFilt
           </FilterSection>
         )}
 
-        {filterOptions.premiumImages && (
-          <FilterSection
-            title="Premium images"
-            expanded={expandedSections['premiumImages'] || false}
-            onToggle={() => toggleSection( 'premiumImages' )}
-          >
-            {filterOptions.premiumImages.map( ( option ) => (
-              <div key={option.label} className="mb-2">
-                <h4 className="font-medium">{option.label}</h4>
-                {Array.isArray( option.options ) && (
-                  <div className="flex flex-wrap gap-2 mt-1">
-                    {option.options.map( ( subOption ) => (
-                      <button
-                        key={subOption}
-                        className={`px-3 py-1 rounded-full ${activeFilters[option.label] === subOption ? 'bg-gray-800 text-white' : 'bg-gray-200'}`}
-                        onClick={() => handleFilterClick( option.label, subOption )}
-                      >
-                        {subOption}
-                      </button>
-                    ) )}
-                  </div>
-                )}
-              </div>
-            ) )}
-          </FilterSection>
-        )}
-
+       
         {filterOptions.more && (
           <FilterSection
             title="More"
@@ -173,15 +147,15 @@ const Filter: React.FC<FilterProps> = ( {isOpen, onToggle, filterOptions, onFilt
                       type="number"
                       placeholder="Min Width"
                       className="w-1/2 px-2 py-1 border rounded"
-                      value={activeFilters[`${option.label}_minWidth`] || ''}
-                      onChange={( e ) => handleFilterClick( `${option.label}_minWidth`, parseInt( e.target.value ) || 0 )}
+                        value={''}
+                        onChange={( e ) => handleFilterClick( `imageWidth`, parseInt( e.target.value ) || 0 )}
                     />
-                    <input
+                    <input  
                       type="number"
                       placeholder="Min Height"
                       className="w-1/2 px-2 py-1 border rounded"
                       value={activeFilters[`${option.label}_minHeight`] || ''}
-                      onChange={( e ) => handleFilterClick( `${option.label}_minHeight`, parseInt( e.target.value ) || 0 )}
+                        onChange={( e ) => handleFilterClick( `imageHeight`, parseInt( e.target.value ) || 0 )}
                     />
                   </div>
                 )}

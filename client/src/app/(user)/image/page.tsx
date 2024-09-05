@@ -1,37 +1,31 @@
 "use client";
 import Footer from "@/components/Footer";
 import ImageGallery from "@/components/Home/homeImage";
-import {Product} from "@/types/order";
 import instance from "@/utils/axios";
 import {Button, Pagination, Spinner} from "@nextui-org/react";
 import {useEffect, useState} from "react";
-import {IoIosSearch} from "react-icons/io";
-import {getImage} from "@/app/redux/feature/product/image/api";
 import {useAppDispatch, useAppSelector} from "@/app/redux/hooks";
 import {setImagePage} from "@/app/redux/feature/product/slice";
-import {IoSearchOutline} from "react-icons/io5";
-import {useSearchParams} from "next/navigation";
+import {useRouter, useSearchParams} from "next/navigation";
 import {clearKeywords} from "@/app/redux/feature/product/api";
 import Searchbar from "@/components/searchBar/search";
 import Filter from "@/components/searchBar/filtersidebar";
 import {BsFilterLeft} from "react-icons/bs";
-
+import {getImage} from "@/app/redux/feature/product/image/api";
 
 const filterOptions = {
   sortBy: ['Most Popular', 'Newest', 'Oldest'],
-
   orientation: ['Landscape', 'Portrait'],
-
   more: [
     {label: 'Size', options: {minHeight: 0, minWidth: 0}},
     {label: 'File Type', options: ['JPEG', 'PNG']},
   ],
-  density: 0 // input box
+  density: 0
 };
-
 
 const Page = () => {
   const dispatch = useAppDispatch();
+  const router = useRouter();
   const searchParams = useSearchParams();
   const category = searchParams.get( "category" );
   const [totalPages, setTotalPages] = useState( 1 );
@@ -39,32 +33,28 @@ const Page = () => {
   const searchTerm = searchParams.get( "searchTerm" ) || "";
   const categoryParam = category ? ["editor choice"] : "";
   const [isFilterOpen, setIsFilterOpen] = useState( false );
-
-  const [loading, setloading] = useState( false );
-  const {
-    imageData: product,
-    imagePage,
-    totalImageData,
-    totalImageNumOfPage,
-  } = useAppSelector( ( state ) => state.product );
+  const [loading, setLoading] = useState( false );
+  const [filteredData, setFilteredData] = useState( [] );
+  const {imageData: product, imagePage, totalImageData, totalImageNumOfPage} = useAppSelector( ( state ) => state.product );
 
   const toggleFilter = () => {
     setIsFilterOpen( !isFilterOpen );
   };
 
   const handlePageChange = ( page: number ) => {
-    // console.log(page);
     dispatch( setImagePage( page ) );
   };
+
   const handleNextPage = () => {
     handlePageChange( imagePage === totalImageNumOfPage ? 1 : imagePage + 1 );
   };
+
   const handlePrevPage = () => {
     handlePageChange( imagePage === 1 ? totalImageNumOfPage : imagePage - 1 );
   };
 
   const fetchData = async ( page: number ) => {
-    setloading( true );
+    setLoading( true );
     const response = await getImage( dispatch, {
       page: imagePage,
       productsPerPage: 10,
@@ -72,7 +62,41 @@ const Page = () => {
       searchTerm,
       category: categoryParam,
     } );
-    setloading( false );
+    setLoading( false );
+  };
+
+  const fetchFilterData = async ( page: number, filters: Record<string, string> ) => {
+    setLoading( true );
+    try {
+      const response = await instance.get( "/product/filter", {
+        params: {
+          page,
+          productsPerPage: 10,
+          mediaType: ["image"],
+          ...filters
+        }
+      } );
+      console.log( "response:-", response )
+      setFilteredData(response.data.products)
+      // Update your state with the filtered data
+      // You might need to dispatch an action to update the Redux store
+      setLoading( false );
+    } catch ( error ) {
+      console.error( "Error fetching filtered data:", error );
+      setLoading( false );
+    }
+  };
+
+  const handleFilterChange = ( filterType: string, value: string | number ) => {
+    const currentParams = new URLSearchParams( searchParams.toString() );
+    currentParams.set( filterType, value.toString() );
+
+    // Update URL with new filter params
+    router.push( `?${currentParams.toString()}`, {scroll: false} );
+
+    // Fetch filtered data
+    const filters = Object.fromEntries( currentParams );
+    fetchFilterData( imagePage, filters );
   };
 
   useEffect( () => {
@@ -80,13 +104,9 @@ const Page = () => {
     return () => {
       clearKeywords( dispatch );
     };
+    
   }, [imagePage, searchParams] );
 
-  const handleFilterChange = ( filterType: string, value: string | number ) => {
-    console.log( `Filter changed: ${filterType} = ${value}` );
-    // Here you can update your application state or make API calls with the new filter params
-  };
-  
   return (
     <div className="flex flex-col min-h-screen">
       <Searchbar />
@@ -101,10 +121,8 @@ const Page = () => {
               Filters <BsFilterLeft />
             </button>
             <div className="main items-center">
-              {/* Trending Videos */}
               <div className="bg-[#eeeeee]">
                 <div className={`py-10 lg:mx-4 ${!isFilterOpen ? 'xl:mx-24 md:mx-4' : 'ml-0'} `}>
-
                   <h1 className="text-2xl font-bold  text-start">
                     Today's Trending Images
                   </h1>
@@ -118,7 +136,11 @@ const Page = () => {
                       </div>
                     ) : (
                       <div className="columns-1 sm:columns-2 md:columns-3 lg:columns-4 gap-2 mt-2 relative">
-                        {product.length > 0 ? (
+                          {filteredData.length>0 ? ( (
+                            filteredData.map( ( data:any ) => (
+                              <ImageGallery key={data._id} data={data} />
+                            ) )
+                          ) ) : product.length > 0 ?  (
                           product.map( ( data ) => (
                             <ImageGallery key={data._id} data={data} />
                           ) )
@@ -130,7 +152,6 @@ const Page = () => {
                   </div>
                 </div>
               </div>
-
 
               {/* Pagination */}
               {totalImageNumOfPage > 1 && (
@@ -160,7 +181,6 @@ const Page = () => {
                     onChange={handlePageChange}
                     initialPage={1}
                   />
-
                   <Button
                     type="button"
                     size="sm"
@@ -176,7 +196,6 @@ const Page = () => {
                   </Button>
                 </div>
               )}
-
             </div>
           </div>
         </div>

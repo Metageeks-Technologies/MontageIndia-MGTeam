@@ -639,7 +639,8 @@ export const getFilteredProducts =  catchAsyncError(async (req: any, res, next) 
       audioLength,
       audioBitrate,
     } = req.query;
-    console.log("req.query", req.query);
+  console.log( "req.query", req.query );
+  
 
     const queryObject: any = {};
 
@@ -669,15 +670,15 @@ export const getFilteredProducts =  catchAsyncError(async (req: any, res, next) 
     }
     let sortCriteria: { [key: string]: 1 | -1 } = { createdAt: -1 };
 
-    if (sortBy === 'newest') {
+    if (sortBy === 'Newest') {
       sortCriteria = { createdAt: -1 };
     } 
 
-    if(sortBy === 'oldest') {
+    if(sortBy === 'Oldest') {
       sortCriteria = { createdAt: 1 };
     } 
 
-    if (sortBy==="popular") {
+    if (sortBy==="Most Popular") {
       const popularProducts = await Customer.aggregate([
         {
           $project: {
@@ -752,14 +753,14 @@ export const getFilteredProducts =  catchAsyncError(async (req: any, res, next) 
     const limit = Number(productsPerPage);
     const skip = (p - 1) * Number(limit);
 
-    console.log("queryObject", queryObject);
+    // console.log("queryObject", queryObject);
 
     let products = await Product.find(queryObject).
       sort(sortCriteria)
       .skip(skip)
       .limit(Number(limit));
 
-    console.log("products", products);
+    // console.log("products", products);
     const totalData = await Product.countDocuments(queryObject);
     const numOfPages = Math.ceil(totalData / limit);
 
