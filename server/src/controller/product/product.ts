@@ -618,6 +618,159 @@ export const getProductForCustomer = catchAsyncError(
   }
 );
 
+export const getFilteredProducts =  catchAsyncError(async (req: any, res, next) => {
+      const {
+      productsPerPage = "10",
+      page = "1",
+      status = "published",
+      category = [],
+      mediaType = "image",
+      searchTerm = "",
+      tags,
+      sortBy,
+      orientation,
+      imageWidth,
+      imageHeight,
+      imageFileType,
+      dpi,
+      videoResolution,
+      videoLength,
+      videoFrameRate,
+      audioLength,
+      audioBitrate,
+    } = req.query;
+    console.log("req.query", req.query);
+
+    const queryObject: any = {};
+
+    if(status){
+      queryObject.status = "published";
+    }
+
+    if(searchTerm){
+      queryObject.$or = [
+        {title: {$regex: searchTerm, $options: "i"}},
+        {tags: {$regex: searchTerm, $options: "i"}},
+        {category: {$regex: searchTerm, $options: "i"}},
+      ];
+    }
+
+    if(Array.isArray(category) && category.length > 0){
+      queryObject.category = { $in: category };
+    }
+    if(tags){
+      const nTag = tags as string;
+      const tagsArray = Array.isArray(nTag) ? nTag : nTag.split(","); // Ensure tags are in array format
+      queryObject.tags = { $all: tagsArray };
+    }
+
+    if(mediaType){
+      queryObject.mediaType = mediaType;
+    }
+    let sortCriteria: { [key: string]: 1 | -1 } = { createdAt: -1 };
+
+    if (sortBy === 'newest') {
+      sortCriteria = { createdAt: -1 };
+    } 
+
+    if(sortBy === 'oldest') {
+      sortCriteria = { createdAt: 1 };
+    } 
+
+    if (sortBy==="popular") {
+      const popularProducts = await Customer.aggregate([
+        {
+          $project: {
+            allProducts: {
+              $concatArrays: [
+                "$wishlist.productId",
+                "$cart.productId",
+                "$purchasedProducts.productId",
+              ],
+            },
+          },
+        },
+        { $unwind: "$allProducts" },
+        { $group: { _id: "$allProducts" } },
+        { $project: { _id: 1 } },
+      ]);
+
+      const popularProductIds = popularProducts.map((p) => p._id);
+      queryObject._id = { $in: popularProductIds };
+    }
+    //image
+    if(mediaType.includes("image")){
+      if(imageFileType){
+        queryObject["variants.metadata.format"] = imageFileType;
+      }
+      if(dpi){
+        queryObject["variants.metadata.dpi"] = {$gte: dpi};
+      }
+      if(imageWidth && imageHeight){
+        queryObject["variants.metadata.dimension"] = { $regex:new RegExp(`${imageWidth}x${imageHeight}`, 'i')};
+      }
+    }
+    //video
+    if(mediaType.includes("video")){
+      if (videoLength) {
+        queryObject.length = {
+          $gte: (Number(videoLength) - 10)<0? 0:(Number(videoLength) - 10), 
+          $lte: Number(videoLength) + 10,
+        };
+      }
+
+      if(videoFrameRate) queryObject["variants.metadata.frameRate"] = videoFrameRate;
+
+      if (videoResolution) {
+        const escapeRegex = (text: string) => text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        const escapedVideoResolution = escapeRegex(videoResolution as string);
+         const substringMatchRegex = new RegExp(`${escapedVideoResolution}`, 'i');
+
+    if (escapedVideoResolution) {
+      queryObject['variants.metadata.resolution'] = { $regex: substringMatchRegex };
+    }
+      }
+
+    }
+    //audio
+    if(mediaType.includes("audio")){
+      if(audioLength){
+        queryObject["variants.metadata.length"] = {
+          $gte: Number(audioLength) - 5,
+          $lte: Number(audioLength) + 5,
+        };
+        }
+      if(audioBitrate){
+        queryObject["variants.metadata.bitrate"] = {
+          $gte: Number(audioBitrate) - 5, 
+          $lte: Number(audioBitrate) + 5,
+        };
+        }
+    }
+
+    const p = Number(page) || 1;
+    const limit = Number(productsPerPage);
+    const skip = (p - 1) * Number(limit);
+
+    console.log("queryObject", queryObject);
+
+    let products = await Product.find(queryObject).
+      sort(sortCriteria)
+      .skip(skip)
+      .limit(Number(limit));
+
+    console.log("products", products);
+    const totalData = await Product.countDocuments(queryObject);
+    const numOfPages = Math.ceil(totalData / limit);
+
+    return res.status(200).json({
+      success: true,
+      totalData,
+      numOfPages,
+      products,
+    });
+});
+
 export const getSingleProductForCustomer = catchAsyncError(
   async (req: any, res, next) => {
     const { id: uuid } = req.params;

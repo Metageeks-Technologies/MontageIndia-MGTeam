@@ -14,6 +14,7 @@ import {
   getSingleProductForCustomer,
   getProductFromAws,
   buyAllCartWithCredits,
+  getFilteredProducts,
 } from "../../controller/product/product";
 import {
   isAuthorizedCustomer,
@@ -64,6 +65,7 @@ productRouter
 productRouter
   .route("/customer")
   .get(isAuthorizedCustomer, getProductForCustomer);
+productRouter.route("/filter").get(isAuthorizedCustomer,getFilteredProducts);
 
 productRouter.route("/download").get(isAuthorizedCustomer, getProductFromAws);
 
