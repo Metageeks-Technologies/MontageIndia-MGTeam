@@ -473,3 +473,41 @@ export const verifyEmail= catchAsyncError(async (req:any, res, next) => {
     console.log("user",user);
     res.status(200).json({success:true,message:"Email verified successfully"});
 });
+
+export const onDemandForm= catchAsyncError(async (req:any, res, next) => {
+
+  const {email,name,phone,message,subject}=req.body;
+  console.log("req.body",req.body);
+
+  if(!email || !name || !phone || !message || !subject){
+    return res.status(400).json({success:false,message:"Please provide all fields"});
+  }
+
+  console.log("sender",config.emailUser);
+  console.log("reciever",config.montageEmail);
+
+  const mailOptions = {
+    from: config.emailUser as string,
+    to: config.montageEmail as string,
+    subject: subject as string,
+    text: `Dear MontageIndia Team,\n
+      We have received the following details from a MontageIndia user:\n
+      Name: ${name}
+      Email: ${email}
+      Phone: ${phone}
+      Message: ${message}\n
+      Please review and respond as needed,
+      Regards,
+      MontageIndia Team` as string,
+  };
+
+  await sendEmail(mailOptions)
+    .then(() => {
+      console.log("Email sent successfully");
+      return res.status(200).json({success:true,message:"Email sent successfully"});
+    })
+    .catch((error) => {
+      console.error("Failed to send email:", error);
+      return res.status(400).json({success:false,message:"Error sending email"});
+    });
+});
