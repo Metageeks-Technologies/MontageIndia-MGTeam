@@ -98,7 +98,7 @@ const Sidebar = () =>
 
       <aside
         id="r"
-        className="fixed w-fit top-0 left-0 z-40 min-h-[80%] bg-pureWhite-light"
+        className="fixed w-fit top-0 left-0 z-40 min-h-screen bg-pureWhite-light"
         aria-label="Sidebar"
       >
         <div className=" py-2 w-full pt-20 bg-pureWhite-light flex flex-col justify-between ">
