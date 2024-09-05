@@ -5,12 +5,21 @@ import Sidebar from "@/components/admin/sidebar";
 import {FaBoxOpen, FaShippingFast} from "react-icons/fa";
 import {RiGlobalLine, RiVipCrown2Line} from "react-icons/ri";
 import {MdArrowOutward, MdOutlineKeyboardArrowDown} from "react-icons/md";
+import { FaRupeeSign } from "react-icons/fa";
 import {IoArrowForward} from "react-icons/io5";
 import instance from "@/utils/axios";
 
+interface SiteData{
+  totalRevenue: number;
+  totalPublished: number;
+  totalDeleted: number;
+}
+
 const page = () => {
   const [currentUser, setCurrentUser] = useState<any>( '' );
-  const [recentActivities,setRecentActivities] = useState([])
+  const [recentActivities,setRecentActivities] = useState([]);
+  const [revenuePeriod, setRevenuePeriod] = useState<string>( 'lastYear' );
+  const [siteData, setSiteData] = useState<SiteData | null  >(null);
   
 
   const recentActivity = async () => {
@@ -35,8 +44,28 @@ const page = () => {
     }
   };
 
+  const getSiteData = async () => {
+    try {
+      const response = await instance.get( '/auth/admin/siteData',{
+       params:{period:revenuePeriod},
+       withCredentials: true
+        }
+        );
+      console.log( 'Site data:', response.data);
+      setSiteData( response.data.siteData);
+    } catch ( error ) {
+      console.error( 'Error fetching site data:', error );
+    }
+  }
+  
+  useEffect(() => {
+     getSiteData();
+  }
+  , [revenuePeriod]);
+
   useEffect( () => {
     recentActivity();
+   
     // Fetching user details using Promises instead of async/await
     instance.get( '/auth/admin/getCurrAdmin' )
       .then( response => {
@@ -51,7 +80,7 @@ const page = () => {
   console.log( "currenteuser:-", currentUser );
 
   return (
-    <div className="container p-4 m-4 bg-pureWhite-light rounded-md">
+    <div className="container p-4 bg-pureWhite-light rounded-md">
       {/* <Sidebar /> */}
 
       <div className=" bg-white p-4">
@@ -152,17 +181,16 @@ const page = () => {
               <div className="mt-6">
                 <h2 className="text-xl font-semibold mb-2 flex justify-between items-center">
                   Revenue{" "}
-                  <button className="px-6 py-2 border flex items-center gap-2 shadow rounded-md">
-                    <a href="#" className="text-medium font-semibold ">
-                      Last Year
-                    </a>
-                    <MdOutlineKeyboardArrowDown />
-                  </button>
+                  <select id="revenuePeriod" value={revenuePeriod} onChange={(e)=>{setRevenuePeriod(e.target.value)}} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 ">
+                    <option value="lastYear">Since Last Year</option>
+                    <option value="thisYear">This Year</option>
+                    <option value="thisMonth">This Month</option>
+                  </select>
                 </h2>
                 <div className="p-5  rounded-lg flex items-center mt-6 border">
                   <div>
                     <p className="text-gray-600">Total Revenue</p>
-                    <p className=" text-2xl font-semibold mt-2">$0</p>
+                    <p className=" text-2xl font-semibold mt-2"><div className="flex justify-start items-center gap-1"><FaRupeeSign/>{siteData?.totalRevenue}</div></p>
                   </div>
                 </div>
               </div>
@@ -183,16 +211,16 @@ const page = () => {
               <div className="grid grid-cols-1 border rounded-md">
                 <div className="p-4 flex justify-between">
                   <h3 className="font-semibold">Active listings</h3>
-                  <p className="text-xl font-bold">0</p>
+                  <p className="text-xl font-bold">{siteData?.totalPublished}</p>
                 </div>
                 <div className="p-4 flex  justify-between">
                   <h3 className="font-semibold">Expired</h3>
-                  <p className="text-xl font-bold">0</p>
+                  <p className="text-xl font-bold">{siteData?.totalDeleted}</p>
                 </div>
-                <div className="p-4 flex justify-between">
+                {/* <div className="p-4 flex justify-between">
                   <h3 className="font-semibold">Sold out</h3>
                   <p className="text-xl font-bold">0</p>
-                </div>
+                </div> */}
               </div>
             </div>
 

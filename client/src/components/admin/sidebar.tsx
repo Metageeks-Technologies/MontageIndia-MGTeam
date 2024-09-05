@@ -95,12 +95,9 @@ const Sidebar = () =>
 
 
   return (
-    <div className="">
-     
-
-      <aside
+      <div
         id="r"
-        className=" w-64 top-0 left-0 z-40 overflow-scroll  bg-pureWhite-light"
+        className=" w-64 top-0 left-0 z-40 overflow-scroll p-4 rounded-md bg-pureWhite-light"
         aria-label="Sidebar"
       >
         <div className=" py-2 w-full bg-pureWhite-light flex flex-col justify-between ">
@@ -478,8 +475,8 @@ const Sidebar = () =>
             </ul>
           </div>
         </div>
-      </aside>
-    </div>
+      </div>
+  
   );
 };
 

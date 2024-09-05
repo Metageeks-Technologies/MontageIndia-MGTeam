@@ -65,7 +65,7 @@ const AuthWrapper = ( { children }: { children: React.ReactNode; } ) =>
     }
 
     return (
-        <div className="flex mt-16 w-[95%] mx-auto">
+        <div className="flex mt-16 w-full gap-4 px-4 py-6 ">
             {isAuthenticated && !isPasswordResetRoute && <Sidebar />}
             <div className={`${isAuthenticated && !isPasswordResetRoute ? '' : ''} w-full `}>
                 {children}

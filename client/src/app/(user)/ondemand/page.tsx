@@ -7,8 +7,9 @@ import instance from '@/utils/axios';
 import Swal from 'sweetalert2';
 import {ThreeDotsLoader} from '@/components/loader/loaders';
 
-const Page = () => {
+const onDemandPage = () => {
     const [loading, setLoading] = useState(false);
+    const key=process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;
     const [formData, setFormData] = useState( {
         name: '',
         phone: '',
@@ -176,10 +177,10 @@ const Page = () => {
                 </div>
                 <div className="col-span-2">
                     <div className="flex items-center justify-center">
-                        {/* <input type="checkbox" id="notRobot" className="mr-2" />
-                        <label htmlFor="notRobot" className="text-sm">I'm not a robot</label> */}
+                        <input type="checkbox" id="notRobot" className="mr-2" />
+                        <label htmlFor="notRobot" className="text-sm">I'm not a robot</label>
                             <ReCAPTCHA
-                                sitekey={process.env.NEXT_RECAPCHA_SITE_KEY || ''}
+                                sitekey={key as string || ''}
                             />,
                     </div>
                 </div>
@@ -199,4 +200,4 @@ const Page = () => {
 
 };
 
-export default Page;
+export default onDemandPage;
