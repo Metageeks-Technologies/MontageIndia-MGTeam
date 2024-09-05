@@ -25,7 +25,7 @@ const PayButton: React.FC<props> = ({ orderOption }) => {
   const router = useRouter();
 
   const handlePaymentSuccess = async (res: any) => {
-        dispatch(setCart([]));
+        router.push("/user-profile/purchased-product");
         Swal.fire({
           title: "Order Placed",
           text: "Your order has been placed successfully",
@@ -34,7 +34,7 @@ const PayButton: React.FC<props> = ({ orderOption }) => {
           timer: 3000,
           confirmButtonColor: "#2300a3",
         });
-        router.push("/user-profile/purchased-product");
+        
   };
   const handlePayment = (options: any) => {
     if (!loaded || typeof window.Razorpay === "undefined") {

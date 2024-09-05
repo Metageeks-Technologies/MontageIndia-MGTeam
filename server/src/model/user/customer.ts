@@ -7,6 +7,11 @@ import config from "@src/utils/config";
 
 const customerSchema = new mongoose.Schema<TCustomer>(
   {
+    uid:{
+      type: String,
+      required: true,
+      unique: true,
+    },
     name: {
       type: String,
       required: [true, "please enter your name"],
@@ -14,15 +19,6 @@ const customerSchema = new mongoose.Schema<TCustomer>(
       minlength: [4, "name should have more than 4 characters"],
       trim: true,
       default: "none",
-    },
-    username: {
-      type: String,
-      required: [true, "please enter your username"],
-      maxlength: [30, "username can't exceed 30 characters"],
-      minlength: [4, "username should have more than 4 characters"],
-      trim: true,
-      default: "none",
-      unique: true,
     },
     image: {
       type: String,
@@ -35,12 +31,13 @@ const customerSchema = new mongoose.Schema<TCustomer>(
       unique: true,
       validate: [validator.isEmail, "please enter a valid email"],
     },
+    emailVerified: {
+      type: Boolean,
+      default: false,
+    },
     phone: {
       type: String,
-      minlength: [10, "phone number should have minimum 10 characters"],
-      maxlength: [10, "phone number should have maximum 10 characters"],
-      trim: true,
-      default: "none",
+      required:false,
     },
     password: {
       type: String,
@@ -78,11 +75,11 @@ const customerSchema = new mongoose.Schema<TCustomer>(
       },
     ],
     subscription: {
-      subscriptionId: { type: String, default: "" },
+      subscriptionId: { type: String },
       PlanId: { type: mongoose.Types.ObjectId,ref:'SubscriptionPlan' },
-      credits: { type: Number, default: 0 },
-      planValidity: { type: Date, default: Date.now() },
-      status: { type: String, default: "inactive" },
+      credits: { type: Number, default: 100 },
+      planValidity: { type: Date},
+      status: { type: String, default: "active" },
     },
     purchaseHistory: [{ type: mongoose.Schema.Types.ObjectId, ref: "Order" }],
   },

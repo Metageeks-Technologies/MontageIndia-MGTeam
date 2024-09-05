@@ -1,6 +1,6 @@
 import express from "express";
 import { paymentWebHook } from "@src/controller/payment/webhook";
-import { isAuthenticatedCustomer } from "@src/middleware/auth";
+import { firebaseAuth, isAuthenticatedCustomer } from "@src/middleware/auth";
 import {
   getTransactions,
   paymentVerify,
@@ -10,8 +10,8 @@ import { checkDuplicateEvent } from "@src/middleware/auth";
 const paymentRouter = express.Router();
 
 //transaction
-paymentRouter.get("/transactions", isAuthenticatedCustomer, getTransactions);
-paymentRouter.post("/verify", isAuthenticatedCustomer, paymentVerify);
+paymentRouter.get("/transactions",firebaseAuth, getTransactions);
+paymentRouter.post("/verify", firebaseAuth, paymentVerify);
 // webHook
 paymentRouter.route("/webhook").post(checkDuplicateEvent, paymentWebHook);
 

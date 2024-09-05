@@ -19,6 +19,7 @@ import {
   isAuthorizedCustomer,
   isAuthenticatedAdmin,
   isAuthenticatedCustomer,
+  firebaseAuth
 } from "@src/middleware/auth";
 import {
   addProductToCart,
@@ -32,7 +33,7 @@ productRouter
   .route("/")
   .post(isAuthenticatedAdmin, createProduct)
   .get(isAuthenticatedAdmin, getProducts);
-productRouter.route("/get").get(isAuthenticatedCustomer, getProductData);
+productRouter.route("/get").get(firebaseAuth, getProductData);
 productRouter
   .route("/video")
   .patch(isAuthenticatedAdmin, addSizeAndKeysToVideo);
@@ -44,22 +45,22 @@ productRouter
 //Customer
 productRouter
   .route("/cart/data")
-  .get(isAuthenticatedCustomer, getProductsByIds);
+  .get(firebaseAuth, getProductsByIds);
 productRouter
   .route("/addToCart")
-  .post(isAuthenticatedCustomer, addProductToCart);
+  .post(firebaseAuth, addProductToCart);
 productRouter
   .route("/removeFromCart")
-  .post(isAuthenticatedCustomer, removeProductFromCart);
+  .post(firebaseAuth, removeProductFromCart);
 productRouter
   .route("/buyWithCredits")
-  .post(isAuthenticatedCustomer, buyWithCredits);
+  .post(firebaseAuth, buyWithCredits);
 productRouter
   .route("/cart/buyWithCredits")
-  .post(isAuthenticatedCustomer, buyAllCartWithCredits);
+  .post(firebaseAuth, buyAllCartWithCredits);
 productRouter
   .route("/purchased")
-  .get(isAuthenticatedCustomer, getPurchasedProducts);
+  .get(firebaseAuth, getPurchasedProducts);
 productRouter
   .route("/customer")
   .get(isAuthorizedCustomer, getProductForCustomer);

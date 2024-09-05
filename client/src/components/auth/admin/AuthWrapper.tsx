@@ -65,14 +65,13 @@ const AuthWrapper = ( { children }: { children: React.ReactNode; } ) =>
     }
 
     return (
-        <div className="flex items-center w-[95%] mx-auto bg-pageBg-light   ">
-            { isAuthenticated && !isPasswordResetRoute && <Sidebar /> }
-            <div className={ `${ isAuthenticated && !isPasswordResetRoute ? 'md:ml-[18%] md:mr-[2%] sm:ml-[25%]' : '' } w-full min-h-screen mt-16   ` }>
-
-                { children }
+        <div className="flex items-center w-[95%] mx-auto">
+            {isAuthenticated && !isPasswordResetRoute && <Sidebar />}
+            <div className={`${isAuthenticated && !isPasswordResetRoute ? 'ml-48' : ''} w-full  mt-16 `}>
+                {children}
             </div>
         </div>
-    );
+    )
 };
 
 export default AuthWrapper;

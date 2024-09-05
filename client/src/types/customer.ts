@@ -13,9 +13,9 @@ interface Subscription {
 }
 
 export type TCustomer = {
+  uid: string;
   id: string;
   image: string;
-  username: string;
   email: string;
   name: string; // Customer's full name
   password: string;
