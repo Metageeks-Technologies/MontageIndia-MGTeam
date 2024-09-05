@@ -1,8 +1,4 @@
-// chats - https://claude.ai/chat/658085bc-784c-49af-ad62-7d26769ce024
-// https://claude.ai/chat/0128b738-2363-45af-b3bf-9ba522d08645
-
-"use client";
-import React, {useState} from 'react';
+import React, {useState, useCallback} from 'react';
 import {BsFilterLeft, BsChevronDown, BsChevronUp} from 'react-icons/bs';
 import {MdClear} from 'react-icons/md';
 
@@ -14,21 +10,12 @@ interface FilterSectionProps {
 }
 
 interface ExpandedSections {
-  premiumImages: boolean;
-  orientation: boolean;
-  color: boolean;
-  people: boolean;
-  artists: boolean;
-  more: boolean;
+  [key: string]: boolean;
 }
 
 interface FilterOption {
   label: string;
-  options: string[];
-}
-
-interface FilterOptions {
-  [key: string]: FilterOption[];
+  options: string[] | {minHeight: number; minWidth: number;};
 }
 
 interface FilterProps {
@@ -36,28 +23,43 @@ interface FilterProps {
   onToggle: () => void;
   filterOptions: {
     sortBy: string[];
-    premiumImages: FilterOption[];
-    orientation: string[]; 
-    more: FilterOption[];
+    orientation?: string[];
+    more?: FilterOption[];
+    premiumImages?: FilterOption[];
+    videoLength?: number;
+    frameRate?: string[];
+    audioLength?: number;
+    bitRate?: number;
+    density?: number;
   };
+  onFilterChange: ( filterType: string, value: string | number ) => void;
 }
 
-const Filter: React.FC<FilterProps> = ( {isOpen, onToggle, filterOptions} ) => {
-  const [sortBy, setSortBy] = useState<string>( filterOptions.sortBy[0] );
-  const [orientation, setOrientation] = useState<string>( '' );
-  const [excludeAI, setExcludeAI] = useState<boolean>( false );
-  const [expandedSections, setExpandedSections] = useState<ExpandedSections>( {
-    premiumImages: false,
-    orientation: true,
-    color: false,
-    people: false,
-    artists: false,
-    more: false,
-  } );
+const Filter: React.FC<FilterProps> = ( {isOpen, onToggle, filterOptions, onFilterChange} ) => {
+  const [expandedSections, setExpandedSections] = useState<ExpandedSections>( {} );
+  const [activeFilters, setActiveFilters] = useState<{[key: string]: string | number;}>( {} );
 
-  const toggleSection = ( section: keyof ExpandedSections ): void => {
+  const toggleSection = ( section: string ): void => {
     setExpandedSections( prev => ( {...prev, [section]: !prev[section]} ) );
   };
+
+  const handleFilterClick = useCallback( ( filterType: string, value: string | number ) => {
+    setActiveFilters( prev => {
+      const newFilters = {...prev};
+      if ( newFilters[filterType] === value ) {
+        delete newFilters[filterType];
+      } else {
+        newFilters[filterType] = value;
+      }
+      return newFilters;
+    } );
+    onFilterChange( filterType, value );
+  }, [onFilterChange] );
+
+  const handleNumericInputChange = useCallback( ( key: string, value: string ) => {
+    const numValue = parseInt( value ) || 0;
+    handleFilterClick( key, numValue );
+  }, [handleFilterClick] );
 
   const FilterSection: React.FC<FilterSectionProps> = ( {title, expanded, onToggle, children} ) => (
     <div className="mb-4">
@@ -73,9 +75,7 @@ const Filter: React.FC<FilterProps> = ( {isOpen, onToggle, filterOptions} ) => {
   );
 
   return (
-    <div className={`h-fit sticky top-36 left-0  bg-white text-gray-800 overflow-y-auto transition-all duration-300 ease-in-out
-      ${isOpen ? 'w-80' : 'w-0'}
-    `}>
+    <div className={`h-fit sticky top-36 left-0 bg-white text-gray-800 overflow-y-auto transition-all duration-300 ease-in-out ${isOpen ? 'w-80' : 'w-0'}`}>
       <div className="p-4">
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-xl font-semibold">Filters</h2>
@@ -90,9 +90,8 @@ const Filter: React.FC<FilterProps> = ( {isOpen, onToggle, filterOptions} ) => {
             {filterOptions.sortBy.map( ( option ) => (
               <button
                 key={option}
-                className={`px-3 py-1 rounded-full ${sortBy === option ? 'bg-blue-500 text-white' : 'bg-gray-200'
-                  }`}
-                onClick={() => setSortBy( option )}
+                className={`px-3 py-1 rounded-full ${activeFilters['sortBy'] === option ? 'bg-gray-800 text-white' : 'bg-gray-200'}`}
+                onClick={() => handleFilterClick( 'sortBy', option )}
               >
                 {option}
               </button>
@@ -100,84 +99,169 @@ const Filter: React.FC<FilterProps> = ( {isOpen, onToggle, filterOptions} ) => {
           </div>
         </div>
 
-        <FilterSection
-          title="Premium images"
-          expanded={expandedSections.premiumImages}
-          onToggle={() => toggleSection( 'premiumImages' )}
-        >
-          {filterOptions.premiumImages.map( ( option ) => (
-            <div key={option.label} className="mb-2">
-              <h4 className="font-medium">{option.label}</h4>
-              <div className="flex flex-wrap gap-2 mt-1">
-                {option.options.map( ( subOption ) => (
-                  <button
-                    key={subOption}
-                    className="px-3 py-1 rounded-full bg-gray-200"
-                  >
-                    {subOption}
-                  </button>
-                ) )}
-              </div>
-            </div>
-          ) )}
-        </FilterSection>
-
-        <FilterSection
-          title="Orientation"
-          expanded={expandedSections.orientation}
-          onToggle={() => toggleSection( 'orientation' )}
-        >
-          <div className="flex flex-wrap gap-2 mt-2">
-            {filterOptions.orientation.map( ( option ) => (
-              <button
-                key={option}
-                className={`px-3 py-1 rounded-full ${orientation === option ? 'bg-gray-800 text-white' : 'bg-gray-200'
-                  }`}
-                onClick={() => setOrientation( option )}
-              >
-                {option}
-              </button>
-            ) )}
-          </div>
-        </FilterSection>
-
-        {/* <div className="flex items-center justify-between mb-4">
-          <span>AI Generated</span>
-          <label className="relative inline-flex items-center cursor-pointer">
-            <input
-              type="checkbox"
-              className="sr-only peer"
-              checked={excludeAI}
-              onChange={() => setExcludeAI( !excludeAI )}
-            />
-            <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-          </label>
-        </div> */}
-
-        {( ['More'] as const ).map( ( section ) => (
+        {filterOptions.orientation && (
           <FilterSection
-            key={section}
-            title={section}
-            expanded={expandedSections[section.toLowerCase() as keyof ExpandedSections]}
-            onToggle={() => toggleSection( section.toLowerCase() as keyof ExpandedSections )}
+            title="Orientation"
+            expanded={expandedSections['orientation'] || false}
+            onToggle={() => toggleSection( 'orientation' )}
           >
-            {filterOptions[section.toLowerCase() as keyof typeof filterOptions].map( ( option: any ) => (
+            <div className="flex flex-wrap gap-2 mt-2">
+              {filterOptions.orientation.map( ( option ) => (
+                <button
+                  key={option}
+                  className={`px-3 py-1 rounded-full ${activeFilters['orientation'] === option ? 'bg-gray-800 text-white' : 'bg-gray-200'}`}
+                  onClick={() => handleFilterClick( 'orientation', option )}
+                >
+                  {option}
+                </button>
+              ) )}
+            </div>
+          </FilterSection>
+        )}
+
+        {filterOptions.premiumImages && (
+          <FilterSection
+            title="Premium images"
+            expanded={expandedSections['premiumImages'] || false}
+            onToggle={() => toggleSection( 'premiumImages' )}
+          >
+            {filterOptions.premiumImages.map( ( option ) => (
               <div key={option.label} className="mb-2">
                 <h4 className="font-medium">{option.label}</h4>
-                <div className="flex flex-wrap gap-2 mt-1">
-                  {option.options.map( ( subOption: string ) => (
-                    <button
-                      key={subOption}
-                      className="px-3 py-1 rounded-full bg-gray-200"
-                    >
-                      {subOption}
-                    </button>
-                  ) )}
-                </div>
+                {Array.isArray( option.options ) && (
+                  <div className="flex flex-wrap gap-2 mt-1">
+                    {option.options.map( ( subOption ) => (
+                      <button
+                        key={subOption}
+                        className={`px-3 py-1 rounded-full ${activeFilters[option.label] === subOption ? 'bg-gray-800 text-white' : 'bg-gray-200'}`}
+                        onClick={() => handleFilterClick( option.label, subOption )}
+                      >
+                        {subOption}
+                      </button>
+                    ) )}
+                  </div>
+                )}
               </div>
             ) )}
           </FilterSection>
-        ) )}
+        )}
+
+        {filterOptions.more && (
+          <FilterSection
+            title="More"
+            expanded={expandedSections['more'] || false}
+            onToggle={() => toggleSection( 'more' )}
+          >
+            {filterOptions.more.map( ( option ) => (
+              <div key={option.label} className="mb-2">
+                <h4 className="font-medium">{option.label}</h4>
+                {Array.isArray( option.options ) ? (
+                  <div className="flex flex-wrap gap-2 mt-1">
+                    {option.options.map( ( subOption ) => (
+                      <button
+                        key={subOption}
+                        className={`px-3 py-1 rounded-full ${activeFilters[option.label] === subOption ? 'bg-gray-800 text-white' : 'bg-gray-200'}`}
+                        onClick={() => handleFilterClick( option.label, subOption )}
+                      >
+                        {subOption}
+                      </button>
+                    ) )}
+                  </div>
+                ) : (
+                  <div className="flex gap-2 mt-1">
+                    <input
+                      type="number"
+                      placeholder="Min Width"
+                      className="w-1/2 px-2 py-1 border rounded"
+                      value={activeFilters[`${option.label}_minWidth`] || ''}
+                      onChange={( e ) => handleFilterClick( `${option.label}_minWidth`, parseInt( e.target.value ) || 0 )}
+                    />
+                    <input
+                      type="number"
+                      placeholder="Min Height"
+                      className="w-1/2 px-2 py-1 border rounded"
+                      value={activeFilters[`${option.label}_minHeight`] || ''}
+                      onChange={( e ) => handleFilterClick( `${option.label}_minHeight`, parseInt( e.target.value ) || 0 )}
+                    />
+                  </div>
+                )}
+              </div>
+            ) )}
+          </FilterSection>
+        )}
+
+        {( filterOptions.videoLength !== undefined || filterOptions.audioLength !== undefined || filterOptions.bitRate !== undefined || filterOptions.density !== undefined ) && (
+          <FilterSection
+            title="Other Filters"
+            expanded={expandedSections['otherFilters'] || false}
+            onToggle={() => toggleSection( 'otherFilters' )}
+          >
+            {filterOptions.videoLength !== undefined && (
+              <div className="mb-2">
+                <label className="block font-medium">Video Length</label>
+                <input
+                  type="number"
+                  className="w-full px-2 py-1 border rounded"
+                  value={activeFilters['videoLength'] || ''}
+                  onChange={( e ) => handleNumericInputChange( 'videoLength', e.target.value )}
+                />
+              </div>
+            )}
+            {filterOptions.audioLength !== undefined && (
+              <div className="mb-2">
+                <label className="block font-medium">Audio Length</label>
+                <input
+                  type="number"
+                  className="w-full px-2 py-1 border rounded"
+                  value={activeFilters['audioLength'] || ''}
+                  onChange={( e ) => handleNumericInputChange( 'audioLength', e.target.value )}
+                />
+              </div>
+            )}
+            {filterOptions.bitRate !== undefined && (
+              <div className="mb-2">
+                <label className="block font-medium">Bit Rate</label>
+                <input
+                  type="number"
+                  className="w-full px-2 py-1 border rounded"
+                  value={activeFilters['bitRate'] || ''}
+                  onChange={( e ) => handleNumericInputChange( 'bitRate', e.target.value )}
+                />
+              </div>
+            )}
+            {filterOptions.density !== undefined && (
+              <div className="mb-2">
+                <label className="block font-medium">Density</label>
+                <input
+                  type="number"
+                  className="w-full px-2 py-1 border rounded"
+                  value={activeFilters['density'] || ''}
+                  onChange={( e ) => handleNumericInputChange( 'density', e.target.value )}
+                />
+              </div>
+            )}
+          </FilterSection>
+        )}
+
+        {filterOptions.frameRate && (
+          <FilterSection
+            title="Frame Rate"
+            expanded={expandedSections['frameRate'] || false}
+            onToggle={() => toggleSection( 'frameRate' )}
+          >
+            <div className="flex flex-wrap gap-2 mt-2">
+              {filterOptions.frameRate.map( ( option ) => (
+                <button
+                  key={option}
+                  className={`px-3 py-1 rounded-full ${activeFilters['frameRate'] === option ? 'bg-gray-800 text-white' : 'bg-gray-200'}`}
+                  onClick={() => handleFilterClick( 'frameRate', option )}
+                >
+                  {option}
+                </button>
+              ) )}
+            </div>
+          </FilterSection>
+        )}
       </div>
     </div>
   );

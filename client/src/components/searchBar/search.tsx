@@ -185,7 +185,7 @@ const Searchbar = () => {
                 </button>
               </div>
             </div>
-            <div className=" rounded-md flex flex-row scrollbar-hide overflow-x-scroll items-center text-center w-[80%] bg-gray80 justify-start">
+            <div className=" rounded-md flex flex-row scrollbar-hide overflow-x-scroll items-center text-center w-[90%] bg-gray80 justify-start">
               {terms.map( ( category ) => {
                 return (
                   <button

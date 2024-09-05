@@ -30,10 +30,10 @@ const UserActivityPage = () =>
     setLoading( true );
     try
     {
-      const response = await instance.get( `auth/admin/Activity/getAllActivity`, {
-        params: { timeRange, dataPerPage, currentPage, searchTerm },
-        withCredentials: true,
-      } );
+        const response = await instance.get( `auth/admin/Activity/getAllActivity`, {
+          params: { timeRange, dataPerPage, currentPage, searchTerm },
+          withCredentials: true,
+        } );
       setData( response.data.activities );
       setTotalPages( response.data.totalPages );
       setCurrentPage( response.data.currentPage );

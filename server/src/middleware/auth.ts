@@ -197,7 +197,8 @@ export const checkDuplicateEvent = catchAsyncError(
 
 export const firebaseAuth = catchAsyncError(async (req: any, res, next) => {
   const authHeader = req.headers.authorization;
-
+// clg
+console.log("authHeader:-",authHeader)
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
     return res.status(401).json({ message: 'Unauthorized' });
   }
@@ -212,10 +213,10 @@ export const firebaseAuth = catchAsyncError(async (req: any, res, next) => {
       console.log("decodedToken",decodedToken);
       const uid = decodedToken.uid;
 
-      // console.log("req.user",uid);
+      console.log("req.user",uid);
       
       const user=await customer.findOne({uid});
-      console.log("user",user);
+      console.log("user",user); 
       if(!user){
         return res.status(401).json({ error: "Invalid or expired token" });
       }

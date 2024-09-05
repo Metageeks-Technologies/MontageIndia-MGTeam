@@ -1,28 +1,49 @@
 'use client';
 
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useState} from "react";
 import Sidebar from "@/components/admin/sidebar";
-import { FaBoxOpen, FaShippingFast } from "react-icons/fa";
-import { RiGlobalLine, RiVipCrown2Line } from "react-icons/ri";
-import { MdArrowOutward, MdOutlineKeyboardArrowDown } from "react-icons/md";
-import { IoArrowForward } from "react-icons/io5";
+import {FaBoxOpen, FaShippingFast} from "react-icons/fa";
+import {RiGlobalLine, RiVipCrown2Line} from "react-icons/ri";
+import {MdArrowOutward, MdOutlineKeyboardArrowDown} from "react-icons/md";
+import {IoArrowForward} from "react-icons/io5";
 import instance from "@/utils/axios";
 
-const page = () =>
-{
-  const [ currentUser, setCurrentUser ] = useState<any>( '' );
+const page = () => {
+  const [currentUser, setCurrentUser] = useState<any>( '' );
+  const [recentActivities,setRecentActivities] = useState([])
+  
 
-  useEffect( () =>
-  {
+  const recentActivity = async () => {
+    // setLoading( true );
+    try {
+      const response = await instance.get( `auth/admin/Activity/getAllActivity`, {
+        params: {timeRange: "all", dataPerPage: Number.MAX_SAFE_INTEGER},
+        withCredentials: true,
+      } );
+      const sortedActivities = response.data.activities.sort( ( a:any, b:any ) => {
+        return b.timestamp  -  a.timestamp ; // Sort by timestamp, most recent first
+      } );
+      
+      // Set the top 5 recent activities after sorting
+      const topFiveActivities = sortedActivities.slice( 0, 5 );
+      console.log( topFiveActivities );
+      setRecentActivities( topFiveActivities );
+    } catch ( error ) {
+      console.error( "Error fetching users:", error );
+    } finally {
+      
+    }
+  };
+
+  useEffect( () => {
+    recentActivity();
     // Fetching user details using Promises instead of async/await
     instance.get( '/auth/admin/getCurrAdmin' )
-      .then( response =>
-      {
+      .then( response => {
         console.log( 'User details:', response.data );
-        setCurrentUser( response.data.user );
+        setCurrentUser( response.data.user ); 
       } )
-      .catch( error =>
-      {
+      .catch( error => {
         console.error( 'Error fetching user details:', error );
       } );
   }, [] );
@@ -31,27 +52,27 @@ const page = () =>
 
   return (
     <div className="container p-4 m-4 bg-pureWhite-light rounded-md">
-      {/* <Sidebar /> */ }
+      {/* <Sidebar /> */}
 
       <div className=" bg-white p-4">
-        {/* Welcome Section */ }
+        {/* Welcome Section */}
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-semibold">Hello ! { currentUser && currentUser.name }</h1>
+          <h1 className="text-2xl font-semibold">Hello ! {currentUser && currentUser.name}</h1>
 
-          <button className="bg-webgreen text-white border border-gray-400 px-4 py-3 rounded-lg shadow flex items-center space-x-2">
+          {/* <button className="bg-webgreen text-white border border-gray-400 px-4 py-3 rounded-lg shadow flex items-center space-x-2">
             <RiGlobalLine className="h-5 w-5" />
             <span className="text-sm">Open Site</span>
-          </button>
+          </button> */}
         </div>
 
-        {/* Welcome to Montage India Section */ }
+        {/* Welcome to Montage India Section */}
         <div className="mb-6">
           <h2 className="text-xl font-semibold mb-2">Welcome to Montage India 👋</h2>
           <p className="text-gray-600 mb-4">
             A quick guide to getting your first sale
           </p>
 
-          <div className="bg-purple-50  rounded-md border border-purple-500">
+          {/* <div className="bg-purple-50  rounded-md border border-purple-500">
             <div className=" p-4 rounded-lg flex justify-between items-center ">
               <div className="flex items-center space-x-4">
                 <FaBoxOpen className="w-6 h-6 text-webgreen" />
@@ -78,10 +99,10 @@ const page = () =>
                 <MdArrowOutward className="text-black h-5 w-5" />
               </button>
             </div>
-          </div>
+          </div> */}
         </div>
 
-        {/* Overview Performance */ }
+        {/* Overview Performance */}
         <div className="flex justify-between gap-6">
           <div className="mb-6 basis-[65%]">
             <div className="flex flex-col">
@@ -130,7 +151,7 @@ const page = () =>
 
               <div className="mt-6">
                 <h2 className="text-xl font-semibold mb-2 flex justify-between items-center">
-                  Revenue{ " " }
+                  Revenue{" "}
                   <button className="px-6 py-2 border flex items-center gap-2 shadow rounded-md">
                     <a href="#" className="text-medium font-semibold ">
                       Last Year
@@ -153,7 +174,7 @@ const page = () =>
               <div className="mb-2 flex justify-between items-center">
                 <h2 className="text-xl font-semibold ">Products </h2>
                 <div className="flex gap-2 items-center">
-                  <a href="#" className="text-lg">
+                  <a href="/admin/product/available" className="text-lg cursor-pointer">
                     See All
                   </a>
                   <IoArrowForward className="h-5 w-5" />
@@ -179,7 +200,7 @@ const page = () =>
               <div className="flex justify-between">
                 <h1 className="text-lg font-semibold">Recent Activities</h1>
                 <div className="flex gap-2 items-center">
-                  <a href="#" className="text-lg">
+                  <a href="/admin/user/user-activity" className="text-lg">
                     See All
                   </a>
                   <IoArrowForward className="h-5 w-5" />

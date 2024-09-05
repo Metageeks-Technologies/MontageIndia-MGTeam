@@ -39,9 +39,9 @@ const Sidebar = () =>
 {
   const [ isProductOpen, setIsProductOpen ] = useState( false );
   const [ isUserOpen, setIsUserOpen ] = useState( false );
-  const [ currentUser, setCurrentUser ] = useState<any>( "" );
   const [ isCustomerOpen, setIsCustomerOpen ] = useState( false );
   const [ isCategoryOpen, setIsCategoryOpen ] = useState( false );
+  const [ currentUser, setCurrentUser ] = useState<any>( "" );
   const router = useRouter();
   const pathname = usePathname();
 
@@ -50,18 +50,20 @@ const Sidebar = () =>
     menuSetter( ( prev: any ) => !prev );
   }, [] );
 
+  const initialFunc = () => {
+    setIsCategoryOpen( false );
+    setIsCustomerOpen( false );
+    setIsUserOpen( false );
+    setIsProductOpen( false );
+
+  }
+
   const handleLogout = async () =>
   {
     try
     {
       const response = await instance.get( "/auth/admin/logout" );
-      notifySuccess( response.data.message  );
-      // Swal.fire( {
-      //   icon: 'success',
-      //   title: 'Logged out successfully',
-      //   showConfirmButton: false,
-      //   timer: 1500
-      // } );
+      notifySuccess( response.data.message  ); 
       setCurrentUser( "" );
       router.push( "/auth/admin/login" );
     } catch ( error )
@@ -98,10 +100,10 @@ const Sidebar = () =>
 
       <aside
         id="r"
-        className="fixed w-fit top-0 left-0 z-40 min-h-screen bg-pureWhite-light"
+        className=" w-64 top-0 left-0 z-40 overflow-scroll  bg-pureWhite-light"
         aria-label="Sidebar"
       >
-        <div className=" py-2 w-full pt-20 bg-pureWhite-light flex flex-col justify-between ">
+        <div className=" py-2 w-full bg-pureWhite-light flex flex-col justify-between ">
           {/* <div className="flex items-center mb-4 justify-between w-[80%]">
             <div>
               <img src={images.logo.src} alt="logo" className="h-8 mr-3" />
@@ -130,16 +132,12 @@ const Sidebar = () =>
             />
             <IoIosSearch className="absolute right-2 top-1/2 transform -translate-y-1/2 h-6 w-6 text-gray-400" />
           </div> */}
-          <div className="flex flex-col px-5 justify-between">
+          <div className="flex flex-col  justify-between">
             <ul className="space-y-2 font-medium">
-              <li
-
-                className={ `rounded-lg cursor-pointer ${ isActiveLink( "/admin/dashboard" ) ? "bg-webred text-pureWhite-light hover:bg-webred" : "hover:bg-webred-light"
-                  }` }
-              >
+              <li  className={ `rounded-lg cursor-pointer ${ isActiveLink( "/admin/dashboard" ) ? "bg-webred text-pureWhite-light hover:bg-webred" : "hover:bg-webred-light" }` } >
                 <Link href='/admin/dashboard' className="flex items-center w-full p-2 text-base  transition duration-75 rounded-lg group   ">
                   <FaHome className="w-5 h-5  transition duration-75 " />
-                  <span className="flex-1 ms-3 text-left rtl:text-right whitespace-nowrap">Home</span>
+                  <span className="flex-1 ms-3 text-left rtl:text-right whitespace-nowrap">Dashboard</span>
                 </Link>
               </li>
 
@@ -149,7 +147,7 @@ const Sidebar = () =>
                 <li>
                   <Link
                     href={ "/admin/product/available" }
-                    onClick={ () => toggleMenu( setIsProductOpen ) }
+                    onClick={ () => toggleMenu( "product" ) }
                     className={ `flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group hover:bg-webred-light ${ !isProductOpen ? 'bg-white' : 'bg-pageBg-light' }` }
                   >
                     <BiCategoryAlt className="w-5 h-5 text-gray-500 transition duration-75  group-hover:text-gray-900  " />
@@ -205,7 +203,7 @@ const Sidebar = () =>
                 <li>
                   <Link
                     href={ "/admin/user/userList" }
-                    onClick={ () => toggleMenu( setIsUserOpen ) }
+                    onClick={ () => toggleMenu( "user" ) }
                     className={ `flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group hover:bg-webred-light ${ !isUserOpen ? "" : "bg-pageBg-light rounded-none" }` }
                   >
                     <FaUserFriends className="w-5 h-5 text-gray-500 transition duration-75  group-hover:text-gray-900  " />
@@ -238,7 +236,7 @@ const Sidebar = () =>
                   <li>
                     <Link
                       href={ "/admin/category" }
-                      onClick={ () => toggleMenu( setIsCategoryOpen ) }
+                      onClick={ () => toggleMenu( "category" ) }
                       className={ `flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group hover:bg-webred-light ${ !isCategoryOpen ? "" : "bg-pageBg-light rounded-none" }` }
                     >
                       <FaCampground className="w-5 h-5 text-gray-500 transition duration-75  group-hover:text-gray-900  " />
@@ -264,7 +262,7 @@ const Sidebar = () =>
 
                   <li>
                     <a
-                      onClick={ () => toggleMenu( setIsCustomerOpen ) }
+                      onClick={ () => toggleMenu( "customer" ) }
                       className={ `flex items-center p-2 text-gray-900 rounded-lg hover:bg-webred-light cursor-pointer group ${ isCustomerOpen ? 'bg-pageBg-light rounded-none' : '' }` }
                     >
                       <FaUsers className="w-5 h-5 text-gray-500 transition duration-75 group-hover:text-gray-900" />

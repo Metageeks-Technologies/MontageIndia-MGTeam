@@ -16,18 +16,15 @@ import Filter from "@/components/searchBar/filtersidebar";
 import {BsFilterLeft} from "react-icons/bs";
 
 const filterOptions = {
-  sortBy: ['Popular', 'Most relevant'],
-  premiumImages: [
-    {label: 'License', options: ['Standard', 'Extended']},
-    {label: 'Usage', options: ['Commercial', 'Editorial']},
-  ],
-  orientation: ['Horizontal', 'Vertical'],
-
+  sortBy: ['Most Popular', 'Newest', 'Oldest'], 
+  orientation: ['Landscape', 'Portrait'], 
   more: [
-    {label: 'Category', options: ['Nature', 'Technology', 'Food', 'Travel']},
-    {label: 'Resolution', options: ['4K', '1080p', '720p']},
+    {label: 'Resolution', options: ['FHD', 'HD']},
   ],
-};
+  videoLength: 0 , // input
+  frameRate : ["30Hz","24Hz"]
+}; 
+
 const Page = () => {
   const searchParams = useSearchParams();
 
@@ -88,12 +85,17 @@ const Page = () => {
     700: 2,
     500: 1,
   };
+  const handleFilterChange = ( filterType: string, value: string | number ) => {
+    console.log( `Filter changed: ${filterType} = ${value}` );
+    // Here you can update your application state or make API calls with the new filter params
+    
+  };
 
   return (
     <div className="flex flex-col min-h-screen">
       <Searchbar />
       <div className="flex flex-1">
-        <Filter isOpen={isFilterOpen} onToggle={toggleFilter} filterOptions={filterOptions} />
+        <Filter isOpen={isFilterOpen} onToggle={toggleFilter} filterOptions={filterOptions} onFilterChange={handleFilterChange} />
         <div className={`flex-1 transition-all duration-300 ease-in-out `}>
           <div className="p-4">
             <button

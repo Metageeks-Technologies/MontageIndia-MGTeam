@@ -1,96 +1,97 @@
 "use client";
 import Footer from "@/components/Footer";
 import ImageGallery from "@/components/Home/homeImage";
-import { Product } from "@/types/order";
+import {Product} from "@/types/order";
 import instance from "@/utils/axios";
-import { Button, Pagination, Spinner } from "@nextui-org/react";
-import { useEffect, useState } from "react";
-import { IoIosSearch } from "react-icons/io";
-import { getImage } from "@/app/redux/feature/product/image/api";
-import { useAppDispatch, useAppSelector } from "@/app/redux/hooks";
-import { setImagePage } from "@/app/redux/feature/product/slice";
-import { IoSearchOutline } from "react-icons/io5";
-import { useSearchParams } from "next/navigation";
-import { clearKeywords } from "@/app/redux/feature/product/api";
+import {Button, Pagination, Spinner} from "@nextui-org/react";
+import {useEffect, useState} from "react";
+import {IoIosSearch} from "react-icons/io";
+import {getImage} from "@/app/redux/feature/product/image/api";
+import {useAppDispatch, useAppSelector} from "@/app/redux/hooks";
+import {setImagePage} from "@/app/redux/feature/product/slice";
+import {IoSearchOutline} from "react-icons/io5";
+import {useSearchParams} from "next/navigation";
+import {clearKeywords} from "@/app/redux/feature/product/api";
 import Searchbar from "@/components/searchBar/search";
 import Filter from "@/components/searchBar/filtersidebar";
 import {BsFilterLeft} from "react-icons/bs";
 
 
 const filterOptions = {
-  sortBy: ['Most Popular', 'Most Relevant', 'Newest', 'Oldest'],
-  premiumImages: [
-    {label: 'License Type', options: ['Standard', 'Extended']},
-    {label: 'Usage Rights', options: ['Commercial', 'Editorial']},
-  ],
-  orientation: ['Landscape', 'Portrait', 'Square', 'Panorama'],
-  color: ['Color', 'Black & White'],
+  sortBy: ['Most Popular', 'Newest', 'Oldest'],
+
+  orientation: ['Landscape', 'Portrait'],
+
   more: [
-    {label: 'Category', options: ['Nature', 'Technology', 'Food', 'Travel', 'People', 'Architecture', 'Animals', 'Sports', 'Business']},
-    {label: 'Resolution', options: ['4K', '1080p', '720p']},
-    {label: 'File Type', options: ['JPEG', 'PNG', 'GIF']},
-    {label: 'Date Added', options: ['Last 24 Hours', 'Last Week', 'Last Month']},
+    {label: 'Size', options: {minHeight: 0, minWidth: 0}},
+    {label: 'File Type', options: ['JPEG', 'PNG']},
   ],
+  density: 0 // input box
 };
 
 
 const Page = () => {
   const dispatch = useAppDispatch();
   const searchParams = useSearchParams();
-  const category = searchParams.get("category");
-  const [totalPages, setTotalPages] = useState(1);
-  const [currentPage, setCurrentPage] = useState(1);
-  const searchTerm = searchParams.get("searchTerm") || "";
+  const category = searchParams.get( "category" );
+  const [totalPages, setTotalPages] = useState( 1 );
+  const [currentPage, setCurrentPage] = useState( 1 );
+  const searchTerm = searchParams.get( "searchTerm" ) || "";
   const categoryParam = category ? ["editor choice"] : "";
   const [isFilterOpen, setIsFilterOpen] = useState( false );
 
-  const [loading, setloading] = useState(false);
+  const [loading, setloading] = useState( false );
   const {
     imageData: product,
     imagePage,
     totalImageData,
     totalImageNumOfPage,
-  } = useAppSelector((state) => state.product);
+  } = useAppSelector( ( state ) => state.product );
 
   const toggleFilter = () => {
     setIsFilterOpen( !isFilterOpen );
   };
 
-  const handlePageChange = (page: number) => {
+  const handlePageChange = ( page: number ) => {
     // console.log(page);
-    dispatch(setImagePage(page));
+    dispatch( setImagePage( page ) );
   };
   const handleNextPage = () => {
-    handlePageChange(imagePage === totalImageNumOfPage ? 1 : imagePage + 1);
+    handlePageChange( imagePage === totalImageNumOfPage ? 1 : imagePage + 1 );
   };
   const handlePrevPage = () => {
-    handlePageChange(imagePage === 1 ? totalImageNumOfPage : imagePage - 1);
+    handlePageChange( imagePage === 1 ? totalImageNumOfPage : imagePage - 1 );
   };
 
-  const fetchData = async (page: number) => {
-    setloading(true);
-    const response = await getImage(dispatch, {
+  const fetchData = async ( page: number ) => {
+    setloading( true );
+    const response = await getImage( dispatch, {
       page: imagePage,
       productsPerPage: 10,
       mediaType: ["image"],
       searchTerm,
       category: categoryParam,
-    });
-    setloading(false);
+    } );
+    setloading( false );
   };
 
-  useEffect(() => {
-    fetchData(imagePage);
+  useEffect( () => {
+    fetchData( imagePage );
     return () => {
-      clearKeywords(dispatch);
+      clearKeywords( dispatch );
     };
-  }, [imagePage, searchParams]);
+  }, [imagePage, searchParams] );
 
+  const handleFilterChange = ( filterType: string, value: string | number ) => {
+    console.log( `Filter changed: ${filterType} = ${value}` );
+    // Here you can update your application state or make API calls with the new filter params
+  };
+  
   return (
     <div className="flex flex-col min-h-screen">
       <Searchbar />
       <div className="flex flex-1">
-        <Filter isOpen={isFilterOpen} onToggle={toggleFilter} filterOptions={filterOptions} />
+        <Filter isOpen={isFilterOpen} onToggle={toggleFilter} filterOptions={filterOptions} onFilterChange={handleFilterChange} />
         <div className={`flex-1 transition-all duration-300 ease-in-out `}>
           <div className="p-4">
             <button
@@ -176,7 +177,6 @@ const Page = () => {
                 </div>
               )}
 
-              <Footer />
             </div>
           </div>
         </div>
