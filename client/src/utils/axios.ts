@@ -16,26 +16,27 @@ const getToken = () => {
         }
       } else {
         console.log("No user is signed in.");
-        resolve(""); 
+        resolve("");
       }
     });
   });
 };
 
-
 const instance = axios.create({
   baseURL: `${process.env.NEXT_PUBLIC_SERVER_URL}/api/v1`,
+  withCredentials: true,
 });
 
-instance.interceptors.request.use(async (config) => {
-  
+instance.interceptors.request.use(
+  async (config) => {
     const idToken = await getToken();
-    console.log("idToken",idToken);
+    console.log("idToken", idToken);
     config.headers.Authorization = `Bearer ${idToken}`;
-  
-  return config;
-}, (error) => {
-  return Promise.reject(error);
-});
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
 
 export default instance;
