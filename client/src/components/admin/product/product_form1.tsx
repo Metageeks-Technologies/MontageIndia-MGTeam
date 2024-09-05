@@ -293,8 +293,7 @@ const Form1 = ( { onNext }: any ) =>
 
           <div className=" gap-4">
             <label className="text-sm font-medium text-gray-700">Description</label>
-            <div className="">
-
+            <div className=""> 
               <textarea
                 value={ description }
                 onChange={ handleChange }
@@ -306,7 +305,7 @@ const Form1 = ( { onNext }: any ) =>
 
           <div className='space-y-6'>
             <div className='flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4'>
-              <div className='w-full sm:w-2/3'>
+              <div className='w-1/2 '>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Tags</label>
                 <div className="flex items-center">
                   <input
@@ -315,8 +314,7 @@ const Form1 = ( { onNext }: any ) =>
                     value={ tagInput }
                     onChange={ ( e ) => setTagInput( e.target.value ) }
                     onKeyDown={ handleTagKeyDown }
-                  />
-
+                  /> 
                 </div>
               </div>
               <div className="w-full sm:w-auto">

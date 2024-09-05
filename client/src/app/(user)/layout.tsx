@@ -9,8 +9,8 @@ import Script from "next/script";
 import Sidebar from "@/components/navbar/Navbar";
 import InitialLoad from "@/components/provider/InitialLoad";
 import TopBanner from "@/components/navbar/TopBanner";
+import {ChatProvider} from "@/app/(user)/Provider/chatProvider";
 import Head from "next/head";
-import { ChatProvider } from "@/app/(user)/Provider/chatProvider";
 
 // import { Navbar } from "@nextui-org/react";
 
@@ -35,17 +35,17 @@ export default function RootLayout ( {
           <InitialLoad>
             <TopBanner />
             <Sidebar />
-            <ChatProvider> 
-            {children}
+            <ChatProvider>
+              {children}
             </ChatProvider>
-            
+
           </InitialLoad>
         </ReduxProvider>
         <Script
           src="https://checkout.razorpay.com/v1/checkout.js"
           strategy="beforeInteractive"
         />
-        
+
 
       </body>
     </html>

@@ -1,186 +1,162 @@
 "use client";
-import Footer from "@/components/Footer";
-import BlogCard from "@/components/Home/blogCard";
-import CardSlider from "@/components/Home/collectionCard";
-import React, { useEffect, useState } from "react";
-import { IoIosSearch } from "react-icons/io";
-import { Button, Pagination, Spinner } from "@nextui-org/react";
+import React, {useEffect, useState} from "react";
+import {Button, Pagination, Spinner} from "@nextui-org/react";
 import Waveform from "@/components/Home/AudioWaveForm";
-import { useAppDispatch, useAppSelector } from "@/app/redux/hooks";
-import { getAudio } from "@/app/redux/feature/product/audio/api";
-import { IoSearchOutline } from "react-icons/io5";
-import { setAudioPage } from "@/app/redux/feature/product/slice";
-import { clearKeywords } from "@/app/redux/feature/product/api";
+import {useAppDispatch, useAppSelector} from "@/app/redux/hooks";
+import {getAudio} from "@/app/redux/feature/product/audio/api";
+import {setAudioPage} from "@/app/redux/feature/product/slice";
+import {clearKeywords} from "@/app/redux/feature/product/api";
 import Searchbar from "@/components/searchBar/search";
-import { useSearchParams } from "next/navigation";
+import {useSearchParams} from "next/navigation";
+import Filter from "@/components/searchBar/filtersidebar";
+import Footer from "@/components/Footer";
+import {BsFilterLeft} from "react-icons/bs";
 
 const Page = () => {
   const dispatch = useAppDispatch();
   const searchParams = useSearchParams();
-  const searchTerm = searchParams.get("searchTerm") || "";
-  const category = searchParams.get("category");
+  const searchTerm = searchParams.get( "searchTerm" ) || "";
+  const category = searchParams.get( "category" );
   const categoryParam = category ? ["editor choice"] : "";
-  const [loading, setloading] = useState(false);
+  const [loading, setLoading] = useState( false );
+  const [isFilterOpen, setIsFilterOpen] = useState( false );
 
-  const { audioData, page, totalNumOfPage, totalAudioData } = useAppSelector(
-    (state) => state.product
+  const filterOptions = {
+    sortBy: ['Most Popular', 'Newest', 'Oldest'],
+    audioLength: 0,
+    bitRate: 0
+  };
+
+  const {audioData, page, totalNumOfPage, totalAudioData} = useAppSelector(
+    ( state ) => state.product
   );
 
-  const fetchData = async (page: number) => {
-    setloading(true);
-    // setLoading(true);
-    const response = await getAudio(dispatch, {
+  const fetchData = async ( page: number ) => {
+    setLoading( true );
+    await getAudio( dispatch, {
       page: page,
       productsPerPage: 8,
       mediaType: ["audio"],
       searchTerm,
       category: categoryParam,
-    });
-    setloading(false);
+    } );
+    setLoading( false );
   };
 
-  useEffect(() => {
-    fetchData(page);
+  useEffect( () => {
+    fetchData( page );
     return () => {
-      clearKeywords(dispatch);
+      clearKeywords( dispatch );
     };
-  }, [page, , searchParams]);
+  }, [page, searchParams] );
 
-  useEffect(() => {
-    return () => {
-      clearKeywords(dispatch);
-    };
-  }, [page, searchParams]);
-
-  const handlePageChange = (page: number) => {
-    // console.log(page);
-    dispatch(setAudioPage(page));
+  const handlePageChange = ( page: number ) => {
+    dispatch( setAudioPage( page ) );
   };
 
   const handleNextPage = () => {
-    handlePageChange(page === totalNumOfPage ? 1 : page + 1);
+    handlePageChange( page === totalNumOfPage ? 1 : page + 1 );
   };
 
   const handlePrevPage = () => {
-    handlePageChange(page === 1 ? totalNumOfPage : page - 1);
+    handlePageChange( page === 1 ? totalNumOfPage : page - 1 );
+  };
+
+  const toggleFilter = () => {
+    setIsFilterOpen( !isFilterOpen );
+  };
+
+  const handleFilterChange = ( filterType: string, value: string | number ) => {
+    console.log( `Filter changed: ${filterType} = ${value}` );
+    // Here you can update your application state or make API calls with the new filter params
   };
 
   return (
-    <>
+    <div className="flex flex-col min-h-screen">
       <Searchbar />
-      <div className="main bg-pageBg-light">
-        {/* <hr className="mt-5" /> */}
-
-        {/* <Waveform /> */}
-
-        <div className="py-10 lg:mx-4 xl:mx-24 md:mx-4 mx-4">
-
-          {/* <div className="flex flex-wrap gap-2 ">
-            <button className="flex items-center hover:bg-[#c7c7c9] text-sm px-3 py-1 border border-gray-700 rounded text-gray-700 bg-transparent backdrop-blur-sm bg-opacity-20 hover:bg-opacity-30 transition duration-300">
-              <IoIosSearch className="h-5 w-5 mr-1" />
-              Nature
+      <div className="flex flex-1 bg-pageBg-light">
+        <Filter isOpen={isFilterOpen} onToggle={toggleFilter} filterOptions={filterOptions} onFilterChange={handleFilterChange} />
+        <div className="flex-1 transition-all duration-300 ease-in-out">
+          <div className="p-4">
+            <button
+              className=" py-2 text-gray-800 bg-white border flex flex-row items-center gap-2 border-gray-300 px-5 rounded-md mb-4"
+              onClick={toggleFilter}
+            >
+              Filters <BsFilterLeft />
             </button>
-            <button className="flex items-center text-sm hover:bg-[#c7c7c9] px-3 py-1 border border-gray-700 rounded text-gray-700 bg-transparent backdrop-blur-sm bg-opacity-20 hover:bg-opacity-30 transition duration-300">
-              <IoIosSearch className="h-5 w-5 mr-1" />
-              India Gate
-            </button>
-            <button className="flex items-center text-sm hover:bg-[#c7c7c9] px-3 py-1 border border-gray-700 rounded text-gray-700 bg-transparent backdrop-blur-sm bg-opacity-20 hover:bg-opacity-30 transition duration-300">
-              <IoIosSearch className="h-5 w-5 mr-1" />
-              Travel
-            </button>
-            <button className="flex items-center text-sm hover:bg-[#c7c7c9] px-3 py-1 border border-gray-700 rounded text-gray-700 bg-transparent backdrop-blur-sm bg-opacity-20 hover:bg-opacity-30 transition duration-300">
-              <IoIosSearch className="h-5 w-5 mr-1" />
-              Architecture
-            </button>
-            <button className="flex items-center text-sm hover:bg-[#c7c7c9] px-3 py-1 border border-gray-700 rounded text-gray-700 bg-transparent backdrop-blur-sm bg-opacity-20 hover:bg-opacity-30 transition duration-300">
-              <IoIosSearch className="h-5 w-5 mr-1" />
-              India Gate Delhi Night
-            </button>
-            <button className="flex items-center text-sm px-3 hover:bg-[#c7c7c9] py-1 border border-gray-700 rounded text-gray-700 bg-transparent backdrop-blur-sm bg-opacity-20 hover:bg-opacity-30 transition duration-300">
-              <IoIosSearch className="h-5 w-5 mr-1" />
-              Nature
-            </button>
-            <button className="flex items-center text-sm px-3 py-1 hover:bg-[#c7c7c9] border border-gray-700 rounded text-gray-700 bg-transparent backdrop-blur-sm bg-opacity-20 hover:bg-opacity-30 transition duration-300">
-              <IoIosSearch className="h-5 w-5 mr-1" />
-              India
-            </button>
-          </div> */}
-
-          {totalAudioData > 0 && (
-            <h4 className=" text-lg text-neutral-700">
-              {totalAudioData} Audio Files
-            </h4>
-          )}
-
-          <div className=" overflow-y-auto mt-2">
-            {loading ? (
-              <div className="h-screen justify-center flex">
-                <Spinner label="Loading..." color="danger" />
-              </div>
-            ) : (
-              <>
-                {audioData.length > 0 ? (
-                  audioData.map((product, index) => (
-                    <Waveform key={index} product={product} />
-                  ))
-                ) : (
-                  <p>No Audio found.</p>
+            <div className="main">
+              <div className="py-10 px-4 md:px-8 lg:px-12">
+                {totalAudioData > 0 && (
+                  <h4 className="text-lg text-neutral-700 mb-4">
+                    {totalAudioData} Audio Files
+                  </h4>
                 )}
-              </>
-            )}
-          </div>
-        </div>
 
-        {/* Pagination */}
-        {totalNumOfPage > 1 && (
-          <div className="flex justify-center items-center gap-4 my-10">
-            <Button
-              size="sm"
-              type="button"
-              disabled={page === 1}
-              variant="flat"
-              className={`${
-                page === 1 ? "opacity-70 cursor-not-allowed" : "hover:bg-webred"
-              } bg-webred text-white rounded-full font-bold`}
-              onPress={handlePrevPage}
-            >
-              Prev
-            </Button>
-            <Pagination
-              color="success"
-              classNames={{
-                item: "w-8 h-8 text-small bg-gray-100 hover:bg-gray-300 rounded-full",
-                cursor:
-                  "bg-webred hover:bg-red text-white rounded-full font-bold",
-              }}
-              total={totalNumOfPage}
-              page={page}
-              onChange={handlePageChange}
-              initialPage={1}
-            />
-            <p className="text-cart">of {totalNumOfPage}</p>
-            <Button
-              type="button"
-              size="sm"
-              disabled={page === totalNumOfPage}
-              variant="flat"
-              className={`${
-                page === totalNumOfPage
-                  ? "opacity-70 cursor-not-allowed"
-                  : "hover:bg-webred"
-              } bg-webred text-white rounded-full font-bold`}
-              onPress={handleNextPage}
-            >
-              Next
-            </Button>
-          </div>
-        )}
+                <div className="overflow-y-auto mt-2">
+                  {loading ? (
+                    <div className="h-64 flex justify-center items-center">
+                      <Spinner label="Loading..." color="danger" />
+                    </div>
+                  ) : (
+                    <>
+                      {audioData.length > 0 ? (
+                        audioData.map( ( product, index ) => (
+                          <Waveform key={index} product={product} />
+                        ) )
+                      ) : (
+                        <p>No Audio found.</p>
+                      )}
+                    </>
+                  )}
+                </div>
 
-        <div className="mt-8">
-          <Footer />
+                {totalNumOfPage > 1 && (
+                  <div className="flex flex-wrap justify-center items-center gap-4 my-10">
+                    <Button
+                      size="sm"
+                      type="button"
+                      disabled={page === 1}
+                      variant="flat"
+                      className={`${page === 1 ? "opacity-70 cursor-not-allowed" : "hover:bg-webred"
+                        } bg-webred text-white rounded-full font-bold`}
+                      onPress={handlePrevPage}
+                    >
+                      Prev
+                    </Button>
+                    <Pagination
+                      color="success"
+                      classNames={{
+                        item: "w-8 h-8 text-small bg-gray-100 hover:bg-gray-300 rounded-full",
+                        cursor: "bg-webred hover:bg-red text-white rounded-full font-bold",
+                      }}
+                      total={totalNumOfPage}
+                      page={page}
+                      onChange={handlePageChange}
+                      initialPage={1}
+                    />
+                    <p className="text-cart">of {totalNumOfPage}</p>
+                    <Button
+                      type="button"
+                      size="sm"
+                      disabled={page === totalNumOfPage}
+                      variant="flat"
+                      className={`${page === totalNumOfPage
+                          ? "opacity-70 cursor-not-allowed"
+                          : "hover:bg-webred"
+                        } bg-webred text-white rounded-full font-bold`}
+                      onPress={handleNextPage}
+                    >
+                      Next
+                    </Button>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-    </>
+      <Footer />
+    </div>
   );
 };
 
