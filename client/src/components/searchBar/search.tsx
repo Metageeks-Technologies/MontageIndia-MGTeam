@@ -13,15 +13,15 @@ import {FaVideo} from 'react-icons/fa';
 
 const Searchbar = () => {
   const pathname = usePathname();
-  const [selectedOption, setSelectedOption] = useState( "All Image" );
+  const [selectedOption, setSelectedOption] = useState("All Image");
   const dispatch = useAppDispatch();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const searchRenderTerm = searchParams.get( 'searchTerm' );
-  const [searchTerm, setSearchTerm] = useState( searchRenderTerm || "" );
-  const mediaType = searchParams.get( 'mediaType' ) || 'image';
-  const category = searchParams.get( 'category' );
-  const terms = useAppSelector( ( state ) => state.product.relatedKeyword );
+  const searchRenderTerm = searchParams.get("searchTerm");
+  const [searchTerm, setSearchTerm] = useState(searchRenderTerm || "");
+  const mediaType = searchParams.get("mediaType") || "image";
+  const category = searchParams.get("category");
+  const terms = useAppSelector((state) => state.product.relatedKeyword);
 
   useEffect( () => {
     if ( pathname.includes( '/video' ) ) {
@@ -31,73 +31,76 @@ const Searchbar = () => {
     } else if ( pathname.includes( '/image' ) ) {
       setSelectedOption( category && category.includes( 'editor choice' ) ? 'Editorial Image' : 'All Image' );
     }
-  }, [pathname, category, searchRenderTerm] );
+  }, [pathname, category, searchRenderTerm]);
 
-  const handleKeyDown = ( e: React.KeyboardEvent<HTMLInputElement> ) => {
-    if ( e.key === 'Enter' ) {
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
       getData();
     }
   };
 
   const getData = () => {
     // Redirect based on the selected option
-    let pathname = '/image';
-    let query: {searchTerm: string; mediaType: string; category?: string;} = {searchTerm, mediaType: 'image'};
+    let pathname = "/image";
+    let query: { searchTerm: string; mediaType: string; category?: string } = {
+      searchTerm,
+      mediaType: "image",
+    };
 
-    if ( selectedOption.includes( 'Video' ) ) {
-      pathname = '/video';
-      query.mediaType = 'video';
-    } else if ( selectedOption.includes( 'Audio' ) ) {
-      pathname = '/audio';
-      query.mediaType = 'audio';
+    if (selectedOption.includes("Video")) {
+      pathname = "/video";
+      query.mediaType = "video";
+    } else if (selectedOption.includes("Audio")) {
+      pathname = "/audio";
+      query.mediaType = "audio";
     }
 
-    if ( selectedOption.includes( 'Editorial' ) ) {
-      query = {...query, category: 'editor choice'};
+    if (selectedOption.includes("Editorial")) {
+      query = { ...query, category: "editor choice" };
     }
-    router.push( `${pathname}?${new URLSearchParams( query ).toString()}` );
+    router.push(`${pathname}?${new URLSearchParams(query).toString()}`);
     // fetchData(1);
-    dispatch( setVideoPage( 1 ) );
-    dispatch( setAudioPage( 1 ) );
-    dispatch( setImagePage( 1 ) );
-
+    dispatch(setVideoPage(1));
+    dispatch(setAudioPage(1));
+    dispatch(setImagePage(1));
   };
   const handleClear = () => {
-    setSearchTerm( '' );
-    const params = new URLSearchParams( window.location.search );
+    setSearchTerm("");
+    const params = new URLSearchParams(window.location.search);
 
-    params.delete( 'searchTerm' );
+    params.delete("searchTerm");
     const newUrl = `${window.location.pathname}?${params.toString()}`;
-    router.replace( newUrl );
+    router.replace(newUrl);
   };
-  const handleCategoryClick = ( category: string ) => {
-    setSearchTerm( category );
+  const handleCategoryClick = (category: string) => {
+    setSearchTerm(category);
 
-    const currentCategories = searchParams.get( 'searchTerm' );
+    const currentCategories = searchParams.get("searchTerm");
 
     const categoriesArray = currentCategories
-      ? currentCategories.split( ',' ).map( cat => cat.trim() )
+      ? currentCategories.split(",").map((cat) => cat.trim())
       : [];
 
     let updatedCategory;
-    if ( categoriesArray.includes( category ) ) {
-      updatedCategory = categoriesArray.filter( cat => cat !== category );
+    if (categoriesArray.includes(category)) {
+      updatedCategory = categoriesArray.filter((cat) => cat !== category);
     } else {
       updatedCategory = [...categoriesArray, category];
     }
 
-    const updatedSearchParams = new URLSearchParams( searchParams.toString() );
-    if ( updatedCategory.length > 0 ) {
-      updatedSearchParams.set( 'searchTerm', updatedCategory.join( ',' ) );
+    const updatedSearchParams = new URLSearchParams(searchParams.toString());
+    if (updatedCategory.length > 0) {
+      updatedSearchParams.set("searchTerm", updatedCategory.join(","));
     } else {
-      updatedSearchParams.delete( 'searchTerm' );
+      updatedSearchParams.delete("searchTerm");
     }
 
-    const newUrl = `${window.location.pathname}?${updatedSearchParams.toString()}`;
+    const newUrl = `${
+      window.location.pathname
+    }?${updatedSearchParams.toString()}`;
 
-    window.history.pushState( {}, '', newUrl );
+    window.history.pushState({}, "", newUrl);
   };
-
 
   return (
     <div className='sticky top-0 z-10'>
@@ -154,14 +157,25 @@ const Searchbar = () => {
                 type="text"
                 placeholder="Search for Image"
                 value={searchTerm}
-                onChange={( e ) => setSearchTerm( e.target.value )}
+                onChange={(e) => setSearchTerm(e.target.value)}
                 onKeyDown={handleKeyDown}
                 className="w-full py-2 px-4 outline-none bg-gray-100"
               />
+              {searchTerm && (
+                <span
+                  onClick={handleClear}
+                  className="absolute right-10 top-1/2 transform -translate-y-1/2 text-gray-400 cursor-pointer "
+                >
+                  <ImCross />
+                </span>
+              )}
             </div>
           </div>
 
-          <div onClick={getData} className="cursor-pointer absolute top-0 bottom-0 right-0 flex justify-center items-center w-12 bg-[#8D529C] rounded-r-md">
+          <div
+            onClick={getData}
+            className="cursor-pointer absolute top-0 bottom-0 right-0 flex justify-center items-center w-12 bg-[#8D529C] rounded-r-md"
+          >
             <IoSearchOutline className="text-white w-6 h-6" />
           </div>
         </div>
@@ -200,9 +214,9 @@ const Searchbar = () => {
                     {category}
                   </button>
                 );
-              } )}
+              })}
             </div>
-            <div className=' hidden md:block lg:-mr-16 xl:mr-8 md:-mr-10'>
+            <div className=" hidden md:block lg:-mr-16 xl:mr-8 md:-mr-10">
               <button
                 onClick={handleClear}
                 disabled={!searchRenderTerm}
