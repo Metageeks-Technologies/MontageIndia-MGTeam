@@ -45,17 +45,38 @@ const Sidebar = () =>
   const router = useRouter();
   const pathname = usePathname();
 
-  const toggleMenu = useCallback( ( menuSetter: any ) =>
-  {
-    menuSetter( ( prev: any ) => !prev );
-  }, [] );
+  const toggleMenu = (state:string)=>{
+    if(state === "product"){
+      setIsProductOpen(!isProductOpen);
+      setIsUserOpen(false);
+      setIsCustomerOpen(false);
+      setIsCategoryOpen(false);
+    }
+    if(state === "user"){
+      setIsUserOpen(!isUserOpen);
+      setIsProductOpen(false);
+      setIsCustomerOpen(false);
+      setIsCategoryOpen(false);
+    }
+    if(state === "customer"){
+      setIsCustomerOpen(!isCustomerOpen);
+      setIsProductOpen(false);
+      setIsUserOpen(false);
+      setIsCategoryOpen(false);
+    }
+    if(state === "category"){
+      setIsCategoryOpen(!isCategoryOpen);
+      setIsProductOpen(false);
+      setIsUserOpen(false);
+      setIsCustomerOpen(false);
+  }
+  }
 
-  const initialFunc = () => {
-    setIsCategoryOpen( false );
-    setIsCustomerOpen( false );
-    setIsUserOpen( false );
-    setIsProductOpen( false );
-
+  const initialState = ()=>{
+    setIsProductOpen(false);
+    setIsUserOpen(false);
+    setIsCustomerOpen(false);
+    setIsCategoryOpen(false);
   }
 
   const handleLogout = async () =>
@@ -132,7 +153,7 @@ const Sidebar = () =>
           <div className="flex flex-col  justify-between">
             <ul className="space-y-2 font-medium">
               <li  className={ `rounded-lg cursor-pointer ${ isActiveLink( "/admin/dashboard" ) ? "bg-webred text-pureWhite-light hover:bg-webred" : "hover:bg-webred-light" }` } >
-                <Link href='/admin/dashboard' className="flex items-center w-full p-2 text-base  transition duration-75 rounded-lg group   ">
+                <Link href='/admin/dashboard' onClick={()=>{initialState()}} className="flex items-center w-full p-2 text-base  transition duration-75 rounded-lg group   ">
                   <FaHome className="w-5 h-5  transition duration-75 " />
                   <span className="flex-1 ms-3 text-left rtl:text-right whitespace-nowrap">Dashboard</span>
                 </Link>
@@ -143,9 +164,9 @@ const Sidebar = () =>
               { currentUser && (
                 <li>
                   <Link
-                    href={ "/admin/product/available" }
-                    onClick={ () => toggleMenu( "product" ) }
-                    className={ `flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group hover:bg-webred-light ${ !isProductOpen ? 'bg-white' : 'bg-pageBg-light' }` }
+                    href="/admin/product/available"
+                    onClick={ () => toggleMenu("product") }
+                    className={ `flex cursor-pointer items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group hover:bg-webred-light ${ !isProductOpen ? 'bg-white' : 'bg-pageBg-light mb-1' }` }
                   >
                     <BiCategoryAlt className="w-5 h-5 text-gray-500 transition duration-75  group-hover:text-gray-900  " />
                     <span className="flex-1 ms-3 text-left rtl:text-right whitespace-nowrap">
@@ -158,35 +179,36 @@ const Sidebar = () =>
                     ) }
                   </Link>
                   { isProductOpen && (
-                    <ul className={ `py-2 space-y-2 ${ isProductOpen ? "bg-pageBg-light  p-4" : "" }` }>
+                    <ul className={ `py-2 space-y-2 ${ isProductOpen ? "bg-pageBg-light px-2 rounded-md" : "" }` }>
                       <li>
+                      
                         <Link
                           href="/admin/product/create"
-                          className={ `flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group  ${ isActiveLink( "/admin/product/create" )
+                          className={ `flex items-start w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-7 group  ${ isActiveLink( "/admin/product/create" )
                             ? "bg-webred text-pureWhite-light"
-                            : "hover:bg-webred-light"
+                            : "hover:bg-[#f56d6d] hover:text-white "
                             }` }
                         >
                           Create
                         </Link>
                       </li>
                       <li>
-                        <Link href="/admin/product/available" className={ `flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group  cursor-pointer ${ isActiveLink( '/admin/product/available' ) ? 'bg-webred text-pureWhite-light' : 'hover:bg-webred-light' }` }>Published</Link>
+                        <Link href="/admin/product/available" className={ `flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-7 group  cursor-pointer ${ isActiveLink( '/admin/product/available' ) ? 'bg-webred text-pureWhite-light' : 'hover:bg-[#f56d6d] hover:text-white' }` }>Published</Link>
 
                       </li>
                       <li>
                         <Link
                           href="/admin/product/draft"
-                          className={ `flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group  cursor-pointer ${ isActiveLink( "/admin/product/draft" )
+                          className={ `flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-7 group  cursor-pointer ${ isActiveLink( "/admin/product/draft" )
                             ? "bg-webred text-pureWhite-light"
-                            : "hover:bg-webred-light"
+                            : "hover:bg-[#f56d6d] hover:text-white"
                             }` }
                         >
                           Draft
                         </Link>
                       </li>
                       <li>
-                        <Link href="/admin/product/archive" className={ `flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group  cursor-pointer ${ isActiveLink( '/admin/product/archive' ) ? 'bg-webred text-pureWhite-light' : 'hover:bg-webred-light' }` }>Deleted</Link>
+                        <Link href="/admin/product/archive" className={ `flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-7 group  cursor-pointer ${ isActiveLink( '/admin/product/archive' ) ? 'bg-webred text-pureWhite-light' : 'hover:bg-[#f56d6d] hover:text-white' }` }>Deleted</Link>
                       </li>
                       <li>
                         {/* <Link href="/admin/product/unavailable" className={ `flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-webred-light cursor-pointer ${ isActiveLink( '/admin/product/unavailable' ) ? 'bg-webred text-pureWhite-light' : '' }` }>Unavailable</Link> */ }
@@ -199,9 +221,9 @@ const Sidebar = () =>
               { currentUser && currentUser.role === "superadmin" && (
                 <li>
                   <Link
-                    href={ "/admin/user/userList" }
-                    onClick={ () => toggleMenu( "user" ) }
-                    className={ `flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group hover:bg-webred-light ${ !isUserOpen ? "" : "bg-pageBg-light rounded-none" }` }
+                    href="/admin/user/userList"
+                    onClick={ () => toggleMenu("user") }
+                    className={ `flex cursor-pointer items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group hover:bg-[#f56d6d] ${ !isUserOpen ? "" : "bg-pageBg-light mb-1 " }` }
                   >
                     <FaUserFriends className="w-5 h-5 text-gray-500 transition duration-75  group-hover:text-gray-900  " />
                     <span className="flex-1 ms-3 text-left rtl:text-right whitespace-nowrap">Staff</span>
@@ -212,15 +234,15 @@ const Sidebar = () =>
                     ) }
                   </Link>
                   { isUserOpen && (
-                    <ul className={ `py-2 space-y-2 ${ !isUserOpen ? "" : "bg-pageBg-light rounded-none p-4" }` }>
+                    <ul className={ `py-2 space-y-2 ${ !isUserOpen ? "" : "bg-pageBg-light rounded-md px-2" }` }>
                       <li>
-                        <Link href="/admin/user/userList" className={ `flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group cursor-pointer ${ isActiveLink( '/admin/user/userList' ) ? 'bg-webred text-pureWhite-light' : 'hover:bg-webred-light' }` }>Staff List</Link>
+                        <Link href="/admin/user/userList" className={ `flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-7 group cursor-pointer ${ isActiveLink( '/admin/user/userList' ) ? 'bg-webred text-pureWhite-light' : 'hover:bg-[#f56d6d] hover:text-white' }` }>Staff List</Link>
                       </li>
                       <li>
-                        <Link href="/admin/user/user-create" className={ `flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group  cursor-pointer ${ isActiveLink( '/admin/user/user-create' ) ? 'bg-webred text-pureWhite-light' : 'hover:bg-webred-light' }` }> Create Staff</Link>
+                        <Link href="/admin/user/user-create" className={ `flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-7 group  cursor-pointer ${ isActiveLink( '/admin/user/user-create' ) ? 'bg-webred text-pureWhite-light' : 'hover:bg-[#f56d6d] hover:text-white' }` }> Create Staff</Link>
                       </li>
                       <li>
-                        <Link href="/admin/user/user-activity" className={ `flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group  cursor-pointer ${ isActiveLink( '/admin/user/user-activity' ) ? 'bg-webred text-pureWhite-light' : 'hover:bg-webred-light' }` }>Staff Activity</Link>
+                        <Link href="/admin/user/user-activity" className={ `flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-7 group  cursor-pointer ${ isActiveLink( '/admin/user/user-activity' ) ? 'bg-webred text-pureWhite-light' : 'hover:bg-[#f56d6d] hover:text-white' }` }>Staff Activity</Link>
                       </li>
                     </ul>
                   ) }
@@ -232,9 +254,9 @@ const Sidebar = () =>
 
                   <li>
                     <Link
-                      href={ "/admin/category" }
+                      href="/admin/category/create"
                       onClick={ () => toggleMenu( "category" ) }
-                      className={ `flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group hover:bg-webred-light ${ !isCategoryOpen ? "" : "bg-pageBg-light rounded-none" }` }
+                      className={ `flex cursor-pointer items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group hover:bg-webred-light ${ !isCategoryOpen ? "" : "bg-pageBg-light rounded-md mb-1" }` }
                     >
                       <FaCampground className="w-5 h-5 text-gray-500 transition duration-75  group-hover:text-gray-900  " />
                       <span className="flex-1 ms-3 text-left rtl:text-right whitespace-nowrap">Category</span>
@@ -245,12 +267,12 @@ const Sidebar = () =>
                       ) }
                     </Link>
                     { isCategoryOpen && (
-                      <ul className={ `py-2 space-y-2 ${ !isCategoryOpen ? "" : "bg-pageBg-light rounded-none p-4" }` }>
+                      <ul className={ `py-2 space-y-2 ${ !isCategoryOpen ? "" : "bg-pageBg-light rounded-md px-2" }` }>
                         <li>
-                          <Link href="/admin/category/create" className={ `flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group cursor-pointer ${ isActiveLink( '/admin/category/create' ) ? 'bg-webred text-pureWhite-light' : 'hover:bg-webred-light' }` }>Add New Category</Link>
+                          <Link href="/admin/category/create" className={ `flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-7 group cursor-pointer ${ isActiveLink( '/admin/category/create' ) ? 'bg-webred text-pureWhite-light' : 'hover:bg-[#f56d6d] hover:text-white' }` }>Add Category</Link>
                         </li>
                         <li>
-                          <Link href="/admin/category" className={ `flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group  cursor-pointer ${ isActiveLink( '/admin/category' ) ? 'bg-webred text-pureWhite-light' : 'hover:bg-webred-light' }` }>Categories List</Link>
+                          <Link href="/admin/category" className={ `flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-7  group  cursor-pointer ${ isActiveLink( '/admin/category' ) ? 'bg-webred text-pureWhite-light' : 'hover:bg-[#f56d6d] hover:text-white' }` }>Categories List</Link>
                         </li>
 
                       </ul>
@@ -258,9 +280,10 @@ const Sidebar = () =>
                   </li>
 
                   <li>
-                    <a
+                    <Link
+                      href="/admin/subscription"
                       onClick={ () => toggleMenu( "customer" ) }
-                      className={ `flex items-center p-2 text-gray-900 rounded-lg hover:bg-webred-light cursor-pointer group ${ isCustomerOpen ? 'bg-pageBg-light rounded-none' : '' }` }
+                      className={ `flex items-center p-2 text-gray-900 rounded-lg hover:bg-webred-light cursor-pointer group ${ isCustomerOpen ? 'bg-pageBg-light rounded-md mb-1' : '' }` }
                     >
                       <FaUsers className="w-5 h-5 text-gray-500 transition duration-75 group-hover:text-gray-900" />
                       <span className="flex-1 ms-3 whitespace-nowrap">
@@ -271,15 +294,15 @@ const Sidebar = () =>
                       ) : (
                         <MdOutlineKeyboardArrowDown className="w-5 h-5" />
                       ) }
-                    </a>
+                    </Link>
                     { isCustomerOpen && (
-                      <ul className={ `py-2 space-y-2 ${ !isCustomerOpen ? "" : "bg-pageBg-light rounded-none p-4" }` }>
+                      <ul className={ `py-2 space-y-2 ${ !isCustomerOpen ? "" : "bg-pageBg-light rounded-md px-2" }` }>
                         <li>
                           <Link
                             href="/admin/subscription"
-                            className={ `flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group  cursor-pointer ${ isActiveLink( "/admin/subscription" )
+                            className={ `flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-7 group  cursor-pointer ${ isActiveLink( "/admin/subscription" )
                               ? "bg-webred text-pureWhite-light"
-                              : "hover:bg-webred-light"
+                              : "hover:bg-[#f56d6d] hover:text-white"
                               }` }
                           >
                             Subscription
@@ -289,9 +312,9 @@ const Sidebar = () =>
                         <li>
                           <Link
                             href="/admin/subscription-history"
-                            className={ `flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group  cursor-pointer ${ isActiveLink( "/admin/subscription-history" )
+                            className={ `flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-7 group  cursor-pointer ${ isActiveLink( "/admin/subscription-history" )
                               ? "bg-webred text-pureWhite-light"
-                              : "hover:bg-webred-light"
+                              : "hover:bg-[#f56d6d] hover:text-white"
                               }` }
                           >
                             Subscription History
@@ -301,9 +324,9 @@ const Sidebar = () =>
                         <li>
                           <Link
                             href="/admin/transaction"
-                            className={ `flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group  cursor-pointer ${ isActiveLink( "/admin/transaction" )
+                            className={ `flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-7 group  cursor-pointer ${ isActiveLink( "/admin/transaction" )
                               ? "bg-webred text-pureWhite-light"
-                              : "hover:bg-webred-light"
+                              : "hover:bg-[#f56d6d] hover:text-white"
                               }` }
                           >
                             Transaction History
@@ -313,9 +336,9 @@ const Sidebar = () =>
                         <li>
                           <Link
                             href="/admin/customer-list"
-                            className={ `flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group  cursor-pointer ${ isActiveLink( "/admin/customer-list" )
+                            className={ `flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-7 group  cursor-pointer ${ isActiveLink( "/admin/customer-list" )
                               ? "bg-webred text-pureWhite-light"
-                              : "hover:bg-webred-light"
+                              : "hover:bg-[#f56d6d] hover:text-white"
                               }` }
                           >
                             Customer List
@@ -432,7 +455,7 @@ const Sidebar = () =>
           <div className="border-t bg-white px-2 py-4 mt-5 rounded-md w-[90%]">
             <div
               className="flex items-center mb-4 border-b pb-2 cursor-pointer"
-              onClick={ () => router.push( "/admin/profile" ) }
+              onClick={ () => {initialState(); router.push( "/admin/profile" ); }}
             >
               <FaUserCircle className="w-10 h-10 mr-3 text-gray-800" />
               <div>

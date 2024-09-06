@@ -15,6 +15,14 @@ interface SiteData{
   totalDeleted: number;
 }
 
+interface Activity{
+  name: string;
+  productId: {
+    title: string;
+  };
+  action: string;
+}
+
 const page = () => {
   const [currentUser, setCurrentUser] = useState<any>( '' );
   const [recentActivities,setRecentActivities] = useState([]);
@@ -29,6 +37,7 @@ const page = () => {
         params: {timeRange: "all", dataPerPage: Number.MAX_SAFE_INTEGER},
         withCredentials: true,
       } );
+      console.log( 'Recent activities:', response.data.activities );
       const sortedActivities = response.data.activities.sort( ( a:any, b:any ) => {
         return b.timestamp  -  a.timestamp ; // Sort by timestamp, most recent first
       } );
@@ -234,8 +243,10 @@ const page = () => {
                   <IoArrowForward className="h-5 w-5" />
                 </div>
               </div>
-              <div className="w-full h-[14rem] border mt-6 rounded-lg flex flex-col items-center justify-center">
-                <div className="flex items-center justify-center bg-white rounded-full p-2 shadow-md border border-gray-300">
+              <div className="w-full border mt-6 rounded-lg gap-2 bg-white  flex flex-col p-2 items-center justify-center">
+                {(!recentActivities || recentActivities.length<=0) && (
+                  <>
+                   <div className="flex items-center justify-center bg-white rounded-full p-2 shadow-md border border-gray-300">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="35"
@@ -252,6 +263,39 @@ const page = () => {
                 <p className="mt-4 text-center text-gray-700">
                   You have no recent activity
                 </p>
+                </>
+                ) }
+
+                {
+                  
+                  
+                 recentActivities && recentActivities.length>0 && 
+                 (
+                  <>
+                  <div className="px-2 mx-2 py-1 w-full flex bg-gray-100 justify-between gap-2 border rounded-md ">
+                    <div className="w-1/3 capitalize font-bold " >User</div>
+                    <div className="w-1/3 text-center font-bold" >Product</div>
+                    <div className="w-1/3 capitalize text-end font-bold" >Action</div>
+                  </div>
+                  
+                  {
+                    recentActivities.map((activity:Activity,index:number)=>(
+                  
+                  <div key={index} className="px-2 mx-2 py-1 w-full flex  hover:bg-slate-200 justify-between gap-2 border rounded-md ">
+                    <div className="w-1/3 capitalize " >{activity.name}</div>
+                    <div className="w-1/3 text-center truncate" >{activity.productId.title} </div>
+                    <div className={`w-1/3 capitalize text-end ${activity.action==='delete' && "text-red-400" } ${activity.action==='update' && "text-[#42A5D0]"} ${activity.action==='create' && "text-[#8D529C]"} `}>{activity.action}d</div>
+                  </div>
+               
+                 ))
+                  }
+                  </>
+                 )
+                 
+                 
+               
+                }
+               
               </div>
             </div>
           </div>

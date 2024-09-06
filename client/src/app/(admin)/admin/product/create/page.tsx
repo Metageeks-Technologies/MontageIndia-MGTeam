@@ -60,7 +60,7 @@ const ProductCreatePage = () =>
   };
 
   return (
-    <div className="container m-5 p-4 bg-pureWhite-light  rounded-lg">
+    <div className="container p-4 bg-pureWhite-light min-h-screen rounded-lg">
       <div>
         <div className="flex items-center mb-6">
           <button className="mr-4">

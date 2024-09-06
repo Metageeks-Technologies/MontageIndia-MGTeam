@@ -121,7 +121,7 @@ const UserCreate: React.FC = () =>
     };
 
     return (
-        <div className="container p-4 m-4 bg-pureWhite-light rounded-md">
+        <div className="container p-4 min-h-screen bg-pureWhite-light rounded-md">
 
             <div className="flex justify-between items-center mb-4">
                 <h1 className="text-2xl font-bold">Create User</h1>
