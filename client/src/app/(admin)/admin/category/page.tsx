@@ -428,15 +428,15 @@ const CategoriesPage: React.FC = () =>
 
                                         />
                                     </td>
-                                    <td className="px-4 py-4 border-b border-gray-200 bg-white">
+                                    <td className="px-4 py-4 border-b text-black border-gray-200 bg-white">
                                         { category.name }
                                     </td>
 
-                                    <td className="px-4 py-4 border-b border-gray-200 bg-white">
+                                    <td className="px-4 py-4 border-b text-black border-gray-200 bg-white">
                                         { category.description }
                                     </td>
 
-                                    <td className="px-4 py-4 border-b border-gray-200 bg-white">
+                                    <td className="px-4 py-4 border-b text-black border-gray-200 bg-white">
                                         <div className="flex justify-center items-center space-x-2">
 
                                             <button className="text-green-600 hover:text-green-900" onClick={ () => handleEdit( category ) }>

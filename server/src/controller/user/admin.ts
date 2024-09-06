@@ -440,7 +440,7 @@ export const getSiteData = catchAsyncError(async (req, res, next) => {
 
     const deletedProductResult = await Product.aggregate([
         {
-            $match: { status: 'unavailable' } 
+            $match: { status: 'archived' } 
         },
         {
             $count: 'totalDeleted'
