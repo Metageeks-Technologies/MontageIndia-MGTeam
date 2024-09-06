@@ -1,5 +1,5 @@
 import express from "express";
-import { isAuthenticatedCustomer,firebaseAuth } from "@src/middleware/auth";
+import { isAuthenticatedCustomer, firebaseAuth } from "@src/middleware/auth";
 import {
   addToWishlist,
   removeFromWishlist,
@@ -7,6 +7,7 @@ import {
   getCart,
   addToCart,
   removeFromCart,
+  createCart,
 } from "@src/controller/product/product";
 import {
   getAllCustomer,
@@ -25,7 +26,7 @@ import {
   isPhoneExist,
   googleLogin,
   verifyEmail,
-  isPhoneEmailExist
+  isPhoneEmailExist,
 } from "@src/controller/user/customer";
 import { get } from "http";
 const userRouter = express.Router();
@@ -38,16 +39,10 @@ userRouter.route("/signup").post(signupCustomer);
 userRouter.route("/login").post(loginCustomer);
 userRouter.route("/logout").get(logoutCustomer);
 userRouter.route("/getAll").get(getAllCustomer);
-userRouter
-  .route("/getCurrent")
-  .get(firebaseAuth, getCurrentCustomer);
+userRouter.route("/getCurrent").get(firebaseAuth, getCurrentCustomer);
 // userRouter.route("/delete/:id").delete(isAuthenticatedCustomer, deleteCustomer);
-userRouter
-  .route("/update")
-  .patch(firebaseAuth, updateCustomerDetails);
-userRouter
-  .route("/changePassword")
-  .patch(firebaseAuth, changePassword);
+userRouter.route("/update").patch(firebaseAuth, updateCustomerDetails);
+userRouter.route("/changePassword").patch(firebaseAuth, changePassword);
 userRouter.route("/forgetPassword").post(forgetPassword);
 userRouter.route("/resetPassword").post(resetPassword);
 
@@ -59,6 +54,7 @@ userRouter
 
 userRouter
   .route("/cart")
+  .post(firebaseAuth, createCart)
   .get(firebaseAuth, getCart)
   .patch(firebaseAuth, addToCart)
   .delete(firebaseAuth, removeFromCart);

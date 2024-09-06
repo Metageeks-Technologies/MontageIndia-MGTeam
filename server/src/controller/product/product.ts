@@ -854,6 +854,37 @@ export const addToCart = catchAsyncError(async (req: any, res, next) => {
   });
 });
 
+export const createCart = catchAsyncError(async (req: any, res, next) => {
+  const { cart } = req.body;
+  const customerId = req.user._id;
+  if (!cart) {
+    return next(new ErrorHandler(`cart is required`, 400));
+  }
+  if (!customerId) {
+    return next(new ErrorHandler(`customerId is required`, 400));
+  }
+
+  const customer = await Customer.findById(customerId);
+  if (!customer) {
+    return next(new ErrorHandler(`customer not found`, 404));
+  }
+  const userCart = customer.cart;
+
+  if (!userCart || userCart.length === 0) {
+    customer.cart = cart;
+    await customer.save();
+  } else {
+    const newCart = [...userCart, ...cart];
+    customer.cart = newCart;
+    await customer.save();
+  }
+
+  res.status(200).json({
+    success: true,
+    message: "Cart created",
+  });
+});
+
 export const removeFromCart = catchAsyncError(async (req: any, res, next) => {
   const { productId } = req.body;
   const customerId = req.user._id;

@@ -21,6 +21,8 @@ import {
   setupRecaptcha,
 } from "@/utils/loginOptions";
 import { Tabs, Tab, Card, CardBody, CardHeader } from "@nextui-org/react";
+import { createCart } from "@/app/redux/feature/product/api";
+import { useAppDispatch } from "@/app/redux/hooks";
 
 const LoginPage = () => {
   const router = useRouter();
@@ -35,6 +37,7 @@ const LoginPage = () => {
   const [isOtpSent, setIsOtpSent] = useState<boolean>(false);
   const [resendOtpCooldown, setResendOtpCooldown] = useState<number>(60);
   const [activeTab, setActiveTab] = useState<string>("email");
+  const dispatch = useAppDispatch();
   const [loaders, setLoaders] = useState({
     loader: false,
     sentOtp: false,
@@ -69,6 +72,7 @@ const LoginPage = () => {
         console.log("user logged in", userCredential.user);
         setLoaders({ ...loaders, loader: false });
         router.push(redirectUrl || "/");
+        await createCart(dispatch);
         notifySuccess("Login Successful");
         setEmail("");
         setPassword("");
@@ -113,6 +117,7 @@ const LoginPage = () => {
 
       notifySuccess("Login Successful");
       router.push(redirectUrl || "/");
+      await createCart(dispatch);
       setEmail("");
       setPassword("");
     } catch (error: any) {
@@ -172,6 +177,7 @@ const LoginPage = () => {
       setLoaders({ ...loaders, verifyOtp: false });
       notifySuccess("OTP verified successfully");
       router.push(redirectUrl || "/");
+      await createCart(dispatch);
     } else {
       console.log("response", response.error);
       setError(response.error);

@@ -347,3 +347,23 @@ export const removeFromLocalStorageCart = (
   }
   dispatch(removeCartProduct(productId));
 };
+
+export const createCart = async (dispatch: AppDispatch) => {
+  if (typeof window === "undefined") return;
+  dispatch(requestStart());
+  try {
+    let cart: CartItem[] = [];
+    const cartData = localStorage.getItem("_mi_cart");
+    if (cartData) {
+      const parsedCart = JSON.parse(cartData) as CartItem[];
+      cart = parsedCart;
+    }
+
+    const { data } = await instance.post(`/user/cart`, { cart });
+    dispatch(setCart([]));
+    localStorage.removeItem("_mi_cart");
+  } catch (error: any) {
+    const e = error as AxiosError;
+    dispatch(requestFail(e.message));
+  }
+};

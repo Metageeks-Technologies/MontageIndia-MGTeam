@@ -15,6 +15,8 @@ import {
   signUpWithEmailAndPhone,
 } from "@/utils/loginOptions";
 import { useSearchParams } from "next/navigation";
+import { createCart } from "@/app/redux/feature/product/api";
+import { useAppDispatch } from "@/app/redux/hooks";
 interface FormData {
   name: string;
   email: string;
@@ -26,6 +28,7 @@ interface FormData {
 
 const SignUpPage = () => {
   const router = useRouter();
+  const dispatch = useAppDispatch();
   const searchParams = useSearchParams();
   const [formData, setFormData] = useState<FormData>({
     name: "",
@@ -93,6 +96,8 @@ const SignUpPage = () => {
       }
       notifySuccess("SignUp Successful");
       router.push(redirectUrl || "/");
+      await createCart(dispatch);
+
       return;
     } catch (error: any) {
       console.error("Login error:", error);
@@ -140,6 +145,7 @@ const SignUpPage = () => {
       if (response.status === 201) {
         notifySuccess("SignUp Successful");
         router.replace(redirectUrl || "/");
+        await createCart(dispatch);
       }
     } catch (error: any) {
       setLoaders({ ...loaders, signUp: false });
