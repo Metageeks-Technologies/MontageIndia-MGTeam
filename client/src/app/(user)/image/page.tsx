@@ -19,8 +19,7 @@ const filterOptions = {
   more: [
     {label: 'Size', options: {minHeight: 0, minWidth: 0}},
     {label: 'File Type', options: ['JPEG', 'PNG']},
-  ],
-  density: 0
+  ], density: 0
 };
 
 const Page = () => {
@@ -62,6 +61,7 @@ const Page = () => {
       searchTerm,
       category: categoryParam,
     } );
+    
     setLoading( false );
   };
 
@@ -76,10 +76,8 @@ const Page = () => {
           ...filters
         }
       } );
-      console.log( "response:-", response )
-      setFilteredData(response.data.products)
-      // Update your state with the filtered data
-      // You might need to dispatch an action to update the Redux store
+      console.log("response in filtered data:-",response)
+      setFilteredData( response.data.products );
       setLoading( false );
     } catch ( error ) {
       console.error( "Error fetching filtered data:", error );
@@ -90,28 +88,50 @@ const Page = () => {
   const handleFilterChange = ( filterType: string, value: string | number ) => {
     const currentParams = new URLSearchParams( searchParams.toString() );
     currentParams.set( filterType, value.toString() );
-
-    // Update URL with new filter params
     router.push( `?${currentParams.toString()}`, {scroll: false} );
-
-    // Fetch filtered data
     const filters = Object.fromEntries( currentParams );
     fetchFilterData( imagePage, filters );
   };
 
-  useEffect( () => {
+  const handleClearFilters = () => {
+    const currentParams = new URLSearchParams( searchParams.toString() );
+    currentParams.delete( 'sortBy' );
+    currentParams.delete( 'orientation' );
+    currentParams.delete( 'minHeight' );
+    currentParams.delete( 'minWidth' );
+    currentParams.delete( 'fileType' );
+    currentParams.delete( 'minDensity' );
+    router.push( `?${currentParams.toString()}`, {scroll: false} );
     fetchData( imagePage );
+  }
+
+  const hasFilterParams = () => {
+    return Array.from( searchParams.keys() ).some( key =>
+      ['sortBy', 'orientation', 'minHeight', 'minWidth', 'fileType', 'minDensity'].includes( key )
+    );
+  };
+
+  useEffect( () => {
+    const filterParamsExist = hasFilterParams();
+    setIsFilterOpen( filterParamsExist );
+    if ( hasFilterParams() ) {
+      const filters = Object.fromEntries( searchParams );
+      fetchFilterData( imagePage, filters );
+    } else {
+      fetchData( imagePage );
+    }
     return () => {
       clearKeywords( dispatch );
     };
-    
   }, [imagePage, searchParams] );
+
+  const displayData = hasFilterParams() ? filteredData : product;
 
   return (
     <div className="flex flex-col min-h-screen">
       <Searchbar />
       <div className="flex flex-1">
-        <Filter isOpen={isFilterOpen} onToggle={toggleFilter} filterOptions={filterOptions} onFilterChange={handleFilterChange} />
+        <Filter isOpen={isFilterOpen} onToggle={toggleFilter} filterOptions={filterOptions} onFilterChange={handleFilterChange} onclearFilter = {handleClearFilters} />
         <div className={`flex-1 transition-all duration-300 ease-in-out `}>
           <div className="p-4">
             <button
@@ -136,12 +156,8 @@ const Page = () => {
                       </div>
                     ) : (
                       <div className="columns-1 sm:columns-2 md:columns-3 lg:columns-4 gap-2 mt-2 relative">
-                          {filteredData.length>0 ? ( (
-                            filteredData.map( ( data:any ) => (
-                              <ImageGallery key={data._id} data={data} />
-                            ) )
-                          ) ) : product.length > 0 ?  (
-                          product.map( ( data ) => (
+                        {displayData.length > 0 ? (
+                          displayData.map( ( data: any ) => (
                             <ImageGallery key={data._id} data={data} />
                           ) )
                         ) : (
