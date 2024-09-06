@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import CartPopup from "../cart/cartPage";
 import { AiOutlineHeart, AiOutlineMenu, AiOutlineClose } from "react-icons/ai";
 import { IoIosArrowDropdown, IoMdArrowDropdown } from "react-icons/io";
@@ -32,13 +32,17 @@ interface NavItemProps {
 const Navbar: React.FC = () => {
   const [menuOpen, setMenuOpen] = useState<boolean>(false);
   const [isUserOpen, setIsUserOpen] = useState<boolean>(false);
-  const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
+  const [isEditorChosePopupOpen, setIsDropdownOpen] = useState<boolean>(false);
   const [isMobile, setIsMobile] = useState<boolean>(false);
+  const [mobileDropdownOpen, setMobileDropdownOpen] = useState<boolean>(false);
+  const mobileDropdownRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
 
   // Replace this with your actual user state management
   const { user } = useAppSelector((state) => state.user);
   const cart = useAppSelector((state) => state.product.cart);
+
+  const editorChoiceRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleResize = () => {
@@ -49,8 +53,41 @@ const Navbar: React.FC = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const toggleDropdown = () => setIsDropdownOpen(!isDropdownOpen);
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        editorChoiceRef.current &&
+        !editorChoiceRef.current.contains(event.target as Node)
+      ) {
+        setIsDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  const toggleDropdown = () => setIsDropdownOpen(!isEditorChosePopupOpen);
   const closeDropdown = () => setIsDropdownOpen(false);
+  const toggleMobileDropdown = () => setMobileDropdownOpen(!mobileDropdownOpen);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        mobileDropdownRef.current &&
+        !mobileDropdownRef.current.contains(event.target as Node)
+      ) {
+        setMobileDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   const handleLogout = async () => {
     try {
@@ -64,6 +101,7 @@ const Navbar: React.FC = () => {
   };
 
   const handleUserIconClick = () => {
+    if (isUserOpen) return;
     setIsUserOpen(!isUserOpen);
   };
 
@@ -87,11 +125,29 @@ const Navbar: React.FC = () => {
   }) => (
     <Link
       href={href}
-      className="text-gray-600 hover:text-gray-800 block py-2 px-4 hover:bg-gray-100 transition duration-200"
+      className="text-gray-600 hover:text-gray-800 block py-2 ps-4 pe-8 hover:bg-gray-100 transition duration-200"
     >
       {children}
     </Link>
   );
+
+  const userPopupRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        userPopupRef.current &&
+        !userPopupRef.current.contains(event.target as Node)
+      ) {
+        setIsUserOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   return (
     <div className="bg-white shadow-md">
@@ -115,18 +171,22 @@ const Navbar: React.FC = () => {
                   <NavItem href="/audio">Audio</NavItem>
                   <li className="relative group">
                     <button
+                      disabled={isEditorChosePopupOpen}
                       onClick={toggleDropdown}
                       className="flex items-center text-gray-700 hover:text-black"
                     >
                       Editor Choice
                       <IoIosArrowDropdown
                         className={`ml-1 transform ${
-                          isDropdownOpen ? "rotate-180" : ""
+                          isEditorChosePopupOpen ? "rotate-180" : ""
                         } transition-transform duration-200`}
                       />
                     </button>
-                    {isDropdownOpen && (
-                      <div className="absolute  mt-2 w-fit bg-white border rounded shadow-xl z-50 flex flex-col items-center justify-center  top-full  px-4 ">
+                    {isEditorChosePopupOpen && (
+                      <div
+                        ref={editorChoiceRef}
+                        className="absolute  mt-2 w-fit bg-white border rounded shadow-xl z-50 flex flex-col items-center justify-start  top-full  "
+                      >
                         <DropdownItem href="/video?category=editor choice&mediaType=video">
                           Video
                         </DropdownItem>
@@ -151,27 +211,30 @@ const Navbar: React.FC = () => {
                 {user.subscription.credits || 0} Credits Available
               </span>
             )}
-            <Link href="/user-profile/wishlist">
+            <Link href={!!user ? "/user-profile/wishlist" : "/auth/user/login"}>
               <AiOutlineHeart className="text-gray-700 hover:text-webred cursor-pointer w-7 h-7 transition-transform duration-200 ease-in-out hover:scale-110" />
             </Link>
 
             <CartPopup />
             <div className="relative">
               {user ? (
-                <img
-                  src={user.image}
-                  alt={user.name}
-                  className="w-10 h-10 rounded-full cursor-pointer"
-                  onClick={handleUserIconClick}
-                />
+                <button disabled={isUserOpen} onClick={handleUserIconClick}>
+                  <img
+                    src={user.image}
+                    alt={user.name}
+                    className="w-10 h-10 rounded-full cursor-pointer"
+                  />
+                </button>
               ) : (
-                <FaUserCircle
-                  className="w-7 h-7 text-gray-700 cursor-pointer"
-                  onClick={handleUserIconClick}
-                />
+                <button disabled={isUserOpen} onClick={handleUserIconClick}>
+                  <FaUserCircle className="w-10 h-10 rounded-full cursor-pointer" />
+                </button>
               )}
               {isUserOpen && (
-                <div className="absolute right-0 mt-2 w-48 bg-white border rounded shadow-xl z-50">
+                <div
+                  ref={userPopupRef}
+                  className="absolute right-0 mt-2 w-48 bg-white border rounded shadow-xl z-50"
+                >
                   {user ? (
                     <>
                       <button
@@ -260,21 +323,23 @@ const Navbar: React.FC = () => {
                 <>
                   <button
                     onClick={handleProfileClick}
-                    className="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-black hover:bg-gray-100"
+                    className="flex items-center w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100"
                   >
+                    <FaUserCircle className="w-5 h-5 mr-3" />
                     User Profile
                   </button>
                   <button
                     onClick={handleLogout}
-                    className="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-black hover:bg-gray-100"
+                    className="flex items-center w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100"
                   >
+                    <BiLogOutCircle className="w-5 h-5 mr-3" />
                     Logout
                   </button>
                 </>
               ) : (
                 <button
                   onClick={() => router.push("/auth/user/login")}
-                  className="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-black hover:bg-gray-100"
+                  className="flex items-center w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100"
                 >
                   Log In
                 </button>

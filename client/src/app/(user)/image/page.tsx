@@ -42,9 +42,11 @@ const Page = () => {
     handlePageChange(imagePage === 1 ? totalImageNumOfPage : imagePage - 1);
   };
 
+  const { user } = useAppSelector((state) => state.user);
+
   const fetchData = async (page: number) => {
     setloading(true);
-    const response = await getImage(dispatch, {
+    const response = await getImage(dispatch, !!user, {
       page: imagePage,
       productsPerPage: 10,
       mediaType: ["image"],
@@ -81,20 +83,19 @@ const Page = () => {
                   <Spinner label="Loading..." color="danger" />
                 </div>
               ) : (
-                  <div className="columns-1 sm:columns-2 md:columns-3 lg:columns-4 gap-2 mt-2 relative">
-                   {product.length > 0 ? (
-                    product.map( ( data ) => (
+                <div className="columns-1 sm:columns-2 md:columns-3 lg:columns-4 gap-2 mt-2 relative">
+                  {product.length > 0 ? (
+                    product.map((data) => (
                       <ImageGallery key={data._id} data={data} />
-                    ) )
+                    ))
                   ) : (
-                        <p>No Images found.</p>
+                    <p>No Images found.</p>
                   )}
                 </div>
               )}
             </div>
           </div>
         </div>
-
 
         {/* Pagination */}
         {totalImageNumOfPage > 1 && (
@@ -104,10 +105,11 @@ const Page = () => {
               type="button"
               disabled={currentPage === 1}
               variant="flat"
-              className={`${currentPage === 1
-                ? "opacity-70 cursor-not-allowed"
-                : "hover:bg-webred"
-                } bg-webred text-white rounded-full font-bold`}
+              className={`${
+                currentPage === 1
+                  ? "opacity-70 cursor-not-allowed"
+                  : "hover:bg-webred"
+              } bg-webred text-white rounded-full font-bold`}
               onPress={handlePrevPage}
             >
               Prev
@@ -124,16 +126,17 @@ const Page = () => {
               onChange={handlePageChange}
               initialPage={1}
             />
-         
+
             <Button
               type="button"
               size="sm"
               disabled={currentPage === totalPages}
               variant="flat"
-              className={`${currentPage === totalPages
-                ? "opacity-70 cursor-not-allowed"
-                : "hover:bg-webred"
-                } bg-webred text-white rounded-full font-bold`}
+              className={`${
+                currentPage === totalPages
+                  ? "opacity-70 cursor-not-allowed"
+                  : "hover:bg-webred"
+              } bg-webred text-white rounded-full font-bold`}
               onPress={handleNextPage}
             >
               Next

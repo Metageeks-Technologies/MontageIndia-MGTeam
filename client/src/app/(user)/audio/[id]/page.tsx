@@ -1,17 +1,18 @@
 "use client";
-import
-{
+import {
   clearSingleProductData,
   getSingleProduct,
   addProductToCart,
   addProductToWishlist,
   removeProductFromCart,
   removeProductFromWishlist,
+  setSingleProductInLocalStorage,
+  removeSingleProductFromLocalStorage,
 } from "@/app/redux/feature/product/api";
 import { useAppDispatch, useAppSelector } from "@/app/redux/hooks";
 import Searchbar from "@/components/searchBar/search";
 import DetailWaveform from "@/components/Home/DetailWaveForm";
-import { useParams } from "next/navigation";
+import { useParams, useRouter, usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { BiSolidPurchaseTagAlt } from "react-icons/bi";
 import { BsCart2, BsCartCheckFill } from "react-icons/bs";
@@ -31,58 +32,49 @@ import { getAudio } from "@/app/redux/feature/product/audio/api";
 import { formatSecToMin } from "@/utils/DateFormat";
 import { notifyWarn } from "@/utils/toast";
 import CustomShareButton from "@/components/Home/gallary/share";
-import {LuIndianRupee} from "react-icons/lu";
+import { LuIndianRupee } from "react-icons/lu";
+import { redirectToLogin } from "@/utils/redirectToLogin";
 
-const page = () =>
-{
+const page = () => {
   const params = useParams();
   const id = params.id as string | undefined;
-  const [ cartLoading, setCartLoading ] = useState( false );
-  const [ wishlistLoading, setWishlistLoading ] = useState( false );
-  const [ tryLoading, setTryLoading ] = useState( false );
+  const [cartLoading, setCartLoading] = useState(false);
+  const [wishlistLoading, setWishlistLoading] = useState(false);
+  const [tryLoading, setTryLoading] = useState(false);
   const dispatch = useAppDispatch();
   const { audioData, similarProducts, page, totalNumOfPage } = useAppSelector(
-    ( state ) => state.product
+    (state) => state.product
   );
-  useEffect( () =>
-  {
-    getAudio( dispatch, {
-      page: page,
-      productsPerPage: 4,
-      mediaType: [ "audio" ],
-    } );
-  }, [ page ] );
+  const { user } = useAppSelector((state) => state.user);
 
-  useEffect( () =>
-  {
-    if ( id ) getSingleProduct( dispatch, id );
-    getAudio( dispatch, {
+  useEffect(() => {
+    if (id) getSingleProduct(dispatch, !!user, id);
+    getAudio(dispatch, !!user, {
       page: page,
       productsPerPage: 4,
-      mediaType: [ "audio" ],
-    } );
-    return () =>
-    {
-      clearSingleProductData( dispatch );
+      mediaType: ["audio"],
+    });
+    return () => {
+      clearSingleProductData(dispatch);
     };
-  }, [ id ] );
+  }, [id, page]);
 
   const {
     singleProduct: product,
     loading,
     cart,
-  } = useAppSelector( ( state ) => state.product );
-  const { user } = useAppSelector( ( state ) => state.user );
+  } = useAppSelector((state) => state.product);
 
-  const isVariantPurchased = ( variantId: string ) =>
-  {
-    return user?.purchasedProducts.some( ( item ) =>
-      item.variantId.includes( variantId )
+  const router = useRouter();
+  const pathname = usePathname();
+
+  const isVariantPurchased = (variantId: string) => {
+    return user?.purchasedProducts.some((item) =>
+      item.variantId.includes(variantId)
     );
   };
-  const isVariantInCart = ( variantId: string ) =>
-  {
-    return cart.some( ( item ) => item.variantId.includes( variantId ) );
+  const isVariantInCart = (variantId: string) => {
+    return cart.some((item) => item.variantId.includes(variantId));
   };
 
   // const handleCart = (variant: string) => {
@@ -102,71 +94,70 @@ const page = () =>
   //   } else {
   //   }
   // };
-  const handleCart = async () =>
-  {
-    if ( !product || loading || cartLoading ) return;
-    setCartLoading( true );
-    try
-    {
-      if ( product.isInCart )
-      {
-        await removeProductFromCart( dispatch, product._id );
-      } else
-      {
-        await addProductToCart( dispatch, product._id, product.variants[ 0 ]._id );
+  const handleCart = async () => {
+    if (!product || loading || cartLoading) return;
+    if (!user && !product.isInCart) {
+      setSingleProductInLocalStorage(
+        { productId: product, variantId: product.variants[0]._id },
+        dispatch
+      );
+    }
+    if (!user && product.isInCart) {
+      removeSingleProductFromLocalStorage(product._id, dispatch);
+    }
+    setCartLoading(true);
+    try {
+      if (product.isInCart) {
+        await removeProductFromCart(dispatch, product._id);
+      } else {
+        await addProductToCart(dispatch, product._id, product.variants[0]._id);
       }
-    } catch ( error )
-    {
-      console.error( "Error updating cart:", error );
-    } finally
-    {
-      setCartLoading( false );
+    } catch (error) {
+      console.error("Error updating cart:", error);
+    } finally {
+      setCartLoading(false);
     }
   };
 
-  const handleeWishlist = async () =>
-  {
-    if ( !product || wishlistLoading ) return;
-    setWishlistLoading( true );
-    try
-    {
-      if ( product.isWhitelisted )
-      {
-        await removeProductFromWishlist( dispatch, product._id );
-      } else
-      {
-        await addProductToWishlist( dispatch, product._id, product.variants[ 0 ]._id );
+  const handleeWishlist = async () => {
+    if (!product || wishlistLoading) return;
+    if (!user) {
+      redirectToLogin(router, pathname);
+      return;
+    }
+    setWishlistLoading(true);
+    try {
+      if (product.isWhitelisted) {
+        await removeProductFromWishlist(dispatch, product._id);
+      } else {
+        await addProductToWishlist(
+          dispatch,
+          product._id,
+          product.variants[0]._id
+        );
       }
-    } catch ( error )
-    {
-      console.error( "Error updating wishlist:", error );
-    } finally
-    {
-      setWishlistLoading( false );
+    } catch (error) {
+      console.error("Error updating wishlist:", error);
+    } finally {
+      setWishlistLoading(false);
     }
   };
 
-  const handleDownload = async () =>
-  {
-    if ( !product || tryLoading ) return;
-    setTryLoading( true );
-    try
-    {
-      await downloadProduct( dispatch, product.publicKey, product.title );
-    } catch ( error )
-    {
-      console.error( "Error downloading product:", error );
-    } finally
-    {
-      setTryLoading( false );
+  const handleDownload = async () => {
+    if (!product || tryLoading) return;
+    setTryLoading(true);
+    try {
+      await downloadProduct(dispatch, product.publicKey, product.title);
+    } catch (error) {
+      console.error("Error downloading product:", error);
+    } finally {
+      setTryLoading(false);
     }
   };
 
-  const [ downloading, setLoading ] = useState( false );
+  const [downloading, setLoading] = useState(false);
 
-
-  if ( !product )
-  {
+  if (!product) {
     return <div></div>;
   }
 
@@ -182,12 +173,18 @@ const page = () =>
               {product && (
                 <div className="relative">
                   <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 pt-4 pr-6">
-                    <h1 className="text-xl sm:text-2xl font-semibold mb-2 sm:mb-0">{product.title}</h1>
+                    <h1 className="text-xl sm:text-2xl font-semibold mb-2 sm:mb-0">
+                      {product.title}
+                    </h1>
                     <div className="flex flex-wrap gap-2">
                       <button
                         onClick={handleeWishlist}
                         disabled={wishlistLoading}
-                        title={product.isWhitelisted ? "Remove from Saved" : "Save Image"}
+                        title={
+                          product.isWhitelisted
+                            ? "Remove from Saved"
+                            : "Save Image"
+                        }
                         className="flex gap-2 border py-1 items-center rounded bg-white px-3 text-sm"
                       >
                         {wishlistLoading ? (
@@ -215,7 +212,6 @@ const page = () =>
                     </div>
                   </div>
                   <div className="w-full h-48 sm:h-64 md:h-80 lg:h-[32rem] rounded-lg">
-
                     {product && <DetailWaveform product={product} />}
                   </div>
                   <div className="mt-2 w-full lg:w-[50rem]">
@@ -232,59 +228,90 @@ const page = () =>
               {product && (
                 <>
                   <div className="border p-4 sm:p-6 bg-white rounded-lg">
-                    <h3 className="font-bold text-lg sm:text-xl mb-4">Music Standard a License</h3>
+                    <h3 className="font-bold text-lg sm:text-xl mb-4">
+                      Music Standard a License
+                    </h3>
                     <p className="text-xs sm:text-sm text-gray-600 mb-4">
-                      All Royalty-Free licenses include global use rights, comprehensive protection, and simple pricing with volume discounts available
+                      All Royalty-Free licenses include global use rights,
+                      comprehensive protection, and simple pricing with volume
+                      discounts available
                     </p>
                     <div className="space-y-4">
-                      {product.variants.map( ( license, index ) => (
+                      {product.variants.map((license, index) => (
                         <div
                           key={index}
                           className="border w-full cursor-pointer hover:bg-[#F4F4F4] p-3 flex flex-row justify-between items-center rounded-md"
                           onClick={() => handleCart()}
-
                         >
                           <div className=" items-center gap-3">
                             {index === 0 ? (
-                              <span className="text-sm font-semibold">Original</span>
+                              <span className="text-sm font-semibold">
+                                Original
+                              </span>
                             ) : index === 1 ? (
-                              <span className="text-sm font-semibold">Medium</span>
+                              <span className="text-sm font-semibold">
+                                Medium
+                              </span>
                             ) : (
-                              <span className="text-sm font-semibold">Small</span>
+                              <span className="text-sm font-semibold">
+                                Small
+                              </span>
                             )}
                             <div className="text-sm py-2">
                               {license?.metadata?.bitrate} Kbps
                             </div>
                           </div>
                           <div>
-                            {isVariantPurchased( license._id ) ? (
+                            {isVariantPurchased(license._id) ? (
                               <div
                                 title="Purchased Product"
                                 className="p-2 flex items-center gap-1 bg-red-500 text-white rounded-full"
                               >
-                                <LuIndianRupee /> {license.price} <BiSolidPurchaseTagAlt />
+                                <LuIndianRupee /> {license.price}{" "}
+                                <BiSolidPurchaseTagAlt />
                               </div>
                             ) : (
                               <div
-                                title={isVariantInCart( license._id ) ? "Remove from cart" : "Add to cart"}
+                                title={
+                                  isVariantInCart(license._id)
+                                    ? "Remove from cart"
+                                    : "Add to cart"
+                                }
                                 className="p-2 flex items-center gap-1 text-black rounded-full"
                               >
                                 <LuIndianRupee />
                                 {license.price}
                                 <span
-                                  className={`p-2 ${isVariantInCart( license._id )
-                                    ? "bg-webred text-white"
-                                    : "bg-white text-black"
-                                    } rounded-full`}
+                                  className={`p-2 ${
+                                    isVariantInCart(license._id)
+                                      ? "bg-webred text-white"
+                                      : "bg-white text-black"
+                                  } rounded-full`}
                                 >
-                                    {cartLoading ? (
+                                  {cartLoading ? (
                                     <span className="h-5 w-5 flex items-center justify-center">
-                                      <svg className="animate-spin h-5 w-5 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                      <svg
+                                        className="animate-spin h-5 w-5 text-current"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                      >
+                                        <circle
+                                          className="opacity-25"
+                                          cx="12"
+                                          cy="12"
+                                          r="10"
+                                          stroke="currentColor"
+                                          strokeWidth="4"
+                                        ></circle>
+                                        <path
+                                          className="opacity-75"
+                                          fill="currentColor"
+                                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                                        ></path>
                                       </svg>
                                     </span>
-                                  ) : isVariantInCart( license._id ) ? (
+                                  ) : isVariantInCart(license._id) ? (
                                     <BsCartCheckFill className="h-5 w-5" />
                                   ) : (
                                     <BsCart2 className="h-5 w-5" />
@@ -294,7 +321,7 @@ const page = () =>
                             )}
                           </div>
                         </div>
-                      ) )}
+                      ))}
                     </div>
                   </div>
 
@@ -303,22 +330,27 @@ const page = () =>
                     <div className="space-y-3 text-sm">
                       <div className="flex justify-between">
                         <span className="font-medium w-1/3">Title:</span>
-                        <p className="text-blue-600 hover:underline">{product?.title}</p>
+                        <p className="text-blue-600 hover:underline">
+                          {product?.title}
+                        </p>
                       </div>
                       <div className="flex justify-between">
                         <span className="font-medium w-1/3">Audio Format:</span>
-                        <span className="text-neutral-600">{product.variants[0].metadata?.format}</span>
+                        <span className="text-neutral-600">
+                          {product.variants[0].metadata?.format}
+                        </span>
                       </div>
                       <div className="flex justify-between">
                         <span className="font-medium w-1/3">Track Length:</span>
-                        <span className="text-neutral-600 whitespace-nowrap" >
+                        <span className="text-neutral-600 whitespace-nowrap">
                           {product.variants[0].metadata?.length} Minutes
                         </span>
                       </div>
                       <div className="flex justify-between">
                         <span className="font-medium w-1/3">Bit Rate:</span>
                         <span className="text-neutral-600 whitespace-nowrap">
-                          {product.variants[0].metadata?.bitrate} Kbps                         </span>
+                          {product.variants[0].metadata?.bitrate} Kbps{" "}
+                        </span>
                       </div>
                       <div className="flex justify-between">
                         <span className="font-medium w-1/3">Max Size:</span>
@@ -330,12 +362,15 @@ const page = () =>
                       <div className="flex justify-between">
                         <span className="font-medium w-1/3">Categories:</span>
                         <div className="flex flex-wrap ">
-                          {product.category.map( ( category, index ) => (
-                            <p key={index} className="text-blue-600 hover:underline">
+                          {product.category.map((category, index) => (
+                            <p
+                              key={index}
+                              className="text-blue-600 hover:underline"
+                            >
                               {category}
                               {index !== product.category.length - 1 && ","}
                             </p>
-                          ) )}
+                          ))}
                         </div>
                       </div>
                     </div>
@@ -343,45 +378,46 @@ const page = () =>
                 </>
               )}
             </div>
-
           </div>
 
           <div className="pt-8 sm:pt-12 bg-pureWhite-light w-full px-4 sm:px-6 lg:px-4 xl:px-24 md:px-4 py-8">
             <h1 className="font-semibold text-lg sm:text-xl">Similar Audios</h1>
-            {similarProducts.map( ( product, index ) => (
+            {similarProducts.map((product, index) => (
               <Waveform
                 key={index}
                 product={product}
                 productType="similarProducts"
               />
-            ) )}
+            ))}
           </div>
 
           {product && (
             <div className="px-4 sm:px-6 lg:px-4 xl:px-24 md:px-4 bg-pureWhite-light">
               <div className="pt-8">
-                <h2 className="font-bold text-lg sm:text-xl">Related keywords</h2>
+                <h2 className="font-bold text-lg sm:text-xl">
+                  Related keywords
+                </h2>
                 <div className="flex flex-wrap gap-2 mt-2">
-                  {product.tags.map( ( keyword, index ) => (
+                  {product.tags.map((keyword, index) => (
                     <span key={index}>
                       <button className="border rounded-md py-1 px-3 sm:px-4 flex gap-1 items-center text-sm">
                         <IoSearchOutline className="h-4 w-4 sm:h-5 sm:w-5" />
                         {keyword}
                       </button>
                     </span>
-                  ) )}
+                  ))}
                 </div>
               </div>
               <div className="mt-8 mb-3">
                 <h1 className="font-semibold text-lg sm:text-xl">Category</h1>
                 <div className="flex flex-wrap gap-2 mt-2">
-                  {product.category.map( ( keyword, index ) => (
+                  {product.category.map((keyword, index) => (
                     <span key={index}>
                       <button className="border rounded-md py-1 px-3 sm:px-4 flex gap-1 items-center text-sm">
                         {keyword}
                       </button>
                     </span>
-                  ) )}
+                  ))}
                 </div>
               </div>
             </div>

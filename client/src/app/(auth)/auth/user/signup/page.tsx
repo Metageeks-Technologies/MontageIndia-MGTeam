@@ -14,7 +14,7 @@ import {
   signInWithGoogle,
   signUpWithEmailAndPhone,
 } from "@/utils/loginOptions";
-
+import { useSearchParams } from "next/navigation";
 interface FormData {
   name: string;
   email: string;
@@ -26,6 +26,7 @@ interface FormData {
 
 const SignUpPage = () => {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [formData, setFormData] = useState<FormData>({
     name: "",
     email: "",
@@ -46,7 +47,7 @@ const SignUpPage = () => {
     verifyOtp: false,
     signUp: false,
   });
-
+  const redirectUrl = searchParams.get("redirect");
   // sign with phone and email
   const handleSignUp = async () => {
     setError("");
@@ -91,7 +92,7 @@ const SignUpPage = () => {
         return;
       }
       notifySuccess("SignUp Successful");
-      router.push("/");
+      router.push(redirectUrl || "/");
       return;
     } catch (error: any) {
       console.error("Login error:", error);
@@ -138,7 +139,7 @@ const SignUpPage = () => {
 
       if (response.status === 201) {
         notifySuccess("SignUp Successful");
-        router.replace("/");
+        router.replace(redirectUrl || "/");
       }
     } catch (error: any) {
       setLoaders({ ...loaders, signUp: false });
@@ -389,8 +390,21 @@ const SignUpPage = () => {
                   onClick={() => {
                     handleSendOtp();
                   }}
-                  disabled={loaders.sendOtp || !formData.phone || !formData.email || !formData.password || !formData.name}
-                  className={`${(!formData.phone || !formData.email || !formData.password || !formData.name) ?"bg-red-400": "bg-webgreen"} text-white focus:ring-4 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center5 me-2 mb-2`}
+                  disabled={
+                    loaders.sendOtp ||
+                    !formData.phone ||
+                    !formData.email ||
+                    !formData.password ||
+                    !formData.name
+                  }
+                  className={`${
+                    !formData.phone ||
+                    !formData.email ||
+                    !formData.password ||
+                    !formData.name
+                      ? "bg-red-400"
+                      : "bg-webgreen"
+                  } text-white focus:ring-4 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center5 me-2 mb-2`}
                 >
                   {loaders.sendOtp ? <ThreeDotsLoader /> : "Continue"}
                 </button>

@@ -27,6 +27,7 @@ const Page = () => {
     totalVideoData,
     totalVideoNumOfPage,
   } = useAppSelector((state) => state.product);
+  const { user } = useAppSelector((state) => state.user);
 
   const handlePageChange = (page: number) => {
     dispatch(setVideoPage(page));
@@ -44,7 +45,7 @@ const Page = () => {
     setloading(true);
 
     // setLoading(true);
-    const response = await getVideo(dispatch, {
+    const response = await getVideo(dispatch, !!user, {
       page,
       mediaType: ["video"],
       searchTerm,
@@ -90,9 +91,9 @@ const Page = () => {
               ) : (
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3  mt-5  lg:border">
                   {product.length > 0 ? (
-                    product.map( ( data ) => (
+                    product.map((data) => (
                       <Trending key={data._id} data={data} />
-                    ) )
+                    ))
                   ) : (
                     <p>No videos found.</p>
                   )}
@@ -102,7 +103,6 @@ const Page = () => {
           </div>
         </div>
 
-
         {/* Pagination */}
         {totalVideoNumOfPage > 1 && (
           <div className="flex justify-center items-center gap-4 my-4">
@@ -111,10 +111,11 @@ const Page = () => {
               type="button"
               disabled={videoPage === 1}
               variant="flat"
-              className={`${videoPage === 1
+              className={`${
+                videoPage === 1
                   ? "opacity-70 cursor-not-allowed"
                   : "hover:bg-webred"
-                } bg-webred text-white rounded-full font-bold`}
+              } bg-webred text-white rounded-full font-bold`}
               onPress={handlePrevPage}
             >
               Prev
@@ -137,10 +138,11 @@ const Page = () => {
               size="sm"
               disabled={videoPage === totalVideoNumOfPage}
               variant="flat"
-              className={`${videoPage === totalVideoNumOfPage
+              className={`${
+                videoPage === totalVideoNumOfPage
                   ? "opacity-70 cursor-not-allowed"
                   : "hover:bg-webred"
-                } bg-webred text-white rounded-full font-bold`}
+              } bg-webred text-white rounded-full font-bold`}
               onPress={handleNextPage}
             >
               Next
@@ -151,7 +153,6 @@ const Page = () => {
         <Footer />
       </div>
     </>
-
   );
 };
 

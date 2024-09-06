@@ -12,13 +12,21 @@ import { Button, Badge } from "@nextui-org/react";
 import { removeCartItem } from "@/app/redux/feature/user/api";
 import { FaRegFaceSadTear } from "react-icons/fa6";
 import Link from "next/link";
-import { removeItemFromCart } from "@/app/redux/feature/product/api";
+import {
+  removeFromLocalStorageCart,
+  removeItemFromCart,
+} from "@/app/redux/feature/product/api";
 import { LuIndianRupee } from "react-icons/lu";
 function CartPopup() {
   const [isOpen, setIsOpen] = useState(false);
   const dispatch = useAppDispatch();
   const cart = useAppSelector((state) => state.product.cart);
+  const user = useAppSelector((state) => state.user.user);
   const handleRemoveCart = (id: string, variantId: string) => {
+    if (!user) {
+      removeFromLocalStorageCart(id, dispatch);
+      return;
+    }
     removeItemFromCart(dispatch, id);
   };
   const limitWords = (text: string, limit: number) => {
@@ -35,9 +43,27 @@ function CartPopup() {
     return string.charAt(0).toUpperCase() + string.slice(1);
   };
 
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const popupElement = document.getElementById("cart-popup");
+      if (
+        popupElement &&
+        !popupElement.contains(event.target as Node) &&
+        isOpen
+      ) {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isOpen]);
+
   return (
     <>
-      <div onClick={() => setIsOpen(true)} >
+      <button disabled={isOpen} onClick={() => setIsOpen(true)}>
         <Badge
           color="danger"
           className={`${cart.length > 0 ? " text-xs" : "hidden"}`}
@@ -46,8 +72,9 @@ function CartPopup() {
         >
           <AiOutlineShoppingCart className="text-gray-700 cursor-pointer w-6 h-6 transition-transform duration-200 ease-in-out hover:scale-110 -700 mt-1" />
         </Badge>
-      </div>
+      </button>
       <div
+        id="cart-popup"
         className={`${
           !isOpen
             ? "hidden"

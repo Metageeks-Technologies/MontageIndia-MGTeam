@@ -1,6 +1,8 @@
+"use client";
 import { TCustomerProduct } from "@/types/product";
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
+import { getCartFromLocalStorage } from "./api";
 
 export type CartItem = {
   productId: TCustomerProduct;
@@ -78,7 +80,7 @@ const initialState: InitialState = {
   videoPage: 1,
   totalVideoNumOfPage: 1,
   totalVideoData: 0,
-  cart: [],
+  cart: getCartFromLocalStorage() || [],
 
   relatedKeyword: [],
   similarProducts: [],
@@ -367,6 +369,20 @@ export const audioSlice = createSlice({
       state.loading = false;
       state.error = " ";
     },
+    handleVariantChange: (
+      state,
+      action: PayloadAction<{ productId: string; variantId: string }>
+    ) => {
+      const { productId, variantId } = action.payload;
+      const product = state.cart.find(
+        (item) => item.productId._id === productId
+      );
+      if (product) {
+        state.cart = state.cart.map((item) =>
+          item.productId._id === productId ? { ...item, variantId } : item
+        );
+      }
+    },
   },
 });
 
@@ -379,7 +395,7 @@ export const {
   addToCart,
   removeFromCart,
   setImageData,
-
+  handleVariantChange,
   setImagePage,
   setSingleProduct,
   setAudioPage,

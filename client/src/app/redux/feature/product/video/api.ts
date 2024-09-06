@@ -3,17 +3,22 @@ import { requestStart, requestFail, setVideoData, setKeyWords } from "../slice";
 import type { AppDispatch } from "@/app/redux/store";
 import type { AxiosError } from "axios";
 import { notifyError } from "@/utils/toast";
+import { filerProductForUser } from "../api";
 
-export const getVideo = async (dispatch: AppDispatch, params: any) => {
+export const getVideo = async (
+  dispatch: AppDispatch,
+  user: boolean,
+  params: any
+) => {
   dispatch(requestStart());
   try {
     const { data } = await instance.get(`product/customer`, {
       params: { ...params },
     });
-    console.log(data);
+
     dispatch(
       setVideoData({
-        data: data.products,
+        data: filerProductForUser({ products: data.products, user }),
         totalNumOfPage: data.numOfPages,
         totalData: data.totalData,
       })

@@ -12,7 +12,7 @@ import Link from "next/link";
 import { Spinner } from "@nextui-org/react";
 import Swal from "sweetalert2";
 import { ThreeDotsLoader } from "@/components/loader/loaders";
-
+import { useSearchParams } from "next/navigation";
 import {
   signInWithGoogle,
   signInWithEmailPassword,
@@ -24,6 +24,7 @@ import { Tabs, Tab, Card, CardBody, CardHeader } from "@nextui-org/react";
 
 const LoginPage = () => {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -39,6 +40,8 @@ const LoginPage = () => {
     sentOtp: false,
     verifyOtp: false,
   });
+
+  const redirectUrl = searchParams.get("redirect");
 
   const handleTabClick = (tabName: string) => {
     setActiveTab(tabName);
@@ -65,7 +68,7 @@ const LoginPage = () => {
         const userCredential = response.result;
         console.log("user logged in", userCredential.user);
         setLoaders({ ...loaders, loader: false });
-        router.push("/");
+        router.push(redirectUrl || "/");
         notifySuccess("Login Successful");
         setEmail("");
         setPassword("");
@@ -109,7 +112,7 @@ const LoginPage = () => {
       });
 
       notifySuccess("Login Successful");
-      router.push("/");
+      router.push(redirectUrl || "/");
       setEmail("");
       setPassword("");
     } catch (error: any) {
@@ -168,7 +171,7 @@ const LoginPage = () => {
       setError("");
       setLoaders({ ...loaders, verifyOtp: false });
       notifySuccess("OTP verified successfully");
-      router.push("/");
+      router.push(redirectUrl || "/");
     } else {
       console.log("response", response.error);
       setError(response.error);
@@ -400,20 +403,22 @@ const LoginPage = () => {
                           }}
                         />
                       </div>
-                      {phoneNumber && !isOtpSent && phoneNumber.length === 10 && (
-                        <div className="flex justify-end items-center mb-2">
-                          <button
-                            className="px-2 py-1 text-white rounded-md bg-webgreen hover:bg-webgreen-light "
-                            onClick={() => handleSendOtp()}
-                          >
-                            {loaders.sentOtp ? (
-                              <ThreeDotsLoader />
-                            ) : (
-                              <span>Send OTP</span>
-                            )}
-                          </button>
-                        </div>
-                      )}
+                      {phoneNumber &&
+                        !isOtpSent &&
+                        phoneNumber.length === 10 && (
+                          <div className="flex justify-end items-center mb-2">
+                            <button
+                              className="px-2 py-1 text-white rounded-md bg-webgreen hover:bg-webgreen-light "
+                              onClick={() => handleSendOtp()}
+                            >
+                              {loaders.sentOtp ? (
+                                <ThreeDotsLoader />
+                              ) : (
+                                <span>Send OTP</span>
+                              )}
+                            </button>
+                          </div>
+                        )}
                       {isOtpSent && (
                         <div className="mb-2">
                           <div className="flex justify-start items-center mb-1">

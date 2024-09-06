@@ -12,8 +12,13 @@ import {
   setKeyWords,
   removeFromWishlist,
 } from "../slice";
+import { filerProductForUser } from "../api";
 
-export const getAudio = async (dispatch: AppDispatch, params: any) => {
+export const getAudio = async (
+  dispatch: AppDispatch,
+  user: boolean,
+  params: any
+) => {
   dispatch(requestStart());
   try {
     const { data } = await instance.get(`product/customer`, {
@@ -22,7 +27,7 @@ export const getAudio = async (dispatch: AppDispatch, params: any) => {
     console.log(data);
     dispatch(
       setAudioData({
-        data: data.products,
+        data: filerProductForUser({ products: data.products, user }),
         totalNumOfPage: data.numOfPages,
         totalData: data.totalData,
       })
