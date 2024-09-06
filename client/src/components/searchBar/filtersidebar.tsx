@@ -1,6 +1,7 @@
-import React, {useState, useCallback} from 'react';
+import React, {useState, useCallback, useRef, useEffect} from 'react';
 import {BsFilterLeft, BsChevronDown, BsChevronUp} from 'react-icons/bs';
 import {MdClear} from 'react-icons/md';
+import {useRouter, useSearchParams} from 'next/navigation';
 
 interface FilterSectionProps {
   title: string;
@@ -24,8 +25,8 @@ interface FilterProps {
   filterOptions: {
     sortBy: string[];
     orientation?: string[];
+    resolution?: string[];
     more?: FilterOption[];
-
     videoLength?: number;
     frameRate?: string[];
     audioLength?: number;
@@ -33,11 +34,15 @@ interface FilterProps {
     density?: number;
   };
   onFilterChange: ( filterType: string, value: string | number ) => void;
+  onclearFilter: () => void;
 }
 
-const Filter: React.FC<FilterProps> = ( {isOpen, onToggle, filterOptions, onFilterChange} ) => {
+const Filter: React.FC<FilterProps> = ( {isOpen, onToggle, filterOptions, onFilterChange, onclearFilter} ) => {
   const [expandedSections, setExpandedSections] = useState<ExpandedSections>( {} );
   const [activeFilters, setActiveFilters] = useState<{[key: string]: string | number;}>( {} );
+  const inputRefs = useRef<{[key: string]: React.RefObject<HTMLInputElement>;}>( {} );
+  const router = useRouter();
+  const searchParams = useSearchParams();
 
   const toggleSection = ( section: string ): void => {
     setExpandedSections( prev => ( {...prev, [section]: !prev[section]} ) );
@@ -51,15 +56,42 @@ const Filter: React.FC<FilterProps> = ( {isOpen, onToggle, filterOptions, onFilt
       } else {
         newFilters[filterType] = value;
       }
-      return newFilters;
-    } );
+      return newFilters;  
+    } ); 
+
+
+    const currentParams = new URLSearchParams( searchParams.toString() );
+    if ( currentParams.get( filterType ) === value.toString() ) {
+      currentParams.delete( filterType );
+    } else {
+      currentParams.set( filterType, value.toString() );
+    }
+    router.push( `?${currentParams.toString()}`, {scroll: false} );
+
     onFilterChange( filterType, value );
-  }, [onFilterChange] );
+  }, [onFilterChange, router, searchParams] );
+
 
   const handleNumericInputChange = useCallback( ( key: string, value: string ) => {
     const numValue = parseInt( value ) || 0;
     handleFilterClick( key, numValue );
+    // Maintain focus on the input after value change
+    if ( inputRefs.current[key] && inputRefs.current[key].current ) {
+      inputRefs.current[key].current?.focus();
+    }
   }, [handleFilterClick] );
+
+  useEffect( () => {
+    const filtersFromQuery: {[key: string]: string | number;} = {};
+    searchParams.forEach( ( value, key ) => {
+      if ( key === 'imageWidth' || key === 'imageHeight' || key === 'videoLength' || key === 'audioLength' || key === 'audioBitrate' || key === 'minDensity' ) {
+        filtersFromQuery[key] = parseInt( value ) || 0;
+      } else {
+        filtersFromQuery[key] = value;
+      }
+    } );
+    setActiveFilters( filtersFromQuery );
+  }, [searchParams] );
 
   const FilterSection: React.FC<FilterSectionProps> = ( {title, expanded, onToggle, children} ) => (
     <div className="mb-4">
@@ -79,9 +111,17 @@ const Filter: React.FC<FilterProps> = ( {isOpen, onToggle, filterOptions, onFilt
       <div className="p-4">
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-xl font-semibold">Filters</h2>
-          <button onClick={onToggle} className="md:hidden">
-            <MdClear size={24} />
-          </button>
+          <div className="flex items-center">
+            <button
+              onClick={onclearFilter}
+              className="mr-4 px-3 py-1 bg-red-500 text-white rounded-full text-sm hover:bg-red-600 transition-colors"
+            >
+              Clear All
+            </button>
+            <button onClick={onToggle} className="md:hidden">
+              <MdClear size={24} />
+            </button>
+          </div>
         </div>
 
         <div className="mb-4">
@@ -119,7 +159,26 @@ const Filter: React.FC<FilterProps> = ( {isOpen, onToggle, filterOptions, onFilt
           </FilterSection>
         )}
 
-       
+        {filterOptions.resolution && (
+          <FilterSection
+            title="Resolution"
+            expanded={expandedSections['resolution'] || false}
+            onToggle={() => toggleSection( 'resolution' )}
+          >
+            <div className="flex flex-wrap gap-2 mt-2">
+              {filterOptions.resolution.map( ( option ) => (
+                <button
+                  key={option}
+                  className={`px-3 py-1 rounded-full ${activeFilters['resolution'] === option ? 'bg-gray-800 text-white' : 'bg-gray-200'}`}
+                  onClick={() => handleFilterClick( 'videoResolution', option === "FHD" ? 40 : 24 )}
+                >
+                  {option}
+                </button>
+              ) )}
+            </div>
+          </FilterSection>
+        )}
+
         {filterOptions.more && (
           <FilterSection
             title="More"
@@ -134,8 +193,8 @@ const Filter: React.FC<FilterProps> = ( {isOpen, onToggle, filterOptions, onFilt
                     {option.options.map( ( subOption ) => (
                       <button
                         key={subOption}
-                        className={`px-3 py-1 rounded-full ${activeFilters[option.label] === subOption ? 'bg-gray-800 text-white' : 'bg-gray-200'}`}
-                        onClick={() => handleFilterClick( option.label, subOption )}
+                        className={`px-3 py-1 rounded-full ${activeFilters['imageFileType'] === subOption ? 'bg-gray-800 text-white' : 'bg-gray-200'}`}
+                        onClick={() => handleFilterClick( 'imageFileType', subOption )}
                       >
                         {subOption}
                       </button>
@@ -143,20 +202,23 @@ const Filter: React.FC<FilterProps> = ( {isOpen, onToggle, filterOptions, onFilt
                   </div>
                 ) : (
                   <div className="flex gap-2 mt-1">
-                    <input
-                      type="number"
-                      placeholder="Min Width"
-                      className="w-1/2 px-2 py-1 border rounded"
-                        value={''}
-                        onChange={( e ) => handleFilterClick( `imageWidth`, parseInt( e.target.value ) || 0 )}
-                    />
-                    <input  
-                      type="number"
-                      placeholder="Min Height"
-                      className="w-1/2 px-2 py-1 border rounded"
-                      value={activeFilters[`${option.label}_minHeight`] || ''}
-                        onChange={( e ) => handleFilterClick( `imageHeight`, parseInt( e.target.value ) || 0 )}
-                    />
+                    {['Width', 'Height'].map( ( dim ) => {
+                      const key = `image${dim}`;
+                      if ( !inputRefs.current[key] ) {
+                        inputRefs.current[key] = React.createRef<HTMLInputElement>();
+                      }
+                      return (
+                        <input
+                          key={key}
+                          ref={inputRefs.current[key]}
+                          type="number"
+                          placeholder={`Min ${dim}`}
+                          className="w-1/2 px-2 py-1 border rounded"
+                          value={activeFilters[key] || ''}
+                          onChange={( e ) => handleNumericInputChange( key, e.target.value )}
+                        />
+                      );
+                    } )}
                   </div>
                 )}
               </div>
@@ -198,19 +260,19 @@ const Filter: React.FC<FilterProps> = ( {isOpen, onToggle, filterOptions, onFilt
                 <input
                   type="number"
                   className="w-full px-2 py-1 border rounded"
-                  value={activeFilters['bitRate'] || ''}
-                  onChange={( e ) => handleNumericInputChange( 'bitRate', e.target.value )}
+                  value={activeFilters['audioBitrate'] || ''}
+                  onChange={( e ) => handleNumericInputChange( 'audioBitrate', e.target.value )}
                 />
               </div>
             )}
             {filterOptions.density !== undefined && (
               <div className="mb-2">
-                <label className="block font-medium">Density</label>
+                <label className="block font-medium">Minimum Density</label>
                 <input
                   type="number"
                   className="w-full px-2 py-1 border rounded"
-                  value={activeFilters['density'] || ''}
-                  onChange={( e ) => handleNumericInputChange( 'density', e.target.value )}
+                  value={activeFilters['minDensity'] || ''}
+                  onChange={( e ) => handleNumericInputChange( 'minDensity', e.target.value )}
                 />
               </div>
             )}
@@ -228,7 +290,7 @@ const Filter: React.FC<FilterProps> = ( {isOpen, onToggle, filterOptions, onFilt
                 <button
                   key={option}
                   className={`px-3 py-1 rounded-full ${activeFilters['frameRate'] === option ? 'bg-gray-800 text-white' : 'bg-gray-200'}`}
-                  onClick={() => handleFilterClick( 'frameRate', option )}
+                  onClick={() => handleFilterClick( 'videoFrameRate', option === "30Hz" ? 30:  24 )}
                 >
                   {option}
                 </button>

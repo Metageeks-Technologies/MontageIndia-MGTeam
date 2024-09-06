@@ -632,7 +632,7 @@ export const getFilteredProducts =  catchAsyncError(async (req: any, res, next) 
       imageWidth,
       imageHeight,
       imageFileType,
-      dpi,
+      minDensity,
       videoResolution,
       videoLength,
       videoFrameRate,
@@ -701,14 +701,18 @@ export const getFilteredProducts =  catchAsyncError(async (req: any, res, next) 
     }
     //image
     if(mediaType.includes("image")){
-      if(imageFileType){
-        queryObject["variants.metadata.format"] = imageFileType;
+      console.log("mediaType:-",mediaType)
+      if ( imageFileType ) {
+        const str = imageFileType.toLowerCase();
+        console.log("str:-",str)
+        queryObject["variants.metadata.format"] = str;
+        // queryObject["variants.metadata.format"] = { $regex: new RegExp( imageFileType.toLowerCase(), 'i' ) };
       }
-      if(dpi){
-        queryObject["variants.metadata.dpi"] = {$gte: dpi};
+      if(minDensity){
+        queryObject["variants.metadata.dpi"] = {$gte: minDensity};
       }
       if(imageWidth && imageHeight){
-        queryObject["variants.metadata.dimension"] = { $regex:new RegExp(`${imageWidth}x${imageHeight}`, 'i')};
+        queryObject["variants.metadata.dimension"] = {$regex: new RegExp( `${imageWidth}x${imageHeight}`, 'i' )}; 
       }
     }
     //video
@@ -753,7 +757,7 @@ export const getFilteredProducts =  catchAsyncError(async (req: any, res, next) 
     const limit = Number(productsPerPage);
     const skip = (p - 1) * Number(limit);
 
-    // console.log("queryObject", queryObject);
+    console.log("queryObject", queryObject);
 
     let products = await Product.find(queryObject).
       sort(sortCriteria)
