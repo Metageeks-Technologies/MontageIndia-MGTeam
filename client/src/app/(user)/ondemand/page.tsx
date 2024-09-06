@@ -3,8 +3,13 @@
 import Footer from '@/components/Footer';
 import React, {useState} from 'react';
 import ReCAPTCHA from "react-google-recaptcha";
+import instance from '@/utils/axios';
+import Swal from 'sweetalert2';
+import {ThreeDotsLoader} from '@/components/loader/loaders';
 
-const Page = () => {
+const onDemandPage = () => {
+    const [loading, setLoading] = useState(false);
+    const key=process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;
     const [formData, setFormData] = useState( {
         name: '',
         phone: '',
@@ -33,7 +38,7 @@ const Page = () => {
         } ) );
     };
 
-    const handleSubmit = ( e: React.FormEvent ) => {
+    const handleSubmit = async ( e: React.FormEvent ) => {
         e.preventDefault();
         let hasError = false;
         const newErrors = {...errors};
@@ -49,7 +54,38 @@ const Page = () => {
         setErrors( newErrors );
 
         if ( !hasError ) {
-            // Handle form submission logic here
+            try{
+                setLoading(true);
+                const response = await instance.post( '/user/onDemand/email', {...formData},{
+                    withCredentials: true
+                });
+                console.log("email response",response);
+                if(!response.data.success){
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error sending email',
+                        text: 'Please try again later',
+                    });
+                    setLoading(false);
+                    return;
+                }
+
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Email sent successfully',
+                    text: 'We will get back to you soon',
+                });
+                setLoading(false);
+            }
+            catch(e){
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error sending email',
+                    text: 'Please try again later',
+                })
+                return;
+            }
+           
             console.log( 'Form submitted:', formData );
             // You can also send the form data to your server here
             setFormData( {
@@ -141,17 +177,19 @@ const Page = () => {
                 </div>
                 <div className="col-span-2">
                     <div className="flex items-center justify-center">
-                        {/* <input type="checkbox" id="notRobot" className="mr-2" />
-                        <label htmlFor="notRobot" className="text-sm">I'm not a robot</label> */}
+                        <input type="checkbox" id="notRobot" className="mr-2" />
+                        <label htmlFor="notRobot" className="text-sm">I'm not a robot</label>
                             <ReCAPTCHA
-                                sitekey="Your client site key" 
+                                sitekey={key as string || ''}
                             />,
                     </div>
                 </div>
                     <div className="col-span-2">
                         
-                    <button type="submit" className="justify-center mx-auto bg-webred text-white p-2 rounded">
-                        Submit Now
+                    <button disabled={loading} type="submit" className="justify-center mx-auto bg-webred text-white px-4 py-2 rounded">
+                       {loading?(<ThreeDotsLoader/>):(
+                        <span>Submit Now</span>
+                       )} 
                     </button>
                 </div>
             </form>
@@ -162,4 +200,4 @@ const Page = () => {
 
 };
 
-export default Page;
+export default onDemandPage;

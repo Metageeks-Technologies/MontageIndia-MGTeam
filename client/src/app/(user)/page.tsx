@@ -14,6 +14,7 @@ import { getCartData, getCurrCustomer } from "../redux/feature/user/api";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import Hero from "@/components/Home/gallary/Hero";
 import TopBanner from "@/components/navbar/TopBanner";
+import { IoCameraOutline } from "react-icons/io5";
 
 // Collection data
 interface Card {
@@ -23,52 +24,63 @@ interface Card {
 
 const cards: Card[] = [
   {
-    title: "Fourth of July",
-    image:
-      "https://wallpapers.com/images/hd/natural-scenery-pictures-736-x-1308-2yckka60jpvm2q4e.jpg",
+    title: "Video",
+    image: "asset/Mask group.jpg",
   },
   {
-    title: "Summer Gardens",
-    image:
-      "https://i.pinimg.com/736x/79/fd/d1/79fdd17253b569a417e980a99aecd978.jpg",
+    title: "Image",
+    image: "asset/Group 13224.jpg",
   },
   {
-    title: "Lucid Dreaming",
-    image:
-      "https://mrwallpaper.com/images/high/single-boy-in-yellow-hoodie-0lwl18k2bha6gwz6.jpg",
-  },
-  {
-    title: "Teamwork",
-    image:
-      "https://i0.wp.com/thetitansfa.com/wp-content/uploads/2024/01/034www.emmahurleyphotography.com_-scaled.jpg?fit=1708%2C2560&ssl=1",
+    title: "Audio",
+    image: "asset/Mask group 1.jpg",
   },
 ];
 
 //Weakly data
 type ImageData = {
-  title: string;
   imageUrl: string;
-  author: string;
-  authorUrl: string;
-  downloadUrl: string;
 };
 
-const weekly: ImageData[] = [
+const ImageData: ImageData[] = [
   {
-    title: "Free stock image of the week",
-    imageUrl:
-      "https://thumbs.dreamstime.com/b/father-s-day-happy-family-daughter-hugging-dad-laughs-holiday-father-s-day-happy-family-daughter-hugging-dad-laughs-114528530.jpg", // Replace with actual image path
-    author: "Oakland Images",
-    authorUrl: "#",
-    downloadUrl: "#",
+    imageUrl: "/asset/Group6.jpg",
   },
   {
-    title: "Free stock vector of the week",
+    imageUrl: "/asset/Mask group2.jpg",
+  },
+  {
+    imageUrl: "/asset/Mask group3.jpg",
+  },
+  {
+    imageUrl: "/asset/Mask group4.jpg",
+  },
+  {
+    imageUrl: "/asset/Group6.jpg",
+  },
+  {
+    imageUrl: "/asset/Mask group5.jpg",
+  },
+  {
+    imageUrl: "/asset/Group6.jpg",
+  },
+
+  {
+    imageUrl: "/asset/Mask group7.jpg",
+  },
+  {
     imageUrl:
-      "https://buffer.com/cdn-cgi/image/w=1000,fit=contain,q=90,f=auto/library/content/images/size/w1200/2020/05/Frame-9.png", // Replace with actual image path
-    author: "Net Vector",
-    authorUrl: "#",
-    downloadUrl: "#",
+      "https://www.holidify.com/images/cmsuploads/compressed/5621259188_e74d63cb05_b_20180302140149.jpg",
+  },
+
+  {
+    imageUrl: "/asset/Mask group10.jpg",
+  },
+  {
+    imageUrl: "/asset/Mask group11.jpg",
+  },
+  {
+    imageUrl: "/asset/Group6.jpg",
   },
 ];
 
@@ -80,63 +92,43 @@ export interface Category {
 
 const categories: Category[] = [
   {
-    title: "Abstract",
+    title: "Sports",
     imageUrl:
-      "https://images.ctfassets.net/hrltx12pl8hq/4l5bZtkt4f7nH7uyFQi4Vb/812e369976caabe99bb89814953885d6/5_abstract_painting.webp",
+      "https://stories.uq.edu.au/contact-magazine/2020/gift-of-family-time/assets/04nqydUdTc/uq-contact-issr-survey-family-2-2560x1440.jpeg",
   },
   {
-    title: "Animals | Wildlife",
+    title: "Fashion",
     imageUrl:
-      "https://images.ctfassets.net/hrltx12pl8hq/6gsGYFitrk9QqdPcMjKYiM/e58384dbbddc2f74a8dc0e259c8eeccd/3_abstract_backgrounds.webp",
+      "https://www.techprevue.com/wp-content/uploads/2016/09/fashion-online-shopping-sites.jpg",
   },
   {
-    title: "The arts",
+    title: "Wellness",
     imageUrl:
-      "https://images.ctfassets.net/hrltx12pl8hq/1zbtYRlwha0ejHWl8SVY5A/1cc4ec2315bb1cc0265707318303d45c/1_abstract_art.webp",
+      "https://www.tyentusa.com/blog/wp-content/uploads/2019/02/woman-practices-yoga-meditates-lotus-position-health-tips-ss.jpg",
   },
   {
-    title: "Backgrounds | Textures",
+    title: "Food",
     imageUrl:
-      "https://images.ctfassets.net/hrltx12pl8hq/6cOybdXpcRTB19N9G5pQ37/dbe37d306fdb3dda2d3d59e18cf28437/7_abstract_architecture.webp",
+      "https://img.freepik.com/premium-photo/healthy-lifestyle-with-clean-food-concept-happy-asian-woman-eating-salad-isolated-white-wall_105092-1487.jpg",
   },
   {
-    title: "Beauty | Fashion",
-    imageUrl:
-      "https://images.ctfassets.net/hrltx12pl8hq/7AY0lFMWFYM7pnMvQYU8dG/b535109e3fb2f0209cd0f66ee5e68e39/12_geometric_abstract.webp",
+    title: "Nature",
+    imageUrl: "https://wallpaperaccess.com/full/1712283.jpg",
   },
   {
-    title: "Buildings | Landmarks",
-    imageUrl: "https://wallpapercave.com/wp/wp2665219.jpg",
+    title: "Landscapes",
+    imageUrl:
+      "https://thelandscapephotoguy.com/wp-content/uploads/2019/03/NZ-landscape-with-human.jpg",
   },
   {
-    title: "Business | Finance",
+    title: "Pets",
     imageUrl:
-      "https://th.bing.com/th/id/OIP.HFEyPXmLD5Sf_zMpRkMPKAHaEo?rs=1&pid=ImgDetMain",
+      "https://www.desicomments.com/wp-content/uploads/2017/01/Amazing-Pets-Pic.jpg",
   },
   {
-    title: "Celebrities",
+    title: "Business",
     imageUrl:
-      "https://images.ctfassets.net/hrltx12pl8hq/1XwvE7PgPMss95unrtW7Ca/b4fea6f2e5d563495733b18cb158a75e/11_Royalty.webp",
-  },
-  {
-    title: "Editorial",
-    imageUrl:
-      "https://images.ctfassets.net/hrltx12pl8hq/7jI7WkXc39siBLuzcHRSwC/5e131766e000075654bdfd7cb8c66db7/9_abstract_shapes.webp",
-  },
-  {
-    title: "Education",
-    imageUrl:
-      "https://images.ctfassets.net/hrltx12pl8hq/42EmxNsqRKZdbrSS5tdpqd/9b076211db1689819a4e39cf5071e8e1/8_abstract_sketches.webp",
-  },
-  {
-    title: "Food and drink",
-    imageUrl:
-      "https://th.bing.com/th/id/OIP.BJOamtIJl_1eASDCsPF28QHaEo?rs=1&pid=ImgDetMain",
-  },
-  {
-    title: "Healthcare | Medical",
-    imageUrl:
-      "https://images.ctfassets.net/hrltx12pl8hq/49ZEwUkFyZ4afTVjUzwrlF/ba0bd80a123a051b0af0c71fb4e2abd6/1_medicine.webp",
+      "https://www.debbiepetersonspeaks.com/wp-content/uploads/2019/11/Depositphotos_39192435_l-2015.jpg",
   },
 ];
 
@@ -181,27 +173,27 @@ type Company = {
 const companies: Company[] = [
   {
     name: "epaimages",
-    logo: "https://www.freepnglogos.com/uploads/company-logo-png/hyundai-motor-company-logo-png-transparent-0.png",
+    logo: "/asset/Group 13210.jpg",
+  },
+  {
+    name: "epaimages",
+    logo: "/asset/Group 13209.jpg",
   },
   {
     name: "LIFE",
-    logo: "https://www.freepnglogos.com/uploads/company-logo-png/file-mobile-apps-development-company-logo-25.png",
+    logo: "/asset/Group 13208.jpg",
   },
   {
     name: "BFA",
-    logo: "https://logos-world.net/wp-content/uploads/2020/04/Amazon-Logo.png",
+    logo: "/asset/Group 13207.jpg",
   },
   {
     name: "REX",
-    logo: "https://www.carlogos.org/logo/Mahindra-logo-2560x1440.png",
+    logo: "/asset/Group 13206.jpg",
   },
   {
     name: "STRINGR",
-    logo: "https://images.squarespace-cdn.com/content/v1/5f0097caead12b7ccccaac20/dd58c926-7bba-40ef-9f8b-0c8db6f004b0/Add_The_Wonder_Black.png",
-  },
-  {
-    name: "itv",
-    logo: "https://static.vecteezy.com/system/resources/previews/020/975/568/original/tvs-logo-tvs-icon-transparent-free-png.png",
+    logo: "/asset/Group 13205.jpg",
   },
 ];
 
@@ -258,251 +250,148 @@ export default function Home() {
         onClick={() => console.log( 'Redirecting to Sale Page' )}
       /> */}
 
-      {/*  Image Routes Banner Section */}
-      {/* <div
-        className="relative bg-cover bg-center h-[600px] md:h-[500px] sm:h-[400px]"
-        style={{
-          backgroundImage:
-            "url(https://images.ctfassets.net/hrltx12pl8hq/01rJn4TormMsGQs1ZRIpzX/16a1cae2440420d0fd0a7a9a006f2dcb/Artboard_Copy_231.jpg?fit=fill&w=1280&h=720&fm=webp)",
-        }}
-      >
-        <div className="relative z-10 flex flex-col items-center justify-center h-full text-white text-center px-4 sm:px-6 md:px-8">
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold">
-            Unleash your creativity with unrivaled images
+      <div className=" w-full h-[400px] relative ">
+        <img
+          src="/asset/main-with-camera2 2.jpg"
+          alt=""
+          className="absolute w-full h-[24rem]  object-cover"
+        />
+        <div className="relative z-10 flex flex-col items-center justify-center h-full text-white text-center p-4 md:p-8 lg:p-16">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-4xl font-bold px-2  w-[50%]">
+            Impact The World With True, Inventive Footage
           </h1>
-          <p className="mt-4 text-lg sm:text-xl">
-            Add wonder to your stories with 450M+ photos, vectors,
-            illustrations, and editorial images.
-          </p>
-          <div className="mt-6 flex flex-wrap justify-center space-x-2 sm:space-x-4 md:space-y-2 space-y-2">
-            <button className="flex items-center px-4 py-2 border border-white rounded-full text-white bg-transparent backdrop-blur-sm bg-opacity-20 hover:bg-opacity-30 transition duration-300">
-              <IoIosSearch className="h-5 w-5 mr-2" />
-              Happy birthday
-            </button>
-            <button className="flex items-center px-4 py-2 border border-white rounded-full text-white bg-transparent backdrop-blur-sm bg-opacity-20 hover:bg-opacity-30 transition duration-300">
-              <IoIosSearch className="h-5 w-5 mr-2" />
-              Thank You
-            </button>
-            <button className="flex items-center px-4 py-2 border border-white rounded-full text-white bg-transparent backdrop-blur-sm bg-opacity-20 hover:bg-opacity-30 transition duration-300">
-              <IoIosSearch className="h-5 w-5 mr-2" />
-              Background
-            </button>
-            <button className="flex items-center px-4 py-2 border border-white rounded-full text-white bg-transparent backdrop-blur-sm bg-opacity-20 hover:bg-opacity-30 transition duration-300">
-              <IoIosSearch className="h-5 w-5 mr-2" />
-              Congratulations
-            </button>
-            <button className="flex items-center px-4 py-2 border border-white rounded-full text-white bg-transparent backdrop-blur-sm bg-opacity-20 hover:bg-opacity-30 transition duration-300">
-              <IoIosSearch className="h-5 w-5 mr-2" />
-              Business
-            </button>
-            <button className="flex items-center px-4 py-2 border border-white rounded-full text-white bg-transparent backdrop-blur-sm bg-opacity-20 hover:bg-opacity-30 transition duration-300">
-              <IoIosSearch className="h-5 w-5 mr-2" />
-              Welcome
-            </button>
-          </div>
-        </div>
-      </div> */}
-      {/* <div>"hello"</div> */}
-      <div className="w-full h-full">
-        <Hero />
-      </div>
-      {/* <div className="p-10 px-24">
-        <h1 className="text-3xl font-bold">
-          Explore images that ignite your creativity
-        </h1>
-        <div className="flex justify-between">
-          <div className="flex gap-3 mt-5 items-center">
-            <img
-              src="https://images.ctfassets.net/hrltx12pl8hq/2ppk3Ug2z6oFMZY5z8WXnx/75af41f13939954c93de0ff8c1972612/shutterstock_1922207966.jpg?fit=fill&w=120&h=120&fm=webp"
-              alt="photo"
-              className="object-cover rounded-md h-28 w-28"
-            />
-            <h1 className="font-semibold">Photos</h1>
-          </div>
-          <div className="flex gap-3 mt-5 items-center">
-            <img
-              src="https://images.ctfassets.net/hrltx12pl8hq/1qoVFqqABKxtFRMkUh0v6l/6a9bbdc723ac373f4e44400de87997b2/shutterstock_1734177410__1_.jpg?fit=fill&w=120&h=120&fm=webp"
-              alt="photo"
-              className="object-cover rounded-md h-28 w-28"
-            />
-            <h1 className="font-semibold">vector</h1>
-          </div>
-          <div className="flex gap-3 mt-5 items-center">
-            <img
-              src="https://images.ctfassets.net/hrltx12pl8hq/go6z2gBaTMDvTrtoOipOw/3b9d21ff7003ca392a2daeb569d629fc/shutterstock_1802211250.jpg?fit=fill&w=120&h=120&fm=webp"
-              alt="photo"
-              className="object-cover rounded-md h-28 w-28"
-            />
-            <h1 className="font-semibold">IIIustrations</h1>
-          </div>
-          <div className="flex gap-3 mt-5 items-center">
-            <img
-              src="https://images.ctfassets.net/hrltx12pl8hq/ss2daMHu3XewLBroGgbtp/6cf4fbe1fc297c20ee6cd2bb303e12a1/shutterstock_2390735237.jpg?fit=fill&w=120&h=120&fm=webp"
-              alt="photo"
-              className="object-cover rounded-md h-28 w-28"
-            />
-            <h1 className="font-semibold">AI Image Generator</h1>
-          </div>
-        </div>
-      </div> */}
-      <div className="bg-[#eeeeee]">
-        <div className="py-10 lg:mx-24 sm:mx-4 mx-2">
-          <h1 className="lg:text-5xl sm:text-3xl text-2xl font-semibold lg:text-start md:text-center text-center">
-            See what’s trending
-          </h1>
-          <div className="mx-auto mt-4">
-            <div className="flex flex-col md:flex-col md:gap-4 lg:flex-row justify-between items-center space-y-4 md:space-y-0">
-              <div className="flex flex-wrap justify-center  md:space-y-1 space-y-1  space-x-2 sm:space-x-2">
-                <button className="flex items-center text-sm px-3 py-1 border border-gray-700 rounded-full text-gray-700 bg-transparent backdrop-blur-sm bg-opacity-20 hover:bg-opacity-30 transition duration-300">
-                  <IoIosSearch className="h-5 w-5 mr-1" />
-                  Flower
-                </button>
-                <button className="flex items-center text-sm px-3 py-1 border border-gray-700 rounded-full text-gray-700 bg-transparent backdrop-blur-sm bg-opacity-20 hover:bg-opacity-30 transition duration-300">
-                  <IoIosSearch className="h-5 w-5 mr-1" />
-                  Portrait
-                </button>
-                <button className="flex items-center text-sm px-3 py-1 border border-gray-700 rounded-full text-gray-700 bg-transparent backdrop-blur-sm bg-opacity-20 hover:bg-opacity-30 transition duration-300">
-                  <IoIosSearch className="h-5 w-5 mr-1" />
-                  Interior
-                </button>
-                <button className="flex items-center text-sm px-3 py-1 border border-gray-700 rounded-full text-gray-700 bg-transparent backdrop-blur-sm bg-opacity-20 hover:bg-opacity-30 transition duration-300">
-                  <IoIosSearch className="h-5 w-5 mr-1" />
-                  Texture
-                </button>
-                <button className="flex items-center text-sm px-3 py-1 border border-gray-700 rounded-full text-gray-700 bg-transparent backdrop-blur-sm bg-opacity-20 hover:bg-opacity-30 transition duration-300">
-                  <IoIosSearch className="h-5 w-5 mr-1" />
-                  Animal
-                </button>
-                <button className="flex items-center text-sm px-3 py-1 border border-gray-700 rounded-full text-gray-700 bg-transparent backdrop-blur-sm bg-opacity-20 hover:bg-opacity-30 transition duration-300">
-                  <IoIosSearch className="h-5 w-5 mr-1" />
-                  Nature
+          <div className="w-[70%]  bg-white p-4 mt-6 rounded-lg shadow-lg">
+            <div className="flex lg:flex-wrap flex-row items-center gap-4">
+              <select className="px-4 py-2 bg-gray-100 border border-gray-300 rounded-md text-black focus:outline-none focus:ring-2 focus:ring-black">
+                <option>All Image</option>
+                <option>Video</option>
+                <option>Audio</option>
+              </select>
+              <div className="flex-grow relative">
+                <input
+                  type="text"
+                  placeholder="Search for music"
+                  className="w-full px-4 py-2 border border-gray-400 rounded-md text-black focus:outline-none focus:ring-2 focus:ring-black"
+                />
+                <button className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-red-500 text-white p-2 rounded-md hover:bg-red-600 transition-colors">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-5 w-5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                    />
+                  </svg>
                 </button>
               </div>
-              <div className="flex flex-wrap px-5 gap-5 item-end">
-                <button className="border-black  border-b-3 px-3 font-bold">
-                  Handpicked
+              <div className="lg:block md:block hidden">
+                <button className=" flex items-center px-4 py-2 mr-2  gap-2 border border-gray-300 rounded-md text-black hover:bg-gray-100 transition-colors">
+                <IoCameraOutline className="h-6 w-5 cursor-pointer" />
+                  Search
                 </button>
-                <button>Most popular</button>
               </div>
             </div>
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 mt-5">
-              {imageProducts.map((data: any, index: number) => (
-                <ImageGallery key={index} data={data} />
-              ))}
-            </div>
-          </div>
-          <div className="mt-8 flex justify-center ">
-            <button className="flex items-center text-lg px-6 font-semibold py-2 border border-gray-700  rounded-full text-black bg-transparent backdrop-blur-sm bg-opacity-20 hover:bg-opacity-40 transition duration-300">
-              See more Image
-            </button>
           </div>
         </div>
       </div>
-      <div className="lg:mx-24 md:mx-4 mx-4 py-12 ">
-        <div className="flex flex-col md:flex-row justify-between items-center">
-          <h2 className="text-2xl sm:text-3xl lg:text-5xl font-semibold mb-4 md:mb-0">
-            Explore fresh collections
+
+      <div className="lg:mx-24 md:mx-4 mx-4 py-14 ">
+        <div className="flex flex-col md:flex-row justify-center items-center mb-4">
+          <h2 className="text-2xl text-[#333333] sm:text-3xl lg:text-3xl text-center font-semibold mb-4 md:mb-0">
+            Find the right content for your projects, at the right price.
           </h2>
-          <button className="flex mb-2 items-center text-lg sm:text-lg px-4 sm:px-8 font-semibold py-2 border border-gray-700 rounded-full text-black bg-transparent backdrop-blur-sm bg-opacity-20 hover:bg-opacity-40 transition duration-300">
-            See more Images
-          </button>
         </div>
-        <div className="container mx-auto gap-4 grid lg:grid-cols-4 md:grid-cols-2 grid-cols-1 lg:mt-3">
+        <div className="container mx-auto gap-4 grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 lg:mt-3">
           {cards.map((card, index) => (
             <CardSlider key={index} {...card} />
           ))}
         </div>
       </div>
-      <div className="bg-gray-100 py-10">
-        <div className="flex lg:mx-32 md:mx-4 mx-4 items-center lg:flex-row sm:flex-col flex-col">
-          <div className="lg:text-left lg:basis-[35%]">
-            <h1 className="lg:text-5xl md:text-3xl text-2xl font-bold mb-4">
-              A weekly dose of inspiration, just for you
-            </h1>
-            <p className="text-gray-600 mb-6 text-xl">
-              Sign up and get a free image or photo every week
-            </p>
-            <div className="flex justify-center">
-              <button className="bg-red-500 text-white  py-3 px-8 rounded-full">
-                Get Started
-              </button>
+
+      {/* <div className="w-full h-full">
+        <Hero />
+      </div> */}
+
+      <div className="bg-[#eeeeee]">
+        <div className="py-12 lg:mx-24 sm:mx-4 mx-2">
+          <h1 className="lg:text-4xl sm:text-3xl text-2xl mt-4 font-semibold text-center text-[#333333]">
+            See what’s trending
+          </h1>
+          <div className="mx-auto mt-6">
+            <div className="columns-1  md:columns-3 lg:columns-4 gap-2 mt-5">
+              {ImageData.map((data: any, index: number) => (
+                <div key={index} className="mb-2 break-inside-avoid">
+                  <div className=" rounded overflow-hidden">
+                    <img
+                      src={data.imageUrl}
+                      alt={`Product Image `}
+                      className="w-full h-auto"
+                    />
+                  </div>
+                </div>
+              ))}
             </div>
-          </div>
-          <div className="flex lg:basis-[65%] lg:justify-around md:gap-5 md:mt-4 mt-4">
-            {weekly.map((data, index) => (
-              <WeeklyCard key={index} {...data} />
-            ))}
           </div>
         </div>
       </div>
-      <div className="lg:mx-24 md:mx-4 mx-4 py-10">
-        <h2 className="text-3xl font-bold mb-6">
-          Browse by category to find your perfect visual
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          {categories.map((data, index) => (
-            <CategoryCard key={index} {...data} />
+
+      <div className="lg:mx-24 sm:mx-4 mx-2 py-10 text-white mt-8">
+        <h1 className="text-[#333333] text-3xl text-center font-bold mb-6">
+          Browse All Categories
+        </h1>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2">
+          {categories.map((data: any, index) => (
+            <div key={index} className="">
+              {/* Masonry item */}
+              <div className="relative">
+                {/* Inner div */}
+                <img
+                  src={data.imageUrl}
+                  alt={`Product Image `}
+                  className="w-full h-52 object-cover rounded"
+                />
+                <div className="absolute bottom-0 py-1.5 w-full bg-black opacity-50 ">
+                  <h1 className="text-white font-semibold text-center">
+                    {data.title}
+                  </h1>
+                </div>
+              </div>
+            </div>
           ))}
         </div>
-        <div className="mt-8 flex justify-center ">
-          <button className="flex items-center text-lg px-8 font-semibold py-2 border border-gray-700  rounded-full text-black bg-transparent backdrop-blur-sm bg-opacity-20 hover:bg-opacity-40 transition duration-300">
-            See more
+        <div className="flex justify-center">
+          <button className="bg-red-500 text-white py-2 px-4 mt-8 rounded ">
+            Load More
           </button>
         </div>
       </div>
-      <div className="bg-gray-100">
-        <div className="lg:mx-24 sm:mx-4 mx-4 py-10">
-          <h2 className="text-3xl font-bold mb-6">
-            Tips and tricks from our blog
+
+      <div className="bg-[#eeeeee] mt-8">
+        <div className="container w-full m-auto py-14 flex flex-col bg-[#eeeeee] items-center">
+          <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-5 text-center">
+            Trusted by the world's largest companies
           </h2>
-          <div className="flex flex-col md:flex-row rounded-lg overflow-hidden">
-            <div className="md:w-1/2">
-              <img
-                src="https://www.shutterstock.com/blog/wp-content/uploads/sites/5/2023/01/negative_space_cover.jpg?resize=1250,1120"
-                className="w-full h-[23rem] object-cover"
-              />
-            </div>
-            <div className="p-4 md:w-1/2 flex flex-col justify-center">
-              <h3 className="font-semibold mb-2">
-                How to Incorporate Negative Space in Design and Photography
-              </h3>
-              <p className="text-gray-700 text-sm">
-                Learn why negative space works in design and photography, and
-                pick up a few tips for using it in your own creative content.
-              </p>
-            </div>
-          </div>
-          <div className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 mt-4 gap-4">
-            {posts.map((data, index) => (
-              <BlogCard key={index} {...data} />
+          <div className="flex flex-wrap justify-center space-x-0 sm:space-x-4 lg:space-x-8 mb-5">
+            {companies.map((company) => (
+              <div
+                key={company.name}
+                className="flex items-center mb-4 gap-5 sm:mb-0 border border-neutral-200"
+              >
+                <img
+                  src={company.logo}
+                  alt={company.name}
+                  className="h-16 w-32 sm:h-20 sm:w-40 object-cover"
+                />
+              </div>
             ))}
           </div>
         </div>
-      </div>
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-10 flex flex-col  items-center">
-        <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-5 text-center">
-          Trusted by the world's largest companies
-        </h2>
-        <div className="flex flex-wrap justify-center space-x-0 sm:space-x-4 lg:space-x-8 mb-5">
-          {companies.map((company) => (
-            <div
-              key={company.name}
-              className="flex items-center mb-4 gap-5 sm:mb-0"
-            >
-              <img
-                src={company.logo}
-                alt={company.name}
-                className="h-16 w-32 sm:h-20 sm:w-40 object-cover"
-              />
-            </div>
-          ))}
-        </div>
-        <p className="text-center mb-5">
-          Need a personalized package for your business?
-        </p>
-        <button className="bg-red-500 text-white py-2 px-4 rounded-3xl">
-          Request a Quote
-        </button>
       </div>
       <Footer />
     </div>

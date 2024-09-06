@@ -34,6 +34,7 @@ const config: TConfig = {
   razorpaySecret: getEnvVariable("RAZORPAY_SECRET"),
   customerJwtSecret: getEnvVariable("JWT_SECRET_CUSTOMER"),
   razorpayWebhookSecret: getEnvVariable("RAZORPAY_WEBHOOK_SECRET"),
+  montageEmail: getEnvVariable("MONTAGE_EMAIL"),
 };
 
 export default config;

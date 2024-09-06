@@ -22,4 +22,5 @@ export type TConfig = {
   razorpaySecret: string;
   customerJwtSecret: string;
   razorpayWebhookSecret: string;
+  montageEmail: string;
 };

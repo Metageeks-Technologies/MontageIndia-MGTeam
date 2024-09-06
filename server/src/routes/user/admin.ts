@@ -12,7 +12,8 @@ import {
     updateAdminDetails,
     resetPassword,
     getAdminById,
-    toggleDeleteAdmin
+    toggleDeleteAdmin,
+    getSiteData
 } from '../../controller/user/admin.js';
 import { isAuthenticatedAdmin } from '@src/middleware/auth.js';
 import { clearActivity, getActivity } from '@src/controller/user/activity.js';
@@ -23,7 +24,6 @@ adminRouter.route("/login").post(loginAdmin);
 adminRouter.route("/logout").get(logoutAdmin)
 adminRouter.route("/getAllAdmin").get(isAuthenticatedAdmin,getAllAdmin);
 adminRouter.route("/signup").post(signupAdmin);
-adminRouter.route("/:id").delete(isAuthenticatedAdmin,toggleDeleteAdmin);
 adminRouter.route("/getCurrAdmin").get(isAuthenticatedAdmin,getCurrentAdmin);
 adminRouter.route("/createAdmin").post(isAuthenticatedAdmin,createAdmin);
 adminRouter.route("/updateAdmin/:id").patch(isAuthenticatedAdmin,updateAdmin);
@@ -31,7 +31,9 @@ adminRouter.route("/updateAdminDetails").patch(isAuthenticatedAdmin,updateAdminD
 adminRouter.route("/changePassword").patch(isAuthenticatedAdmin,changePassword);
 adminRouter.route("/forgetPassword").post(forgetPassword);
 adminRouter.route("/resetPassword").post(resetPassword);
+adminRouter.route("/siteData").get(isAuthenticatedAdmin,getSiteData);
 adminRouter.route("/:id").get(isAuthenticatedAdmin,getAdminById);
+adminRouter.route("/:id").delete(isAuthenticatedAdmin,toggleDeleteAdmin);
 
 // activity route
 adminRouter.route("/Activity/getAllActivity").get(isAuthenticatedAdmin,getActivity);

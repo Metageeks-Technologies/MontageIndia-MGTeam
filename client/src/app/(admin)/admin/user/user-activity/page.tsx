@@ -7,7 +7,10 @@ interface UserActivity
 {
   _id: string;
   name: string;
-  productId: string;
+  productId: {
+    _id: string;
+    title: string;
+  }
   username: string;
   email: string;
   category: string[];
@@ -30,10 +33,10 @@ const UserActivityPage = () =>
     setLoading( true );
     try
     {
-      const response = await instance.get( `auth/admin/Activity/getAllActivity`, {
-        params: { timeRange, dataPerPage, currentPage, searchTerm },
-        withCredentials: true,
-      } );
+        const response = await instance.get( `auth/admin/Activity/getAllActivity`, {
+          params: { timeRange, dataPerPage, currentPage, searchTerm },
+          withCredentials: true,
+        } );
       setData( response.data.activities );
       setTotalPages( response.data.totalPages );
       setCurrentPage( response.data.currentPage );
@@ -157,7 +160,7 @@ const UserActivityPage = () =>
   ] );
 
   return (
-    <div className="container p-4 m-4 bg-pureWhite-light rounded-md">
+    <div className="container p-4 bg-pureWhite-light rounded-md">
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-2xl font-bold">User Activity</h1>
       </div>
@@ -217,7 +220,7 @@ const UserActivityPage = () =>
                     Category
                   </th>
                   <th scope="col" className="px-6 py-3">
-                    Product ID
+                    Product
                   </th>
                   <th scope="col" className="px-6 py-3">
                     Timestamp
@@ -264,7 +267,7 @@ const UserActivityPage = () =>
                           ) )
                           : "" }
                       </td>
-                      <td className="px-4 py-4 sm:px-6">{ item.productId }</td>
+                      <td className="px-4 py-4 sm:px-6">{ item.productId.title }</td>
                       <td className="px-4 py-4 sm:px-6">
                         { formatDate( item.timestamp ) }
                       </td>

@@ -11,10 +11,10 @@ const CardSlider = (card: Card) => {
         <img
           src={card.image}
           alt={card.title}
-          className="lg:w-[21rem] md:w-[23rem] w-[23rem] h-[27rem] object-cover rounded-md"
+          className="w-full h-full object-cover"
         />
-        <div className="absolute inset-0 bg-black bg-opacity-20 group-hover:bg-opacity-0 transition-opacity rounded-lg flex items-center justify-center">
-          <div className="text-white font-semibold text-lg absolute bottom-20 text-center">
+        <div className="absolute inset-0  rounded flex items-center justify-center">
+          <div className="text-white font-semibold text-lg absolute bottom-3 left-5">
             {card.title}
           </div>
         </div>
