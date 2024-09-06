@@ -108,7 +108,7 @@ const LoginPage = () => {
       setEmail("");
       const { uid, email, displayName, photoURL } = userData.user;
 
-      const response = instance.post("/user/googleLogin", {
+      const response = await instance.post("/user/googleLogin", {
         uid,
         email,
         name: displayName,

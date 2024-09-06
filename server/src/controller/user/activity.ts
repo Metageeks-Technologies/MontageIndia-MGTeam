@@ -61,7 +61,7 @@ export const getActivity = catchAsyncError(async (req, res, next) => {
     const limit = parseInt(dataPerPage as string, 10) || 10;
     const skip = (parseInt(currentPage as string, 10) - 1) * limit;
 
-    const activities = await Activity.find(objectQuery)
+    const activities = await Activity.find(objectQuery).populate('productId',)
         .sort({ timestamp: -1 }) 
         .skip(skip)
         .limit(limit);

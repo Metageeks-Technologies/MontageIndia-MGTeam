@@ -5,13 +5,77 @@ import Sidebar from "@/components/admin/sidebar";
 import { FaBoxOpen, FaShippingFast } from "react-icons/fa";
 import { RiGlobalLine, RiVipCrown2Line } from "react-icons/ri";
 import { MdArrowOutward, MdOutlineKeyboardArrowDown } from "react-icons/md";
+import { FaRupeeSign } from "react-icons/fa";
 import { IoArrowForward } from "react-icons/io5";
 import instance from "@/utils/axios";
 
+interface SiteData {
+  totalRevenue: number;
+  totalPublished: number;
+  totalDeleted: number;
+}
+
+interface Activity {
+  name: string;
+  productId: {
+    title: string;
+  };
+  action: string;
+}
+
 const page = () => {
   const [currentUser, setCurrentUser] = useState<any>("");
+  const [recentActivities, setRecentActivities] = useState([]);
+  const [revenuePeriod, setRevenuePeriod] = useState<string>("lastYear");
+  const [siteData, setSiteData] = useState<SiteData | null>(null);
+
+  const recentActivity = async () => {
+    // setLoading( true );
+    try {
+      const response = await instance.get(
+        `auth/admin/Activity/getAllActivity`,
+        {
+          params: { timeRange: "all", dataPerPage: Number.MAX_SAFE_INTEGER },
+          withCredentials: true,
+        }
+      );
+      console.log("Recent activities:", response.data.activities);
+      const sortedActivities = response.data.activities.sort(
+        (a: any, b: any) => {
+          return b.timestamp - a.timestamp; // Sort by timestamp, most recent first
+        }
+      );
+
+      // Set the top 5 recent activities after sorting
+      const topFiveActivities = sortedActivities.slice(0, 5);
+      console.log(topFiveActivities);
+      setRecentActivities(topFiveActivities);
+    } catch (error) {
+      console.error("Error fetching users:", error);
+    } finally {
+    }
+  };
+
+  const getSiteData = async () => {
+    try {
+      const response = await instance.get("/auth/admin/siteData", {
+        params: { period: revenuePeriod },
+        withCredentials: true,
+      });
+      console.log("Site data:", response.data);
+      setSiteData(response.data.siteData);
+    } catch (error) {
+      console.error("Error fetching site data:", error);
+    }
+  };
 
   useEffect(() => {
+    getSiteData();
+  }, [revenuePeriod]);
+
+  useEffect(() => {
+    recentActivity();
+
     // Fetching user details using Promises instead of async/await
     instance
       .get("/auth/admin/getCurrAdmin")
@@ -27,7 +91,7 @@ const page = () => {
   console.log("currenteuser:-", currentUser);
 
   return (
-    <div className="container p-4 m-4 bg-pureWhite-light rounded-md">
+    <div className="container p-4 bg-pureWhite-light rounded-md">
       {/* <Sidebar /> */}
 
       <div className=" bg-white p-4">
@@ -37,10 +101,10 @@ const page = () => {
             Hello ! {currentUser && currentUser.name}
           </h1>
 
-          <button className="bg-webgreen text-white border border-gray-400 px-4 py-3 rounded-lg shadow flex items-center space-x-2">
+          {/* <button className="bg-webgreen text-white border border-gray-400 px-4 py-3 rounded-lg shadow flex items-center space-x-2">
             <RiGlobalLine className="h-5 w-5" />
             <span className="text-sm">Open Site</span>
-          </button>
+          </button> */}
         </div>
 
         {/* Welcome to Montage India Section */}
@@ -132,17 +196,28 @@ const page = () => {
               <div className="mt-6">
                 <h2 className="text-xl font-semibold mb-2 flex justify-between items-center">
                   Revenue{" "}
-                  <button className="px-6 py-2 border flex items-center gap-2 shadow rounded-md">
-                    <a href="#" className="text-medium font-semibold ">
-                      Last Year
-                    </a>
-                    <MdOutlineKeyboardArrowDown />
-                  </button>
+                  <select
+                    id="revenuePeriod"
+                    value={revenuePeriod}
+                    onChange={(e) => {
+                      setRevenuePeriod(e.target.value);
+                    }}
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 "
+                  >
+                    <option value="lastYear">Since Last Year</option>
+                    <option value="thisYear">This Year</option>
+                    <option value="thisMonth">This Month</option>
+                  </select>
                 </h2>
                 <div className="p-5  rounded-lg flex items-center mt-6 border">
                   <div>
                     <p className="text-gray-600">Total Revenue</p>
-                    <p className=" text-2xl font-semibold mt-2">$0</p>
+                    <p className=" text-2xl font-semibold mt-2">
+                      <div className="flex justify-start items-center gap-1">
+                        <FaRupeeSign />
+                        {siteData?.totalRevenue}
+                      </div>
+                    </p>
                   </div>
                 </div>
               </div>
@@ -154,7 +229,10 @@ const page = () => {
               <div className="mb-2 flex justify-between items-center">
                 <h2 className="text-xl font-semibold ">Products </h2>
                 <div className="flex gap-2 items-center">
-                  <a href="#" className="text-lg">
+                  <a
+                    href="/admin/product/available"
+                    className="text-lg cursor-pointer"
+                  >
                     See All
                   </a>
                   <IoArrowForward className="h-5 w-5" />
@@ -163,16 +241,18 @@ const page = () => {
               <div className="grid grid-cols-1 border rounded-md">
                 <div className="p-4 flex justify-between">
                   <h3 className="font-semibold">Active listings</h3>
-                  <p className="text-xl font-bold">0</p>
+                  <p className="text-xl font-bold">
+                    {siteData?.totalPublished}
+                  </p>
                 </div>
                 <div className="p-4 flex  justify-between">
                   <h3 className="font-semibold">Expired</h3>
-                  <p className="text-xl font-bold">0</p>
+                  <p className="text-xl font-bold">{siteData?.totalDeleted}</p>
                 </div>
-                <div className="p-4 flex justify-between">
+                {/* <div className="p-4 flex justify-between">
                   <h3 className="font-semibold">Sold out</h3>
                   <p className="text-xl font-bold">0</p>
-                </div>
+                </div> */}
               </div>
             </div>
 
@@ -180,30 +260,73 @@ const page = () => {
               <div className="flex justify-between">
                 <h1 className="text-lg font-semibold">Recent Activities</h1>
                 <div className="flex gap-2 items-center">
-                  <a href="#" className="text-lg">
+                  <a href="/admin/user/user-activity" className="text-lg">
                     See All
                   </a>
                   <IoArrowForward className="h-5 w-5" />
                 </div>
               </div>
-              <div className="w-full h-[14rem] border mt-6 rounded-lg flex flex-col items-center justify-center">
-                <div className="flex items-center justify-center bg-white rounded-full p-2 shadow-md border border-gray-300">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="35"
-                    height="35"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                  >
-                    <path
-                      d="M12 2C17.5228 2 22 6.47715 22 12C22 13.6169 21.6162 15.1442 20.9348 16.4958C20.8633 16.2175 20.7307 15.9523 20.5374 15.7206L20.4142 15.5858L19 14.1716L17.5858 15.5858L17.469 15.713C16.8069 16.4988 16.8458 17.6743 17.5858 18.4142C18.014 18.8424 18.588 19.0358 19.148 18.9946C17.3323 20.8487 14.8006 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2ZM12 15C10.6199 15 9.37036 15.5592 8.46564 16.4633L8.30009 16.6368L9.24506 17.4961C10.035 17.1825 10.982 17 12 17C12.9049 17 13.7537 17.1442 14.4859 17.3965L14.7549 17.4961L15.6999 16.6368C14.7853 15.6312 13.4664 15 12 15ZM8.5 10C7.67157 10 7 10.6716 7 11.5C7 12.3284 7.67157 13 8.5 13C9.32843 13 10 12.3284 10 11.5C10 10.6716 9.32843 10 8.5 10ZM15.5 10C14.6716 10 14 10.6716 14 11.5C14 12.3284 14.6716 13 15.5 13C16.3284 13 17 12.3284 17 11.5C17 10.6716 16.3284 10 15.5 10Z"
-                      fill="#3F3F46"
-                    />
-                  </svg>
-                </div>
-                <p className="mt-4 text-center text-gray-700">
-                  You have no recent activity
-                </p>
+              <div className="w-full border mt-6 rounded-lg gap-2 bg-white  flex flex-col p-2 items-center justify-center">
+                {(!recentActivities || recentActivities.length <= 0) && (
+                  <>
+                    <div className="flex items-center justify-center bg-white rounded-full p-2 shadow-md border border-gray-300">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="35"
+                        height="35"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                      >
+                        <path
+                          d="M12 2C17.5228 2 22 6.47715 22 12C22 13.6169 21.6162 15.1442 20.9348 16.4958C20.8633 16.2175 20.7307 15.9523 20.5374 15.7206L20.4142 15.5858L19 14.1716L17.5858 15.5858L17.469 15.713C16.8069 16.4988 16.8458 17.6743 17.5858 18.4142C18.014 18.8424 18.588 19.0358 19.148 18.9946C17.3323 20.8487 14.8006 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2ZM12 15C10.6199 15 9.37036 15.5592 8.46564 16.4633L8.30009 16.6368L9.24506 17.4961C10.035 17.1825 10.982 17 12 17C12.9049 17 13.7537 17.1442 14.4859 17.3965L14.7549 17.4961L15.6999 16.6368C14.7853 15.6312 13.4664 15 12 15ZM8.5 10C7.67157 10 7 10.6716 7 11.5C7 12.3284 7.67157 13 8.5 13C9.32843 13 10 12.3284 10 11.5C10 10.6716 9.32843 10 8.5 10ZM15.5 10C14.6716 10 14 10.6716 14 11.5C14 12.3284 14.6716 13 15.5 13C16.3284 13 17 12.3284 17 11.5C17 10.6716 16.3284 10 15.5 10Z"
+                          fill="#3F3F46"
+                        />
+                      </svg>
+                    </div>
+                    <p className="mt-4 text-center text-gray-700">
+                      You have no recent activity
+                    </p>
+                  </>
+                )}
+
+                {recentActivities && recentActivities.length > 0 && (
+                  <>
+                    <div className="px-2 mx-2 py-1 w-full flex bg-gray-100 justify-between gap-2 border rounded-md ">
+                      <div className="w-1/3 capitalize font-bold ">User</div>
+                      <div className="w-1/3 text-center font-bold">Product</div>
+                      <div className="w-1/3 capitalize text-end font-bold">
+                        Action
+                      </div>
+                    </div>
+
+                    {recentActivities.map(
+                      (activity: Activity, index: number) => (
+                        <div
+                          key={index}
+                          className="px-2 mx-2 py-1 w-full flex  hover:bg-slate-200 justify-between gap-2 border rounded-md "
+                        >
+                          <div className="w-1/3 capitalize ">
+                            {activity.name}
+                          </div>
+                          <div className="w-1/3 text-center truncate">
+                            {activity.productId.title}{" "}
+                          </div>
+                          <div
+                            className={`w-1/3 capitalize text-end ${
+                              activity.action === "delete" && "text-red-400"
+                            } ${
+                              activity.action === "update" && "text-[#42A5D0]"
+                            } ${
+                              activity.action === "create" && "text-[#8D529C]"
+                            } `}
+                          >
+                            {activity.action}d
+                          </div>
+                        </div>
+                      )
+                    )}
+                  </>
+                )}
               </div>
             </div>
           </div>

@@ -3,8 +3,10 @@ import ErrorHandler from '../../utils/errorHandler.js';
 import config from '@src/utils/config.js';
 import sendToken from '../../utils/sendToken.js';
 import Admin from '../../model/user/admin.js';
+import Transaction from '../../model/transaction/transaction.js';
 import { sendEmail } from '@src/utils/nodemailer/mailer/mailer.js';
 import crypto from "crypto";
+import Product from '@src/model/product/product.js';
 
 
 /* 
@@ -25,6 +27,12 @@ index
 13.getAdminById
 
 */
+
+interface MatchCondition{
+    status: string;
+    createdAt?: any;
+}
+
 
 //only for superAdmin
 export const signupAdmin = catchAsyncError(async (req, res, next) => {
@@ -364,3 +372,83 @@ export const resetPassword = catchAsyncError(async (req, res, next) => {
     res.status(200).json({ message: 'Password has been reset suscessfully.now you can close this tab or window'});
 
 });
+
+const getPeriodDates = () => {
+  const now = new Date();
+
+  // Start of the year
+  const startOfYear = new Date(now.getFullYear(), 0, 1);
+  // Start of last year
+  const startOfLastYear = new Date(now.getFullYear() - 1, 0, 1);
+  // Start of the month
+  const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+
+  return {
+    startOfYear,
+    startOfLastYear,
+    startOfMonth
+  };
+};
+
+export const getSiteData = catchAsyncError(async (req, res, next) => {
+    console.log("getSiteData");
+   const {period} = req.body; // "allTime", "lastYear", "thisYear", "thisMonth"
+    const { startOfYear, startOfLastYear, startOfMonth } = getPeriodDates();
+
+    // Build the query dynamically based on the requested period
+    let matchCondition:MatchCondition = { status: 'captured'}; // Common match condition
+    if (period === 'lastYear') {
+      matchCondition = {
+        ...matchCondition,
+        createdAt: { $gte: startOfLastYear, $lt: startOfYear }
+      };
+    } else if (period === 'thisYear') {
+      matchCondition = {
+        ...matchCondition,
+        createdAt: { $gte: startOfYear }
+      };
+    } else if (period === 'thisMonth') {
+      matchCondition = {
+        ...matchCondition,
+        createdAt: { $gte: startOfMonth }
+      };
+    }
+
+    const revenueResult = await Transaction.aggregate([
+      {
+        $match: matchCondition // Filter for transactions based on the period
+      },
+      {
+        $group: {
+          _id: null,
+          totalRevenue: { $sum: '$amount' } // Sum the amount field
+        }
+      }
+    ]);
+    const totalRevenue = revenueResult.length > 0 ? revenueResult[0].totalRevenue : 0;
+
+    const activeProductResult = await Product.aggregate([
+      {
+        $match: { status: 'published' } 
+      },
+      {
+        $count: 'totalPublished'
+      }
+    ]);
+
+    const totalPublished = activeProductResult.length > 0 ? activeProductResult[0].totalPublished : 0;
+
+    const deletedProductResult = await Product.aggregate([
+        {
+            $match: { status: 'archived' } 
+        },
+        {
+            $count: 'totalDeleted'
+        }
+        ]);
+
+    const totalDeleted = deletedProductResult.length > 0 ? deletedProductResult[0].totalDeleted : 0;
+
+
+    return res.send({ success: true, siteData:{ totalRevenue, totalPublished, totalDeleted} });
+})

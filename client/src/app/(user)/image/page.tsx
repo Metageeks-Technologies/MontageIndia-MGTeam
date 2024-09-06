@@ -1,29 +1,40 @@
 "use client";
 import Footer from "@/components/Footer";
 import ImageGallery from "@/components/Home/homeImage";
-import { Product } from "@/types/order";
 import instance from "@/utils/axios";
 import { Button, Pagination, Spinner } from "@nextui-org/react";
 import { useEffect, useState } from "react";
-import { IoIosSearch } from "react-icons/io";
-import { getImage } from "@/app/redux/feature/product/image/api";
 import { useAppDispatch, useAppSelector } from "@/app/redux/hooks";
 import { setImagePage } from "@/app/redux/feature/product/slice";
-import { IoSearchOutline } from "react-icons/io5";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { clearKeywords } from "@/app/redux/feature/product/api";
 import Searchbar from "@/components/searchBar/search";
+import Filter from "@/components/searchBar/filtersidebar";
+import { BsFilterLeft } from "react-icons/bs";
+import { getImage } from "@/app/redux/feature/product/image/api";
+
+const filterOptions = {
+  sortBy: ["Most Popular", "Newest", "Oldest"],
+  orientation: ["Landscape", "Portrait"],
+  more: [
+    { label: "Size", options: { minHeight: 0, minWidth: 0 } },
+    { label: "File Type", options: ["JPEG", "PNG"] },
+  ],
+  density: 0,
+};
 
 const Page = () => {
   const dispatch = useAppDispatch();
+  const router = useRouter();
   const searchParams = useSearchParams();
   const category = searchParams.get("category");
   const [totalPages, setTotalPages] = useState(1);
   const [currentPage, setCurrentPage] = useState(1);
   const searchTerm = searchParams.get("searchTerm") || "";
   const categoryParam = category ? ["editor choice"] : "";
-
-  const [loading, setloading] = useState(false);
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [filteredData, setFilteredData] = useState([]);
   const {
     imageData: product,
     imagePage,
@@ -31,21 +42,24 @@ const Page = () => {
     totalImageNumOfPage,
   } = useAppSelector((state) => state.product);
 
+  const toggleFilter = () => {
+    setIsFilterOpen(!isFilterOpen);
+  };
+
   const handlePageChange = (page: number) => {
-    // console.log(page);
     dispatch(setImagePage(page));
   };
+
   const handleNextPage = () => {
     handlePageChange(imagePage === totalImageNumOfPage ? 1 : imagePage + 1);
   };
+  const { user } = useAppSelector((state) => state.user);
   const handlePrevPage = () => {
     handlePageChange(imagePage === 1 ? totalImageNumOfPage : imagePage - 1);
   };
 
-  const { user } = useAppSelector((state) => state.user);
-
   const fetchData = async (page: number) => {
-    setloading(true);
+    setLoading(true);
     const response = await getImage(dispatch, !!user, {
       page: imagePage,
       productsPerPage: 10,
@@ -53,100 +67,185 @@ const Page = () => {
       searchTerm,
       category: categoryParam,
     });
-    setloading(false);
+
+    setLoading(false);
+  };
+
+  const fetchFilterData = async (
+    page: number,
+    filters: Record<string, string>
+  ) => {
+    setLoading(true);
+    try {
+      const response = await instance.get("/product/filter", {
+        params: {
+          page,
+          productsPerPage: 10,
+          mediaType: ["image"],
+          ...filters,
+        },
+      });
+      console.log("response in filtered data:-", response);
+      setFilteredData(response.data.products);
+      setLoading(false);
+    } catch (error) {
+      console.error("Error fetching filtered data:", error);
+      setLoading(false);
+    }
+  };
+
+  const handleFilterChange = (filterType: string, value: string | number) => {
+    const currentParams = new URLSearchParams(searchParams.toString());
+    currentParams.set(filterType, value.toString());
+    router.push(`?${currentParams.toString()}`, { scroll: false });
+    const filters = Object.fromEntries(currentParams);
+    fetchFilterData(imagePage, filters);
+  };
+
+  const handleClearFilters = () => {
+    const currentParams = new URLSearchParams(searchParams.toString());
+    currentParams.delete("sortBy");
+    currentParams.delete("orientation");
+    currentParams.delete("minHeight");
+    currentParams.delete("minWidth");
+    currentParams.delete("fileType");
+    currentParams.delete("minDensity");
+    router.push(`?${currentParams.toString()}`, { scroll: false });
+    fetchData(imagePage);
+  };
+
+  const hasFilterParams = () => {
+    return Array.from(searchParams.keys()).some((key) =>
+      [
+        "sortBy",
+        "orientation",
+        "minHeight",
+        "minWidth",
+        "fileType",
+        "minDensity",
+      ].includes(key)
+    );
   };
 
   useEffect(() => {
-    fetchData(imagePage);
+    const filterParamsExist = hasFilterParams();
+    setIsFilterOpen(filterParamsExist);
+    if (hasFilterParams()) {
+      const filters = Object.fromEntries(searchParams);
+      fetchFilterData(imagePage, filters);
+    } else {
+      fetchData(imagePage);
+    }
     return () => {
       clearKeywords(dispatch);
     };
   }, [imagePage, searchParams]);
 
-  return (
-    <>
-      <Searchbar />
+  const displayData = hasFilterParams() ? filteredData : product;
 
-      <div className="main items-center">
-        {/* Trending Videos */}
-        <div className="bg-[#eeeeee]">
-          <div className="py-10 lg:mx-4 xl:mx-24 md:mx-4 mx-4">
-            <h1 className="text-2xl font-bold  text-start">
-              Today's Trending Images
-            </h1>
-            <h4 className="text-lg text-neutral-700">
-              {totalImageData} Product stock Photos and High-res Pictures
-            </h4>
-            <div className="mx-auto mt-4">
-              {loading ? (
-                <div className="justify-center text-center m-auto">
-                  <Spinner label="Loading..." color="danger" />
+  return (
+    <div className="flex flex-col min-h-screen">
+      <Searchbar />
+      <div className="flex flex-1">
+        <Filter
+          isOpen={isFilterOpen}
+          onToggle={toggleFilter}
+          filterOptions={filterOptions}
+          onFilterChange={handleFilterChange}
+          onclearFilter={handleClearFilters}
+        />
+        <div className={`flex-1 transition-all duration-300 ease-in-out `}>
+          <div className="p-4">
+            <button
+              className="py-2 text-gray-800 bg-white border flex flex-row items-center gap-2 border-gray-300 px-5 rounded-md mb-4"
+              onClick={toggleFilter}
+            >
+              Filters <BsFilterLeft />
+            </button>
+            <div className="main items-center">
+              <div className="bg-[#eeeeee]">
+                <div
+                  className={`py-10 lg:mx-4 ${
+                    !isFilterOpen ? "xl:mx-24 md:mx-4" : "ml-0"
+                  } `}
+                >
+                  <h1 className="text-2xl font-bold  text-start">
+                    Today's Trending Images
+                  </h1>
+                  <h4 className="text-lg text-neutral-700">
+                    {totalImageData} Product stock Photos and High-res Pictures
+                  </h4>
+                  <div className="mx-auto mt-4">
+                    {loading ? (
+                      <div className="justify-center text-center m-auto">
+                        <Spinner label="Loading..." color="danger" />
+                      </div>
+                    ) : (
+                      <div className="columns-1 sm:columns-2 md:columns-3 lg:columns-4 gap-2 mt-2 relative">
+                        {displayData.length > 0 ? (
+                          displayData.map((data: any) => (
+                            <ImageGallery key={data._id} data={data} />
+                          ))
+                        ) : (
+                          <p>No Images found.</p>
+                        )}
+                      </div>
+                    )}
+                  </div>
                 </div>
-              ) : (
-                <div className="columns-1 sm:columns-2 md:columns-3 lg:columns-4 gap-2 mt-2 relative">
-                  {product.length > 0 ? (
-                    product.map((data) => (
-                      <ImageGallery key={data._id} data={data} />
-                    ))
-                  ) : (
-                    <p>No Images found.</p>
-                  )}
+              </div>
+
+              {/* Pagination */}
+              {totalImageNumOfPage > 1 && (
+                <div className="flex justify-center items-center gap-4 my-4">
+                  <Button
+                    size="sm"
+                    type="button"
+                    disabled={currentPage === 1}
+                    variant="flat"
+                    className={`${
+                      currentPage === 1
+                        ? "opacity-70 cursor-not-allowed"
+                        : "hover:bg-webred"
+                    } bg-webred text-white rounded-full font-bold`}
+                    onPress={handlePrevPage}
+                  >
+                    Prev
+                  </Button>
+                  <Pagination
+                    color="success"
+                    classNames={{
+                      item: "w-8 h-8 text-small bg-gray-100 hover:bg-gray-300 rounded-full",
+                      cursor:
+                        "bg-webred hover:bg-red text-white rounded-full font-bold",
+                    }}
+                    total={totalImageNumOfPage}
+                    page={imagePage}
+                    onChange={handlePageChange}
+                    initialPage={1}
+                  />
+                  <Button
+                    type="button"
+                    size="sm"
+                    disabled={currentPage === totalPages}
+                    variant="flat"
+                    className={`${
+                      currentPage === totalPages
+                        ? "opacity-70 cursor-not-allowed"
+                        : "hover:bg-webred"
+                    } bg-webred text-white rounded-full font-bold`}
+                    onPress={handleNextPage}
+                  >
+                    Next
+                  </Button>
                 </div>
               )}
             </div>
           </div>
         </div>
-
-        {/* Pagination */}
-        {totalImageNumOfPage > 1 && (
-          <div className="flex justify-center items-center gap-4 my-4">
-            <Button
-              size="sm"
-              type="button"
-              disabled={currentPage === 1}
-              variant="flat"
-              className={`${
-                currentPage === 1
-                  ? "opacity-70 cursor-not-allowed"
-                  : "hover:bg-webred"
-              } bg-webred text-white rounded-full font-bold`}
-              onPress={handlePrevPage}
-            >
-              Prev
-            </Button>
-            <Pagination
-              color="success"
-              classNames={{
-                item: "w-8 h-8 text-small bg-gray-100 hover:bg-gray-300 rounded-full",
-                cursor:
-                  "bg-webred hover:bg-red text-white rounded-full font-bold",
-              }}
-              total={totalImageNumOfPage}
-              page={imagePage}
-              onChange={handlePageChange}
-              initialPage={1}
-            />
-
-            <Button
-              type="button"
-              size="sm"
-              disabled={currentPage === totalPages}
-              variant="flat"
-              className={`${
-                currentPage === totalPages
-                  ? "opacity-70 cursor-not-allowed"
-                  : "hover:bg-webred"
-              } bg-webred text-white rounded-full font-bold`}
-              onPress={handleNextPage}
-            >
-              Next
-            </Button>
-          </div>
-        )}
-
-        <Footer />
       </div>
-    </>
+      <Footer />
+    </div>
   );
 };
 

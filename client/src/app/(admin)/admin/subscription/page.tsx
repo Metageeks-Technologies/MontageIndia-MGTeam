@@ -173,7 +173,7 @@ const SubscriptionPage = () =>
   };
 
   return (
-    <div className={ `flex flex-col justify-start items-center m-6  rounded-lg    bg-white ${ isUpdateMode ? '' : 'min-h-screen' } ` }>
+    <div className={ `flex flex-col justify-start items-center rounded-lg    bg-white ${ isUpdateMode ? '' : 'min-h-screen' } ` }>
       {
         isUpdateMode ? (
           <div className="bg-white w-full p-2 shadow rounded-lg overflow-hidden">

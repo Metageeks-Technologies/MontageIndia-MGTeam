@@ -48,7 +48,9 @@ const transactionSchema:Schema = new Schema(
     status: {
         type: String,
         required: true
-    }
+    },
+},{
+    timestamps: true
 })
 
 const Transaction = mongoose.model<ITransaction>('Transaction', transactionSchema);

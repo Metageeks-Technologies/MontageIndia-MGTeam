@@ -27,11 +27,20 @@ const CategoriesPage: React.FC = () =>
     const [ isLoading, setIsLoading ] = useState( false );
     const [ error, setError ] = useState<string | null>( null );
     const [ imagePreview, setImagePreview ] = useState<string | null>( null );
+    const [ currentPage, setCurrentPage ] = useState<number>( 1 );
+    const [ totalPages, setTotalPages ] = useState<number>( 1 );
+    const [ dataPerPage, setDataPerPage ] = useState<number>( 10 );
+    const [totalCategories, setTotalCategories] = useState<number>(0);
+
     const router = useRouter();
     useEffect( () =>
     {
         fetchCategories();
-    }, [] );
+    }, [currentPage] );
+
+    const handlePageChange = ( page: number ) =>{
+        setCurrentPage( page );
+    }
 
     const fetchCategories = async () =>
     {
@@ -39,8 +48,17 @@ const CategoriesPage: React.FC = () =>
         setError( null );
         try
         {
-            const response = await instance.get( '/field/category' );
+            const response = await instance.get( '/field/category',
+                {
+                    params: {
+                        page: currentPage,
+                    },
+                }
+            );
             setCategories( response.data.categories );
+            setTotalPages( response.data.totalPages );
+            setTotalCategories( response.data.totalCategories );
+
         } catch ( error )
         {
             console.error( 'Error fetching categories:', error );
@@ -57,7 +75,6 @@ const CategoriesPage: React.FC = () =>
             setIsLoading( false );
         }
     };
-
 
     const handleEdit = ( category: Category ) =>
     {
@@ -276,7 +293,7 @@ const CategoriesPage: React.FC = () =>
     console.log( "categoies:-", categories );
 
     return (
-        <div className="container p-4 m-4 bg-pureWhite-light rounded-md">
+        <div className="container p-4 min-h-screen bg-pureWhite-light rounded-md">
             <div className="flex justify-between items-center mb-4">
                 <h1 className="text-2xl font-bold">Categories</h1>
                 <button className="bg-red-500 text-white px-4 py-2 rounded" onClick={ () => router.push( '/admin/category/create' ) }>+  Add New Category</button>
@@ -411,15 +428,15 @@ const CategoriesPage: React.FC = () =>
 
                                         />
                                     </td>
-                                    <td className="px-4 py-4 border-b border-gray-200 bg-white">
+                                    <td className="px-4 py-4 border-b text-black border-gray-200 bg-white">
                                         { category.name }
                                     </td>
 
-                                    <td className="px-4 py-4 border-b border-gray-200 bg-white">
+                                    <td className="px-4 py-4 border-b text-black border-gray-200 bg-white">
                                         { category.description }
                                     </td>
 
-                                    <td className="px-4 py-4 border-b border-gray-200 bg-white">
+                                    <td className="px-4 py-4 border-b text-black border-gray-200 bg-white">
                                         <div className="flex justify-center items-center space-x-2">
 
                                             <button className="text-green-600 hover:text-green-900" onClick={ () => handleEdit( category ) }>
@@ -438,6 +455,41 @@ const CategoriesPage: React.FC = () =>
                 </div>
                 }
             </div>
+
+             { totalPages > 0 && (
+        <div className="flex justify-between items-center mt-4">
+          <div>
+            <p>Showing { ( dataPerPage * ( currentPage - 1 ) ) + 1 } to { dataPerPage * ( currentPage ) } of { totalCategories } Entries</p>
+
+          </div>
+          <div className="flex items-center space-x-2">
+            <button
+              className="px-3 py-1 border rounded"
+              onClick={ () => handlePageChange( currentPage - 1 ) }
+              disabled={ currentPage === 1 }
+            >
+              &lt;
+            </button>
+            { [ ...Array( totalPages ) ].map( ( _, index ) => (
+              <button
+                key={ index }
+                className={ `px-3 py-1 border rounded ${ currentPage === index + 1 ? 'bg-red-500 text-white' : 'bg-white'
+                  }` }
+                onClick={ () => handlePageChange( index + 1 ) }
+              >
+                { index + 1 }
+              </button>
+            ) ) }
+            <button
+              className="px-3 py-1 border rounded"
+              onClick={ () => handlePageChange( currentPage + 1 ) }
+              disabled={ currentPage === totalPages }
+            >
+              &gt;
+            </button>
+          </div>
+        </div>
+      ) }
         </div>
     );
 };

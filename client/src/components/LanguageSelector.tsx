@@ -105,7 +105,6 @@ export function GoogleTranslate (): JSX.Element {
             >
                 {languages.map( ( lang ) => (
                     <option key={lang.value} value={lang.value}>
-                        <img src={lang.src} alt={lang.label} className="w-6 h-6 inline-block" />
                         {lang.label}
                     </option>
                 ) )}

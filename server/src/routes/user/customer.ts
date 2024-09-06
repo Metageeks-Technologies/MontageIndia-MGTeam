@@ -27,8 +27,9 @@ import {
   googleLogin,
   verifyEmail,
   isPhoneEmailExist,
+  onDemandForm,
 } from "@src/controller/user/customer";
-import { get } from "http";
+
 const userRouter = express.Router();
 
 userRouter.route("/verifyEmail").post(verifyEmail);
@@ -58,6 +59,7 @@ userRouter
   .get(firebaseAuth, getCart)
   .patch(firebaseAuth, addToCart)
   .delete(firebaseAuth, removeFromCart);
+userRouter.route("/onDemand/email").post(firebaseAuth, onDemandForm);
 
 userRouter.route("/:id").get(firebaseAuth, getCustomerById);
 export default userRouter;

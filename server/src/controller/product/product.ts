@@ -632,14 +632,15 @@ export const getFilteredProducts =  catchAsyncError(async (req: any, res, next) 
       imageWidth,
       imageHeight,
       imageFileType,
-      dpi,
+      minDensity,
       videoResolution,
       videoLength,
       videoFrameRate,
       audioLength,
       audioBitrate,
     } = req.query;
-    console.log("req.query", req.query);
+  console.log( "req.query", req.query );
+  
 
     const queryObject: any = {};
 
@@ -669,15 +670,15 @@ export const getFilteredProducts =  catchAsyncError(async (req: any, res, next) 
     }
     let sortCriteria: { [key: string]: 1 | -1 } = { createdAt: -1 };
 
-    if (sortBy === 'newest') {
+    if (sortBy === 'Newest') {
       sortCriteria = { createdAt: -1 };
     } 
 
-    if(sortBy === 'oldest') {
+    if(sortBy === 'Oldest') {
       sortCriteria = { createdAt: 1 };
     } 
 
-    if (sortBy==="popular") {
+    if (sortBy==="Most Popular") {
       const popularProducts = await Customer.aggregate([
         {
           $project: {
@@ -700,14 +701,18 @@ export const getFilteredProducts =  catchAsyncError(async (req: any, res, next) 
     }
     //image
     if(mediaType.includes("image")){
-      if(imageFileType){
-        queryObject["variants.metadata.format"] = imageFileType;
+      console.log("mediaType:-",mediaType)
+      if ( imageFileType ) {
+        const str = imageFileType.toLowerCase();
+        console.log("str:-",str)
+        queryObject["variants.metadata.format"] = str;
+        // queryObject["variants.metadata.format"] = { $regex: new RegExp( imageFileType.toLowerCase(), 'i' ) };
       }
-      if(dpi){
-        queryObject["variants.metadata.dpi"] = {$gte: dpi};
+      if(minDensity){
+        queryObject["variants.metadata.dpi"] = {$gte: minDensity};
       }
       if(imageWidth && imageHeight){
-        queryObject["variants.metadata.dimension"] = { $regex:new RegExp(`${imageWidth}x${imageHeight}`, 'i')};
+        queryObject["variants.metadata.dimension"] = {$regex: new RegExp( `${imageWidth}x${imageHeight}`, 'i' )}; 
       }
     }
     //video
@@ -759,7 +764,7 @@ export const getFilteredProducts =  catchAsyncError(async (req: any, res, next) 
       .skip(skip)
       .limit(Number(limit));
 
-    console.log("products", products);
+    // console.log("products", products);
     const totalData = await Product.countDocuments(queryObject);
     const numOfPages = Math.ceil(totalData / limit);
 

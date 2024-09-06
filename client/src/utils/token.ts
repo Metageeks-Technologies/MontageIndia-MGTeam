@@ -10,4 +10,4 @@ export const getToken = () => {
 
 export const removeToken = () => {
   Cookies.remove('token');
-};
+}
