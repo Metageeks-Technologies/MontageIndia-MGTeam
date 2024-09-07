@@ -10,22 +10,22 @@ import customer from "@src/model/user/customer.js";
 export const isAuthenticatedAdmin = catchAsyncError(
   async (req: any, res, next) => {
     // console.log("auth",req);
-    const { token } = req.cookies;
+    const { _mi_token } = req.cookies;
     // console.log("token",token);
-    if (!token) {
+    if (!_mi_token) {
       return next(
         new ErrorHandler("Please Login to access this resource", 401)
       );
     }
 
-    const decodedData = jwt.verify(token, config.jwtSecret || "");
+    const decodedData = jwt.verify(_mi_token, config.jwtSecret || "");
     const requestedUser = await Admin.findById((decodedData as JwtPayload).id);
     if (!requestedUser) {
       return next(new ErrorHandler("User not found", 404));
     }
     if (requestedUser.isDeleted) {
       return res
-        .cookie("token", null, {
+        .cookie("_mi_token", null, {
           expires: new Date(Date.now()),
           httpOnly: true,
         })

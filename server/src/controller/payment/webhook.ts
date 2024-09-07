@@ -276,7 +276,7 @@ const paymentHandler = async (payload: any) => {
 
     const newPayment = {
       userId: userId ? userId : "",
-      amount,
+      amount: (amount/100) as number,
       email,
       method,
       currency,

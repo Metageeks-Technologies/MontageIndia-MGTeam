@@ -17,7 +17,7 @@ const filterOptions = {
   sortBy: ["Most Popular", "Newest", "Oldest"],
   orientation: ["Landscape", "Portrait"],
   more: [
-    { label: "Size", options: { minHeight: 0, minWidth: 0 } },
+    { label: "Size", options: { minHeight: 0, maxHeight:0, maxWidth:0, minWidth: 0 } },
     { label: "File Type", options: ["JPEG", "PNG"] },
   ],
   density: 0,
@@ -108,8 +108,11 @@ const Page = () => {
     currentParams.delete("orientation");
     currentParams.delete("minHeight");
     currentParams.delete("minWidth");
+    currentParams.delete("maxHeight");
+    currentParams.delete("maxWidth");
     currentParams.delete("fileType");
     currentParams.delete("minDensity");
+    currentParams.delete("maxDensity");
     router.push(`?${currentParams.toString()}`, { scroll: false });
     fetchData(imagePage);
   };
@@ -121,8 +124,11 @@ const Page = () => {
         "orientation",
         "minHeight",
         "minWidth",
+        "maxHeight",
+        "maxWidth",
         "fileType",
         "minDensity",
+        "maxDensity",
       ].includes(key)
     );
   };
@@ -177,11 +183,11 @@ const Page = () => {
                   </h4>
                   <div className="mx-auto mt-4">
                     {loading ? (
-                      <div className="justify-center text-center m-auto">
+                      <div className="flex items-center justify-center min-h-screen text-center m-auto">
                         <Spinner label="Loading..." color="danger" />
                       </div>
                     ) : (
-                      <div className="columns-1 sm:columns-2 md:columns-3 lg:columns-4 gap-2 mt-2 relative">
+                      <div className="columns-1 min-h-screen sm:columns-2 md:columns-3 lg:columns-4 gap-2 mt-2 relative">
                         {displayData.length > 0 ? (
                           displayData.map((data: any) => (
                             <ImageGallery key={data._id} data={data} />

@@ -11,7 +11,7 @@ export default (user:any, statusCode:number, res:Response) => {
     secure: nodeEnv === 'production',
     sameSite: nodeEnv === 'production' ? 'none' : 'lax' as 'none' | 'strict' | 'lax' | undefined,
   };
-  res.status(statusCode).cookie("token", token, options).json({
+  res.status(statusCode).cookie("_mi_token", token, options).json({
     success: true,
     token,
     user,
