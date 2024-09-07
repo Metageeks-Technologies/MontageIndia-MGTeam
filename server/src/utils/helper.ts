@@ -1,13 +1,14 @@
-import fs from 'fs/promises';
+import fs from "fs/promises";
 
 export const deleteLocalFile = async (filePath: string): Promise<void> => {
-    try {
-        await fs.unlink(filePath);
-        console.log(`File deleted successfully: ${filePath}`);
-    } catch (err: any) {
-        console.error(`Error deleting file: ${err.message}`);
-    }
+  try {
+    await fs.unlink(filePath);
+    console.log(`File deleted successfully: ${filePath}`);
+  } catch (err: any) {
+    console.error(`Error deleting file: ${err.message}`);
+  }
 };
+//
 // export const deleteLocalFile = (filePath: string): void => {
 //     const maxRetries = 3;
 //     let attempts = 0;
