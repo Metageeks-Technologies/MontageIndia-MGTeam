@@ -131,7 +131,7 @@ const SignUpPage = () => {
 
     try {
       const response = await instance.post(
-        `/user/signup`,
+        `/user/googleLogin`,
         { uid, name: displayName, image: photoURL, email },
         {
           headers: {
@@ -142,7 +142,7 @@ const SignUpPage = () => {
 
       console.log("Login successful:", response.data);
 
-      if (response.status === 201) {
+      if (response.data.status === "success") {
         notifySuccess("SignUp Successful");
         router.replace(redirectUrl || "/");
         await createCart(dispatch);
