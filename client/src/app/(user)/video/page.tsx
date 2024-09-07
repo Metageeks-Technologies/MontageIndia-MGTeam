@@ -14,6 +14,7 @@ import { clearKeywords } from "@/app/redux/feature/product/api";
 import Filter from "@/components/searchBar/filtersidebar";
 import { BsFilterLeft } from "react-icons/bs";
 import instance from "@/utils/axios";
+import Banner from "@/components/Banner";
 
 const filterOptions = {
   sortBy: ["Most Popular", "Newest", "Oldest"],
@@ -146,6 +147,7 @@ const Page = () => {
   return (
     <div className="flex flex-col min-h-screen">
       <Searchbar />
+      <Banner />
       <div className="flex flex-1">
         <Filter
           isOpen={isFilterOpen}

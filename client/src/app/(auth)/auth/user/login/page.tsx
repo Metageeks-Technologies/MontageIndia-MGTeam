@@ -114,6 +114,7 @@ const LoginPage = () => {
         name: displayName,
         image: photoURL,
       });
+      console.log("google login", response)
 
       notifySuccess("Login Successful");
       router.push(redirectUrl || "/");

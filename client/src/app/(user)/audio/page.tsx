@@ -14,6 +14,7 @@ import { BsFilterLeft } from "react-icons/bs";
 import { getImage } from "@/app/redux/feature/product/image/api";
 import { getAudio } from "@/app/redux/feature/product/audio/api";
 import Waveform from "@/components/Home/AudioWaveForm";
+import Banner from "@/components/Banner";
 
 const filterOptions = {
   sortBy: ["Most Popular", "Newest", "Oldest"],
@@ -132,6 +133,7 @@ const Page = () => {
   return (
     <div className="flex flex-col min-h-screen">
       <Searchbar />
+      <Banner />
       <div className="flex flex-1 bg-pageBg-light">
         <Filter
           isOpen={isFilterOpen}

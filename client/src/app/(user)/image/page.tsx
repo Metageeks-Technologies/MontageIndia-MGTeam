@@ -12,12 +12,16 @@ import Searchbar from "@/components/searchBar/search";
 import Filter from "@/components/searchBar/filtersidebar";
 import { BsFilterLeft } from "react-icons/bs";
 import { getImage } from "@/app/redux/feature/product/image/api";
+import Hero from "@/components/Home/gallary/Hero";
 
 const filterOptions = {
   sortBy: ["Most Popular", "Newest", "Oldest"],
   orientation: ["Landscape", "Portrait"],
   more: [
-    { label: "Size", options: { minHeight: 0, maxHeight:0, maxWidth:0, minWidth: 0 } },
+    {
+      label: "Size",
+      options: { minHeight: 0, maxHeight: 0, maxWidth: 0, minWidth: 0 },
+    },
     { label: "File Type", options: ["JPEG", "PNG"] },
   ],
   density: 0,
@@ -152,6 +156,9 @@ const Page = () => {
   return (
     <div className="flex flex-col min-h-screen">
       <Searchbar />
+      <div className="w-full h-full lg:block md:hidden hidden">
+        <Hero />
+      </div>
       <div className="flex flex-1">
         <Filter
           isOpen={isFilterOpen}
