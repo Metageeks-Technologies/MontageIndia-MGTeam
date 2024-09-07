@@ -148,7 +148,7 @@ export const fetchAllPlans = catchAsyncError(async (req, res, next) => {
 
 export const fetchPlanById = catchAsyncError(async (req, res, next) => {
   const { id } = req.params;
-  const response = await SubscriptionPlan.findOne({ PlanId: id });
+  const response = await SubscriptionPlan.findOne({ planId: id });
   res.json({
     success: true,
     message: "Subscription Plan fetched successfully",
