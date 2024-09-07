@@ -101,12 +101,13 @@ const LoginPage = () => {
       setEmail("");
       const { uid, email, displayName, photoURL } = userData.user;
 
-      const response = instance.post("/user/googleLogin", {
+      const response = await instance.post("/user/googleLogin", {
         uid,
         email,
         name: displayName,
         image: photoURL,
       });
+      console.log("google login", response)
 
       notifySuccess("Login Successful");
       router.push("/");

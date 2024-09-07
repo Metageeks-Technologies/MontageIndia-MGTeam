@@ -11,6 +11,7 @@ import {useSearchParams} from "next/navigation";
 import Filter from "@/components/searchBar/filtersidebar";
 import Footer from "@/components/Footer";
 import {BsFilterLeft} from "react-icons/bs";
+import Banner from "@/components/Banner";
 
 const Page = () => {
   const dispatch = useAppDispatch();
@@ -74,6 +75,7 @@ const Page = () => {
   return (
     <div className="flex flex-col min-h-screen">
       <Searchbar />
+      <Banner/>
       <div className="flex flex-1 bg-pageBg-light">
         <Filter isOpen={isFilterOpen} onToggle={toggleFilter} filterOptions={filterOptions} onFilterChange={handleFilterChange} />
         <div className="flex-1 transition-all duration-300 ease-in-out">

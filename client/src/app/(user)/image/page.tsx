@@ -12,6 +12,7 @@ import Searchbar from "@/components/searchBar/search";
 import Filter from "@/components/searchBar/filtersidebar";
 import {BsFilterLeft} from "react-icons/bs";
 import {getImage} from "@/app/redux/feature/product/image/api";
+import Hero from "@/components/Home/gallary/Hero";
 
 const filterOptions = {
   sortBy: ['Most Popular', 'Newest', 'Oldest'],
@@ -110,6 +111,9 @@ const Page = () => {
   return (
     <div className="flex flex-col min-h-screen">
       <Searchbar />
+      <div className="w-full h-full lg:block md:hidden hidden">
+        <Hero />
+      </div>
       <div className="flex flex-1">
         <Filter isOpen={isFilterOpen} onToggle={toggleFilter} filterOptions={filterOptions} onFilterChange={handleFilterChange} />
         <div className={`flex-1 transition-all duration-300 ease-in-out `}>

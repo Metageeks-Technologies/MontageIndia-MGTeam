@@ -15,6 +15,7 @@ import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import Hero from "@/components/Home/gallary/Hero";
 import TopBanner from "@/components/navbar/TopBanner";
 import { IoCameraOutline } from "react-icons/io5";
+import Banner from "@/components/Banner";
 
 // Collection data
 interface Card {
@@ -250,56 +251,7 @@ export default function Home() {
         onClick={() => console.log( 'Redirecting to Sale Page' )}
       /> */}
 
-      <div className=" w-full h-[400px] relative ">
-        <img
-          src="/asset/main-with-camera2 2.jpg"
-          alt=""
-          className="absolute w-full h-[24rem]  object-cover"
-        />
-        <div className="relative z-10 flex flex-col items-center justify-center h-full text-white text-center p-4 md:p-8 lg:p-16">
-          <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-4xl font-bold px-2  w-[50%]">
-            Impact The World With True, Inventive Footage
-          </h1>
-          <div className="w-[70%]  bg-white p-4 mt-6 rounded-lg shadow-lg">
-            <div className="flex lg:flex-wrap flex-row items-center gap-4">
-              <select className="px-4 py-2 bg-gray-100 border border-gray-300 rounded-md text-black focus:outline-none focus:ring-2 focus:ring-black">
-                <option>All Image</option>
-                <option>Video</option>
-                <option>Audio</option>
-              </select>
-              <div className="flex-grow relative">
-                <input
-                  type="text"
-                  placeholder="Search for music"
-                  className="w-full px-4 py-2 border border-gray-400 rounded-md text-black focus:outline-none focus:ring-2 focus:ring-black"
-                />
-                <button className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-red-500 text-white p-2 rounded-md hover:bg-red-600 transition-colors">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-5 w-5"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                    />
-                  </svg>
-                </button>
-              </div>
-              <div className="lg:block md:block hidden">
-                <button className=" flex items-center px-4 py-2 mr-2  gap-2 border border-gray-300 rounded-md text-black hover:bg-gray-100 transition-colors">
-                <IoCameraOutline className="h-6 w-5 cursor-pointer" />
-                  Search
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <Banner/>
 
       <div className="lg:mx-24 md:mx-4 mx-4 py-14 ">
         <div className="flex flex-col md:flex-row justify-center items-center mb-4">
@@ -377,7 +329,7 @@ export default function Home() {
           <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-5 text-center">
             Trusted by the world's largest companies
           </h2>
-          <div className="flex flex-wrap justify-center space-x-0 sm:space-x-4 lg:space-x-8 mb-5">
+          <div className="grid lg:grid-cols-6 md:grid-cols-4 grid-cols-2 gap-3">
             {companies.map((company) => (
               <div
                 key={company.name}
