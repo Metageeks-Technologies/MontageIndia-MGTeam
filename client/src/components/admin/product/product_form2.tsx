@@ -363,7 +363,7 @@ const Form2: React.FC<Form2Props> = ({ onPrev, onNext, formData }) => {
           onClick={handleSubmit}
           className={`w-full p-3 font-semibold text-white rounded-lg ${
             file && !loading
-              ? "bg-webred hover:bg-webred-light"
+              ? "bg-webred hover:bg-webredHover-light"
               : "bg-gray-400 cursor-not-allowed"
           }`}
           disabled={!file || loading}

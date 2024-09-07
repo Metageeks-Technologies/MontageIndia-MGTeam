@@ -31,6 +31,7 @@ import Searchbar from "@/components/searchBar/search";
 import { formatSecToMin } from "@/utils/DateFormat";
 import { redirectToLogin } from "@/utils/redirectToLogin";
 import { useRouter, usePathname } from "next/navigation";
+import { Spinner } from "@nextui-org/react";
 
 const Home = () => {
   const [selectedVariantId, setSelectedVariantId] = useState("");
@@ -159,7 +160,7 @@ const Home = () => {
         <div className="bg-pageBg mx-auto ">
           <div className="flex flex-col lg:flex-row lg:space-x-8 px-4 lg:px-4 xl:px-24 md:px-4 ">
             <div className="w-full lg:w-2/3">
-              {product && (
+              {!!product ? (
                 <div className="relative">
                   <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 pt-4 pr-6">
                     <h1 className="text-xl sm:text-2xl font-semibold mb-2 sm:mb-0">
@@ -200,13 +201,13 @@ const Home = () => {
                       </button>
                     </div>
                   </div>
-                  <div className="w-full h-48 sm:h-64 md:h-80 lg:h-[32rem] rounded-lg">
+                  <div className="w-auto h-48 sm:h-64 md:h-80 lg:h-[32rem] rounded-lg overflow-hidden flex items-center justify-center">
                     <video
                       controls
-                      className=" object-cover h-full w-full rounded-lg"
+                      className="w-auto rounded-lg max-h-full object-contain"
                     >
                       <source
-                        src={` ${process.env.NEXT_PUBLIC_AWS_PREFIX}/${product.publicKey}`}
+                        src={`${process.env.NEXT_PUBLIC_AWS_PREFIX}/${product.publicKey}`}
                       />
                     </video>
                   </div>
@@ -217,6 +218,10 @@ const Home = () => {
                     </p>
                     <p className="text-sm">{product.description}</p>
                   </div>
+                </div>
+              ) : (
+                <div className="justify-center m-10 text-center ">
+                  <Spinner label="Loading..." color="danger" />
                 </div>
               )}
             </div>
@@ -395,14 +400,18 @@ const Home = () => {
             </div>
           </div>
 
-          <div className="pt-8 sm:pt-12 bg-pureWhite-light w-full px-4 sm:px-6 lg:px-4 xl:px-24 md:px-4 py-8">
-            <h1 className="font-semibold text-lg sm:text-xl">Similar Videos</h1>
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3  mt-5  lg:border">
-              {videoData.map((data, index: number) => (
-                <Trending key={index} data={data} />
-              ))}
+          {!!product && (
+            <div className="pt-8 sm:pt-12 bg-pureWhite-light w-full px-4 sm:px-6 lg:px-4 xl:px-24 md:px-4 py-8">
+              <h1 className="font-semibold text-lg sm:text-xl">
+                Similar Videos
+              </h1>
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3  mt-5  lg:border">
+                {videoData.map((data, index: number) => (
+                  <Trending key={index} data={data} />
+                ))}
+              </div>
             </div>
-          </div>
+          )}
 
           {product && (
             <div className="px-4 sm:px-6 lg:px-4 xl:px-24 md:px-4 bg-pureWhite-light">
