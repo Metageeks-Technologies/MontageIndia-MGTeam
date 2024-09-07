@@ -43,6 +43,7 @@ export const googleLogin = catchAsyncError(async (req, res, next) => {
     name,
     email,
     image,
+    emailVerified: true,
   });
 
   return res.status(201).send({ status:'success', message: "User created"});
