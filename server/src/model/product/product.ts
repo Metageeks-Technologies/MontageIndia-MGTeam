@@ -25,7 +25,7 @@ const productSchema = new mongoose.Schema(
           dpi: { type: Number },
           bitrate: { type: Number },
           resolution: { type: String },
-          frameRate: { type: String },
+          frameRate: { type: Number },
         },
       },
     ],

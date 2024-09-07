@@ -158,14 +158,14 @@ export const addSizeAndKeysToVideo = catchAsyncError(
     const originalMetadata: MetaData = {
       resolution: "1920x1080", //Px
       bitrate: 5, //Mbps
-      frameRate: "30", //Hz
+      frameRate: 30, //Hz
       format: "mp4",
       size: 1,
     };
     const mediumMetadata: MetaData = {
       resolution: "1280x720", //Px
       bitrate: 2, //Mbps
-      frameRate: "24", //Hz
+      frameRate: 24, //Hz
       format: "mp4",
       size: 1,
     };
@@ -483,12 +483,22 @@ export const getProductForCustomer = catchAsyncError(
       page = "1",
       status = "published",
       category = [],
-      mediaType = [],
+      mediaType = "image",
       searchTerm = "",
       tags,
-      popular,
+      sortBy = "newest",
+      imageFileType,
+      imageWidth,
+      imageHeight,
+      imageOrientation,
+      imageDensity,
+      videoResolution,
+      videoOrientation,
+      videoLength,
+      videoFrameRate,
+      audioLength,
+      audioBitrate,
     } = req.query;
-    console.log("dsd", category, searchTerm);
 
     const queryObject: any = {};
 
@@ -508,8 +518,8 @@ export const getProductForCustomer = catchAsyncError(
       queryObject.category = { $in: category };
     }
 
-    if (Array.isArray(mediaType) && mediaType.length > 0) {
-      queryObject.mediaType = { $in: mediaType };
+    if (mediaType) {
+      queryObject.mediaType = mediaType;
     }
 
     if (tags) {
@@ -517,27 +527,269 @@ export const getProductForCustomer = catchAsyncError(
       const tagsArray = Array.isArray(nTag) ? nTag : nTag.split(","); // Ensure tags are in array format
       queryObject.tags = { $all: tagsArray };
     }
+    let sortCriteria: { [key: string]: 1 | -1 } = { createdAt: -1 };
 
-    if (popular) {
-      const popularProducts = await Customer.aggregate([
-        {
-          $project: {
-            allProducts: {
-              $concatArrays: [
-                "$wishlist.productId",
-                "$cart.productId",
-                "$purchasedProducts.productId",
-              ],
+    if (sortBy) {
+      if (sortBy === "newest") {
+        sortCriteria = { createdAt: -1 };
+      } else if (sortBy === "oldest") {
+        sortCriteria = { createdAt: 1 };
+      } else if (sortBy === "popular") {
+        const popularProducts = await Customer.aggregate([
+          {
+            $project: {
+              allProducts: {
+                $concatArrays: [
+                  "$wishlist.productId",
+                  "$cart.productId",
+                  "$purchasedProducts.productId",
+                ],
+              },
             },
           },
-        },
-        { $unwind: "$allProducts" },
-        { $group: { _id: "$allProducts" } },
-        { $project: { _id: 1 } },
-      ]);
+          { $unwind: "$allProducts" },
+          { $group: { _id: "$allProducts" } },
+          { $project: { _id: 1 } },
+        ]);
 
-      const popularProductIds = popularProducts.map((p) => p._id);
-      queryObject._id = { $in: popularProductIds };
+        const popularProductIds = popularProducts.map((p) => p._id);
+        queryObject._id = { $in: popularProductIds };
+      }
+    }
+    // image
+    if (mediaType.includes("image")) {
+      if (imageFileType) {
+        const str = imageFileType.toLowerCase();
+
+        queryObject["variants.metadata.format"] = str;
+        // queryObject["variants.metadata.format"] = { $regex: new RegExp( imageFileType.toLowerCase(), 'i' ) };
+      }
+      if (imageDensity) {
+        queryObject["variants.metadata.dpi"] = {
+          $gte: Number(imageDensity) - 20 > 0 ? Number(imageDensity) - 20 : 0,
+          $lte: Number(imageDensity) + 20,
+        };
+      }
+      let dimensionFilters: any[] = [];
+
+      if (imageOrientation || imageWidth || imageHeight) {
+        queryObject["variants.metadata.dimension"] = { $exists: true };
+
+        let dimensionMatch: any = {
+          $expr: {
+            $anyElementTrue: {
+              $map: {
+                input: "$variants",
+                as: "variant",
+                in: {
+                  $let: {
+                    vars: {
+                      dimension: "$$variant.metadata.dimension",
+                      width: {
+                        $toInt: {
+                          $arrayElemAt: [
+                            { $split: ["$$variant.metadata.dimension", "x"] },
+                            0,
+                          ],
+                        },
+                      },
+                      height: {
+                        $toInt: {
+                          $arrayElemAt: [
+                            { $split: ["$$variant.metadata.dimension", "x"] },
+                            1,
+                          ],
+                        },
+                      },
+                    },
+                    in: {
+                      $and: [
+                        // Add your conditions here based on imageOrientation, imageWidth, and imageHeight
+                        {
+                          $cond: [
+                            { $eq: [imageOrientation, "vertical"] },
+                            { $gt: ["$$height", "$$width"] },
+                            {
+                              $cond: [
+                                { $eq: [imageOrientation, "horizontal"] },
+                                { $gte: ["$$width", "$$height"] },
+                                true,
+                              ],
+                            },
+                          ],
+                        },
+                        // Add width and height conditions if needed
+                        {
+                          $cond: [
+                            { $ne: [imageWidth, null] },
+                            {
+                              $let: {
+                                vars: { numericWidth: { $toInt: imageWidth } },
+                                in: {
+                                  $and: [
+                                    {
+                                      $gte: [
+                                        "$$width",
+                                        { $subtract: ["$$numericWidth", 100] },
+                                      ],
+                                    },
+                                    {
+                                      $lte: [
+                                        "$$width",
+                                        { $add: ["$$numericWidth", 100] },
+                                      ],
+                                    },
+                                  ],
+                                },
+                              },
+                            },
+                            true,
+                          ],
+                        },
+                        {
+                          $cond: [
+                            { $ne: [imageHeight, null] },
+                            {
+                              $let: {
+                                vars: {
+                                  numericHeight: { $toInt: imageHeight },
+                                },
+                                in: {
+                                  $and: [
+                                    {
+                                      $gte: [
+                                        "$$height",
+                                        {
+                                          $subtract: ["$$numericHeight", 100],
+                                        },
+                                      ],
+                                    },
+                                    {
+                                      $lte: [
+                                        "$$height",
+                                        { $add: ["$$numericHeight", 100] },
+                                      ],
+                                    },
+                                  ],
+                                },
+                              },
+                            },
+                            true,
+                          ],
+                        },
+                      ],
+                    },
+                  },
+                },
+              },
+            },
+          },
+        };
+
+        if (imageOrientation) {
+          if (imageOrientation === "vertical") {
+            dimensionMatch.$expr.$anyElementTrue.$map.in.$let.in.$and.push({
+              $gt: ["$$height", "$$width"],
+            });
+          } else if (imageOrientation === "horizontal") {
+            dimensionMatch.$expr.$anyElementTrue.$map.in.$let.in.$and.push({
+              $gte: ["$$width", "$$height"],
+            });
+          }
+        }
+
+        if (imageWidth) {
+          const minWidth = Math.max(Number(imageWidth) - 100, 0);
+          const maxWidth = Number(imageWidth) + 100;
+          dimensionMatch.$expr.$anyElementTrue.$map.in.$let.in.$and.push({
+            $and: [
+              { $gte: ["$$width", minWidth] },
+              { $lte: ["$$width", maxWidth] },
+            ],
+          });
+        }
+
+        if (imageHeight) {
+          const minHeight = Math.max(Number(imageHeight) - 100, 0);
+          const maxHeight = Number(imageHeight) + 100;
+          dimensionMatch.$expr.$anyElementTrue.$map.in.$let.in.$and.push({
+            $and: [
+              { $gte: ["$$height", minHeight] },
+              { $lte: ["$$height", maxHeight] },
+            ],
+          });
+        }
+
+        dimensionFilters.push(dimensionMatch);
+      }
+
+      if (dimensionFilters.length > 0) {
+        queryObject.$and = queryObject.$and || [];
+        queryObject.$and.push(...dimensionFilters);
+      }
+    }
+    // video
+    if (mediaType.includes("video")) {
+      if (videoLength) {
+        queryObject.length = {
+          $gte: Number(videoLength) - 10 > 0 ? Number(videoLength) - 10 : 0,
+          $lte: Number(videoLength) + 10,
+        };
+      }
+
+      if (videoFrameRate) {
+        const frameRateValue = Number(videoFrameRate);
+        const minFrameRate = Math.max(frameRateValue - 10, 0);
+        const maxFrameRate = frameRateValue + 10;
+
+        queryObject["variants"] = {
+          $elemMatch: {
+            "metadata.frameRate": {
+              $gte: minFrameRate,
+              $lte: maxFrameRate,
+            },
+          },
+        };
+      }
+
+      if (videoOrientation) {
+        if (videoOrientation === "vertical") {
+          queryObject["$expr"] = { $gt: ["$height", "$width"] };
+        } else if (videoOrientation === "horizontal") {
+          queryObject["$expr"] = { $gte: ["$width", "$height"] };
+        }
+      }
+
+      if (videoResolution) {
+        const escapeRegex = (text: string) =>
+          text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+        const escapedVideoResolution = escapeRegex(videoResolution as string);
+        const substringMatchRegex = new RegExp(
+          `${escapedVideoResolution}`,
+          "i"
+        );
+
+        if (escapedVideoResolution) {
+          queryObject["variants.metadata.resolution"] = {
+            $regex: substringMatchRegex,
+          };
+        }
+      }
+    }
+    // audio
+    if (mediaType.includes("audio")) {
+      if (audioLength) {
+        queryObject["variants.metadata.length"] = {
+          $gte: Number(audioLength) - 10 > 0 ? Number(audioLength) - 10 : 0,
+          $lte: Number(audioLength) + 10,
+        };
+      }
+      if (audioBitrate) {
+        queryObject["variants.metadata.bitrate"] = {
+          $gte: Number(audioBitrate) - 10 > 0 ? Number(audioBitrate) - 10 : 0,
+          $lte: Number(audioBitrate) + 10,
+        };
+      }
     }
 
     let isWhitelisted = false;
@@ -563,7 +815,7 @@ export const getProductForCustomer = catchAsyncError(
     const skip = (p - 1) * Number(limit);
 
     let products = await Product.find(queryObject)
-      .sort({ createdAt: -1 })
+      .sort(sortCriteria)
       .skip(skip)
       .limit(Number(limit));
     const totalData = await Product.countDocuments(queryObject);
@@ -618,8 +870,9 @@ export const getProductForCustomer = catchAsyncError(
   }
 );
 
-export const getFilteredProducts =  catchAsyncError(async (req: any, res, next) => {
-      const {
+export const getFilteredProducts = catchAsyncError(
+  async (req: any, res, next) => {
+    const {
       productsPerPage = "10",
       page = "1",
       status = "published",
@@ -627,65 +880,59 @@ export const getFilteredProducts =  catchAsyncError(async (req: any, res, next) 
       mediaType = "image",
       searchTerm = "",
       tags,
-      sortBy,
-      orientation,
-      imageMinHeight,
-      imageMaxHeight,
-      imageMinWidth,
-      imageMaxWidth,
-      imageFileType,
-      minDensity,
-      maxDensity,
-      videoResolution,
-      minVideoLength,
-      maxVideoLength,
-      videoFrameRate,
-      audioMinLength,
-      audioMaxLength,
-      audioMinBitrate,
-      audioMaxBitrate,
+      sortBy, //working
+      imageFileType, //working
+      imageWidth, //working
+      imageHeight, //working
+      imageOrientation, //working
+      imageDensity, //working
+      videoResolution, //working
+      videoOrientation, //working
+      videoLength, //working
+      videoFrameRate, //working
+      audioLength, //working
+      audioBitrate, //working
     } = req.query;
-  console.log( "req.query", req.query );
-  
+    console.log("req.query", req.query);
 
     const queryObject: any = {};
 
-    if(status){
+    if (status) {
       queryObject.status = "published";
     }
 
-    if(searchTerm){
+    if (searchTerm) {
       queryObject.$or = [
-        {title: {$regex: searchTerm, $options: "i"}},
-        {tags: {$regex: searchTerm, $options: "i"}},
-        {category: {$regex: searchTerm, $options: "i"}},
+        { title: { $regex: searchTerm, $options: "i" } },
+        { tags: { $regex: searchTerm, $options: "i" } },
+        { category: { $regex: searchTerm, $options: "i" } },
       ];
     }
 
-    if(Array.isArray(category) && category.length > 0){
+    if (Array.isArray(category) && category.length > 0) {
       queryObject.category = { $in: category };
     }
-    if(tags){
+    if (tags) {
       const nTag = tags as string;
       const tagsArray = Array.isArray(nTag) ? nTag : nTag.split(","); // Ensure tags are in array format
       queryObject.tags = { $all: tagsArray };
     }
 
-    if(mediaType){
+    if (mediaType) {
       queryObject.mediaType = mediaType;
     }
 
     let sortCriteria: { [key: string]: 1 | -1 } = { createdAt: -1 };
 
-    if (sortBy === 'Newest') {
+    if (sortBy === "newest") {
       sortCriteria = { createdAt: -1 };
-    } 
+    }
 
-    if(sortBy === 'Oldest') {
+    if (sortBy === "oldest") {
       sortCriteria = { createdAt: 1 };
-    } 
+    }
 
-    if (sortBy==="Most Popular") {
+    if (sortBy === "popular") {
       const popularProducts = await Customer.aggregate([
         {
           $project: {
@@ -708,58 +955,239 @@ export const getFilteredProducts =  catchAsyncError(async (req: any, res, next) 
     }
 
     //image
-    if(mediaType.includes("image")){
-      if ( imageFileType ) {
+    if (mediaType.includes("image")) {
+      if (imageFileType) {
         const str = imageFileType.toLowerCase();
-        console.log("str:-",str)
+
         queryObject["variants.metadata.format"] = str;
         // queryObject["variants.metadata.format"] = { $regex: new RegExp( imageFileType.toLowerCase(), 'i' ) };
       }
-      if(maxDensity || minDensity){
-       queryObject["variants.metadata.dpi"] = {
-          $gte: Number(minDensity) || 0,
-          $lte: Number(maxDensity) || 5000,
+      if (imageDensity) {
+        queryObject["variants.metadata.dpi"] = {
+          $gte: Number(imageDensity) - 20 > 0 ? Number(imageDensity) - 20 : 0,
+          $lte: Number(imageDensity) + 20,
         };
       }
-      //image size logic here
+      let dimensionFilters: any[] = [];
 
+      if (imageOrientation || imageWidth || imageHeight) {
+        queryObject["variants.metadata.dimension"] = { $exists: true };
+
+        let dimensionMatch: any = {
+          $expr: {
+            $anyElementTrue: {
+              $map: {
+                input: "$variants",
+                as: "variant",
+                in: {
+                  $let: {
+                    vars: {
+                      dimension: "$$variant.metadata.dimension",
+                      width: {
+                        $toInt: {
+                          $arrayElemAt: [
+                            { $split: ["$$variant.metadata.dimension", "x"] },
+                            0,
+                          ],
+                        },
+                      },
+                      height: {
+                        $toInt: {
+                          $arrayElemAt: [
+                            { $split: ["$$variant.metadata.dimension", "x"] },
+                            1,
+                          ],
+                        },
+                      },
+                    },
+                    in: {
+                      $and: [
+                        // Add your conditions here based on imageOrientation, imageWidth, and imageHeight
+                        {
+                          $cond: [
+                            { $eq: [imageOrientation, "vertical"] },
+                            { $gt: ["$$height", "$$width"] },
+                            {
+                              $cond: [
+                                { $eq: [imageOrientation, "horizontal"] },
+                                { $gte: ["$$width", "$$height"] },
+                                true,
+                              ],
+                            },
+                          ],
+                        },
+                        // Add width and height conditions if needed
+                        {
+                          $cond: [
+                            { $ne: [imageWidth, null] },
+                            {
+                              $let: {
+                                vars: { numericWidth: { $toInt: imageWidth } },
+                                in: {
+                                  $and: [
+                                    {
+                                      $gte: [
+                                        "$$width",
+                                        { $subtract: ["$$numericWidth", 100] },
+                                      ],
+                                    },
+                                    {
+                                      $lte: [
+                                        "$$width",
+                                        { $add: ["$$numericWidth", 100] },
+                                      ],
+                                    },
+                                  ],
+                                },
+                              },
+                            },
+                            true,
+                          ],
+                        },
+                        {
+                          $cond: [
+                            { $ne: [imageHeight, null] },
+                            {
+                              $let: {
+                                vars: {
+                                  numericHeight: { $toInt: imageHeight },
+                                },
+                                in: {
+                                  $and: [
+                                    {
+                                      $gte: [
+                                        "$$height",
+                                        { $subtract: ["$$numericHeight", 100] },
+                                      ],
+                                    },
+                                    {
+                                      $lte: [
+                                        "$$height",
+                                        { $add: ["$$numericHeight", 100] },
+                                      ],
+                                    },
+                                  ],
+                                },
+                              },
+                            },
+                            true,
+                          ],
+                        },
+                      ],
+                    },
+                  },
+                },
+              },
+            },
+          },
+        };
+
+        if (imageOrientation) {
+          if (imageOrientation === "vertical") {
+            dimensionMatch.$expr.$anyElementTrue.$map.in.$let.in.$and.push({
+              $gt: ["$$height", "$$width"],
+            });
+          } else if (imageOrientation === "horizontal") {
+            dimensionMatch.$expr.$anyElementTrue.$map.in.$let.in.$and.push({
+              $gte: ["$$width", "$$height"],
+            });
+          }
+        }
+
+        if (imageWidth) {
+          const minWidth = Math.max(Number(imageWidth) - 100, 0);
+          const maxWidth = Number(imageWidth) + 100;
+          dimensionMatch.$expr.$anyElementTrue.$map.in.$let.in.$and.push({
+            $and: [
+              { $gte: ["$$width", minWidth] },
+              { $lte: ["$$width", maxWidth] },
+            ],
+          });
+        }
+
+        if (imageHeight) {
+          const minHeight = Math.max(Number(imageHeight) - 100, 0);
+          const maxHeight = Number(imageHeight) + 100;
+          dimensionMatch.$expr.$anyElementTrue.$map.in.$let.in.$and.push({
+            $and: [
+              { $gte: ["$$height", minHeight] },
+              { $lte: ["$$height", maxHeight] },
+            ],
+          });
+        }
+
+        dimensionFilters.push(dimensionMatch);
+      }
+
+      if (dimensionFilters.length > 0) {
+        queryObject.$and = queryObject.$and || [];
+        queryObject.$and.push(...dimensionFilters);
+      }
+
+      //image size logic here
     }
     //video
-    if(mediaType.includes("video")){
-      if (minVideoLength || maxVideoLength) {
+    if (mediaType.includes("video")) {
+      if (videoLength) {
         queryObject.length = {
-          $gte: Number(minVideoLength), 
-          $lte: Number(maxVideoLength),
+          $gte: Number(videoLength) - 10 > 0 ? Number(videoLength) - 10 : 0,
+          $lte: Number(videoLength) + 10,
         };
       }
 
-      if(videoFrameRate) queryObject["variants.metadata.frameRate"] = videoFrameRate;
+      if (videoFrameRate) {
+        const frameRateValue = Number(videoFrameRate);
+        const minFrameRate = Math.max(frameRateValue - 10, 0);
+        const maxFrameRate = frameRateValue + 10;
+
+        queryObject["variants"] = {
+          $elemMatch: {
+            "metadata.frameRate": {
+              $gte: minFrameRate,
+              $lte: maxFrameRate,
+            },
+          },
+        };
+      }
+
+      if (videoOrientation) {
+        if (videoOrientation === "vertical") {
+          queryObject["$expr"] = { $gt: ["$height", "$width"] };
+        } else if (videoOrientation === "horizontal") {
+          queryObject["$expr"] = { $gte: ["$width", "$height"] };
+        }
+      }
 
       if (videoResolution) {
-        const escapeRegex = (text: string) => text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        const escapeRegex = (text: string) =>
+          text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
         const escapedVideoResolution = escapeRegex(videoResolution as string);
-         const substringMatchRegex = new RegExp(`${escapedVideoResolution}`, 'i');
+        const substringMatchRegex = new RegExp(
+          `${escapedVideoResolution}`,
+          "i"
+        );
 
-    if (escapedVideoResolution) {
-      queryObject['variants.metadata.resolution'] = { $regex: substringMatchRegex };
-    }
+        if (escapedVideoResolution) {
+          queryObject["variants.metadata.resolution"] = {
+            $regex: substringMatchRegex,
+          };
+        }
       }
-
     }
     //audio
-    if(mediaType.includes("audio")){
-      if(audioMinLength || audioMaxLength){
+    if (mediaType.includes("audio")) {
+      if (audioLength) {
         queryObject["variants.metadata.length"] = {
-          $gte: Number(audioMinLength) || 0,
-          $lte: Number(audioMaxLength) || 10000,
+          $gte: Number(audioLength) - 10 > 0 ? Number(audioLength) - 10 : 0,
+          $lte: Number(audioLength) + 10,
         };
-        }
-      if(audioMinBitrate || audioMaxBitrate){
+      }
+      if (audioBitrate) {
         queryObject["variants.metadata.bitrate"] = {
-          $gte: Number(audioMinBitrate) || 0, 
-          $lte: Number(audioMaxBitrate) || 10000,
+          $gte: Number(audioBitrate) - 10 > 0 ? Number(audioBitrate) - 10 : 0,
+          $lte: Number(audioBitrate) + 10,
         };
-        }
+      }
     }
 
     const p = Number(page) || 1;
@@ -768,16 +1196,14 @@ export const getFilteredProducts =  catchAsyncError(async (req: any, res, next) 
 
     console.log("queryObject", queryObject);
 
-  let productsQuery = Product.find(queryObject);
-  // console.log("productsQuery", productsQuery);
+    let productsQuery = Product.find(queryObject);
+    // console.log("productsQuery", productsQuery);
 
-  if (sortBy !== 'Most Popular') {
-    productsQuery = productsQuery.sort(sortCriteria);
-  }
+    if (sortBy !== "Most Popular") {
+      productsQuery = productsQuery.sort(sortCriteria);
+    }
 
-  let products = await productsQuery
-    .skip(skip)
-    .limit(Number(limit));
+    let products = await productsQuery.skip(skip).limit(Number(limit));
 
     // console.log("products", products);
 
@@ -791,7 +1217,8 @@ export const getFilteredProducts =  catchAsyncError(async (req: any, res, next) 
       numOfPages,
       products,
     });
-});
+  }
+);
 
 export const getSingleProductForCustomer = catchAsyncError(
   async (req: any, res, next) => {

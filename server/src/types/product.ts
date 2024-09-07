@@ -7,7 +7,7 @@ export type MetaData = {
   dpi?: number;
   bitrate?: number;
   resolution?: string;
-  frameRate?: string;
+  frameRate?: number;
 };
 export type TProduct = Document & {
   _id: string;
