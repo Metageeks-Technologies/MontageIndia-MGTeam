@@ -120,6 +120,11 @@ const SignUpPage = () => {
   };
 
   const handleSignUpGoogle = async () => {
+    if(!terms){
+      setError("Please accept the terms and conditions.");
+      return;
+    }
+
     const userData = await signInWithGoogle();
     console.log("userData", userData);
     const uid = userData?.user?.uid;
@@ -401,13 +406,15 @@ const SignUpPage = () => {
                     !formData.phone ||
                     !formData.email ||
                     !formData.password ||
-                    !formData.name
+                    !formData.name ||
+                    !terms
                   }
                   className={`${
                     !formData.phone ||
                     !formData.email ||
                     !formData.password ||
-                    !formData.name
+                    !formData.name ||
+                    !terms
                       ? "bg-red-400"
                       : "bg-webgreen"
                   } text-white focus:ring-4 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center5 me-2 mb-2`}

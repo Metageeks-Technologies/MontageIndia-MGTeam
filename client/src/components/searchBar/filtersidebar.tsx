@@ -16,7 +16,7 @@ interface ExpandedSections {
 
 interface FilterOption {
   label: string;
-  options: string[] | {minHeight: number; minWidth: number;};
+  options: string[] | {minHeight: number; minWidth: number; maxHeight: number; maxWidth: number};
 }
 
 interface FilterProps {
@@ -84,7 +84,7 @@ const Filter: React.FC<FilterProps> = ( {isOpen, onToggle, filterOptions, onFilt
   useEffect( () => {
     const filtersFromQuery: {[key: string]: string | number;} = {};
     searchParams.forEach( ( value, key ) => {
-      if ( key === 'imageWidth' || key === 'imageHeight' || key === 'videoLength' || key === 'audioLength' || key === 'audioBitrate' || key === 'minDensity' ) {
+      if ( key === 'imageMinWidth' || key==='imageMaxWidth' || key==='imageMinHeight' || key === 'imageMaxHeight' || key==='minVideoLength' || key === 'maxVideoLength' || key === 'audioMinLength' || key==='audioMaxLength' || key === 'audioMinBitrate' || key==='audioMaxBitrate' || key==='maxDensity' || key === 'minDensity' ) {
         filtersFromQuery[key] = parseInt( value ) || 0;
       } else {
         filtersFromQuery[key] = value;
@@ -170,7 +170,7 @@ const Filter: React.FC<FilterProps> = ( {isOpen, onToggle, filterOptions, onFilt
                 <button
                   key={option}
                   className={`px-3 py-1 rounded-full ${activeFilters['resolution'] === option ? 'bg-gray-800 text-white' : 'bg-gray-200'}`}
-                  onClick={() => handleFilterClick( 'videoResolution', option === "FHD" ? 40 : 24 )}
+                  onClick={() => handleFilterClick( 'videoResolution', option === "FHD" ? 1080 : 720 )}
                 >
                   {option}
                 </button>
@@ -201,8 +201,8 @@ const Filter: React.FC<FilterProps> = ( {isOpen, onToggle, filterOptions, onFilt
                     ) )}
                   </div>
                 ) : (
-                  <div className="flex gap-2 mt-1">
-                    {['Width', 'Height'].map( ( dim ) => {
+                  <div className="flex flex-wrap gap-2 mt-1">
+                    {['MinWidth','MaxWidth','MinHeight','MaxHeight'].map( ( dim ) => {
                       const key = `image${dim}`;
                       if ( !inputRefs.current[key] ) {
                         inputRefs.current[key] = React.createRef<HTMLInputElement>();
@@ -212,8 +212,8 @@ const Filter: React.FC<FilterProps> = ( {isOpen, onToggle, filterOptions, onFilt
                           key={key}
                           ref={inputRefs.current[key]}
                           type="number"
-                          placeholder={`Min ${dim}`}
-                          className="w-1/2 px-2 py-1 border rounded"
+                          placeholder={dim}
+                          className="w-32 px-2 py-1 border rounded"
                           value={activeFilters[key] || ''}
                           onChange={( e ) => handleNumericInputChange( key, e.target.value )}
                         />
@@ -234,46 +234,96 @@ const Filter: React.FC<FilterProps> = ( {isOpen, onToggle, filterOptions, onFilt
           >
             {filterOptions.videoLength !== undefined && (
               <div className="mb-2">
-                <label className="block font-medium">Video Length</label>
+              <div className='flex gap-2'>
+              <div>
+                <label className="block font-medium">minLength (sec)</label>
                 <input
                   type="number"
                   className="w-full px-2 py-1 border rounded"
-                  value={activeFilters['videoLength'] || ''}
-                  onChange={( e ) => handleNumericInputChange( 'videoLength', e.target.value )}
+                  value={activeFilters['minVideoLength'] || ''}
+                  onChange={( e ) => handleNumericInputChange( 'minVideoLength', e.target.value )}
                 />
+                </div>
+                <div>
+                <label className="block font-medium">maxLength (sec)</label>
+                <input
+                  type="number"
+                  className="w-full px-2 py-1 border rounded"
+                  value={activeFilters['maxVideoLength'] || ''}
+                  onChange={( e ) => handleNumericInputChange( 'maxVideoLength', e.target.value )}
+                />
+                </div>
+                </div>
               </div>
             )}
             {filterOptions.audioLength !== undefined && (
-              <div className="mb-2">
-                <label className="block font-medium">Audio Length</label>
+              <div className="mb-2 flex gap-2">
+              <div>
+                 <label className="block font-medium">minLength(sec)</label>
                 <input
                   type="number"
+                  placeholder='e.g. 10'
                   className="w-full px-2 py-1 border rounded"
-                  value={activeFilters['audioLength'] || ''}
-                  onChange={( e ) => handleNumericInputChange( 'audioLength', e.target.value )}
+                  value={activeFilters['audioMinLength'] || ''}
+                  onChange={( e ) => handleNumericInputChange( 'audioMinLength', e.target.value )}
                 />
+              </div>
+               <div>
+                 <label className="block font-medium">maxLength(sec)</label>
+                <input
+                  type="number"
+                  placeholder='e.g. 100'
+                  className="w-full px-2 py-1 border rounded"
+                  value={activeFilters['audioMaxLength'] || ''}
+                  onChange={( e ) => handleNumericInputChange( 'audioMaxLength', e.target.value )}
+                />
+              </div>
+               
               </div>
             )}
             {filterOptions.bitRate !== undefined && (
-              <div className="mb-2">
-                <label className="block font-medium">Bit Rate</label>
+              <div className="mb-2 flex gap-2 ">
+              <div><label className="block font-medium">minBitRate</label>
                 <input
                   type="number"
+                  placeholder='e.g. 10'
                   className="w-full px-2 py-1 border rounded"
-                  value={activeFilters['audioBitrate'] || ''}
-                  onChange={( e ) => handleNumericInputChange( 'audioBitrate', e.target.value )}
-                />
+                  value={activeFilters['audioMinBitrate'] || ''}
+                  onChange={( e ) => handleNumericInputChange( 'audioMinBitrate', e.target.value )}
+                /></div>
+              <div><label className="block font-medium">maxBitRate</label>
+                <input
+                  type="number"
+                  placeholder='e.g. 100'
+                  className="w-full px-2 py-1 border rounded"
+                  value={activeFilters['audioMaxBitrate'] || ''}
+                  onChange={( e ) => handleNumericInputChange( 'audioMaxBitrate', e.target.value )}
+                /></div>
+                
               </div>
             )}
             {filterOptions.density !== undefined && (
-              <div className="mb-2">
-                <label className="block font-medium">Minimum Density</label>
+              <div className="mb-2 flex gap-2">
+                <div>
+                <label className="block font-medium">Min Density</label>
                 <input
                   type="number"
                   className="w-full px-2 py-1 border rounded"
+                  placeholder='e.g. 0'
                   value={activeFilters['minDensity'] || ''}
                   onChange={( e ) => handleNumericInputChange( 'minDensity', e.target.value )}
                 />
+                </div>
+                 <div >
+                <label className="block font-medium">Max Density</label>
+                <input
+                  type="number"
+                  placeholder='e.g. 100'
+                  className="w-full px-2 py-1 border rounded"
+                  value={activeFilters['maxDensity'] || ''}
+                  onChange={( e ) => handleNumericInputChange( 'maxDensity', e.target.value )}
+                />
+                </div>
               </div>
             )}
           </FilterSection>

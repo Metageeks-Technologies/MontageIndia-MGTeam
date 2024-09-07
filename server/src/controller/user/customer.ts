@@ -35,7 +35,9 @@ export const googleLogin = catchAsyncError(async (req, res, next) => {
   const user = await Customer.findOne({ uid });
 
   if (user) {
-   return res.status(200).send({ status:'success', message: "User already exists" });
+    user.emailVerified = true;
+    await user.save();
+    return res.status(200).send({ status:'success', message: "User already exists" });
   }
 
   const newUser = await Customer.create({
@@ -43,12 +45,12 @@ export const googleLogin = catchAsyncError(async (req, res, next) => {
     name,
     email,
     image,
+    emailVerified: true,
   });
 
   return res.status(201).send({ status:'success', message: "User created"});
 }
 );
-
 
 export const signupCustomer = catchAsyncError(async (req, res, next) => {
   if (!req.body) {
@@ -142,7 +144,8 @@ export const getCurrentCustomer = catchAsyncError(
     const { id } = req.user;
     const user = await Customer.findOne({ _id: id }).populate("subscription.PlanId");
     console.log(user);
-    res.status(200).json({
+
+    return res.status(200).json({
       success: true,
       user,
     });

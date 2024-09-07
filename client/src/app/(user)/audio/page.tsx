@@ -158,7 +158,7 @@ const Page = () => {
 
                 <div className="overflow-y-auto mt-2">
                   {loading ? (
-                    <div className="h-64 flex justify-center items-center">
+                    <div className="min-h-screen flex justify-center items-center">
                       <Spinner label="Loading..." color="danger" />
                     </div>
                   ) : (

@@ -629,15 +629,21 @@ export const getFilteredProducts =  catchAsyncError(async (req: any, res, next) 
       tags,
       sortBy,
       orientation,
-      imageWidth,
-      imageHeight,
+      imageMinHeight,
+      imageMaxHeight,
+      imageMinWidth,
+      imageMaxWidth,
       imageFileType,
       minDensity,
+      maxDensity,
       videoResolution,
-      videoLength,
+      minVideoLength,
+      maxVideoLength,
       videoFrameRate,
-      audioLength,
-      audioBitrate,
+      audioMinLength,
+      audioMaxLength,
+      audioMinBitrate,
+      audioMaxBitrate,
     } = req.query;
   console.log( "req.query", req.query );
   
@@ -668,6 +674,7 @@ export const getFilteredProducts =  catchAsyncError(async (req: any, res, next) 
     if(mediaType){
       queryObject.mediaType = mediaType;
     }
+
     let sortCriteria: { [key: string]: 1 | -1 } = { createdAt: -1 };
 
     if (sortBy === 'Newest') {
@@ -699,28 +706,30 @@ export const getFilteredProducts =  catchAsyncError(async (req: any, res, next) 
       const popularProductIds = popularProducts.map((p) => p._id);
       queryObject._id = { $in: popularProductIds };
     }
+
     //image
     if(mediaType.includes("image")){
-      console.log("mediaType:-",mediaType)
       if ( imageFileType ) {
         const str = imageFileType.toLowerCase();
         console.log("str:-",str)
         queryObject["variants.metadata.format"] = str;
         // queryObject["variants.metadata.format"] = { $regex: new RegExp( imageFileType.toLowerCase(), 'i' ) };
       }
-      if(minDensity){
-        queryObject["variants.metadata.dpi"] = {$gte: minDensity};
+      if(maxDensity || minDensity){
+       queryObject["variants.metadata.dpi"] = {
+          $gte: Number(minDensity) || 0,
+          $lte: Number(maxDensity) || 5000,
+        };
       }
-      if(imageWidth && imageHeight){
-        queryObject["variants.metadata.dimension"] = {$regex: new RegExp( `${imageWidth}x${imageHeight}`, 'i' )}; 
-      }
+      //image size logic here
+
     }
     //video
     if(mediaType.includes("video")){
-      if (videoLength) {
+      if (minVideoLength || maxVideoLength) {
         queryObject.length = {
-          $gte: (Number(videoLength) - 10)<0? 0:(Number(videoLength) - 10), 
-          $lte: Number(videoLength) + 10,
+          $gte: Number(minVideoLength), 
+          $lte: Number(maxVideoLength),
         };
       }
 
@@ -739,16 +748,16 @@ export const getFilteredProducts =  catchAsyncError(async (req: any, res, next) 
     }
     //audio
     if(mediaType.includes("audio")){
-      if(audioLength){
+      if(audioMinLength || audioMaxLength){
         queryObject["variants.metadata.length"] = {
-          $gte: Number(audioLength) - 5,
-          $lte: Number(audioLength) + 5,
+          $gte: Number(audioMinLength) || 0,
+          $lte: Number(audioMaxLength) || 10000,
         };
         }
-      if(audioBitrate){
+      if(audioMinBitrate || audioMaxBitrate){
         queryObject["variants.metadata.bitrate"] = {
-          $gte: Number(audioBitrate) - 5, 
-          $lte: Number(audioBitrate) + 5,
+          $gte: Number(audioMinBitrate) || 0, 
+          $lte: Number(audioMaxBitrate) || 10000,
         };
         }
     }
@@ -759,10 +768,18 @@ export const getFilteredProducts =  catchAsyncError(async (req: any, res, next) 
 
     console.log("queryObject", queryObject);
 
-    let products = await Product.find(queryObject).
-      sort(sortCriteria)
-      .skip(skip)
-      .limit(Number(limit));
+  let productsQuery = Product.find(queryObject);
+  // console.log("productsQuery", productsQuery);
+
+  if (sortBy !== 'Most Popular') {
+    productsQuery = productsQuery.sort(sortCriteria);
+  }
+
+  let products = await productsQuery
+    .skip(skip)
+    .limit(Number(limit));
+
+    // console.log("products", products);
 
     // console.log("products", products);
     const totalData = await Product.countDocuments(queryObject);

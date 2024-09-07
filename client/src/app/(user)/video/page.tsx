@@ -176,9 +176,9 @@ const Page = () => {
                   <h4 className="text-lg text-neutral-700">
                     {totalVideoData} Product stock Photos and High-res Pictures
                   </h4>
-                  <div className="mx-auto mt-4">
+                  <div className="mx-auto min-h-screen mt-4">
                     {loading ? (
-                      <div className="justify-center text-center m-auto">
+                      <div className="flex items-center justify-center text-center m-auto">
                         <Spinner label="Loading..." color="danger" />
                       </div>
                     ) : (
