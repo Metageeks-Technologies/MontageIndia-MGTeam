@@ -251,7 +251,7 @@ export default function Home() {
         onClick={() => console.log( 'Redirecting to Sale Page' )}
       /> */}
 
-      <Banner/>
+      <Banner />
 
       <div className="lg:mx-24 md:mx-4 mx-4 py-14 ">
         <div className="flex flex-col md:flex-row justify-center items-center mb-4">
@@ -323,7 +323,7 @@ export default function Home() {
           </button>
         </div>
       </div>
-
+      {/* dummy commit */}
       <div className="bg-[#eeeeee] mt-8">
         <div className="container w-full m-auto py-14 flex flex-col bg-[#eeeeee] items-center">
           <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-5 text-center">
