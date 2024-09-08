@@ -292,7 +292,7 @@ const page = () => {
                 {recentActivities && recentActivities.length > 0 && (
                   <>
                     <div className="px-2 mx-2 py-1 w-full flex bg-gray-100 justify-between gap-2 border rounded-md ">
-                      <div className="w-1/3 capitalize font-bold ">User</div>
+                      <div className="w-1/3 capitalize font-bold ">Staff</div>
                       <div className="w-1/3 text-center font-bold">Product</div>
                       <div className="w-1/3 capitalize text-end font-bold">
                         Action

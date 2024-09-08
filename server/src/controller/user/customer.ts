@@ -204,16 +204,9 @@ export const getAllCustomer = catchAsyncError(async (req, res, next) => {
 
 export const updateCustomerDetails = catchAsyncError(
   async (req: any, res, next) => {
-    const { name,currentPassword,newPassword,image,email } = req.body;
+    const { name,currentPassword,newPassword,image,email,phone } = req.body;
 
     console.log(name, currentPassword, newPassword,image);
-
-    if(email){
-      const isEmailExist= await Customer.findOne({email});
-      if(isEmailExist){
-        return next(new ErrorHandler("Email already exists",400));
-      }
-    }
 
     const { id } = req.user;
     const customerToUpdate = await Customer.findById(id).select('+password');;
@@ -229,6 +222,14 @@ export const updateCustomerDetails = catchAsyncError(
       updates.email = email;
       updates.emailVerified = false;
     }
+    if(phone){
+      if(phone[0]==="+"){
+        updates.phone = phone.slice(1,phone.length);
+      }
+      else{
+        updates.phone = phone;
+      }
+    }  
     if (currentPassword && newPassword) {
       const verifyPassword = await customerToUpdate.comparePassword(
         currentPassword as string

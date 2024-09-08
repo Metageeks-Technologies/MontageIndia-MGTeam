@@ -11,6 +11,7 @@ import { OrderOption } from "@/types/order";
 import instance from "@/utils/axios";
 import { useEffect, useState } from "react";
 import { MdCurrencyRupee } from "react-icons/md";
+import Link from "next/link";
 import { RxCross2 } from "react-icons/rx";
 import {
   handleVariantChange,
@@ -34,6 +35,7 @@ const PlaceOrder = () => {
   const pathname = usePathname();
   const cart = useAppSelector((state) => state.product.cart);
   const user = useAppSelector((state) => state.user.user);
+  console.log("Cart=>",cart);
   // const [selectedVariants, setSelectedVariants] = useState<{
   //   [key: string]: { variantId: string; price: number; credit: number };
   // }>({});
@@ -318,7 +320,7 @@ const PlaceOrder = () => {
               {cart?.map((item, index: number) => (
                 <tr key={index} className="w-full bg-white border-b text-black">
                   <td className="w-2/6 px-6 py-4 border-none">
-                    <div className="flex flex-row items-start justify-start gap-4">
+                    <Link href={`${process.env.NEXT_PUBLIC_CLIENT_URL}/${item?.productId?.mediaType}/${item?.productId?.uuid}`} className="flex flex-row items-start justify-start gap-4">
                       <div className="md:w-1/3 rounded-lg overflow-hidden flex justify-center items-center">
                         {item?.productId.mediaType === "image" && (
                           <img
@@ -364,7 +366,7 @@ const PlaceOrder = () => {
                         </div> */}
                         </div>
                       </div>
-                    </div>
+                    </Link>
                   </td>
                   {item.productId.mediaType !== "audio" && (
                     <td className="w-1/6 px-6 py-4 border-none text-center">
@@ -433,7 +435,7 @@ const PlaceOrder = () => {
                         className=" hover:bg-webred hover:text-white text-webred border-1 border-webred cursor-pointer rounded-md px-4 py-2"
                       >
                         <div className="text-md whitespace-nowrap font-semibold">
-                          Buy with credits
+                          Buy with Credits
                         </div>
                       </span>
                       <span
@@ -476,7 +478,7 @@ const PlaceOrder = () => {
                       onClick={handleAllBuyWithCredits}
                       className="text-white px-4 py-2 rounded-md bg-webgreen text-md max-sm:text-lg hover:bg-webgreen-light transition-all whitespace-nowrap"
                     >
-                      Pay With Credit
+                      Pay With Credits
                     </button>
                     OR
                     {orderOption && <PayButton orderOption={orderOption} />}

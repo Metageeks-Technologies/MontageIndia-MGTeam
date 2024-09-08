@@ -48,17 +48,21 @@ export const categoryImage = catchAsyncError(async (req: any, res: any, next: an
 
 export const getCategories = catchAsyncError(async (req, res, next) => {
   const { page = 1 } = req.query;
-  const limit = 10;
+  const limit = 8;
 
   const skip = (Number(page) - 1) * Number(limit);
-  const totalCategories = await Category.countDocuments();
   const categories = await Category.find().skip(skip).limit(Number(limit));
+  const totalCategories = await Category.countDocuments();
+  const hasMore = totalCategories > skip + Number(categories.length);
+
+  console.log("categories", categories, totalCategories, hasMore, page, limit);
 
   res.status(200).json({
     success: true,
     categories,
     totalCategories,
     currentPage: page,
+    hasMore,
     totalPages: Math.ceil(totalCategories / Number(limit)),
   });
 });
