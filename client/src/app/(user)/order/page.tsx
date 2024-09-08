@@ -320,7 +320,7 @@ const PlaceOrder = () => {
               {cart?.map((item, index: number) => (
                 <tr key={index} className="w-full bg-white border-b text-black">
                   <td className="w-2/6 px-6 py-4 border-none">
-                    <Link href={`${process.env.NEXT_PUBLIC_CLIENT_URL}/${item?.productId?.mediaType}/${item?.productId?.uuid}`} className="flex flex-row items-start justify-start gap-4">
+                    <Link href={`/${item?.productId?.mediaType}/${item?.productId?.uuid}`} className="flex flex-row items-start justify-start gap-4">
                       <div className="md:w-1/3 rounded-lg overflow-hidden flex justify-center items-center">
                         {item?.productId.mediaType === "image" && (
                           <img

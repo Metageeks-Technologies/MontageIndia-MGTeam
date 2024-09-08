@@ -306,21 +306,21 @@ const page = () => {
                           className="px-2 mx-2 py-1 w-full flex  hover:bg-slate-200 justify-between gap-2 border rounded-md "
                         >
                           <div className="w-1/3 capitalize ">
-                            {activity.name}
+                            {activity?.name}
                           </div>
                           <div className="w-1/3 text-center truncate">
-                            {activity.productId.title}{" "}
+                            {activity?.productId?.title}{" "}
                           </div>
                           <div
                             className={`w-1/3 capitalize text-end ${
-                              activity.action === "delete" && "text-red-400"
+                              activity?.action === "delete" && "text-red-400"
                             } ${
-                              activity.action === "update" && "text-[#42A5D0]"
+                              activity?.action === "update" && "text-[#42A5D0]"
                             } ${
-                              activity.action === "create" && "text-[#8D529C]"
+                              activity?.action === "create" && "text-[#8D529C]"
                             } `}
                           >
-                            {activity.action}d
+                            {activity?.action}d
                           </div>
                         </div>
                       )

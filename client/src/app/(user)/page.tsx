@@ -350,7 +350,7 @@ export default function Home() {
                 <img
                   src={data.image}
                   alt={`Product Image `}
-                  loading="lazy"
+                  // loading="lazy"
                   className="w-full h-52 object-cover rounded"
                 />
                 <div className="absolute bottom-0 py-1.5 w-full bg-black opacity-50 ">
