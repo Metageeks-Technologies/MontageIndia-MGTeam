@@ -139,9 +139,9 @@ const subscriptionCharged = async (payload: any) => {
     // console.log("user",user);
     await SubscriptionHistory.create({
       userId: user?._id,
-      planId: plan_id,
-      startDate: start_at,
-      endDate: end_at,
+      planId: notes.subscriptionId,
+      startDate: Date.now(),
+      endDate: Date.now()+(response.period==='yearly'?365*24*60*60*1000:30*24*60*60*1000),
       status: status,
     });
   } catch (error) {
