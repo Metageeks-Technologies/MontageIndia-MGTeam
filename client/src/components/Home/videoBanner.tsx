@@ -1,4 +1,5 @@
-import React from "react";
+import React,{useState} from "react";
+import {useRouter} from "next/navigation"
 import { IoSearch } from "react-icons/io5";
 
 const VideoBanner = ({
@@ -12,6 +13,18 @@ const VideoBanner = ({
   heading: string;
   description: string;
 }) => {
+  const router = useRouter();
+  const [searchTerm, setSearchTerm] = useState<string>("");
+  const [searchType, setSearchType] = useState<string>("image");
+
+  const handleSearch = ()=>{
+    if(searchTerm.trim().length>0){
+      router.push(`/search/${searchType}?searchTerm=${searchTerm}&mediaType=${searchType}`)
+    }
+
+    return;
+  }
+
   return (
     <div
       className={`relative w-full ${
@@ -41,18 +54,22 @@ const VideoBanner = ({
               <div className="flex relative  z-10 flex-wrap gap-5 justify-between   mx-0 max-w-full bg-white rounded-lg lg:w-[900px] md:w-[600px]  lg:pl-5 md:pl-5 pl-2 max-md:mr-2.5">
                 <input
                   type="text"
-                  placeholder="Find your perfect stock photo.."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  onKeyDown={(e)=>{if(e.key==="Enter"){handleSearch()} }}
+                  placeholder="Find your perfect stock"
                   className="my-auto text-stone-700 focus:outline-none"
                 />
                 <div className="flex gap-5">
-                  <select className="bg-gray-100 lg:block md:block hidden  outline-none cursor-pointer text-black rounded-lg ">
-                    <option>Images</option>
-                    <option>Audios</option>
-                    <option>Videos</option>
+                  <select value={searchType} onChange={(e)=>{setSearchType(e.target.value)}} className="lg:block md:block hidden outline-none cursor-pointer text-black rounded-lg ">
+                    <option value="image">Image</option>
+                    <option value="audio">Audio</option>
+                    <option value="video">Video</option>
                   </select>
 
                   <button
-                    className=" bg-red-500 lg:p-4 relative -right-1 md:p-4 p-2 rounded-lg"
+                    onClick={()=>{handleSearch()}}
+                    className=" bg-red-500 text-white lg:p-4 relative -right-1 md:p-4 p-2 rounded-lg"
                     type="submit"
                     aria-label="Search"
                   >

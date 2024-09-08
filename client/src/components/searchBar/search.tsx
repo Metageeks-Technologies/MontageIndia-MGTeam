@@ -27,6 +27,10 @@ const Searchbar = () => {
   const mediaType = searchParams.get("mediaType") || "image";
   const category = searchParams.get("category");
   const terms = useAppSelector((state) => state.product.relatedKeyword);
+  console.log("path",pathname);
+  const isVideoPage = pathname.includes("/video");
+  const isAudioPage = pathname.includes("/audio");
+  const isImagePage = pathname.includes("/image");
 
   useEffect(() => {
     if (pathname.includes("/search/video")) {
@@ -47,6 +51,15 @@ const Searchbar = () => {
           ? "Editorial Image"
           : "All Image"
       );
+    }
+    else if(pathname.includes("/video")){
+      setSelectedOption("Video")
+    }
+    else if(pathname.includes("/audio")){
+      setSelectedOption("Audio")
+    }
+    else if(pathname.includes("/image")){
+      setSelectedOption("Image")
     }
   }, [pathname, category, searchRenderTerm]);
 
@@ -121,7 +134,9 @@ const Searchbar = () => {
 
     window.history.pushState({}, "", newUrl);
   };
+
   const isSearchPage = pathname.includes("/search") || false;
+
   console.log(isSearchPage, "isSearchpage");
 
   return (
@@ -136,12 +151,15 @@ const Searchbar = () => {
                 value={selectedOption}
                 onChange={(e) => setSelectedOption(e.target.value)}
               >
-                <option>All Image</option>
-                <option>Audio</option>
-                <option>Video</option>
-                <option>Editorial Image</option>
-                <option>Editorial Audio</option>
-                <option>Editorial Video</option>
+                {isImagePage && (<option className="cursor-pointer" value="image" >Image</option>)}
+                {isVideoPage && (<option className="cursor-pointer" value="video" >Video</option>)}
+                {isAudioPage && (<option className="cursor-pointer" value="audio" >Audio</option>)}
+                {!isImagePage && (<option className="cursor-pointer" value="image" >Image</option>)}
+                {!isVideoPage && (<option className="cursor-pointer" value="video" >Video</option>)}
+                {!isAudioPage && (<option className="cursor-pointer" value="audio" >Audio</option>)}
+                <option className="cursor-pointer" value="editorialImage" >Editorial Image</option>
+                <option className="cursor-pointer" value="editorialAudio" >Editorial Audio</option>
+                <option className="cursor-pointer" value="editorialVideo">Editorial Video</option>
               </select>
 
               <img src="/asset/Rectangle 15.png" className="mx-2" alt="" />
@@ -173,7 +191,7 @@ const Searchbar = () => {
                 value={selectedOption}
                 onChange={(e) => setSelectedOption(e.target.value)}
               >
-                <option value="All Image">
+                <option value="Image">
                   <CiCamera />
                 </option>
                 <option value="Audio">
@@ -214,8 +232,8 @@ const Searchbar = () => {
 
       {isSearchPage && (
         <div className="border-t bg-[#FAFAFA] flex flex-wrap items-center gap-5 justify-between border-gray-300 w-full">
-          <div className="flex py-1 items-center flex-col md:flex-row  w-[90%] justify-between lg:mx-4 xl:mx-14 md:mx-2">
-            <div className="flex flex-row gap-3 justify-between w-full md:w-fit">
+          <div className="flex py-1 gap-4 items-center justify-between w-[92%] flex-col md:flex-row mx-auto">
+            <div className="flex flex-row gap-3 justify-between md:w-fit">
               {/* <Filter /> */}
               <div className="md:hidden">
                 <button
@@ -231,13 +249,20 @@ const Searchbar = () => {
                 </button>
               </div>
             </div>
-            <div className=" rounded-md flex flex-row scrollbar-hide overflow-x-scroll items-center text-center w-[90%]  justify-start">
+            {
+                terms && terms.length>0 && (
+                  <div className="font-bold w-44 text-md text-start" >
+                    Related Keywords :
+                  </div>
+                )
+              } 
+            <div className="rounded-md flex flex-row scrollbar-hide overflow-x-scroll items-center text-center justify-start">
               {terms.map((category) => {
                 return (
                   <button
                     key={category}
                     onClick={() => handleCategoryClick(category)}
-                    className={`flex text-sm items-center whitespace-nowrap m-2  px-3 py-[6px] sm:px-4 sm:py-2 border border-gray-300 rounded-md capitalize backdrop-blur-sm hover:bg-opacity-30 transition duration-300 ${
+                    className={`flex text-sm items-center whitespace-nowrap m-2 hover:bg-slate-400 px-3 py-[6px] sm:px-4 sm:py-2 border border-gray-300 rounded-md capitalize backdrop-blur-sm hover:bg-opacity-30 transition duration-300 ${
                       searchRenderTerm === category
                         ? "bg-red-500 text-white"
                         : "bg-transparent"
@@ -249,10 +274,12 @@ const Searchbar = () => {
                 );
               })}
             </div>
-            <div className=" hidden md:block lg:-mr-16 xl:mr-8 md:-mr-10">
+            {
+              searchRenderTerm && (
+                 <div className=" hidden md:block">
               <button
                 onClick={handleClear}
-                disabled={!searchRenderTerm}
+                
                 className={`${
                   searchRenderTerm
                     ? "bg-red-500 cursor-pointer"
@@ -262,6 +289,9 @@ const Searchbar = () => {
                 Clear <MdClear />
               </button>
             </div>
+              )
+            }
+           
           </div>
         </div>
       )}
