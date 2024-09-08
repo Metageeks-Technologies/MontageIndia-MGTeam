@@ -18,6 +18,7 @@ import { IoCameraOutline } from "react-icons/io5";
 import Banner from "@/components/Banner";
 import VideoBanner from "@/components/Home/videoBanner";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 // Collection data
 interface Card {
@@ -343,7 +344,7 @@ export default function Home() {
         </h1>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2">
           {categories.map((data: Category, index) => (
-            <div key={index} className="cursor-pointer">
+            <Link href={`/search/image?searchTerm=${data.name}&mediaType=image`} key={index} >
               {/* Masonry item */}
               <div className="w-full h-52 rounded-md overflow-hidden ">
                 {/* Inner div */}
@@ -358,7 +359,7 @@ export default function Home() {
               <div className="text-zinc-950 px-2 capitalize font-semibold text-start">
                     {data.name}
                 </div>
-            </div>
+            </Link>
           ))}
         </div>
         {hasMore && !loading && (
