@@ -134,7 +134,7 @@ const Page = () => {
     <div className="flex flex-col min-h-screen">
       <Searchbar />
 
-      <div className="flex flex-1 bg-pageBg-light">
+      <div className="flex flex-1 ">
         <Filter
           isOpen={isFilterOpen}
           onToggle={toggleFilter}
@@ -143,15 +143,15 @@ const Page = () => {
           onclearFilter={handleClearFilters}
         />
         <div className="flex-1 transition-all duration-300 ease-in-out">
-          <div className="p-4">
+          <div className="lg:p-4 md:p-0 p-0 ">
             <button
-              className=" py-2 text-gray-800 bg-white border flex flex-row items-center gap-2 border-gray-300 px-5 rounded-md mb-4"
+              className=" py-2 lg:ml-12 md:ml-4 ml-4 text-gray-800 bg-white border flex flex-row items-center gap-2 border-gray-300 px-5 rounded-md mb-4"
               onClick={toggleFilter}
             >
               Filters <BsFilterLeft />
             </button>
             <div className="main">
-              <div className="py-10 px-4 md:px-8 lg:px-12">
+              <div className="py-10 px-4 md:px-4  lg:px-12">
                 {totalAudioData > 0 && (
                   <h4 className="text-lg text-neutral-700 mb-4">
                     {totalAudioData} Audio Files
