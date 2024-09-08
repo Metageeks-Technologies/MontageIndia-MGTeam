@@ -23,7 +23,15 @@ const onDemandPage = () => {
     email: "",
     subject: "",
     message: "",
+    capValue: "",
   });
+
+  const [capValue, setCapValue] = useState();
+
+  const onCaptchaChange = (value: any) => {
+    if (errors.capValue) setErrors({ ...errors, capValue: "" });
+    setCapValue(value);
+  };
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -42,6 +50,10 @@ const onDemandPage = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!capValue) {
+      setErrors({ ...errors, capValue: "Please complete captcha" });
+      return;
+    }
     let hasError = false;
     const newErrors = { ...errors };
 
@@ -193,13 +205,15 @@ const onDemandPage = () => {
               <p className="text-red-500 text-sm mt-1">{errors.message}</p>
             )}
           </div>
-          <div className="col-span-2">
-            <div className="flex items-center justify-center">
-              <input type="checkbox" id="notRobot" className="mr-2" />
-              <label htmlFor="notRobot" className="text-sm">
-                I'm not a robot
-              </label>
-              <ReCAPTCHA sitekey={(key as string) || ""} />,
+          <div className="col-span-2 mx-auto">
+            <div className="d-flex mt-2 mb-2 flex-column align-items-center">
+              <ReCAPTCHA
+                sitekey={`${process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY}`}
+                onChange={onCaptchaChange}
+              />
+              {errors.capValue && (
+                <p style={{ color: "#f56565" }}>{errors.capValue}</p>
+              )}
             </div>
           </div>
           <div className="col-span-2">
