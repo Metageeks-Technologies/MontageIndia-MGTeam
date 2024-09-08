@@ -144,13 +144,13 @@ const Filter: React.FC<FilterProps> = ({
 
   return (
     <div
-      className={`h-fit sticky top-36 left-0 bg-white text-gray-800 overflow-y-auto transition-all duration-300 ease-in-out ${
+      className={`h-fit sticky top-36 left-0  text-gray-800 overflow-y-auto transition-all duration-300 ease-in-out ${
         isOpen ? "w-80" : "w-0"
       }`}
     >
-      <div className="p-4">
+      <div className="p-4 ">
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-xl font-semibold">Filters</h2>
+          <h2 className="text-xl font-semibold ">Filters</h2>
           <div className="flex items-center">
             <button
               onClick={onclearFilter}

@@ -127,7 +127,7 @@ const Searchbar = () => {
   return (
     <div className="sticky top-0 z-50">
       <div className="transition-all duration-300 bg-white shadow-md py-4 border-t-1">
-        <div className="flex relative justify-between items-center gap-4 bg-gray-100 border border-gray-300 rounded-md mx-6 px-4 lg:mx-4 xl:mx-24 md:mx-4">
+        <div className="flex relative justify-between items-center gap-4 bg-gray-100 border border-gray-300 rounded-md mx-4 px-4 lg:mx-4 xl:mx-16 md:mx-4">
           <div className="flex flex-row w-full gap-2">
             {/* Desktop view */}
             <div className="hidden md:flex w-full items-center">
@@ -213,8 +213,8 @@ const Searchbar = () => {
       </div>
 
       {isSearchPage && (
-        <div className="bg-gray80 border-t flex flex-wrap items-center gap-5 justify-between border-gray-300 w-full">
-          <div className="flex py-1 items-center flex-col md:flex-row w-[90%] justify-between lg:mx-4 xl:mx-24 md:mx-4">
+        <div className="border-t bg-[#FAFAFA] flex flex-wrap items-center gap-5 justify-between border-gray-300 w-full">
+          <div className="flex py-1 items-center flex-col md:flex-row  w-[90%] justify-between lg:mx-4 xl:mx-14 md:mx-2">
             <div className="flex flex-row gap-3 justify-between w-full md:w-fit">
               {/* <Filter /> */}
               <div className="md:hidden">
@@ -225,19 +225,19 @@ const Searchbar = () => {
                     searchRenderTerm
                       ? "bg-red-500 cursor-pointer"
                       : "bg-red-500 cursor-not-allowed bg-opacity-50"
-                  } py-[6px] text-sm text-white border flex flex-row items-center gap-2 border-gray-300 px-3 rounded-md`}
+                  } py-[6px] text-sm text-white border flex flex-row ml-4 items-center gap-2 border-gray-300 px-3 rounded-md`}
                 >
                   Clear <MdClear />
                 </button>
               </div>
             </div>
-            <div className=" rounded-md flex flex-row scrollbar-hide overflow-x-scroll items-center text-center w-[90%] bg-gray80 justify-start">
+            <div className=" rounded-md flex flex-row scrollbar-hide overflow-x-scroll items-center text-center w-[90%]  justify-start">
               {terms.map((category) => {
                 return (
                   <button
                     key={category}
                     onClick={() => handleCategoryClick(category)}
-                    className={`flex text-sm items-center whitespace-nowrap m-2 px-3 py-[6px] sm:px-4 sm:py-2 border border-gray-300 rounded-md capitalize backdrop-blur-sm hover:bg-opacity-30 transition duration-300 ${
+                    className={`flex text-sm items-center whitespace-nowrap m-2  px-3 py-[6px] sm:px-4 sm:py-2 border border-gray-300 rounded-md capitalize backdrop-blur-sm hover:bg-opacity-30 transition duration-300 ${
                       searchRenderTerm === category
                         ? "bg-red-500 text-white"
                         : "bg-transparent"

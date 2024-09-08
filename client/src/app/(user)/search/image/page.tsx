@@ -160,18 +160,18 @@ const Page = () => {
           onclearFilter={handleClearFilters}
         />
         <div className={`flex-1 transition-all duration-300 ease-in-out `}>
-          <div className="p-4">
+          <div className="lg:p-4 md:p-0 p-0">
             <button
-              className="py-2 text-gray-800 bg-white border flex flex-row items-center gap-2 border-gray-300 px-5 rounded-md mb-4"
+              className="py-2 lg:ml-12 md:ml-4 ml-4  text-gray-800 bg-white border flex flex-row items-center gap-2 border-gray-300 px-5 rounded-md mb-4"
               onClick={toggleFilter}
             >
               Filters <BsFilterLeft />
             </button>
             <div className="main items-center">
-              <div className="bg-[#eeeeee]">
+              <div className="">
                 <div
                   className={`py-10 lg:mx-4 ${
-                    !isFilterOpen ? "xl:mx-24 md:mx-4" : "ml-0"
+                    !isFilterOpen ? "xl:mx-12 md:mx-4 mx-4" : "ml-0"
                   } `}
                 >
                   <h1 className="text-2xl font-bold  text-start">

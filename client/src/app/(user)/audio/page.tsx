@@ -15,6 +15,7 @@ import { getImage } from "@/app/redux/feature/product/image/api";
 import { getAudio } from "@/app/redux/feature/product/audio/api";
 import Waveform from "@/components/Home/AudioWaveForm";
 import Banner from "@/components/Banner";
+import AudioBanner from "@/components/AudioBaner";
 
 const filterOptions = {
   sortBy: ["Most Popular", "Newest", "Oldest"],
@@ -133,8 +134,8 @@ const Page = () => {
   return (
     <div className="flex flex-col min-h-screen">
       <Searchbar />
-      <Banner />
-      <div className="flex flex-1 bg-pageBg-light">
+      <AudioBanner/>
+      <div className="flex flex-1 ">
         <div className="flex-1 transition-all duration-300 ease-in-out">
           <div className="p-4">
             <div className="main">
