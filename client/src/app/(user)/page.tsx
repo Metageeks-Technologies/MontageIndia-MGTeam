@@ -16,6 +16,8 @@ import Hero from "@/components/Home/gallary/Hero";
 import TopBanner from "@/components/navbar/TopBanner";
 import { IoCameraOutline } from "react-icons/io5";
 import Banner from "@/components/Banner";
+import VideoBanner from "@/components/Home/videoBanner";
+import { useRouter } from "next/navigation";
 
 // Collection data
 interface Card {
@@ -157,6 +159,7 @@ interface Category {
 
 export default function Home() {
   const [imageProducts, setImageProducts] = useState([]);
+  const router = useRouter();
   const [categories, setCategories] = useState<Category[]>([]);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
@@ -202,7 +205,7 @@ export default function Home() {
       }
       setPage(page + 1);
       setHasMore(res.data.hasMore);
-      if (categories.length >= 16 || page>=2) {
+      if (categories.length >= 16 || page >= 2) {
         setHasMore(false);
       }
     } catch (error) {
@@ -239,8 +242,13 @@ export default function Home() {
         onClick={() => console.log( 'Redirecting to Sale Page' )}
       /> */}
 
-      <Banner />
-
+      {/* <Banner /> */}
+      <VideoBanner
+        isSearch={true}
+        videoPath="/images/banner.mp4"
+        heading="Montage India"
+        description="Discover amazing content and services tailored just for you."
+      />
       <div className="lg:mx-24 md:mx-4 mx-4 py-14 ">
         <div className="flex flex-col md:flex-row justify-center items-center mb-4">
           <h2 className="text-2xl text-[#333333] sm:text-3xl lg:text-3xl text-center font-semibold mb-4 md:mb-0">
@@ -248,9 +256,57 @@ export default function Home() {
           </h2>
         </div>
         <div className="container mx-auto gap-4 grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 lg:mt-3">
-          {cards.map((card, index) => (
+          {/* {cards.map((card, index) => (
             <CardSlider key={index} {...card} />
-          ))}
+          ))} */}
+
+          <div
+            className="relative group border cursor-pointer"
+            onClick={() => router.push("/video")}
+          >
+            <img
+              src="asset/Mask group.jpg"
+              alt="Video image"
+              className="w-full h-full object-cover"
+            />
+            <div className="absolute inset-0  rounded flex items-center justify-center">
+              <div className="text-white font-semibold text-lg absolute bottom-3 left-5">
+                Video
+              </div>
+            </div>
+          </div>
+
+          <div
+            className="relative group border cursor-pointer"
+            onClick={() => router.push("/image")}
+          >
+            <img
+              src="asset/Group 13224.jpg"
+              alt="image"
+              className="w-full h-full object-cover"
+            />
+            <div className="absolute inset-0  rounded flex items-center justify-center">
+              <div className="text-white font-semibold text-lg absolute bottom-3 left-5">
+                Image
+              </div>
+            </div>
+          </div>
+
+          <div
+            className="relative group border cursor-pointer"
+            onClick={() => router.push("/audio")}
+          >
+            <img
+              src="asset/Mask group 1.jpg"
+              alt="Audio image"
+              className="w-full h-full object-cover"
+            />
+            <div className="absolute inset-0  rounded flex items-center justify-center">
+              <div className="text-white font-semibold text-lg absolute bottom-3 left-5">
+                Audio
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 

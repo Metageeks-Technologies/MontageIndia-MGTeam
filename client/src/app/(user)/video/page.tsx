@@ -16,6 +16,7 @@ import { BsFilterLeft } from "react-icons/bs";
 import instance from "@/utils/axios";
 import Banner from "@/components/Banner";
 import Masonry from "react-masonry-css";
+import VideoBanner from "@/components/Home/videoBanner";
 
 const breakpointColumnsObj = {
   default: 3,
@@ -154,16 +155,21 @@ const Page = () => {
   return (
     <div className="flex flex-col min-h-screen">
       <Searchbar />
-      <Banner />
+      <VideoBanner
+        isSearch={false}
+        videoPath="/images/video_banner.webm"
+        heading="Explore Stock Videos and Footage"
+        description="stock videos in FHD & HD from the world's leading stock footage collection."
+      />
       <div className="flex flex-1">
         <div className={`flex-1 transition-all duration-300 ease-in-out `}>
-          <div className="p-4">
+          <div className="">
             <div className="main items-center">
               {/* Trending Videos */}
-              <div className="bg-[#eeeeee]">
+              <div className="">
                 <div
                   className={`py-10 lg:mx-4 ${
-                    !isFilterOpen ? "xl:mx-24 md:mx-4" : "ml-0"
+                    !isFilterOpen ? "xl:mx-16 md:mx-4 mx-4" : "ml-0"
                   } `}
                 >
                   <h1 className="text-2xl font-bold  text-start">

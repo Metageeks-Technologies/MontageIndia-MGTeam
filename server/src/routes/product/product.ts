@@ -15,12 +15,13 @@ import {
   getProductFromAws,
   buyAllCartWithCredits,
   getFilteredProducts,
+  deleteProduct,
 } from "../../controller/product/product";
 import {
   isAuthorizedCustomer,
   isAuthenticatedAdmin,
   isAuthenticatedCustomer,
-  firebaseAuth
+  firebaseAuth,
 } from "@src/middleware/auth";
 import {
   addProductToCart,
@@ -44,28 +45,21 @@ productRouter
   .patch(isAuthenticatedAdmin, addPriceToVariant);
 
 //Customer
-productRouter
-  .route("/cart/data")
-  .get(firebaseAuth, getProductsByIds);
-productRouter
-  .route("/addToCart")
-  .post(firebaseAuth, addProductToCart);
+productRouter.route("/cart/data").get(firebaseAuth, getProductsByIds);
+productRouter.route("/addToCart").post(firebaseAuth, addProductToCart);
 productRouter
   .route("/removeFromCart")
   .post(firebaseAuth, removeProductFromCart);
-productRouter
-  .route("/buyWithCredits")
-  .post(firebaseAuth, buyWithCredits);
+productRouter.route("/buyWithCredits").post(firebaseAuth, buyWithCredits);
 productRouter
   .route("/cart/buyWithCredits")
   .post(firebaseAuth, buyAllCartWithCredits);
-productRouter
-  .route("/purchased")
-  .get(firebaseAuth, getPurchasedProducts);
+productRouter.route("/purchased").get(firebaseAuth, getPurchasedProducts);
 productRouter
   .route("/customer")
   .get(isAuthorizedCustomer, getProductForCustomer);
-productRouter.route("/filter").get(isAuthorizedCustomer,getFilteredProducts);
+productRouter.route("/filter").get(isAuthorizedCustomer, getFilteredProducts);
+productRouter.route("/delete").delete(isAuthenticatedAdmin, deleteProduct);
 
 productRouter.route("/download").get(isAuthorizedCustomer, getProductFromAws);
 

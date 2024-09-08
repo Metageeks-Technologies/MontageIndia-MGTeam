@@ -12,6 +12,7 @@ export type MetaData = {
 export type TProduct = Document & {
   _id: string;
   uuid: string;
+  displayId: string;
   slug: string;
   title: string;
   description: string;

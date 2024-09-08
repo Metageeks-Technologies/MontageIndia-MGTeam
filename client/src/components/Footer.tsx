@@ -5,9 +5,9 @@ import {getPrefLangCookie} from '@/utils/cookies';
 
 const Footer = () => {
   return (
-    <div className="bg-black text-white pb-10 px-4 sm:px-10 lg:px-20">
+    <div className="bg-black text-white pb-10 px-4 sm:px-4 lg:px-16">
       <div className="flex flex-col lg:flex-row">
-        <div className="mt-5 lg:w-1/4 pr-4">
+        <div className="mt-5 lg:w-1/4 ">
           <div className='mb-4  rounded-lg w-fit  '>
             <div>
               <img
