@@ -338,27 +338,26 @@ export default function Home() {
       </div>
 
       <div className="lg:mx-24 sm:mx-4 mx-2 py-10 text-white mt-8">
-        <h1 className="text-[#333333] text-3xl text-center font-bold mb-6">
-          Browse All Categories
+        <h1 className="text-[#333333] text-3xl text-start font-bold mb-6">
+          Browse by category to find your perfect visual
         </h1>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2">
           {categories.map((data: Category, index) => (
             <div key={index} className="cursor-pointer">
               {/* Masonry item */}
-              <div className="relative">
+              <div className="w-full h-52 rounded-md overflow-hidden ">
                 {/* Inner div */}
                 <img
                   src={data.image}
                   alt={`Product Image `}
                   // loading="lazy"
-                  className="w-full h-52 object-cover rounded"
+                  className="w-full h-full object-cover"
                 />
-                <div className="absolute bottom-0 py-1.5 w-full bg-black opacity-50 ">
-                  <h1 className="text-white font-semibold text-center">
-                    {data.name}
-                  </h1>
-                </div>
+                
               </div>
+              <div className="text-zinc-950 px-2 capitalize font-semibold text-start">
+                    {data.name}
+                </div>
             </div>
           ))}
         </div>
