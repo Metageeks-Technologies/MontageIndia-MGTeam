@@ -78,7 +78,7 @@ function CartPopup() {
         className={`${
           !isOpen
             ? "hidden"
-            : "absolute  shadow-xl bg-white rounded-md w-[30rem] max-h-[22rem] top-16 right-4 md:right-14  z-20"
+            : "absolute  shadow-xl bg-white rounded-md w-[30rem] max-h-[22rem] top-16 right-4 md:right-14  z-50"
         }`}
       >
         <div className=" rounded-md  bg-white  justify-self-end w-full max-w-2xl">

@@ -125,7 +125,7 @@ const Searchbar = () => {
   console.log(isSearchPage, "isSearchpage");
 
   return (
-    <div className="sticky top-0 z-50">
+    <div className="sticky top-0 z-40">
       <div className="transition-all duration-300 bg-white shadow-md py-4 border-t-1">
         <div className="flex relative justify-between items-center gap-4 bg-gray-100 border border-gray-300 rounded-md mx-6 px-4 lg:mx-4 xl:mx-24 md:mx-4">
           <div className="flex flex-row w-full gap-2">

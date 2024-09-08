@@ -187,16 +187,17 @@ const Navbar: React.FC = () => {
                     </button>
                     {isEditorChosePopupOpen && (
                       <div
+                        onClick={() => setIsDropdownOpen(false)}
                         ref={editorChoiceRef}
                         className="absolute  mt-2 w-fit bg-white border rounded shadow-xl z-50 flex flex-col items-center justify-start  top-full  "
                       >
-                        <DropdownItem href="/video?category=editor choice&mediaType=video">
+                        <DropdownItem href="/search/video?category=editor choice&mediaType=video">
                           Video
                         </DropdownItem>
-                        <DropdownItem href="/image?category=editor choice&mediaType=image">
+                        <DropdownItem href="/search/image?category=editor choice&mediaType=image">
                           Image
                         </DropdownItem>
-                        <DropdownItem href="/audio?category=editor choice&mediaType=audio">
+                        <DropdownItem href="/search/audio?category=editor choice&mediaType=audio">
                           Audio
                         </DropdownItem>
                       </div>
