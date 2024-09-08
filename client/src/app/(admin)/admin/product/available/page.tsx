@@ -329,9 +329,9 @@ const Home: React.FC = () =>
                       </div>
                     </td>
                     <td className="px-4 py-4 border-b border-gray-200 bg-white">
-                      <div className="text-sm font-medium text-gray-900">
-                        { capitalizeFirstLetter( prod.title ) }
-                      </div>
+                      <Link href={`/${prod.mediaType}/${prod.uuid}`} target="_blank" className="text-sm capitalize font-medium text-gray-900">
+                        { prod.title }
+                      </Link>
                     </td>
                     <td className="px-4 py-4 border-b border-gray-200 bg-white">
                       <div className="text-sm text-gray-900">₹{ prod.variants[ 0 ]?.price || 'N/A' }</div>

@@ -217,6 +217,7 @@ export const getSubscriptionHistory = catchAsyncError(
     const subscriptionHistory = await SubscriptionHistory.find(queryObject)
       .sort({ createdAt: -1 })
       .populate("userId", "name username email")
+      .populate("planId")
       .skip(skip)
       .limit(limit);
 

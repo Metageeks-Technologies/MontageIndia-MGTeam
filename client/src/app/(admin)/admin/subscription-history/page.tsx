@@ -12,7 +12,12 @@ interface Subscription
     username: string;
     email: string;
   };
-  planId: string;
+  planId: {
+    _id?:string;
+    item:{
+      name: string;
+    }
+  };
   startDate: string;
   endDate: string;
   status: string;
@@ -121,7 +126,7 @@ const Page = () =>
                 Email
               </th>
               <th className="px-5 py-3 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                Plan ID
+                Plan
               </th>
               <th className="px-5 py-3 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                 Start Date
@@ -156,7 +161,7 @@ const Page = () =>
                       <div className="text-sm text-gray-900">{ item.userId.email }</div>
                     </td>
                     <td className="px-4 py-4 border-b border-gray-200 bg-white">
-                      <div className="text-sm text-gray-900">{ item.planId }</div>
+                      <div className="text-sm text-gray-900">{ item.planId.item.name }</div>
                     </td>
                     <td className="px-4 py-4 border-b border-gray-200 bg-white">
                       <div className="text-sm text-gray-900">{ new Date( item.startDate ).toLocaleDateString() } </div>

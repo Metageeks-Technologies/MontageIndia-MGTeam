@@ -152,7 +152,7 @@ const Sidebar = () =>
           </div> */}
           <div className="flex flex-col  justify-between">
             <ul className="space-y-2 font-medium">
-              <li  className={ `rounded-lg cursor-pointer ${ isActiveLink( "/admin/dashboard" ) ? "bg-webred text-pureWhite-light hover:bg-webred" : "hover:bg-webred-light" }` } >
+              <li  className={ `rounded-lg cursor-pointer ${ isActiveLink( "/admin/dashboard" ) ? "bg-webred text-white " : "hover:bg-webred-light text-gray-700" }` } >
                 <Link href='/admin/dashboard' onClick={()=>{initialState()}} className="flex items-center w-full p-2 text-base  transition duration-75 rounded-lg group   ">
                   <FaHome className="w-5 h-5  transition duration-75 " />
                   <span className="flex-1 ms-3 text-left rtl:text-right whitespace-nowrap">Dashboard</span>
@@ -166,9 +166,9 @@ const Sidebar = () =>
                   <Link
                     href="/admin/product/available"
                     onClick={ () => toggleMenu("product") }
-                    className={ `flex cursor-pointer items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group hover:bg-webred-light ${ !isProductOpen ? 'bg-white' : 'bg-pageBg-light mb-1' }` }
+                    className={ `flex cursor-pointer items-center w-full p-2 text-base transition duration-75 rounded-lg group ${ !isProductOpen ? 'hover:bg-webred-light text-gray-700' : 'bg-webred text-white mb-1' }` }
                   >
-                    <BiCategoryAlt className="w-5 h-5 text-gray-500 transition duration-75  group-hover:text-gray-900  " />
+                    <BiCategoryAlt className="w-5 h-5 transition duration-75" />
                     <span className="flex-1 ms-3 text-left rtl:text-right whitespace-nowrap">
                       Product
                     </span>
@@ -184,7 +184,7 @@ const Sidebar = () =>
                       
                         <Link
                           href="/admin/product/create"
-                          className={ `flex items-start w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-7 group  ${ isActiveLink( "/admin/product/create" )
+                          className={ `flex items-start w-full p-2 transition duration-75 rounded-lg pl-7 group  ${ isActiveLink( "/admin/product/create" )
                             ? "bg-webred text-pureWhite-light"
                             : "hover:bg-[#f56d6d] hover:text-white "
                             }` }
@@ -193,13 +193,13 @@ const Sidebar = () =>
                         </Link>
                       </li>
                       <li>
-                        <Link href="/admin/product/available" className={ `flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-7 group  cursor-pointer ${ isActiveLink( '/admin/product/available' ) ? 'bg-webred text-pureWhite-light' : 'hover:bg-[#f56d6d] hover:text-white' }` }>Published</Link>
+                        <Link href="/admin/product/available" className={ `flex items-center w-full p-2  transition duration-75 rounded-lg pl-7 group  cursor-pointer ${ isActiveLink( '/admin/product/available' ) ? 'bg-webred text-pureWhite-light' : 'hover:bg-[#f56d6d] hover:text-white' }` }>Published</Link>
 
                       </li>
                       <li>
                         <Link
                           href="/admin/product/draft"
-                          className={ `flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-7 group  cursor-pointer ${ isActiveLink( "/admin/product/draft" )
+                          className={ `flex items-center w-full p-2  transition duration-75 rounded-lg pl-7 group  cursor-pointer ${ isActiveLink( "/admin/product/draft" )
                             ? "bg-webred text-pureWhite-light"
                             : "hover:bg-[#f56d6d] hover:text-white"
                             }` }
@@ -223,9 +223,9 @@ const Sidebar = () =>
                   <Link
                     href="/admin/user/userList"
                     onClick={ () => toggleMenu("user") }
-                    className={ `flex cursor-pointer items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group hover:bg-[#f56d6d] ${ !isUserOpen ? "" : "bg-pageBg-light mb-1 " }` }
+                    className={ `flex cursor-pointer items-center w-full p-2 text-base transition duration-75 rounded-lg group ${ !isUserOpen ? "hover:bg-webred-light text-gray-700" : "bg-webred text-white mb-1 " }` }
                   >
-                    <FaUserFriends className="w-5 h-5 text-gray-500 transition duration-75  group-hover:text-gray-900  " />
+                    <FaUserFriends className="w-5 h-5 transition duration-75" />
                     <span className="flex-1 ms-3 text-left rtl:text-right whitespace-nowrap">Staff</span>
                     { isUserOpen ? (
                       <MdOutlineKeyboardArrowUp className="w-5 h-5" />
@@ -256,9 +256,9 @@ const Sidebar = () =>
                     <Link
                       href="/admin/category/create"
                       onClick={ () => toggleMenu( "category" ) }
-                      className={ `flex cursor-pointer items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group hover:bg-webred-light ${ !isCategoryOpen ? "" : "bg-pageBg-light rounded-md mb-1" }` }
+                      className={ `flex cursor-pointer items-center w-full p-2 text-base transition duration-75 rounded-lg group  ${ !isCategoryOpen ? "hover:bg-webred-light text-gray-700" : "bg-webred text-white rounded-md mb-1" }` }
                     >
-                      <FaCampground className="w-5 h-5 text-gray-500 transition duration-75  group-hover:text-gray-900  " />
+                      <FaCampground className="w-5 h-5 transition duration-75" />
                       <span className="flex-1 ms-3 text-left rtl:text-right whitespace-nowrap">Category</span>
                       { isCategoryOpen ? (
                         <MdOutlineKeyboardArrowUp className="w-5 h-5" />
@@ -283,9 +283,9 @@ const Sidebar = () =>
                     <Link
                       href="/admin/subscription"
                       onClick={ () => toggleMenu( "customer" ) }
-                      className={ `flex items-center p-2 text-gray-900 rounded-lg hover:bg-webred-light cursor-pointer group ${ isCustomerOpen ? 'bg-pageBg-light rounded-md mb-1' : '' }` }
+                      className={ `flex items-center p-2 rounded-lg cursor-pointer group ${ isCustomerOpen ? 'bg-webred text-white rounded-md mb-1' : 'hover:bg-webred-light text-gray-700' }` }
                     >
-                      <FaUsers className="w-5 h-5 text-gray-500 transition duration-75 group-hover:text-gray-900" />
+                      <FaUsers className="w-5 h-5 transition duration-75 " />
                       <span className="flex-1 ms-3 whitespace-nowrap">
                         Customers
                       </span>
@@ -452,7 +452,7 @@ const Sidebar = () =>
             </ul>
           </div>
 
-          <div className="border-t bg-white px-2 py-4 mt-5 rounded-md w-[90%]">
+          <div className="border-t bg-white py-4 mt-5 rounded-md w-[90%]">
             <div
               className="flex items-center mb-4 border-b pb-2 cursor-pointer"
               onClick={ () => {initialState(); router.push( "/admin/profile" ); }}
@@ -480,9 +480,9 @@ const Sidebar = () =>
                 { currentUser ? (
                   <a
                     onClick={ handleLogout }
-                    className="flex items-center text-gray-800 hover:bg-gray-200 px-3 py-2"
+                    className="flex gap-2 justify-start w-full rounded-md text-webred hover:bg-webred-light px-2 py-2"
                   >
-                    <BiLogOutCircle className="w-6 h-6 mr-3" />
+                    <BiLogOutCircle className="w-6 h-6" />
                     Log out
                   </a>
                 ) : (
