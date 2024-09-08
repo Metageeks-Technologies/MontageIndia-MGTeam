@@ -17,18 +17,18 @@ import instance from "@/utils/axios";
 import Banner from "@/components/Banner";
 import Masonry from "react-masonry-css";
 
-const breakpointColumnsObj = {
-  default: 3,
-  1100: 2,
-  700: 1,
-};
-
 const filterOptions = {
   sortBy: ["Most Popular", "Newest", "Oldest"],
   orientation: ["Landscape", "Portrait"],
   resolution: ["FHD", "HD"],
   videoLength: 0, // input
   frameRate: ["30Hz", "24Hz"],
+};
+
+const breakpointColumnsObj = {
+  default: 3,
+  1100: 2,
+  700: 1,
 };
 
 const Page = () => {
@@ -154,10 +154,23 @@ const Page = () => {
   return (
     <div className="flex flex-col min-h-screen">
       <Searchbar />
-      <Banner />
+
       <div className="flex flex-1">
+        <Filter
+          isOpen={isFilterOpen}
+          onToggle={toggleFilter}
+          filterOptions={filterOptions}
+          onFilterChange={handleFilterChange}
+          onclearFilter={handleClearFilters}
+        />
         <div className={`flex-1 transition-all duration-300 ease-in-out `}>
           <div className="p-4">
+            <button
+              className="py-2 text-gray-800 bg-white border flex flex-row items-center gap-2 border-gray-300 px-5 rounded-md mb-4"
+              onClick={toggleFilter}
+            >
+              Filters <BsFilterLeft />
+            </button>
             <div className="main items-center">
               {/* Trending Videos */}
               <div className="bg-[#eeeeee]">
@@ -178,19 +191,21 @@ const Page = () => {
                         <Spinner label="Loading..." color="danger" />
                       </div>
                     ) : (
-                      <Masonry
-                        breakpointCols={breakpointColumnsObj}
-                        className="my-masonry-grid"
-                        columnClassName="my-masonry-grid_column"
-                      >
-                        {displayData.length > 0 ? (
-                          displayData.map((data: any) => (
-                            <Trending key={data._id} data={data} />
-                          ))
-                        ) : (
-                          <p>No Video found.</p>
-                        )}
-                      </Masonry>
+                      <div className="mt-5 lg:border">
+                        <Masonry
+                          breakpointCols={breakpointColumnsObj}
+                          className="my-masonry-grid"
+                          columnClassName="my-masonry-grid_column"
+                        >
+                          {displayData.length > 0 ? (
+                            displayData.map((data: any) => (
+                              <Trending key={data._id} data={data} />
+                            ))
+                          ) : (
+                            <p>No Video found.</p>
+                          )}
+                        </Masonry>
+                      </div>
                     )}
                   </div>
                 </div>

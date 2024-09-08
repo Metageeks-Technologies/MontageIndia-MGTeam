@@ -127,6 +127,12 @@ const Trending = ({
       setCartLoading(false);
     }
   };
+  let dimension: string[] = [];
+  let orientation = "horizontal";
+  if (data.variants[0]?.metadata?.dimension) {
+    dimension = data.variants[0]?.metadata?.dimension?.split("x");
+    orientation = dimension?.[0] > dimension?.[1] ? "horizontal" : "vertical";
+  }
 
   return (
     <div
@@ -135,8 +141,12 @@ const Trending = ({
       onMouseLeave={handleMouseLeave}
       onClick={() => router.push(`/video/${data?.uuid}`)}
     >
-      <div className="aspect-w-1 aspect-h-1">
-        <video loop muted className="w-full h-64 object-cover">
+      <div
+        className={`aspect-w-16 aspect-h-${
+          orientation === "vertical" ? "9" : "16"
+        }`}
+      >
+        <video loop muted className="w-full h-full object-cover">
           <source
             src={`${process.env.NEXT_PUBLIC_AWS_PREFIX}/${data.thumbnailKey}`}
           />

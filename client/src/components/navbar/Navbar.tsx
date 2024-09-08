@@ -12,6 +12,7 @@ import Link from "next/link";
 import Swal from "sweetalert2";
 import { notifySuccess } from "@/utils/toast";
 import { signOutUser } from "@/utils/loginOptions";
+import { usePathname } from "next/navigation";
 
 interface User {
   subscription: {
@@ -37,6 +38,8 @@ const Navbar: React.FC = () => {
   const [mobileDropdownOpen, setMobileDropdownOpen] = useState<boolean>(false);
   const mobileDropdownRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
+  const pathname = usePathname();
+  const isSearchPage = pathname.includes("/search");
 
   // Replace this with your actual user state management
   const { user } = useAppSelector((state) => state.user);

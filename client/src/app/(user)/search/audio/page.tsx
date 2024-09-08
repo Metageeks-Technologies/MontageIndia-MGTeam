@@ -133,10 +133,23 @@ const Page = () => {
   return (
     <div className="flex flex-col min-h-screen">
       <Searchbar />
-      <Banner />
+
       <div className="flex flex-1 bg-pageBg-light">
+        <Filter
+          isOpen={isFilterOpen}
+          onToggle={toggleFilter}
+          filterOptions={filterOptions}
+          onFilterChange={handleFilterChange}
+          onclearFilter={handleClearFilters}
+        />
         <div className="flex-1 transition-all duration-300 ease-in-out">
           <div className="p-4">
+            <button
+              className=" py-2 text-gray-800 bg-white border flex flex-row items-center gap-2 border-gray-300 px-5 rounded-md mb-4"
+              onClick={toggleFilter}
+            >
+              Filters <BsFilterLeft />
+            </button>
             <div className="main">
               <div className="py-10 px-4 md:px-8 lg:px-12">
                 {totalAudioData > 0 && (

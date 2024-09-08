@@ -141,9 +141,9 @@ const Waveform = ({
   // };
 
   const handleDownload = async () => {
-    setLoading(true);
+    setDownLoading(true);
     await downloadProduct(dispatch, product?.publicKey, product?.title);
-    setLoading(false);
+    setDownLoading(false);
   };
 
   const handleeWishlist = async () => {

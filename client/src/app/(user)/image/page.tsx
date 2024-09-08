@@ -160,21 +160,9 @@ const Page = () => {
         <Hero />
       </div>
       <div className="flex flex-1">
-        <Filter
-          isOpen={isFilterOpen}
-          onToggle={toggleFilter}
-          filterOptions={filterOptions}
-          onFilterChange={handleFilterChange}
-          onclearFilter={handleClearFilters}
-        />
         <div className={`flex-1 transition-all duration-300 ease-in-out `}>
           <div className="p-4">
-            <button
-              className="py-2 text-gray-800 bg-white border flex flex-row items-center gap-2 border-gray-300 px-5 rounded-md mb-4"
-              onClick={toggleFilter}
-            >
-              Filters <BsFilterLeft />
-            </button>
+           
             <div className="main items-center">
               <div className="bg-[#eeeeee]">
                 <div
