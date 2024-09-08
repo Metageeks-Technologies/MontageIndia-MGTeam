@@ -59,6 +59,8 @@ export const processSQSMessages = async () => {
           const keyArr = key.split(".");
           keyArr.pop();
           const uuid = keyArr.join(".");
+          const isJobExist = await EmcMedia.findOne({ uuid });
+          if (isJobExist) continue;
           const product = await Product.findOne({ uuid });
           if (!product) continue;
           const watermarkJobId = await handleVideoWithWaterMark(
