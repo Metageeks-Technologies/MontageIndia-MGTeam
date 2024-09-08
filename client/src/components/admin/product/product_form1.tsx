@@ -1,220 +1,227 @@
-import React, { useState, useEffect, ChangeEvent } from 'react';
-import { v4 as uuidv4 } from 'uuid';
-import slugify from 'slugify';
-import instance from '@/utils/axios';
-import { notifyError } from '@/utils/toast';
-import ReactQuill from 'react-quill';
-import 'react-quill/dist/quill.snow.css';
-import Select, { MultiValue, ActionMeta, components } from 'react-select';
-import useAdminAuth from '@/components/hooks/useAdminAuth';
-import { categoriesOptions } from '@/utils/tempData';
-import { Spinner } from '@nextui-org/react';
-import Swal from 'sweetalert2';
-
+import React, { useState, useEffect, ChangeEvent } from "react";
+import { v4 as uuidv4 } from "uuid";
+import slugify from "slugify";
+import instance from "@/utils/axios";
+import { notifyError } from "@/utils/toast";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
+import Select, { MultiValue, ActionMeta, components } from "react-select";
+import useAdminAuth from "@/components/hooks/useAdminAuth";
+import { categoriesOptions } from "@/utils/tempData";
+import { Spinner } from "@nextui-org/react";
+import Swal from "sweetalert2";
 
 const mediaOptions: {
-  [ key: string ]: { value: string; label: string; };
+  [key: string]: { value: string; label: string };
 } = {
-  image: { value: 'image', label: 'Image' },
-  video: { value: 'video', label: 'Video' },
-  audio: { value: 'audio', label: 'Audio' }
+  image: { value: "image", label: "Image" },
+  video: { value: "video", label: "Video" },
+  audio: { value: "audio", label: "Audio" },
 };
 
-const Form1 = ( { onNext }: any ) =>
-{
+const Form1 = ({ onNext }: any) => {
   const { user } = useAdminAuth();
-  const [ title, setTitle ] = useState( '' );
-  const [ description, setDescription ] = useState( '' );
-  const [ mediaType, setMediaType ] = useState( '' );
-  const [ tags, setTags ] = useState<string[]>( [] );
-  const [ tagInput, setTagInput ] = useState( '' );
-  const [ loading, setloader ] = useState( false );
-  const [ selectedCategories, setSelectedCategories ] = useState<any[]>( [] );
-  const [ availableCategories, setAvailableCategories ] = useState<any[]>( [] );
-  const [ availableMediaOptions, setAvailableMediaOptions ] = useState<any[]>( [] );
-  const [ selected, setSelectedcheck ] = useState( false );
-  const CustomMenu = React.memo( ( props: any ) =>
-  {
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [mediaType, setMediaType] = useState("");
+  const [tags, setTags] = useState<string[]>([]);
+  const [tagInput, setTagInput] = useState("");
+  const [loading, setloader] = useState(false);
+  const [selectedCategories, setSelectedCategories] = useState<any[]>([]);
+  const [availableCategories, setAvailableCategories] = useState<any[]>([]);
+  const [availableMediaOptions, setAvailableMediaOptions] = useState<any[]>([]);
+  const [selected, setSelectedcheck] = useState(false);
+  const CustomMenu = React.memo((props: any) => {
     const { selectProps, options, getValue } = props;
     const searchValue = selectProps.inputValue;
-    const isExisting = options.some( ( option: any ) => option?.label?.toLowerCase() === searchValue?.toLowerCase() );
+    const isExisting = options.some(
+      (option: any) =>
+        option?.label?.toLowerCase() === searchValue?.toLowerCase()
+    );
     const isSearching = searchValue && searchValue.length > 0;
 
-    const handleAddClick = () =>
-    {
-      handleAddCategory( searchValue );
+    const handleAddClick = () => {
+      handleAddCategory(searchValue);
     };
 
-    if ( isSearching && !isExisting && searchValue.trim() !== '' )
-    {
+    if (isSearching && !isExisting && searchValue.trim() !== "") {
       return (
-        <components.MenuList { ...props }>
-          { props.children }
+        <components.MenuList {...props}>
+          {props.children}
           <div className="p-2">
             <button
               className="w-full bg-lime-400 text-white font-semibold py-2 px-4 rounded-lg"
-              onClick={ handleAddClick }
+              onClick={handleAddClick}
             >
-              Add "{ searchValue }"
+              Add "{searchValue}"
             </button>
           </div>
         </components.MenuList>
       );
     }
-    return <components.MenuList { ...props }>{ props.children }</components.MenuList>;
-  } );
+    return (
+      <components.MenuList {...props}>{props.children}</components.MenuList>
+    );
+  });
 
-  const handleAddCategory = React.useCallback( async ( categoryName: string ) =>
-  {
-    console.log( "category naem:", categoryName );
-    try
-    {
-      const response = await instance.post( '/field/category', { category: categoryName } );
-      if ( response.status === 201 )
-      {
+  const handleAddCategory = React.useCallback(async (categoryName: string) => {
+    console.log("category naem:", categoryName);
+    try {
+      const response = await instance.post("/field/category", {
+        category: categoryName,
+      });
+      if (response.status === 201) {
         const newCategory = {
           value: response.data.category._id,
-          label: response.data.category.name
+          label: response.data.category.name,
         };
-        setAvailableCategories( prev => [ ...prev, newCategory ] );
-        setSelectedCategories( prev => [ ...prev, newCategory ] );
+        setAvailableCategories((prev) => [...prev, newCategory]);
+        setSelectedCategories((prev) => [...prev, newCategory]);
       }
-    } catch ( error )
-    {
-      console.error( "Error adding new category:", error );
-      Swal.fire( {
-        icon: 'error',
-        title: 'Oops...',
-        text: 'Failed to add new category. Please try again.',
-      } );
+    } catch (error) {
+      console.error("Error adding new category:", error);
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "Failed to add new category. Please try again.",
+      });
     }
-  }, [] );
+  }, []);
 
-
-  useEffect( () =>
-  {
-    if ( user )
-    {
-      console.log( "first", user.category[ 0 ] );
+  useEffect(() => {
+    if (user) {
+      console.log("first", user.category[0]);
       // Check if user.category is 'all' or an array
       getCategories();
 
-
-      if ( user.mediaType )
-      {
-        const allowedMediaOptions = Object.keys( mediaOptions )
-          .filter( mediaType => user.mediaType.includes( mediaType ) )
-          .map( mediaType => mediaOptions[ mediaType ] );
-        setAvailableMediaOptions( allowedMediaOptions );
+      if (user.mediaType) {
+        const allowedMediaOptions = Object.keys(mediaOptions)
+          .filter((mediaType) => user.mediaType.includes(mediaType))
+          .map((mediaType) => mediaOptions[mediaType]);
+        setAvailableMediaOptions(allowedMediaOptions);
       }
     }
-  }, [ user ] );
+  }, [user]);
 
-  const handleCheck = ( event: React.ChangeEvent<HTMLInputElement> ) =>
-  {
-    setSelectedcheck( event.target.checked );
+  const handleCheck = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSelectedcheck(event.target.checked);
   };
-  const getCategories = async () =>
-  {
-    try
-    {
-      const response = await instance.get( '/field/category' );
+  const getCategories = async () => {
+    try {
+      const response = await instance.get("/field/category");
       const formattedCategories = response.data.categories
-        .filter( ( category: any ) => category.name !== "editor choice" )
-        .map( ( category: any ) => ( {
+        .filter((category: any) => category.name !== "editor choice")
+        .map((category: any) => ({
           value: category._id,
-          label: category.name
-        } ) );
-      setAvailableCategories( formattedCategories );
-    } catch ( error )
-    {
-      console.log( "error in getting the category:-", error );
+          label: category.name,
+        }));
+      setAvailableCategories(formattedCategories);
+    } catch (error) {
+      console.log("error in getting the category:-", error);
     }
   };
-  const handleChange = ( event: ChangeEvent<HTMLTextAreaElement> ) =>
-  {
-    setDescription( event.target.value );
+  const handleChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
+    setDescription(event.target.value);
   };
-  const getCategoriesWithEditorChoice = ( categories: { label: string; }[], isSelected: boolean ) =>
-  {
+  const getCategoriesWithEditorChoice = (
+    categories: { label: string }[],
+    isSelected: boolean
+  ) => {
     const editorChoiceCategory = "editor choice";
-    const categoriesLabels = categories.map( c => c.label );
+    const categoriesLabels = categories.map((c) => c.label);
 
-    if ( isSelected && !categoriesLabels.includes( editorChoiceCategory ) )
-    {
-      return [ ...categoriesLabels, editorChoiceCategory ];
+    if (isSelected && !categoriesLabels.includes(editorChoiceCategory)) {
+      return [...categoriesLabels, editorChoiceCategory];
     }
 
     return categoriesLabels;
   };
-  const handleNext = async () =>
-  {
-    if ( !user )
-    {
-      notifyError( 'Please login to continue' );
+  const getCurrentDateString = () => {
+    const now = new Date();
+    const day = String(now.getDate()).padStart(2, "0");
+    const month = String(now.getMonth() + 1).padStart(2, "0"); // Months are 0-indexed
+    const year = String(now.getFullYear()).slice(-2);
+    return `${day}${month}${year}`;
+  };
+  const handleNext = async () => {
+    if (!user) {
+      notifyError("Please login to continue");
       return;
     }
     const uuid = uuidv4();
-    const slug = slugify( title, { lower: true } );
-    const data = { uuid, slug, createdBy: user._id, title, description, mediaType, category: getCategoriesWithEditorChoice( selectedCategories, selected ), tags };
-    setloader( true );
-    try
-    {
-      console.log( data );
-      const response = await instance.post( `/product/`, data, {
-        headers: { 'Content-Type': 'application/json' }
-      } );
+    const slug = slugify(title, { lower: true });
+    const displayId = `Mg/${user.name}/${mediaType}/${getCurrentDateString()}`;
+    const data = {
+      uuid,
+      displayId,
+      slug: slug + "-" + uuid,
+      createdBy: user._id,
+      title,
+      description,
+      mediaType,
+      category: getCategoriesWithEditorChoice(selectedCategories, selected),
+      tags,
+    };
+    setloader(true);
+    try {
+      console.log(data);
+      const response = await instance.post(`/product/`, data, {
+        headers: { "Content-Type": "application/json" },
+      });
 
-      if ( response.status === 201 )
-      {
+      if (response.status === 201) {
         const data = response.data;
-        console.log( data );
-        setloader( false );
-        onNext( data );
+        console.log(data);
+        setloader(false);
+        onNext(data);
       }
-    } catch ( error: any )
-    {
-      const errorMessage = error.response?.data?.message || 'An error occurred while sending data';
-      Swal.fire( {
-        icon: 'error',
-        title: 'Oops...',
+    } catch (error: any) {
+      const errorMessage =
+        error.response?.data?.message || "An error occurred while sending data";
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
         text: errorMessage,
-      } );
-      setloader( false );
-      console.error( 'Error sending data:', error );
+      });
+      setloader(false);
+      console.error("Error sending data:", error);
     }
   };
 
-  const handleTagKeyDown = ( e: React.KeyboardEvent<HTMLInputElement> ) =>
-  {
-    if ( e.key === 'Enter' )
-    {
+  const handleTagKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
       e.preventDefault();
-      if ( tagInput.trim() )
-      {
-        setTags( [ ...tags, tagInput.trim() ] );
-        setTagInput( '' );
+      if (tagInput.trim()) {
+        setTags([...tags, tagInput.trim()]);
+        setTagInput("");
       }
     }
   };
-  console.log( "first", selected );
-  const isFormValid = () =>
-  {
-    return title && description && mediaType && tags[ 0 ] && selectedCategories.length > 0;
+  console.log("first", selected);
+  const isFormValid = () => {
+    return (
+      title &&
+      description &&
+      mediaType &&
+      tags[0] &&
+      selectedCategories.length > 0
+    );
   };
 
-  const handleCategoryChange = ( newValue: MultiValue<any>, actionMeta: ActionMeta<any> ) =>
-  {
-    setSelectedCategories( newValue as any[] );
+  const handleCategoryChange = (
+    newValue: MultiValue<any>,
+    actionMeta: ActionMeta<any>
+  ) => {
+    setSelectedCategories(newValue as any[]);
   };
-
-
 
   return (
     <>
-      { loading ? (
-
-        <div role="status" className="justify-center h-screen flex items-center m-auto">
+      {loading ? (
+        <div
+          role="status"
+          className="justify-center h-screen flex items-center m-auto"
+        >
           <svg
             aria-hidden="true"
             className="w-8 h-8 text-gray-200 animate-spin dark:text-gray-600 fill-lime-400"
@@ -235,48 +242,58 @@ const Form1 = ( { onNext }: any ) =>
             <Spinner label="Loading..." color="danger" />
           </span>
         </div>
-
       ) : (
         <div className="space-y-6">
           <div className="items-center">
-            <label className="text-sm font-medium text-gray-700">Media Type</label>
+            <label className="text-sm font-medium text-gray-700">
+              Media Type
+            </label>
             <div className="flex items-center space-x-4">
               <select
                 className=" bg-pageBg-light border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 w-1/2"
-                value={ mediaType }
-                onChange={ ( e ) => setMediaType( e.target.value ) }
+                value={mediaType}
+                onChange={(e) => setMediaType(e.target.value)}
               >
-                <option value="" disabled>Select Media</option>
-                { availableMediaOptions.map( option => (
-                  <option key={ option.value } value={ option.value }>
-                    { option.label }
+                <option value="" disabled>
+                  Select Media
+                </option>
+                {availableMediaOptions.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
                   </option>
-                ) ) }
+                ))}
               </select>
               <div className="flex items-center">
                 <input
                   type="checkbox"
                   id="editorChoice"
-                  checked={ selected }
-                  onChange={ handleCheck }
+                  checked={selected}
+                  onChange={handleCheck}
                   className="w-4 h-4 text-blue-600 bg-pageBg-light border-gray-300 rounded focus:ring-blue-500"
                 />
-                <label htmlFor="editorChoice" className="ml-2 text-sm font-medium text-gray-900">Editor Choice</label>
+                <label
+                  htmlFor="editorChoice"
+                  className="ml-2 text-sm font-medium text-gray-900"
+                >
+                  Editor Choice
+                </label>
               </div>
             </div>
           </div>
 
-          <div className='flex gap-4'>
-            <div className='w-full ' >
-              <label className="text-sm font-medium text-gray-700">Category</label>
+          <div className="flex gap-4">
+            <div className="w-full ">
+              <label className="text-sm font-medium text-gray-700">
+                Category
+              </label>
               <Select
                 isMulti
                 name="categories"
-                options={ availableCategories }
+                options={availableCategories}
                 className="basic-multi-select w-full bg-pageBg-light"
                 classNamePrefix="select"
-                value={ selectedCategories }
-                onChange={ handleCategoryChange }
+                value={selectedCategories}
+                onChange={handleCategoryChange}
               />
             </div>
 
@@ -285,62 +302,69 @@ const Form1 = ( { onNext }: any ) =>
               <input
                 placeholder="Enter Title"
                 className="col-span-1 block w-1/2 bg-pageBg-light border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5"
-                value={ title }
-                onChange={ ( e ) => setTitle( e.target.value ) }
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
               />
             </div>
           </div>
 
           <div className=" gap-4">
-            <label className="text-sm font-medium text-gray-700">Description</label>
-            <div className=""> 
+            <label className="text-sm font-medium text-gray-700">
+              Description
+            </label>
+            <div className="">
               <textarea
-                value={ description }
-                onChange={ handleChange }
+                value={description}
+                onChange={handleChange}
                 className="w-full bg-pageBg-light border border-gray-300 text-gray-900 text-sm rounded-b-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 h-32"
                 placeholder="Product description"
               />
             </div>
           </div>
 
-          <div className='space-y-6'>
-            <div className='flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4'>
-              <div className='w-1/2 '>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Tags</label>
+          <div className="space-y-6">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4">
+              <div className="w-1/2 ">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Tags
+                </label>
                 <div className="flex items-center">
                   <input
                     placeholder="Add tags..."
                     className="flex-grow bg-pageBg-light border border-gray-300 text-gray-900 text-sm rounded-l-lg focus:ring-blue-500 focus:border-blue-500 p-2.5"
-                    value={ tagInput }
-                    onChange={ ( e ) => setTagInput( e.target.value ) }
-                    onKeyDown={ handleTagKeyDown }
-                  /> 
+                    value={tagInput}
+                    onChange={(e) => setTagInput(e.target.value)}
+                    onKeyDown={handleTagKeyDown}
+                  />
                 </div>
               </div>
               <div className="w-full sm:w-auto">
                 <button
-                  onClick={ handleNext }
-                  className={ `w-full sm:w-auto px-6 py-2.5 text-white font-medium rounded-lg transition duration-150 ease-in-out ${ isFormValid()
-                    ? 'bg-webred hover:bg-webred active:webred focus:outline-none focus:ring-2 focus:ring-webred focus:ring-opacity-50'
-                    : 'bg-gray-400 cursor-not-allowed'
-                    }` }
-                  disabled={ !isFormValid() }
+                  onClick={handleNext}
+                  className={`w-full sm:w-auto px-6 py-2.5 text-white font-medium rounded-lg transition duration-150 ease-in-out ${
+                    isFormValid()
+                      ? "bg-webred hover:bg-webred active:webred focus:outline-none focus:ring-2 focus:ring-webred focus:ring-opacity-50"
+                      : "bg-gray-400 cursor-not-allowed"
+                  }`}
+                  disabled={!isFormValid()}
                 >
                   Save and Continue
                 </button>
               </div>
             </div>
 
-            { tags.length > 0 && (
-              <div className='mt-4'>
-                <h3 className="text-sm font-medium text-gray-700 mb-2">Added Tags:</h3>
-                <div className='flex flex-wrap gap-2'>
-                  { tags.map( ( tag, index ) => (
+            {tags.length > 0 && (
+              <div className="mt-4">
+                <h3 className="text-sm font-medium text-gray-700 mb-2">
+                  Added Tags:
+                </h3>
+                <div className="flex flex-wrap gap-2">
+                  {tags.map((tag, index) => (
                     <span
-                      key={ index }
-                      className='bg-gray-100 text-gray-800 text-sm font-medium px-3 py-1 rounded-full border border-gray-300 flex items-center'
+                      key={index}
+                      className="bg-gray-100 text-gray-800 text-sm font-medium px-3 py-1 rounded-full border border-gray-300 flex items-center"
                     >
-                      { tag }
+                      {tag}
                       {/* <button
                             // onClick={ () => removeTag( index ) }
                             className="ml-2 text-gray-500 hover:text-red-500 focus:outline-none"
@@ -350,16 +374,15 @@ const Form1 = ( { onNext }: any ) =>
                             </svg>
                           </button> */}
                     </span>
-                  ) ) }
+                  ))}
                 </div>
               </div>
-            ) }
+            )}
           </div>
-        </div >
-      ) }
+        </div>
+      )}
     </>
   );
-
 };
 
 export default Form1;

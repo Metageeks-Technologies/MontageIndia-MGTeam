@@ -4,6 +4,7 @@ import { TProduct } from "@src/types/product";
 const productSchema = new mongoose.Schema(
   {
     uuid: { type: String, required: true, unique: true },
+    displayId: { type: String, required: true },
     slug: { type: String, required: true },
     title: { type: String, required: true },
     description: { type: String, required: true },
