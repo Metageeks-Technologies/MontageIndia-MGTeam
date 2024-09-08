@@ -152,8 +152,8 @@ const Trending = ({
           />
         </video>
       </div>
-      <div className="absolute opacity-100  justify-center  top-1 left-1 gap-2 flex flex-row text-white m-2   transition-opacity duration-300">
-        <span className=" pt-1 ">
+      <div className="absolute opacity-100  justify-center items-center  top-1 left-1 gap-2 flex flex-row text-white m-2   transition-opacity duration-300">
+        <span className="">
           <img src="/asset/video.svg" alt="Hd " />
         </span>
         <span>FHD</span>

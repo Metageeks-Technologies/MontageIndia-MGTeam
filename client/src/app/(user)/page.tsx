@@ -17,6 +17,7 @@ import TopBanner from "@/components/navbar/TopBanner";
 import { IoCameraOutline } from "react-icons/io5";
 import Banner from "@/components/Banner";
 import VideoBanner from "@/components/Home/videoBanner";
+import { useRouter } from "next/navigation";
 
 // Collection data
 interface Card {
@@ -219,6 +220,7 @@ export default function Home() {
   //   },[])
 
   const [imageProducts, setImageProducts] = useState([]);
+  const router = useRouter();
 
   const getProduct = async () => {
     try {
@@ -266,9 +268,57 @@ export default function Home() {
           </h2>
         </div>
         <div className="container mx-auto gap-4 grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 lg:mt-3">
-          {cards.map((card, index) => (
+          {/* {cards.map((card, index) => (
             <CardSlider key={index} {...card} />
-          ))}
+          ))} */}
+
+          <div
+            className="relative group border cursor-pointer"
+            onClick={() => router.push("/video")}
+          >
+            <img
+              src="asset/Mask group.jpg"
+              alt="Video image"
+              className="w-full h-full object-cover"
+            />
+            <div className="absolute inset-0  rounded flex items-center justify-center">
+              <div className="text-white font-semibold text-lg absolute bottom-3 left-5">
+                Video
+              </div>
+            </div>
+          </div>
+
+          <div
+            className="relative group border cursor-pointer"
+            onClick={() => router.push("/image")}
+          >
+            <img
+              src="asset/Group 13224.jpg"
+              alt="image"
+              className="w-full h-full object-cover"
+            />
+            <div className="absolute inset-0  rounded flex items-center justify-center">
+              <div className="text-white font-semibold text-lg absolute bottom-3 left-5">
+                Image
+              </div>
+            </div>
+          </div>
+
+          <div
+            className="relative group border cursor-pointer"
+            onClick={() => router.push("/audio")}
+          >
+            <img
+              src="asset/Mask group 1.jpg"
+              alt="Audio image"
+              className="w-full h-full object-cover"
+            />
+            <div className="absolute inset-0  rounded flex items-center justify-center">
+              <div className="text-white font-semibold text-lg absolute bottom-3 left-5">
+                Audio
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 

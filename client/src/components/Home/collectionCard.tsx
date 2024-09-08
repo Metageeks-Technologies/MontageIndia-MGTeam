@@ -7,7 +7,7 @@ interface Card {
 const CardSlider = (card: Card) => {
   return (
     <div className="">
-      <div className="relative group">
+      <div className="relative group border">
         <img
           src={card.image}
           alt={card.title}

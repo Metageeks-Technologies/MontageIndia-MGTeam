@@ -2,16 +2,16 @@
 import Footer from "@/components/Footer";
 import ImageGallery from "@/components/Home/homeImage";
 import instance from "@/utils/axios";
-import {Button, Pagination, Spinner} from "@nextui-org/react";
-import {useEffect, useState} from "react";
-import {useAppDispatch, useAppSelector} from "@/app/redux/hooks";
-import {setImagePage} from "@/app/redux/feature/product/slice";
-import {useRouter, useSearchParams} from "next/navigation";
-import {clearKeywords} from "@/app/redux/feature/product/api";
+import { Button, Pagination, Spinner } from "@nextui-org/react";
+import { useEffect, useState } from "react";
+import { useAppDispatch, useAppSelector } from "@/app/redux/hooks";
+import { setImagePage } from "@/app/redux/feature/product/slice";
+import { useRouter, useSearchParams } from "next/navigation";
+import { clearKeywords } from "@/app/redux/feature/product/api";
 import Searchbar from "@/components/searchBar/search";
 import Filter from "@/components/searchBar/filtersidebar";
-import {BsFilterLeft} from "react-icons/bs";
-import {getImage} from "@/app/redux/feature/product/image/api";
+import { BsFilterLeft } from "react-icons/bs";
+import { getImage } from "@/app/redux/feature/product/image/api";
 import Hero from "@/components/Home/gallary/Hero";
 
 const filterOptions = {
@@ -27,40 +27,40 @@ const Page = () => {
   const dispatch = useAppDispatch();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const category = searchParams.get( "category" );
-  const [totalPages, setTotalPages] = useState( 1 );
-  const [currentPage, setCurrentPage] = useState( 1 );
-  const searchTerm = searchParams.get( "searchTerm" ) || "";
+  const category = searchParams.get("category");
+  const [totalPages, setTotalPages] = useState(1);
+  const [currentPage, setCurrentPage] = useState(1);
+  const searchTerm = searchParams.get("searchTerm") || "";
   const categoryParam = category ? ["editor choice"] : "";
-  const [isFilterOpen, setIsFilterOpen] = useState( false );
-  const [loading, setLoading] = useState( false );
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
   const {
     imageData: product,
     imagePage,
     totalImageData,
     totalImageNumOfPage,
-  } = useAppSelector( ( state ) => state.product );
-  const {user} = useAppSelector( ( state ) => state.user );
+  } = useAppSelector((state) => state.product);
+  const { user } = useAppSelector((state) => state.user);
 
   const toggleFilter = () => {
-    setIsFilterOpen( !isFilterOpen );
+    setIsFilterOpen(!isFilterOpen);
   };
 
-  const handlePageChange = ( page: number ) => {
-    dispatch( setImagePage( page ) );
+  const handlePageChange = (page: number) => {
+    dispatch(setImagePage(page));
   };
 
   const handleNextPage = () => {
-    handlePageChange( imagePage === totalImageNumOfPage ? 1 : imagePage + 1 );
+    handlePageChange(imagePage === totalImageNumOfPage ? 1 : imagePage + 1);
   };
   const handlePrevPage = () => {
-    handlePageChange( imagePage === 1 ? totalImageNumOfPage : imagePage - 1 );
+    handlePageChange(imagePage === 1 ? totalImageNumOfPage : imagePage - 1);
   };
 
-  const fetchData = async ( page: number ) => {
-    setLoading( true );
-    const filters = Object.fromEntries( searchParams );
-    const response = await getImage( dispatch, !!user, {
+  const fetchData = async (page: number) => {
+    setLoading(true);
+    const filters = Object.fromEntries(searchParams);
+    const response = await getImage(dispatch, !!user, {
       page,
       mediaType: ["image"],
       searchTerm,
@@ -72,47 +72,47 @@ const Page = () => {
       imageWidth: filters.imageWidth,
       imageHeight: filters.imageHeight,
       imageDensity: filters.imageDensity,
-    } );
-    setLoading( false );
+    });
+    setLoading(false);
   };
 
-  const handleFilterChange = ( filterType: string, value: string | number ) => {
-    const currentParams = new URLSearchParams( searchParams.toString() );
-    currentParams.set( filterType, value.toString() );
-    router.push( `?${currentParams.toString()}`, {scroll: false} );
-    fetchData( imagePage );
+  const handleFilterChange = (filterType: string, value: string | number) => {
+    const currentParams = new URLSearchParams(searchParams.toString());
+    currentParams.set(filterType, value.toString());
+    router.push(`?${currentParams.toString()}`, { scroll: false });
+    fetchData(imagePage);
   };
 
   const handleClearFilters = () => {
-    const currentParams = new URLSearchParams( searchParams.toString() );
-    Object.keys( filterOptions ).forEach( ( key ) => {
-      currentParams.delete( key );
-    } );
-    router.push( `?${currentParams.toString()}`, {scroll: false} );
-    fetchData( imagePage );
+    const currentParams = new URLSearchParams(searchParams.toString());
+    Object.keys(filterOptions).forEach((key) => {
+      currentParams.delete(key);
+    });
+    router.push(`?${currentParams.toString()}`, { scroll: false });
+    fetchData(imagePage);
   };
 
   const hasFilterParams = () => {
-    return Array.from( searchParams.keys() ).some( ( key ) =>
+    return Array.from(searchParams.keys()).some((key) =>
       [
         "sortBy",
         "imageOrientation",
         "imageFileType",
         "imageWidth",
         "imageHeight",
-        "imageDensity"
-      ].includes( key )
+        "imageDensity",
+      ].includes(key)
     );
   };
 
-  useEffect( () => {
+  useEffect(() => {
     const filterParamsExist = hasFilterParams();
-    setIsFilterOpen( filterParamsExist );
-    fetchData( imagePage );
+    setIsFilterOpen(filterParamsExist);
+    fetchData(imagePage);
     return () => {
-      clearKeywords( dispatch );
+      clearKeywords(dispatch);
     };
-  }, [imagePage, searchParams] );
+  }, [imagePage, searchParams]);
 
   const displayData = product;
 
@@ -130,23 +130,24 @@ const Page = () => {
         <Filter
           isOpen={isFilterOpen}
           onToggle={toggleFilter}
-          mediaType="image" 
+          mediaType="image"
           onFilterChange={handleFilterChange}
           onClearFilter={handleClearFilters}
         />
         <div className={`flex-1 transition-all duration-300 ease-in-out `}>
-          <div className="p-4">
+          <div className="lg:p-4 md:p-0 p-0">
             <button
-              className="py-2 text-gray-800 bg-white border flex flex-row items-center gap-2 border-gray-300 px-5 rounded-md mb-4"
+              className="py-2 lg:ml-12 md:ml-4 ml-4  text-gray-800 bg-white border flex flex-row items-center gap-2 border-gray-300 px-5 rounded-md mb-4"
               onClick={toggleFilter}
             >
               Filters <BsFilterLeft />
             </button>
             <div className="main items-center">
-              <div className="bg-[#eeeeee]">
+              <div className="">
                 <div
-                  className={`py-10 lg:mx-4 ${!isFilterOpen ? "xl:mx-24 md:mx-4" : "ml-0"
-                    } `}
+                  className={`py-10 lg:mx-4 ${
+                    !isFilterOpen ? "xl:mx-12 md:mx-4 mx-4" : "ml-0"
+                  } `}
                 >
                   <h1 className="text-2xl font-bold  text-start">
                     Today's Trending Images
@@ -162,9 +163,9 @@ const Page = () => {
                     ) : (
                       <div className="columns-1 min-h-screen sm:columns-2 md:columns-3 lg:columns-4 gap-2 mt-2 relative">
                         {displayData.length > 0 ? (
-                          displayData.map( ( data: any ) => (
+                          displayData.map((data: any) => (
                             <ImageGallery key={data._id} data={data} />
-                          ) )
+                          ))
                         ) : (
                           <p>No Images found.</p>
                         )}
@@ -182,10 +183,11 @@ const Page = () => {
                     type="button"
                     disabled={currentPage === 1}
                     variant="flat"
-                    className={`${currentPage === 1
+                    className={`${
+                      currentPage === 1
                         ? "opacity-70 cursor-not-allowed"
                         : "hover:bg-webred"
-                      } bg-webred text-white rounded-full font-bold`}
+                    } bg-webred text-white rounded-full font-bold`}
                     onPress={handlePrevPage}
                   >
                     Prev
@@ -207,10 +209,11 @@ const Page = () => {
                     size="sm"
                     disabled={currentPage === totalPages}
                     variant="flat"
-                    className={`${currentPage === totalPages
+                    className={`${
+                      currentPage === totalPages
                         ? "opacity-70 cursor-not-allowed"
                         : "hover:bg-webred"
-                      } bg-webred text-white rounded-full font-bold`}
+                    } bg-webred text-white rounded-full font-bold`}
                     onPress={handleNextPage}
                   >
                     Next
