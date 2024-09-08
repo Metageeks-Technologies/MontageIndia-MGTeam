@@ -1,18 +1,18 @@
 "use client";
-import {setVideoPage} from "@/app/redux/feature/product/slice";
-import {getVideo} from "@/app/redux/feature/product/video/api";
-import {useAppDispatch, useAppSelector} from "@/app/redux/hooks";
+import { setVideoPage } from "@/app/redux/feature/product/slice";
+import { getVideo } from "@/app/redux/feature/product/video/api";
+import { useAppDispatch, useAppSelector } from "@/app/redux/hooks";
 import Footer from "@/components/Footer";
 import Searchbar from "@/components/searchBar/search";
 import FAQ from "@/components/Video/fag";
 import Trending from "@/components/Video/trendingVideos";
-import {Button, Pagination, Spinner} from "@nextui-org/react";
-import {useSearchParams, useRouter} from "next/navigation";
-import {useEffect, useState} from "react";
-import {IoIosSearch} from "react-icons/io";
-import {clearKeywords} from "@/app/redux/feature/product/api";
+import { Button, Pagination, Spinner } from "@nextui-org/react";
+import { useSearchParams, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { IoIosSearch } from "react-icons/io";
+import { clearKeywords } from "@/app/redux/feature/product/api";
 import Filter from "@/components/searchBar/filtersidebar";
-import {BsFilterLeft} from "react-icons/bs";
+import { BsFilterLeft } from "react-icons/bs";
 import instance from "@/utils/axios";
 import Banner from "@/components/Banner";
 import Masonry from "react-masonry-css";
@@ -34,41 +34,41 @@ const breakpointColumnsObj = {
 const Page = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [totalPages, setTotalPages] = useState( 1 );
-  const [loading, setLoading] = useState( false );
-  const searchTerm = searchParams.get( "searchTerm" ) || "";
-  const category = searchParams.get( "category" );
+  const [totalPages, setTotalPages] = useState(1);
+  const [loading, setLoading] = useState(false);
+  const searchTerm = searchParams.get("searchTerm") || "";
+  const category = searchParams.get("category");
   const categoryParam = category ? ["editor choice"] : "";
-  const [currentPage, setCurrentPage] = useState( 1 );
-  const [isFilterOpen, setIsFilterOpen] = useState( false );
+  const [currentPage, setCurrentPage] = useState(1);
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
   const dispatch = useAppDispatch();
   const {
     videoData: product,
     videoPage,
     totalVideoData,
     totalVideoNumOfPage,
-  } = useAppSelector( ( state ) => state.product );
+  } = useAppSelector((state) => state.product);
   const toggleFilter = () => {
-    setIsFilterOpen( !isFilterOpen );
+    setIsFilterOpen(!isFilterOpen);
   };
-  const {user} = useAppSelector( ( state ) => state.user );
+  const { user } = useAppSelector((state) => state.user);
 
-  const handlePageChange = ( page: number ) => {
-    dispatch( setVideoPage( page ) );
+  const handlePageChange = (page: number) => {
+    dispatch(setVideoPage(page));
   };
 
   const handleNextPage = () => {
-    handlePageChange( videoPage === totalVideoNumOfPage ? 1 : videoPage + 1 );
+    handlePageChange(videoPage === totalVideoNumOfPage ? 1 : videoPage + 1);
   };
 
   const handlePrevPage = () => {
-    handlePageChange( videoPage === 1 ? totalVideoNumOfPage : videoPage - 1 );
+    handlePageChange(videoPage === 1 ? totalVideoNumOfPage : videoPage - 1);
   };
 
-  const fetchData = async ( page: number ) => {
-    setLoading( true );
-    const filters = Object.fromEntries( searchParams );
-    const response = await getVideo( dispatch, !!user, {
+  const fetchData = async (page: number) => {
+    setLoading(true);
+    const filters = Object.fromEntries(searchParams);
+    const response = await getVideo(dispatch, !!user, {
       page,
       mediaType: ["video"],
       searchTerm,
@@ -79,46 +79,46 @@ const Page = () => {
       videoResolution: filters.videoResolution,
       videoLength: filters.videoLength,
       videoFrameRate: filters.videoFrameRate,
-    } );
-    setLoading( false );
+    });
+    setLoading(false);
   };
 
-  const handleFilterChange = ( filterType: string, value: string | number ) => {
-    const currentParams = new URLSearchParams( searchParams.toString() );
-    currentParams.set( filterType, value.toString() );
-    router.push( `?${currentParams.toString()}`, {scroll: false} );
-    fetchData( videoPage );
-  }; 
+  const handleFilterChange = (filterType: string, value: string | number) => {
+    const currentParams = new URLSearchParams(searchParams.toString());
+    currentParams.set(filterType, value.toString());
+    router.push(`?${currentParams.toString()}`, { scroll: false });
+    fetchData(videoPage);
+  };
 
   const handleClearFilters = () => {
-    const currentParams = new URLSearchParams( searchParams.toString() );
-    Object.keys( filterOptions ).forEach( ( key ) => {
-      currentParams.delete( key );
-    } );
-    router.push( `?${currentParams.toString()}`, {scroll: false} );
-    fetchData( videoPage );
+    const currentParams = new URLSearchParams(searchParams.toString());
+    Object.keys(filterOptions).forEach((key) => {
+      currentParams.delete(key);
+    });
+    router.push(`?${currentParams.toString()}`, { scroll: false });
+    fetchData(videoPage);
   };
 
   const hasFilterParams = () => {
-    return Array.from( searchParams.keys() ).some( ( key ) =>
+    return Array.from(searchParams.keys()).some((key) =>
       [
         "sortBy",
         "videoOrientation",
         "videoResolution",
         "videoLength",
         "videoFrameRate",
-      ].includes( key )
+      ].includes(key)
     );
   };
 
-  useEffect( () => {
+  useEffect(() => {
     const filterParamsExist = hasFilterParams();
-    setIsFilterOpen( filterParamsExist );
-    fetchData( videoPage );
+    setIsFilterOpen(filterParamsExist);
+    fetchData(videoPage);
     return () => {
-      clearKeywords( dispatch );
+      clearKeywords(dispatch);
     };
-  }, [videoPage, searchParams] );
+  }, [videoPage, searchParams]);
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -128,24 +128,25 @@ const Page = () => {
         <Filter
           isOpen={isFilterOpen}
           onToggle={toggleFilter}
-          mediaType="video" 
+          mediaType="video"
           onFilterChange={handleFilterChange}
           onClearFilter={handleClearFilters}
         />
         <div className={`flex-1 transition-all duration-300 ease-in-out `}>
-          <div className="p-4">
+          <div className="lg:p-4 md:p-0 p-0">
             <button
-              className="py-2 text-gray-800 bg-white border flex flex-row items-center gap-2 border-gray-300 px-5 rounded-md mb-4"
+              className="py-2 lg:ml-12 md:ml-4 ml-4 text-gray-800 bg-white border flex flex-row items-center gap-2 border-gray-300 px-5 rounded-md mb-4"
               onClick={toggleFilter}
             >
               Filters <BsFilterLeft />
             </button>
             <div className="main items-center">
               {/* Trending Videos */}
-              <div className="bg-[#eeeeee]">
+              <div className="">
                 <div
-                  className={`py-10 lg:mx-4 ${!isFilterOpen ? "xl:mx-24 md:mx-4" : "ml-0"
-                    } `}
+                  className={`py-10 lg:mx-4 ${
+                    !isFilterOpen ? "xl:mx-12 md:mx-4 mx-4" : "ml-0"
+                  } `}
                 >
                   <h1 className="text-2xl font-bold  text-start">
                     Today's Trending Video
@@ -166,9 +167,9 @@ const Page = () => {
                           columnClassName="my-masonry-grid_column"
                         >
                           {product.length > 0 ? (
-                            product.map( ( data: any ) => (
+                            product.map((data: any) => (
                               <Trending key={data._id} data={data} />
-                            ) )
+                            ))
                           ) : (
                             <p>No Video found.</p>
                           )}
@@ -187,10 +188,11 @@ const Page = () => {
                     type="button"
                     disabled={videoPage === 1}
                     variant="flat"
-                    className={`${videoPage === 1
+                    className={`${
+                      videoPage === 1
                         ? "opacity-70 cursor-not-allowed"
                         : "hover:bg-webred"
-                      } bg-webred text-white rounded-full font-bold`}
+                    } bg-webred text-white rounded-full font-bold`}
                     onPress={handlePrevPage}
                   >
                     Prev
@@ -213,10 +215,11 @@ const Page = () => {
                     size="sm"
                     disabled={videoPage === totalVideoNumOfPage}
                     variant="flat"
-                    className={`${videoPage === totalVideoNumOfPage
+                    className={`${
+                      videoPage === totalVideoNumOfPage
                         ? "opacity-70 cursor-not-allowed"
                         : "hover:bg-webred"
-                      } bg-webred text-white rounded-full font-bold`}
+                    } bg-webred text-white rounded-full font-bold`}
                     onPress={handleNextPage}
                   >
                     Next
