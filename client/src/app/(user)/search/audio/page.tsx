@@ -2,133 +2,108 @@
 import Footer from "@/components/Footer";
 import ImageGallery from "@/components/Home/homeImage";
 import instance from "@/utils/axios";
-import { Button, Pagination, Spinner } from "@nextui-org/react";
-import { useEffect, useState } from "react";
-import { useAppDispatch, useAppSelector } from "@/app/redux/hooks";
-import { setAudioPage, setImagePage } from "@/app/redux/feature/product/slice";
-import { useRouter, useSearchParams } from "next/navigation";
-import { clearKeywords } from "@/app/redux/feature/product/api";
+import {Button, Pagination, Spinner} from "@nextui-org/react";
+import {useEffect, useState} from "react";
+import {useAppDispatch, useAppSelector} from "@/app/redux/hooks";
+import {setAudioPage, setImagePage} from "@/app/redux/feature/product/slice";
+import {useRouter, useSearchParams} from "next/navigation";
+import {clearKeywords} from "@/app/redux/feature/product/api";
 import Searchbar from "@/components/searchBar/search";
 import Filter from "@/components/searchBar/filtersidebar";
-import { BsFilterLeft } from "react-icons/bs";
-import { getImage } from "@/app/redux/feature/product/image/api";
-import { getAudio } from "@/app/redux/feature/product/audio/api";
+import {BsFilterLeft} from "react-icons/bs";
+import {getImage} from "@/app/redux/feature/product/image/api";
+import {getAudio} from "@/app/redux/feature/product/audio/api";
 import Waveform from "@/components/Home/AudioWaveForm";
 import Banner from "@/components/Banner";
 
 const filterOptions = {
-  sortBy: ["Most Popular", "Newest", "Oldest"],
+  sortBy: ["newest", "oldest", "popular"],
   audioLength: 0,
-  bitRate: 0,
+  audioBitrate: 0,
 };
 
 const Page = () => {
   const dispatch = useAppDispatch();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const category = searchParams.get("category");
-  const [totalPages, setTotalPages] = useState(1);
-  const [currentPage, setCurrentPage] = useState(1);
-  const searchTerm = searchParams.get("searchTerm") || "";
+  const category = searchParams.get( "category" );
+  const [totalPages, setTotalPages] = useState( 1 );
+  const [currentPage, setCurrentPage] = useState( 1 );
+  const searchTerm = searchParams.get( "searchTerm" ) || "";
   const categoryParam = category ? ["editor choice"] : "";
-  const [isFilterOpen, setIsFilterOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [filteredData, setFilteredData] = useState([]);
-  const { audioData, page, totalNumOfPage, totalAudioData } = useAppSelector(
-    (state) => state.product
+  const [isFilterOpen, setIsFilterOpen] = useState( false );
+  const [loading, setLoading] = useState( false );
+  const [filteredData, setFilteredData] = useState( [] );
+  const {audioData, page, totalNumOfPage, totalAudioData} = useAppSelector(
+    ( state ) => state.product
   );
-  const { user } = useAppSelector((state) => state.user);
+  const {user} = useAppSelector( ( state ) => state.user );
 
-  const handlePageChange = (page: number) => {
-    dispatch(setAudioPage(page));
+  const handlePageChange = ( page: number ) => {
+    dispatch( setAudioPage( page ) );
   };
 
   const handleNextPage = () => {
-    handlePageChange(page === totalNumOfPage ? 1 : page + 1);
+    handlePageChange( page === totalNumOfPage ? 1 : page + 1 );
   };
 
   const handlePrevPage = () => {
-    handlePageChange(page === 1 ? totalNumOfPage : page - 1);
+    handlePageChange( page === 1 ? totalNumOfPage : page - 1 );
   };
 
   const toggleFilter = () => {
-    setIsFilterOpen(!isFilterOpen);
+    setIsFilterOpen( !isFilterOpen );
   };
 
-  const fetchData = async (page: number) => {
-    setLoading(true);
-    const response = await getAudio(dispatch, !!user, {
+  const fetchData = async ( page: number ) => {
+    setLoading( true );
+    const filters = Object.fromEntries( searchParams );
+    const response = await getAudio( dispatch, !!user, {
       page: page,
       productsPerPage: 8,
       mediaType: ["audio"],
       searchTerm,
       category: categoryParam,
-    });
+      sortBy: filters.sortBy || "newest",
+      audioLength: filters.audioLength,
+      audioBitrate: filters.audioBitrate,
+    } );
 
-    setLoading(false);
+    setLoading( false );
   };
 
-  const fetchFilterData = async (
-    page: number,
-    filters: Record<string, string>
-  ) => {
-    setLoading(true);
-    try {
-      const response = await instance.get("/product/filter", {
-        params: {
-          page,
-          productsPerPage: 10,
-          mediaType: ["audio"],
-          ...filters,
-        },
-      });
-      console.log("response in filtered data:-", response);
-      setFilteredData(response.data.products);
-      setLoading(false);
-    } catch (error) {
-      console.error("Error fetching filtered data:", error);
-      setLoading(false);
-    }
-  };
-
-  const handleFilterChange = (filterType: string, value: string | number) => {
-    const currentParams = new URLSearchParams(searchParams.toString());
-    currentParams.set(filterType, value.toString());
-    router.push(`?${currentParams.toString()}`, { scroll: false });
-    const filters = Object.fromEntries(currentParams);
-    fetchFilterData(page, filters);
+  const handleFilterChange = ( filterType: string, value: string | number ) => {
+    const currentParams = new URLSearchParams( searchParams.toString() );
+    currentParams.set( filterType, value.toString() );
+    router.push( `?${currentParams.toString()}`, {scroll: false} );
+    fetchData( page );
   };
 
   const handleClearFilters = () => {
-    const currentParams = new URLSearchParams(searchParams.toString());
-    currentParams.delete("sortBy");
-    currentParams.delete("audioBitrate");
-    currentParams.delete("audioLength");
-    router.push(`?${currentParams.toString()}`, { scroll: false });
-    fetchData(page);
+    const currentParams = new URLSearchParams( searchParams.toString() );
+    Object.keys( filterOptions ).forEach( ( key ) => {
+      currentParams.delete( key );
+    } );
+    router.push( `?${currentParams.toString()}`, {scroll: false} );
+    fetchData( page );
   };
 
   const hasFilterParams = () => {
-    return Array.from(searchParams.keys()).some((key) =>
-      ["sortBy", "audioBitrate", "audioLength"].includes(key)
+    return Array.from( searchParams.keys() ).some( ( key ) =>
+      ["sortBy", "audioBitrate", "audioLength"].includes( key )
     );
   };
 
-  useEffect(() => {
+  useEffect( () => {
     const filterParamsExist = hasFilterParams();
-    setIsFilterOpen(filterParamsExist);
-    if (hasFilterParams()) {
-      const filters = Object.fromEntries(searchParams);
-      fetchFilterData(page, filters);
-    } else {
-      fetchData(page);
-    }
+    setIsFilterOpen( filterParamsExist );
+    fetchData( page );
     return () => {
-      clearKeywords(dispatch);
+      clearKeywords( dispatch );
     };
-  }, [page, searchParams]);
+  }, [page, searchParams] );
 
-  const displayData = hasFilterParams() ? filteredData : audioData;
+  const displayData = audioData;
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -138,9 +113,9 @@ const Page = () => {
         <Filter
           isOpen={isFilterOpen}
           onToggle={toggleFilter}
-          filterOptions={filterOptions}
+          mediaType="audio"
           onFilterChange={handleFilterChange}
-          onclearFilter={handleClearFilters}
+          onClearFilter={handleClearFilters}
         />
         <div className="flex-1 transition-all duration-300 ease-in-out">
           <div className="p-4">
@@ -166,9 +141,9 @@ const Page = () => {
                   ) : (
                     <>
                       {displayData.length > 0 ? (
-                        displayData.map((product, index) => (
+                        displayData.map( ( product, index ) => (
                           <Waveform key={index} product={product} />
-                        ))
+                        ) )
                       ) : (
                         <p>No Audio found.</p>
                       )}
@@ -183,11 +158,10 @@ const Page = () => {
                       type="button"
                       disabled={page === 1}
                       variant="flat"
-                      className={`${
-                        page === 1
-                          ? "opacity-70 cursor-not-allowed"
-                          : "hover:bg-webred"
-                      } bg-webred text-white rounded-full font-bold`}
+                      className={`${page === 1
+                        ? "opacity-70 cursor-not-allowed"
+                        : "hover:bg-webred"
+                        } bg-webred text-white rounded-full font-bold`}
                       onPress={handlePrevPage}
                     >
                       Prev
@@ -210,11 +184,10 @@ const Page = () => {
                       size="sm"
                       disabled={page === totalNumOfPage}
                       variant="flat"
-                      className={`${
-                        page === totalNumOfPage
-                          ? "opacity-70 cursor-not-allowed"
-                          : "hover:bg-webred"
-                      } bg-webred text-white rounded-full font-bold`}
+                      className={`${page === totalNumOfPage
+                        ? "opacity-70 cursor-not-allowed"
+                        : "hover:bg-webred"
+                        } bg-webred text-white rounded-full font-bold`}
                       onPress={handleNextPage}
                     >
                       Next
