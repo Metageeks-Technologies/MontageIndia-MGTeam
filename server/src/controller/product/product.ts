@@ -1674,3 +1674,17 @@ export const getSimilarProduct = async (user: any, product: any) => {
 
   return similarResult;
 };
+
+export const deleteProduct = catchAsyncError(async (req: any, res, next) => {
+  if (!req.query) {
+    return next(new ErrorHandler(`query is required`, 400));
+  }
+  const product = await Product.deleteMany(req.query);
+  if (!product) {
+    return next(new ErrorHandler(`product not found`, 404));
+  }
+  res.status(200).json({
+    success: true,
+    message: "Product deleted",
+  });
+});
