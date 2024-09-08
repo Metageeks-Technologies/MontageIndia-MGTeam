@@ -34,6 +34,7 @@ interface User {
 interface Form {
   name: string;
   email: string;
+  phone: string;
   currentPassword: string;
   newPassword: string;
   confirmPassword: string;
@@ -54,6 +55,7 @@ const ProfileSetting: FC = () => {
   const [formData, setForm] = useState<Form>({
     name: "",
     email: "",
+    phone: "",
     currentPassword: "",
     newPassword: "",
     confirmPassword: "",
@@ -83,6 +85,7 @@ const ProfileSetting: FC = () => {
         setForm({
           name: response.data.user.name,
           email: response.data.user.email,
+          phone: response.data.user.phone,
           currentPassword: "",
           newPassword: "",
           confirmPassword: "",
@@ -149,6 +152,7 @@ const ProfileSetting: FC = () => {
       !imagePreview &&
       formData.name === user?.name &&
       formData.email === user?.email &&
+      formData.phone === user?.phone &&
       !formData.newPassword &&
       !formData.confirmPassword
     ) {
@@ -180,9 +184,8 @@ const ProfileSetting: FC = () => {
           return;
         }
       } else {
-        payload = { ...payload, name: formData.name, email: formData.email };
+        payload = { ...payload, name: formData.name, email: formData.email,phone:formData.phone };
       }
-
       if (file) {
         await handleUpload();
         let path = `${process.env.NEXT_PUBLIC_AWS_PREFIX}/userProfile/${user?._id}`;
@@ -289,8 +292,8 @@ const ProfileSetting: FC = () => {
                        Mobile
                       </label>
                       <input
-                        disabled={true}
-                        value={user.phone}
+                        value={formData.phone}
+                        onChange={(e) =>setForm({ ...formData, phone: e.target.value })}
                         type="text"
                         className="w-full border bg-[#F1F1F1] border-gray-300 rounded-lg px-4 py-2"
                       />

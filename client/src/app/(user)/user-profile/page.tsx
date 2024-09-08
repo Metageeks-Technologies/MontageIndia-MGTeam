@@ -82,20 +82,20 @@ const Home: FC = () => {
                     Phone
                   </div>
                   <div className="text-black md:w-1/3">
-                    +{user.phone || "Not Provided"}
+                    {user.phone ? "+"+user.phone : "Not available"}
                   </div>
                 </div>
                 <div className="flex justify-between bg-gray-100 border-gray-30 items-center px-4 py-3 border-b">
                   <div className="text-black md:w-1/3 ">
                     E-mail
                   </div>
-                  {
+                  {/* {
                     !user?.emailVerified && (
                       <div className="text-blue-500 hover:underline cursor-pointer font-semibold md:w-1/3" onClick={handleVerifyEmail} >
                         Verify email
                       </div>
                     )
-                  }
+                  } */}
                   <div className="text-black md:w-1/3">
                     {user.email}
                   </div>

@@ -7,7 +7,7 @@ import ImageGallery from "@/components/Home/homeImage";
 import WeeklyCard from "@/components/Home/weeklyCard";
 import instance from "@/utils/axios";
 import { Navbar } from "@nextui-org/react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { IoIosSearch } from "react-icons/io";
 import CartPopup from "@/components/cart/cartPage";
 import { getCartData, getCurrCustomer } from "../redux/feature/user/api";
@@ -84,55 +84,6 @@ const ImageData: ImageData[] = [
     imageUrl: "/asset/Group6.jpg",
   },
 ];
-
-//Category data
-export interface Category {
-  title: string;
-  imageUrl: string;
-}
-
-const categories: Category[] = [
-  {
-    title: "Sports",
-    imageUrl:
-      "https://stories.uq.edu.au/contact-magazine/2020/gift-of-family-time/assets/04nqydUdTc/uq-contact-issr-survey-family-2-2560x1440.jpeg",
-  },
-  {
-    title: "Fashion",
-    imageUrl:
-      "https://www.techprevue.com/wp-content/uploads/2016/09/fashion-online-shopping-sites.jpg",
-  },
-  {
-    title: "Wellness",
-    imageUrl:
-      "https://www.tyentusa.com/blog/wp-content/uploads/2019/02/woman-practices-yoga-meditates-lotus-position-health-tips-ss.jpg",
-  },
-  {
-    title: "Food",
-    imageUrl:
-      "https://img.freepik.com/premium-photo/healthy-lifestyle-with-clean-food-concept-happy-asian-woman-eating-salad-isolated-white-wall_105092-1487.jpg",
-  },
-  {
-    title: "Nature",
-    imageUrl: "https://wallpaperaccess.com/full/1712283.jpg",
-  },
-  {
-    title: "Landscapes",
-    imageUrl:
-      "https://thelandscapephotoguy.com/wp-content/uploads/2019/03/NZ-landscape-with-human.jpg",
-  },
-  {
-    title: "Pets",
-    imageUrl:
-      "https://www.desicomments.com/wp-content/uploads/2017/01/Amazing-Pets-Pic.jpg",
-  },
-  {
-    title: "Business",
-    imageUrl:
-      "https://www.debbiepetersonspeaks.com/wp-content/uploads/2019/11/Depositphotos_39192435_l-2015.jpg",
-  },
-];
-
 // Blog Data
 export interface BlogPost {
   imageUrl: string;
@@ -198,26 +149,22 @@ const companies: Company[] = [
   },
 ];
 
+interface Category {
+  name: string;
+  image: string;
+  description: string;
+}
+
 export default function Home() {
-  // const [imageProducts, setImageProducts] = useState([]);
-
-  //   const getProduct = async ()  => {
-  //    try {
-  //     const res = await instance.get('/product');
-  //     const imageProducts = res.data.products.filter((product:any) => product.mediaType === 'image');
-  //     setImageProducts(imageProducts);
-  //     console.log(res)
-
-  //    } catch (error) {
-  //     console.log(error)
-  //    }
-  //   }
-
-  //   useEffect (()=>{
-  //  getProduct()
-  //   },[])
-
   const [imageProducts, setImageProducts] = useState([]);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [page, setPage] = useState(1);
+  const [loading, setLoading] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
+  const dispatch = useAppDispatch();
+  const productIds = useAppSelector((state: any) => state.user?.user?.cart);
+  const user = useAppSelector((state: any) => state.user?.user?._id);
+  const initialLoad = useRef(true);
 
   const getProduct = async () => {
     try {
@@ -231,9 +178,38 @@ export default function Home() {
       console.log(error);
     }
   };
-  const dispatch = useAppDispatch();
-  const productIds = useAppSelector((state: any) => state.user?.user?.cart);
-  const user = useAppSelector((state: any) => state.user?.user?._id);
+
+  const getCategory = async () => {
+    console.log("getCategory called: ", page);
+    if (Number(categories.length) >= 16) {
+      setHasMore(false);
+      return;
+    }
+    try {
+      setLoading(true);
+      const res = await instance.get("/field/category", {
+        params: {
+          page: page,
+        },
+        withCredentials: true,
+      });
+      console.log("res", res.data);
+      if (res.data.categories.length > 0) {
+        setCategories((prevCategories) => [
+          ...prevCategories,
+          ...res.data.categories,
+        ]);
+      }
+      setPage(page + 1);
+      setHasMore(res.data.hasMore);
+      if (categories.length >= 16 || page>=2) {
+        setHasMore(false);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+    setLoading(false);
+  };
 
   useEffect(() => {
     getCurrCustomer(dispatch);
@@ -242,6 +218,18 @@ export default function Home() {
       getProduct();
     }
   }, [user]);
+
+  useEffect(() => {
+    if (initialLoad.current) {
+      initialLoad.current = false;
+      getCategory();
+    }
+  }, []);
+
+  const handleLoadMore = () => {
+    setPage(2);
+    getCategory();
+  };
 
   return (
     <div className="main  ">
@@ -298,30 +286,36 @@ export default function Home() {
           Browse All Categories
         </h1>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2">
-          {categories.map((data: any, index) => (
-            <div key={index} className="">
+          {categories.map((data: Category, index) => (
+            <div key={index} className="cursor-pointer">
               {/* Masonry item */}
               <div className="relative">
                 {/* Inner div */}
                 <img
-                  src={data.imageUrl}
+                  src={data.image}
                   alt={`Product Image `}
+                  loading="lazy"
                   className="w-full h-52 object-cover rounded"
                 />
                 <div className="absolute bottom-0 py-1.5 w-full bg-black opacity-50 ">
                   <h1 className="text-white font-semibold text-center">
-                    {data.title}
+                    {data.name}
                   </h1>
                 </div>
               </div>
             </div>
           ))}
         </div>
-        <div className="flex justify-center">
-          <button className="bg-red-500 text-white py-2 px-4 mt-8 rounded ">
-            Load More
-          </button>
-        </div>
+        {hasMore && !loading && (
+          <div className="flex justify-center">
+            <button
+              onClick={() => handleLoadMore()}
+              className="bg-red-500 text-white py-2 px-4 mt-8 rounded "
+            >
+              Load More
+            </button>
+          </div>
+        )}
       </div>
       {/* dummy commit */}
       <div className="bg-[#eeeeee] mt-8">
@@ -330,9 +324,9 @@ export default function Home() {
             Trusted by the world's largest companies
           </h2>
           <div className="grid lg:grid-cols-6 md:grid-cols-4 grid-cols-2 gap-3">
-            {companies.map((company) => (
+            {companies.map((company, index) => (
               <div
-                key={company.name}
+                key={index}
                 className="flex items-center mb-4 gap-5 sm:mb-0 border border-neutral-200"
               >
                 <img

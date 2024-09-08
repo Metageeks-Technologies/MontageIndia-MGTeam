@@ -69,7 +69,7 @@ const ProfileSidebar = () => {
 
   return (
     <div
-      className={`z-50 text-black transition-transform duration-300 ease-in-out md:translate-x-0 md:w-[20%]`}
+      className={`z-50 text-black transition-transform min-h-fit duration-300 ease-in-out md:translate-x-0 md:w-[20%]`}
     >
       <div className="fixed bottom-0 left-0 flex items-center justify-between p-1 md:hidden">
         <button
