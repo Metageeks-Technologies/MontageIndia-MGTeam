@@ -16,6 +16,7 @@ import Hero from "@/components/Home/gallary/Hero";
 import TopBanner from "@/components/navbar/TopBanner";
 import { IoCameraOutline } from "react-icons/io5";
 import Banner from "@/components/Banner";
+import VideoBanner from "@/components/Home/videoBanner";
 
 // Collection data
 interface Card {
@@ -251,8 +252,13 @@ export default function Home() {
         onClick={() => console.log( 'Redirecting to Sale Page' )}
       /> */}
 
-      <Banner />
-
+      {/* <Banner /> */}
+      <VideoBanner
+        isSearch={true}
+        videoPath="/images/banner.mp4"
+        heading="Montage India"
+        description="Discover amazing content and services tailored just for you."
+      />
       <div className="lg:mx-24 md:mx-4 mx-4 py-14 ">
         <div className="flex flex-col md:flex-row justify-center items-center mb-4">
           <h2 className="text-2xl text-[#333333] sm:text-3xl lg:text-3xl text-center font-semibold mb-4 md:mb-0">

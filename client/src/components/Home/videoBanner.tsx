@@ -1,0 +1,71 @@
+import React from "react";
+import { IoSearch } from "react-icons/io5";
+
+const VideoBanner = ({
+  isSearch,
+  videoPath,
+  heading,
+  description,
+}: {
+  isSearch: boolean;
+  videoPath: string;
+  heading: string;
+  description: string;
+}) => {
+  return (
+    <div
+      className={`relative w-full ${
+        isSearch ? "h-[600px]" : "h-[24rem]"
+      } overflow-hidden`}
+    >
+      <video
+        className="absolute top-0 left-0 w-full h-full object-cover"
+        autoPlay
+        loop
+        muted
+        playsInline
+      >
+        <source src={videoPath} type="video/mp4" />
+        Your browser does not support the video tag.
+      </video>
+      <div className="absolute inset-0 bg-black bg-opacity-30 flex flex-col items-center justify-center px-4">
+        <h1 className="text-4xl md:text-5xl text-white font-bold mb-4 text-center">
+          {heading}
+        </h1>
+        <p className="text-xl text-white mb-8 text-center max-w-2xl">
+          {description}
+        </p>
+        {isSearch && (
+          <form className="flex flex-col  mt-5  text-lg rounded-none">
+            <div className="flex flex-col w-full opacity-80 rounded-xl max-md:max-w-full">
+              <div className="flex relative  z-10 flex-wrap gap-5 justify-between   mx-0 max-w-full bg-white rounded-lg lg:w-[900px] md:w-[600px]  lg:pl-5 md:pl-5 pl-2 max-md:mr-2.5">
+                <input
+                  type="text"
+                  placeholder="Find your perfect stock photo.."
+                  className="my-auto text-stone-700 focus:outline-none"
+                />
+                <div className="flex gap-5">
+                  <select className="bg-gray-100 lg:block md:block hidden  outline-none cursor-pointer text-black rounded-lg ">
+                    <option>Images</option>
+                    <option>Audios</option>
+                    <option>Videos</option>
+                  </select>
+
+                  <button
+                    className=" bg-red-500 lg:p-4 relative -right-1 md:p-4 p-2 rounded-lg"
+                    type="submit"
+                    aria-label="Search"
+                  >
+                    <IoSearch className="h-6 w-6" />
+                  </button>
+                </div>
+              </div>
+            </div>
+          </form>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default VideoBanner;
