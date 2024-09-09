@@ -50,7 +50,7 @@ app.get("/api/greet", (req, res, next) => {
 
 // dummy ci-cd commit
 app.use(errorMiddleware);
-// processSQSMessages();
+processSQSMessages();
 
 const port = config.port || 5000;
 const start = async () => {

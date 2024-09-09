@@ -1676,10 +1676,10 @@ export const getSimilarProduct = async (user: any, product: any) => {
 };
 
 export const deleteProduct = catchAsyncError(async (req: any, res, next) => {
-  if (!req.query) {
+  if (!req.body) {
     return next(new ErrorHandler(`query is required`, 400));
   }
-  const product = await Product.deleteMany(req.query);
+  const product = await Product.deleteMany(req.body);
   if (!product) {
     return next(new ErrorHandler(`product not found`, 404));
   }
