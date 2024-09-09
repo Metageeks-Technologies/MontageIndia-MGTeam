@@ -316,8 +316,8 @@ export default function Home() {
       </div> */}
 
       <div className="bg-[#eeeeee]">
-        <div className="py-12 lg:mx-24 sm:mx-4 mx-2">
-          <h1 className="lg:text-4xl sm:text-3xl text-2xl mt-4 font-semibold text-center text-[#333333]">
+        <div className="py-4 md:py-12 lg:mx-24 sm:mx-4 mx-2">
+          <h1 className="lg:text-4xl text-2xl md:text-2xl mt-2 md:mt-4 font-semibold text-center text-[#333333]">
             See what’s trending
           </h1>
           <div className="mx-auto mt-6">
@@ -338,27 +338,31 @@ export default function Home() {
         </div>
       </div>
 
-      <div className="lg:mx-24 sm:mx-4 mx-2 py-10 text-white mt-8">
-        <h1 className="text-[#333333] text-3xl text-start font-bold mb-6">
+      <div className="lg:mx-24 sm:mx-4 mx-2 py-4 md:py-10 text-white mt-4 md:mt-8">
+        <h1 className="text-[#333333] text-2xl md:text-3xl text-center font-bold mb-6">
           Browse by category to find your perfect visual
         </h1>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
           {categories.map((data: Category, index) => (
             <Link href={`/search/image?searchTerm=${data.name}&mediaType=image`} key={index} >
               {/* Masonry item */}
-              <div className="w-full h-52 rounded-md overflow-hidden ">
+             <div className="relative">
                 {/* Inner div */}
                 <img
                   src={data.image}
                   alt={`Product Image `}
                   // loading="lazy"
-                  className="w-full h-full object-cover"
+                  className="w-full h-28 md:h-52 object-cover rounded"
                 />
-                
-              </div>
-              <div className="text-zinc-950 px-2 capitalize font-semibold text-start">
+                <div className="absolute bottom-0 py-0.5 md:py-1.5 w-full bg-[#00000089] ">
+                  <h1 className="text-white text-sm md:text-md font-bold capitalize text-center">
                     {data.name}
+                  </h1>
                 </div>
+              </div>
+              {/* <div className="text-zinc-950 px-2 capitalize font-semibold text-start">
+                    {data.name}
+                </div> */}
             </Link>
           ))}
         </div>
@@ -366,7 +370,7 @@ export default function Home() {
           <div className="flex justify-center">
             <button
               onClick={() => handleLoadMore()}
-              className="bg-red-500 text-white py-2 px-4 mt-8 rounded "
+              className="bg-red-500 text-white py-1 px-2 md:py-2 md:px-4 mt-8 rounded "
             >
               Load More
             </button>
@@ -375,20 +379,20 @@ export default function Home() {
       </div>
       {/* dummy commit */}
       <div className="bg-[#eeeeee] mt-8">
-        <div className="container w-full m-auto py-14 flex flex-col bg-[#eeeeee] items-center">
-          <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-5 text-center">
+        <div className="container w-full m-auto py-4 md:py-14 flex flex-col bg-[#eeeeee] items-center">
+          <h2 className="text-2xl text-[#333333] md:text-3xl lg:text-3xl font-bold mb-5 text-center">
             Trusted by the world's largest companies
           </h2>
-          <div className="grid lg:grid-cols-6 md:grid-cols-4 grid-cols-2 gap-3">
+          <div className="grid lg:grid-cols-6 md:grid-cols-4 grid-cols-2 gap-2">
             {companies.map((company, index) => (
               <div
                 key={index}
-                className="flex items-center mb-4 gap-5 sm:mb-0 border border-neutral-200"
+                className="flex items-center md:mb-4 p-4 md:gap-5 border border-neutral-200"
               >
                 <img
                   src={company.logo}
                   alt={company.name}
-                  className="h-16 w-32 sm:h-20 sm:w-40 object-cover"
+                  className="h-16 w-32 md:h-20 md:w-40 object-cover"
                 />
               </div>
             ))}

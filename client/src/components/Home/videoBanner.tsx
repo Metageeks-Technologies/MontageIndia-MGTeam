@@ -21,7 +21,6 @@ const VideoBanner = ({
     if(searchTerm.trim().length>0){
       router.push(`/search/${searchType}?searchTerm=${searchTerm}&mediaType=${searchType}`)
     }
-
     return;
   }
 
