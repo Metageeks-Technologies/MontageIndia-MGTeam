@@ -1,18 +1,5 @@
 import React, {useState, useCallback, useEffect, useRef} from "react";
-import {BsChevronDown, BsChevronUp} from "react-icons/bs";
-import {MdClear} from "react-icons/md";
 import {useRouter, useSearchParams} from "next/navigation";
-
-interface FilterSectionProps {
-  title: string;
-  expanded: boolean;
-  onToggle: () => void;
-  children: React.ReactNode;
-}
-
-interface ExpandedSections {
-  [key: string]: boolean;
-}
 
 interface FilterProps {
   isOpen: boolean;
@@ -29,15 +16,10 @@ const Filter: React.FC<FilterProps> = ( {
   onFilterChange,
   onClearFilter,
 } ) => {
-  const [expandedSections, setExpandedSections] = useState<ExpandedSections>( {} );
   const [activeFilters, setActiveFilters] = useState<{[key: string]: string | number;}>( {} );
   const router = useRouter();
   const searchParams = useSearchParams();
-  const throttleTimers = useRef<{[key: string]: NodeJS.Timeout | null;}>( {} );
-
-  const toggleSection = ( section: string ): void => {
-    setExpandedSections( ( prev ) => ( {...prev, [section]: !prev[section]} ) );
-  };
+  const debounceTimers = useRef<{[key: string]: NodeJS.Timeout | null;}>( {} );
 
   const updateURL = useCallback( ( params: URLSearchParams ) => {
     router.push( `?${params.toString()}`, {scroll: false} );
@@ -70,22 +52,21 @@ const Filter: React.FC<FilterProps> = ( {
     [searchParams, updateURL, onFilterChange]
   );
 
-  const throttle = ( callback: Function, delay: number ) => {
+  const debounce = ( callback: Function, delay: number ) => {
     return ( key: string, value: string ) => {
-      if ( throttleTimers.current[key] ) {
-        clearTimeout( throttleTimers.current[key]! );
+      if ( debounceTimers.current[key] ) {
+        clearTimeout( debounceTimers.current[key]! );
       }
-      throttleTimers.current[key] = setTimeout( () => {
+      debounceTimers.current[key] = setTimeout( () => {
         callback( key, value );
-        throttleTimers.current[key] = null;
+        debounceTimers.current[key] = null;
       }, delay );
     };
-  };
+  }; 
 
   const handleInputChange = useCallback(
     ( key: string, value: string ) => {
       const currentParams = new URLSearchParams( searchParams.toString() );
-      console.log("key:-",key,"value:-",value)
       if ( value === "" ) {
         currentParams.delete( key );
         setActiveFilters( ( prev ) => {
@@ -108,190 +89,154 @@ const Filter: React.FC<FilterProps> = ( {
     [searchParams, updateURL, onFilterChange]
   );
 
-  const throttledInputChange = throttle( handleInputChange, 300 );
-
+  const debouncedInputChange = debounce( handleInputChange, 1500 );
 
   useEffect( () => {
     const filtersFromQuery: {[key: string]: string | number;} = {};
     searchParams.forEach( ( value, key ) => {
+      console.log("Key:-",key,"value:-",value)
       if (
         [
           "imageWidth",
           "imageHeight",
           "imageDensity",
-          "videoResolution",
           "videoLength",
           "videoFrameRate",
           "audioLength",
           "audioBitrate",
-          "imageOrientation"
-
         ].includes( key )
       ) {
         filtersFromQuery[key] = value === "" ? "" : parseInt( value ) || 0;
+      } else if ( key === "videoResolution" ) {
+        if ( value == "1080" ) filtersFromQuery[key] = "fhd";
+        else if ( value == "720" ) filtersFromQuery[key] = "hd";
       } else {
+        console.log(key)
         filtersFromQuery[key] = value;
       }
     } );
     setActiveFilters( filtersFromQuery );
   }, [searchParams] );
 
-  const FilterSection: React.FC<FilterSectionProps> = ( {
-    title,
-    expanded,
-    onToggle,
-    children,
-  } ) => (
-    <div className="mb-4">
-      <div
-        className="flex justify-between items-center cursor-pointer"
-        onClick={onToggle}
+  const renderFilterButton = ( option: string, filterType: string ) => {
+    console.log( "option:-", filterType );
+    console.log( "active filters:-", activeFilters );
+    return (
+      <button
+        key={option}
+        className={`px-3 py-1 rounded-full ${activeFilters[filterType] === option.toLowerCase()
+          ? "bg-black text-white"
+          : "bg-gray-200 text-gray-800"
+          }`}
+        onClick={() => {
+          const resolution = option === "FHD" ? 1080 : option === "HD" ? 720 : option.toLowerCase();
+          handleFilterClick( filterType, resolution );
+        }}
       >
-        <h3 className="font-semibold">{title}</h3>
-        {expanded ? <BsChevronUp /> : <BsChevronDown />}
-      </div>
-      {expanded && <div className="mt-2">{children}</div>}
-    </div>
-  );
+        {option}
+      </button>
+    );
+  };
 
-  const renderFilterButton = ( option: string, filterType: string ) => (
-    <button
-      key={option}
-      className={`px-3 py-1 rounded-full ${activeFilters[filterType] === option
-        ? "bg-gray-800 text-white"
-        : "bg-gray-200"
-        }`}
-      onClick={() => {
-        const resolution = option === "FHD" ? 1080 : option === "HD" ? 720 : option.toLowerCase();
-        handleFilterClick( filterType, resolution );
-      }
-      }
-    >
-      {option}
-    </button>
-  );
 
-  const renderInput = ( placeholder: string, filterType: string ) => ( 
+  const renderInput = ( placeholder: string, filterType: string ) => (
     <input
       type="number"
       placeholder={placeholder}
       className="w-full px-2 py-1 border rounded"
       value={activeFilters[filterType] || ""}
-      onChange={( e ) => throttledInputChange( filterType, e.target.value )}
+      onChange={( e ) => {
+        const newValue = e.target.value;
+        setActiveFilters( ( prev ) => ( {
+          ...prev,
+          [filterType]: newValue,
+        } ) );
+        debouncedInputChange( filterType, newValue );
+      }}
     />
   );
 
   const renderImageFilters = () => (
     <>
-      <FilterSection
-        title="File Type"
-        expanded={expandedSections["fileType"] || false}
-        onToggle={() => toggleSection( "fileType" )}
-      >
-        <div className="flex flex-wrap gap-2 mt-2">
+      <div className="mb-4">
+        <h3 className="font-semibold mb-2">File Type</h3>
+        <div className="flex flex-wrap gap-2">
           {["JPEG", "PNG"].map( ( option ) =>
             renderFilterButton( option, "imageFileType" )
           )}
         </div>
-      </FilterSection>
-      <FilterSection
-        title="Dimensions"
-        expanded={expandedSections["dimensions"] || false}
-        onToggle={() => toggleSection( "dimensions" )}
-      >
-        <div className="flex flex-wrap gap-2 mt-2">
+      </div>
+      <div className="mb-4">
+        <h3 className="font-semibold mb-2">Dimensions</h3>
+        <div className="flex flex-wrap gap-2">
           {renderInput( "Width", "imageWidth" )}
           {renderInput( "Height", "imageHeight" )}
         </div>
-      </FilterSection>
-      <FilterSection
-        title="Orientation"
-        expanded={expandedSections["orientation"] || false}
-        onToggle={() => toggleSection( "orientation" )}
-      >
-        <div className="flex flex-wrap gap-2 mt-2">
+      </div>
+      <div className="mb-4">
+        <h3 className="font-semibold mb-2">Orientation</h3>
+        <div className="flex flex-wrap gap-2">
           {["Horizontal", "Vertical"].map( ( option ) =>
             renderFilterButton( option, "imageOrientation" )
           )}
         </div>
-      </FilterSection>
-      <FilterSection
-        title="Density"
-        expanded={expandedSections["density"] || false}
-        onToggle={() => toggleSection( "density" )}
-      >
-        <div className="flex flex-wrap gap-2 mt-2">
+      </div>
+      <div className="mb-4">
+        <h3 className="font-semibold mb-2">Density</h3>
+        <div className="flex flex-wrap gap-2">
           {renderInput( "Density", "imageDensity" )}
         </div>
-      </FilterSection>
+      </div>
     </>
   );
 
   const renderVideoFilters = () => (
     <>
-      <FilterSection
-        title="Resolution"
-        expanded={expandedSections["resolution"] || false}
-        onToggle={() => toggleSection( "resolution" )}
-      >
-        <div className="flex flex-wrap gap-2 mt-2">
+      <div className="mb-4">
+        <h3 className="font-semibold mb-2">Resolution</h3>
+        <div className="flex flex-wrap gap-2">
           {["FHD", "HD"].map( ( option ) =>
             renderFilterButton( option, "videoResolution" )
           )}
         </div>
-      </FilterSection>
-      <FilterSection
-        title="Orientation"
-        expanded={expandedSections["orientation"] || false}
-        onToggle={() => toggleSection( "orientation" )}
-      >
-        <div className="flex flex-wrap gap-2 mt-2">
+      </div>
+      <div className="mb-4">
+        <h3 className="font-semibold mb-2">Orientation</h3>
+        <div className="flex flex-wrap gap-2">
           {["Vertical", "Horizontal"].map( ( option ) =>
             renderFilterButton( option, "videoOrientation" )
           )}
         </div>
-      </FilterSection>
-      <FilterSection
-        title="Length"
-        expanded={expandedSections["length"] || false}
-        onToggle={() => toggleSection( "length" )}
-      >
-        <div className="flex flex-wrap gap-2 mt-2">
+      </div>
+      <div className="mb-4">
+        <h3 className="font-semibold mb-2">Length</h3>
+        <div className="flex flex-wrap gap-2">
           {renderInput( "Length (seconds)", "videoLength" )}
         </div>
-      </FilterSection>
-      <FilterSection
-        title="Frame Rate"
-        expanded={expandedSections["videoFrameRate"] || false}
-        onToggle={() => toggleSection( "videoFrameRate" )}
-      >
-        <div className="flex flex-wrap gap-2 mt-2">
+      </div>
+      <div className="mb-4">
+        <h3 className="font-semibold mb-2">Frame Rate</h3>
+        <div className="flex flex-wrap gap-2">
           {renderInput( "Frame Rate", "videoFrameRate" )}
         </div>
-      </FilterSection>
+      </div>
     </>
   );
 
   const renderAudioFilters = () => (
     <>
-      <FilterSection
-        title="Length"
-        expanded={expandedSections["length"] || false}
-        onToggle={() => toggleSection( "length" )}
-      >
-        <div className="flex flex-wrap gap-2 mt-2">
+      <div className="mb-4">
+        <h3 className="font-semibold mb-2">Length</h3>
+        <div className="flex flex-wrap gap-2">
           {renderInput( "Length (seconds)", "audioLength" )}
         </div>
-      </FilterSection>
-      <FilterSection
-        title="Bitrate"
-        expanded={expandedSections["bitrate"] || false}
-        onToggle={() => toggleSection( "bitrate" )}
-      >
-        <div className="flex flex-wrap gap-2 mt-2">
+      </div>
+      <div className="mb-4">
+        <h3 className="font-semibold mb-2">Bitrate</h3>
+        <div className="flex flex-wrap gap-2">
           {renderInput( "Bitrate", "audioBitrate" )}
         </div>
-      </FilterSection>
+      </div>
     </>
   );
 
@@ -310,23 +255,23 @@ const Filter: React.FC<FilterProps> = ( {
             >
               Clear All
             </button>
-            <button onClick={onToggle} className="md:hidden">
-              <MdClear size={24} />
+            <button onClick={onToggle} className="">
+              <span className="sr-only">Close</span>
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
             </button>
           </div>
         </div>
 
-        <FilterSection
-          title="Sort by"
-          expanded={expandedSections["sortBy"] || false}
-          onToggle={() => toggleSection( "sortBy" )}
-        >
-          <div className="flex flex-wrap gap-2 mt-2">
-            {["newest", "oldest", "popular"].map( ( option ) =>
+        <div className="mb-4">
+          <h3 className="font-semibold mb-2">Sort by</h3>
+          <div className="flex flex-wrap gap-2">
+            {["Newest", "Oldest", "Popular"].map( ( option ) =>
               renderFilterButton( option, "sortBy" )
             )}
           </div>
-        </FilterSection>
+        </div>
 
         {mediaType === "image" && renderImageFilters()}
         {mediaType === "video" && renderVideoFilters()}
@@ -335,6 +280,5 @@ const Filter: React.FC<FilterProps> = ( {
     </div>
   );
 };
-
 
 export default Filter;
