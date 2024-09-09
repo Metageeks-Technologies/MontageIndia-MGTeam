@@ -27,7 +27,7 @@ const Searchbar = () => {
   const mediaType = searchParams.get("mediaType") || "image";
   const category = searchParams.get("category");
   const terms = useAppSelector((state) => state.product.relatedKeyword);
-  console.log("path",pathname);
+  console.log("path", pathname);
   const isVideoPage = pathname.includes("/video");
   const isAudioPage = pathname.includes("/audio");
   const isImagePage = pathname.includes("/image");
@@ -51,15 +51,12 @@ const Searchbar = () => {
           ? "Editorial Image"
           : "All Image"
       );
-    }
-    else if(pathname.includes("/video")){
-      setSelectedOption("Video")
-    }
-    else if(pathname.includes("/audio")){
-      setSelectedOption("Audio")
-    }
-    else if(pathname.includes("/image")){
-      setSelectedOption("Image")
+    } else if (pathname.includes("/video")) {
+      setSelectedOption("Video");
+    } else if (pathname.includes("/audio")) {
+      setSelectedOption("Audio");
+    } else if (pathname.includes("/image")) {
+      setSelectedOption("Image");
     }
   }, [pathname, category, searchRenderTerm]);
 
@@ -151,15 +148,45 @@ const Searchbar = () => {
                 value={selectedOption}
                 onChange={(e) => setSelectedOption(e.target.value)}
               >
-                {isImagePage && (<option className="cursor-pointer" value="image" >Image</option>)}
-                {isVideoPage && (<option className="cursor-pointer" value="video" >Video</option>)}
-                {isAudioPage && (<option className="cursor-pointer" value="audio" >Audio</option>)}
-                {!isImagePage && (<option className="cursor-pointer" value="image" >Image</option>)}
-                {!isVideoPage && (<option className="cursor-pointer" value="video" >Video</option>)}
-                {!isAudioPage && (<option className="cursor-pointer" value="audio" >Audio</option>)}
-                <option className="cursor-pointer" value="editorialImage" >Editorial Image</option>
-                <option className="cursor-pointer" value="editorialAudio" >Editorial Audio</option>
-                <option className="cursor-pointer" value="editorialVideo">Editorial Video</option>
+                {isImagePage && (
+                  <option className="cursor-pointer" value="image">
+                    Image
+                  </option>
+                )}
+                {isVideoPage && (
+                  <option className="cursor-pointer" value="video">
+                    Video
+                  </option>
+                )}
+                {isAudioPage && (
+                  <option className="cursor-pointer" value="audio">
+                    Audio
+                  </option>
+                )}
+                {!isImagePage && (
+                  <option className="cursor-pointer" value="image">
+                    Image
+                  </option>
+                )}
+                {!isVideoPage && (
+                  <option className="cursor-pointer" value="video">
+                    Video
+                  </option>
+                )}
+                {!isAudioPage && (
+                  <option className="cursor-pointer" value="audio">
+                    Audio
+                  </option>
+                )}
+                <option className="cursor-pointer" value="editorialImage">
+                  Editorial Image
+                </option>
+                <option className="cursor-pointer" value="editorialAudio">
+                  Editorial Audio
+                </option>
+                <option className="cursor-pointer" value="editorialVideo">
+                  Editorial Video
+                </option>
               </select>
 
               <img src="/asset/Rectangle 15.png" className="mx-2" alt="" />
@@ -249,13 +276,11 @@ const Searchbar = () => {
                 </button>
               </div>
             </div>
-            {
-                terms && terms.length>0 && (
-                  <div className="font-bold w-44 text-md text-start" >
-                    Related Keywords :
-                  </div>
-                )
-              } 
+            {terms && terms.length > 0 && (
+              <div className="font-bold w-44 whitespace-nowrap text-md text-start">
+                Related Searches :
+              </div>
+            )}
             <div className="rounded-md flex flex-row scrollbar-hide overflow-x-scroll items-center text-center justify-start">
               {terms.map((category) => {
                 return (
@@ -274,24 +299,20 @@ const Searchbar = () => {
                 );
               })}
             </div>
-            {
-              searchRenderTerm && (
-                 <div className=" hidden md:block">
-              <button
-                onClick={handleClear}
-                
-                className={`${
-                  searchRenderTerm
-                    ? "bg-red-500 cursor-pointer"
-                    : "bg-red-500 cursor-not-allowed bg-opacity-50"
-                } py-2 text-white border flex flex-row items-center gap-2 border-gray-300 px-5 rounded-md`}
-              >
-                Clear <MdClear />
-              </button>
-            </div>
-              )
-            }
-           
+            {searchRenderTerm && (
+              <div className=" hidden md:block">
+                <button
+                  onClick={handleClear}
+                  className={`${
+                    searchRenderTerm
+                      ? "bg-red-500 cursor-pointer"
+                      : "bg-red-500 cursor-not-allowed bg-opacity-50"
+                  } py-2 text-white border flex flex-row items-center gap-2 border-gray-300 px-5 rounded-md`}
+                >
+                  Clear <MdClear />
+                </button>
+              </div>
+            )}
           </div>
         </div>
       )}
