@@ -120,14 +120,7 @@ const Page = () => {
   return (
     <div className="flex flex-col min-h-screen">
       <Searchbar />
-      <div className="flex flex-1">
-        {/* <Filter
-          isOpen={isFilterOpen}
-          onToggle={toggleFilter}
-          filterOptions={filterOptions}
-          onFilterChange={handleFilterChange}
-          onclearFilter={handleClearFilters}
-        /> */}
+      <div className="flex flex-1"> 
         <Filter
           isOpen={isFilterOpen}
           onToggle={toggleFilter}
