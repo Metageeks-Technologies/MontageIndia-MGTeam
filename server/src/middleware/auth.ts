@@ -78,39 +78,40 @@ export const isAuthenticatedCustomer = catchAsyncError(
 
 export const isAuthorizedCustomer = catchAsyncError(
   async (req: any, res, next) => {
-   const authHeader = req.headers.authorization;
+    const authHeader = req.headers.authorization;
 
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    return next();
-  }
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      return next();
+    }
 
-  const idToken = authHeader.split('Bearer ')[1];
-  if(!idToken){
-    return next();
-  }
-  // console.log("idToken",idToken);
+    const idToken = authHeader.split("Bearer ")[1];
+    if (!idToken) {
+      return next();
+    }
+    // console.log("idToken",idToken);
 
-  auth
-    .auth()
-    .verifyIdToken(idToken)
-    .then(async (decodedToken) => {
-      // console.log("decodedToken",decodedToken);
-      const uid = decodedToken.uid;
-      
-      // console.log("req.user",uid);
-      const user=await customer.findOne({uid});
-      // console.log("user",user);
-      if(!user){
+    auth
+      .auth()
+      .verifyIdToken(idToken)
+      .then(async (decodedToken) => {
+        // console.log("decodedToken",decodedToken);
+        const uid = decodedToken.uid;
+
+        // console.log("req.user",uid);
+        const user = await customer.findOne({ uid });
+        // console.log("user",user);
+        if (!user) {
+          return res.status(401).json({ error: "Invalid or expired token" });
+        }
+        req.user = user;
+        // console.log("req.user",req.user);
+        next();
+      })
+      .catch((error) => {
         return res.status(401).json({ error: "Invalid or expired token" });
-      }
-      req.user=user;
-      // console.log("req.user",req.user);
-      next();
-    })
-    .catch((error) => {
-      return res.status(401).json({ error: "Invalid or expired token" });
-    });
-});
+      });
+  }
+);
 
 export const checkProductAccess = catchAsyncError(
   async (req: any, res: any, next: any) => {
@@ -197,31 +198,31 @@ export const checkDuplicateEvent = catchAsyncError(
 
 export const firebaseAuth = catchAsyncError(async (req: any, res, next) => {
   const authHeader = req.headers.authorization;
-// clg
-console.log("authHeader:-",authHeader)
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    return res.status(401).json({ message: 'Unauthorized' });
+  // clg
+  // console.log("authHeader:-",authHeader)
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    return res.status(401).json({ message: "Unauthorized" });
   }
 
-  const idToken = authHeader.split('Bearer ')[1];
-  console.log("idToken",idToken);
+  const idToken = authHeader.split("Bearer ")[1];
+  // console.log("idToken",idToken);
 
   auth
     .auth()
     .verifyIdToken(idToken)
     .then(async (decodedToken) => {
-      console.log("decodedToken",decodedToken);
+      // console.log("decodedToken",decodedToken);
       const uid = decodedToken.uid;
 
-      console.log("req.user",uid);
-      
-      const user=await customer.findOne({uid});
-      console.log("user",user); 
-      if(!user){
+      // console.log("req.user",uid);
+
+      const user = await customer.findOne({ uid });
+      // console.log("user",user);
+      if (!user) {
         return res.status(401).json({ error: "Invalid or expired token" });
       }
-      req.user=user;
-      console.log("req.user",req.user);
+      req.user = user;
+      // console.log("req.user",req.user);
       next();
     })
     .catch((error) => {

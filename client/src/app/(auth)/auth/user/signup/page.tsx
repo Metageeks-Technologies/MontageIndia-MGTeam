@@ -95,8 +95,8 @@ const SignUpPage = () => {
         return;
       }
       notifySuccess("SignUp Successful");
-      router.push(redirectUrl || "/");
       await createCart(dispatch);
+      router.push(redirectUrl || "/");
 
       return;
     } catch (error: any) {
@@ -120,7 +120,7 @@ const SignUpPage = () => {
   };
 
   const handleSignUpGoogle = async () => {
-    if(!terms){
+    if (!terms) {
       setError("Please accept the terms and conditions.");
       return;
     }
@@ -149,8 +149,8 @@ const SignUpPage = () => {
 
       if (response.data.status === "success") {
         notifySuccess("SignUp Successful");
-        router.replace(redirectUrl || "/");
         await createCart(dispatch);
+        router.replace(redirectUrl || "/");
       }
     } catch (error: any) {
       setLoaders({ ...loaders, signUp: false });

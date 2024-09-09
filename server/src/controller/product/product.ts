@@ -1474,16 +1474,29 @@ export const createCart = catchAsyncError(async (req: any, res, next) => {
 
   if (!userCart || userCart.length === 0) {
     customer.cart = cart;
-    await customer.save();
   } else {
-    const newCart = [...userCart, ...cart];
-    customer.cart = newCart;
-    await customer.save();
+    // Create a Map to store unique cart items
+    const uniqueCartMap = new Map();
+
+    // Add existing cart items to the Map
+    userCart.forEach((item) => {
+      uniqueCartMap.set(item.productId.toString(), item);
+    });
+
+    // Add or update new cart items
+    cart.forEach((item: any) => {
+      uniqueCartMap.set(item.productId._id.toString(), item);
+    });
+
+    // Convert the Map back to an array
+    customer.cart = Array.from(uniqueCartMap.values());
   }
+
+  await customer.save();
 
   res.status(200).json({
     success: true,
-    message: "Cart created",
+    message: "Cart updated",
   });
 });
 

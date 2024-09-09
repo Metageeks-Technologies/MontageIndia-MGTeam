@@ -71,8 +71,9 @@ const LoginPage = () => {
         const userCredential = response.result;
         console.log("user logged in", userCredential.user);
         setLoaders({ ...loaders, loader: false });
-        router.push(redirectUrl || "/");
         await createCart(dispatch);
+        router.push(redirectUrl || "/");
+
         notifySuccess("Login Successful");
         setEmail("");
         setPassword("");
@@ -114,11 +115,12 @@ const LoginPage = () => {
         name: displayName,
         image: photoURL,
       });
-      console.log("google login", response)
+      console.log("google login", response);
 
       notifySuccess("Login Successful");
-      router.push(redirectUrl || "/");
       await createCart(dispatch);
+      router.push(redirectUrl || "/");
+
       setEmail("");
       setPassword("");
     } catch (error: any) {
@@ -177,8 +179,8 @@ const LoginPage = () => {
       setError("");
       setLoaders({ ...loaders, verifyOtp: false });
       notifySuccess("OTP verified successfully");
-      router.push(redirectUrl || "/");
       await createCart(dispatch);
+      router.push(redirectUrl || "/");
     } else {
       console.log("response", response.error);
       setError(response.error);

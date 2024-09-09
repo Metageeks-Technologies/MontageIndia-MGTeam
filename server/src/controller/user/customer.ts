@@ -37,7 +37,9 @@ export const googleLogin = catchAsyncError(async (req, res, next) => {
   if (user) {
     user.emailVerified = true;
     await user.save();
-    return res.status(200).send({ status:'success', message: "User already exists" });
+    return res
+      .status(200)
+      .send({ status: "success", message: "User already exists" });
   }
 
   const newUser = await Customer.create({
@@ -48,40 +50,39 @@ export const googleLogin = catchAsyncError(async (req, res, next) => {
     emailVerified: true,
   });
 
-  return res.status(201).send({ status:'success', message: "User created"});
-}
-);
+  return res.status(201).send({ status: "success", message: "User created" });
+});
 
 export const signupCustomer = catchAsyncError(async (req, res, next) => {
   if (!req.body) {
     return res.status(400).json({ error: "Invalid request body" });
   }
-  const { uid,name,phone, email, password,image } = req.body;
+  const { uid, name, phone, email, password, image } = req.body;
 
   if (!uid) {
     return next(new ErrorHandler("please provide all values", 400));
   }
   const query = {
-  $or: [
-    { uid },
-    ...(email ? [{ email }] : []),
-    ...(phone ? [{ phone }] : []),
-  ],
-};
+    $or: [
+      { uid },
+      ...(email ? [{ email }] : []),
+      ...(phone ? [{ phone }] : []),
+    ],
+  };
   const userAlreadyExists = await Customer.findOne(query);
 
   if (userAlreadyExists) {
     return next(new ErrorHandler("User already exists", 400));
   }
 
-  const updatedUser:any = {};
+  const updatedUser: any = {};
 
-  if(uid) updatedUser.uid = uid;
-  if(name) updatedUser.name = name;
-  if(phone) updatedUser.phone = phone.slice(1,phone.length);
-  if(email) updatedUser.email = email;
-  if(password) updatedUser.password = password;
-  if(image) updatedUser.image = image;
+  if (uid) updatedUser.uid = uid;
+  if (name) updatedUser.name = name;
+  if (phone) updatedUser.phone = phone.slice(1, phone.length);
+  if (email) updatedUser.email = email;
+  if (password) updatedUser.password = password;
+  if (image) updatedUser.image = image;
 
   const user = await Customer.create(updatedUser);
 
@@ -139,10 +140,12 @@ export const getCustomerById = catchAsyncError(async (req, res, next) => {
 });
 
 export const getCurrentCustomer = catchAsyncError(
-  async ( req: any, res, next ) => {
-    console.log("Id:-",req.user)
+  async (req: any, res, next) => {
+    // console.log("Id:-",req.user)
     const { id } = req.user;
-    const user = await Customer.findOne({ _id: id }).populate("subscription.PlanId");
+    const user = await Customer.findOne({ _id: id }).populate(
+      "subscription.PlanId"
+    );
     console.log(user);
 
     return res.status(200).json({
@@ -204,43 +207,41 @@ export const getAllCustomer = catchAsyncError(async (req, res, next) => {
 
 export const updateCustomerDetails = catchAsyncError(
   async (req: any, res, next) => {
-    const { name,currentPassword,newPassword,image,email,phone } = req.body;
+    const { name, currentPassword, newPassword, image, email, phone } =
+      req.body;
 
-    console.log(name, currentPassword, newPassword,image);
+    console.log(name, currentPassword, newPassword, image);
 
     const { id } = req.user;
-    const customerToUpdate = await Customer.findById(id).select('+password');;
+    const customerToUpdate = await Customer.findById(id).select("+password");
 
     if (!customerToUpdate) {
       return next(new ErrorHandler("Customer not found", 404));
     }
 
     const updates: Partial<typeof customerToUpdate> = {};
-    if (name) updates.name = name ;
-    if(image) updates.image = image;
-    if(email) {
+    if (name) updates.name = name;
+    if (image) updates.image = image;
+    if (email) {
       updates.email = email;
       updates.emailVerified = false;
     }
-    if(phone){
-      if(phone[0]==="+"){
-        updates.phone = phone.slice(1,phone.length);
-      }
-      else{
+    if (phone) {
+      if (phone[0] === "+") {
+        updates.phone = phone.slice(1, phone.length);
+      } else {
         updates.phone = phone;
       }
-    }  
+    }
     if (currentPassword && newPassword) {
       const verifyPassword = await customerToUpdate.comparePassword(
         currentPassword as string
       );
-      console.log("verify",verifyPassword);
+      console.log("verify", verifyPassword);
       if (!verifyPassword) {
-        return next(
-          new ErrorHandler("Current password is incorrect", 400)
-        );
+        return next(new ErrorHandler("Current password is incorrect", 400));
       }
-      updates.password = newPassword as string; 
+      updates.password = newPassword as string;
     }
     console.log(updates);
 
@@ -435,61 +436,70 @@ export const removeProductFromCart = catchAsyncError(
 );
 
 export const isPhoneExist = catchAsyncError(async (req, res, next) => {
-  const phone= req.query.phone as string;
-  console.log("phone",phone);
-  if(!phone) {
+  const phone = req.query.phone as string;
+  console.log("phone", phone);
+  if (!phone) {
     return next(new ErrorHandler("Please provide phone", 400));
   }
-  const updatedPhone= phone?.slice(1,phone.length);
-  console.log("updatedPhone",updatedPhone);
+  const updatedPhone = phone?.slice(1, phone.length);
+  console.log("updatedPhone", updatedPhone);
   const user = await Customer.findOne({ phone: updatedPhone });
   if (!user) {
-    return res.status(200).json({success:false, message: "Phone number not found" });
+    return res
+      .status(200)
+      .json({ success: false, message: "Phone number not found" });
   }
-  res.status(200).json({ success:true, message: "Phone number found" });
-}
-);
+  res.status(200).json({ success: true, message: "Phone number found" });
+});
 
 export const isPhoneEmailExist = catchAsyncError(async (req, res, next) => {
   const { phone, email } = req.query;
-  if(!phone && !email) {
+  if (!phone && !email) {
     return next(new ErrorHandler("Please provide phone or email", 400));
   }
 
   const user = await Customer.findOne({ $or: [{ phone }, { email }] });
 
   if (user) {
-    return res.status(200).json({success:true, message: "User already exits with this email or PhoneNumber " });
+    return res
+      .status(200)
+      .json({
+        success: true,
+        message: "User already exits with this email or PhoneNumber ",
+      });
   }
 
-  res.status(200).json({success:false, message: "User not found" });
+  res.status(200).json({ success: false, message: "User not found" });
 });
 
-export const verifyEmail= catchAsyncError(async (req:any, res, next) => {
-   const {email}=req.body;
-   console.log("email",email);
-    const user =await Customer.findOne({email});
-    console.log("user",user);
-    if(!user){
-      return res.status(400).json({success:false,message:"User not found"});
-    }
-    user.emailVerified=true;
-    await user.save();
-    console.log("user",user);
-    res.status(200).json({success:true,message:"Email verified successfully"});
+export const verifyEmail = catchAsyncError(async (req: any, res, next) => {
+  const { email } = req.body;
+  console.log("email", email);
+  const user = await Customer.findOne({ email });
+  console.log("user", user);
+  if (!user) {
+    return res.status(400).json({ success: false, message: "User not found" });
+  }
+  user.emailVerified = true;
+  await user.save();
+  console.log("user", user);
+  res
+    .status(200)
+    .json({ success: true, message: "Email verified successfully" });
 });
 
-export const onDemandForm= catchAsyncError(async (req:any, res, next) => {
+export const onDemandForm = catchAsyncError(async (req: any, res, next) => {
+  const { email, name, phone, message, subject } = req.body;
+  console.log("req.body", req.body);
 
-  const {email,name,phone,message,subject}=req.body;
-  console.log("req.body",req.body);
-
-  if(!email || !name || !phone || !message || !subject){
-    return res.status(400).json({success:false,message:"Please provide all fields"});
+  if (!email || !name || !phone || !message || !subject) {
+    return res
+      .status(400)
+      .json({ success: false, message: "Please provide all fields" });
   }
 
-  console.log("sender",config.emailUser);
-  console.log("reciever",config.montageEmail);
+  console.log("sender", config.emailUser);
+  console.log("reciever", config.montageEmail);
 
   const mailOptions = {
     from: config.emailUser as string,
@@ -509,10 +519,14 @@ export const onDemandForm= catchAsyncError(async (req:any, res, next) => {
   await sendEmail(mailOptions)
     .then(() => {
       console.log("Email sent successfully");
-      return res.status(200).json({success:true,message:"Email sent successfully"});
+      return res
+        .status(200)
+        .json({ success: true, message: "Email sent successfully" });
     })
     .catch((error) => {
       console.error("Failed to send email:", error);
-      return res.status(400).json({success:false,message:"Error sending email"});
+      return res
+        .status(400)
+        .json({ success: false, message: "Error sending email" });
     });
 });
