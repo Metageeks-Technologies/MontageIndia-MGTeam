@@ -1,11 +1,10 @@
 'use client';
 import { useState, useEffect, useMemo } from 'react';
 import instance from '@/utils/axios';
-import { Spinner, Pagination, Button } from '@nextui-org/react';
 import Link from 'next/link';
-import { notifyInfo } from '@/utils/toast';
 import Swal from 'sweetalert2';
 import { FaTrashRestoreAlt } from 'react-icons/fa';
+import { SpinnerLoader } from '@/components/loader/loaders';
 
 interface User
 {
@@ -167,7 +166,7 @@ export default function UserList ()
                                 { loading ? (
                                     <tr>
                                         <td colSpan={ 6 } className="text-center py-4">
-                                            <Spinner label="Loading..." color="danger" />
+                                            <SpinnerLoader />
                                         </td>
                                     </tr>
                                 ) : (

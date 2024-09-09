@@ -4,6 +4,7 @@ import {useParams} from 'next/navigation';
 import instance from '@/utils/axios';
 import ProductCard from '@/components/product/productCard';
 import {Spinner} from "@nextui-org/react";
+import {SpinnerLoader} from '@/components/loader/loaders';
 const OrderPage = () => {
     const params = useParams();
     const id  = params.id as string;
@@ -38,9 +39,7 @@ const OrderPage = () => {
       <div className="flex flex-col gap-4 overflow-y-scroll">
 
       {loading ? (
-        <div className="flex justify-center items-center min-h-screen">
-        <Spinner color="danger" size="lg" />
-        </div>
+        <SpinnerLoader />
       ) : (
         order && order?.products?.length > 0  && order?.products?.map((product: any, index: number) => (
           <ProductCard key={index} product={product.productId} />

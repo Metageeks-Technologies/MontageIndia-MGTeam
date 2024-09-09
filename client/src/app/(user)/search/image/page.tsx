@@ -3,6 +3,7 @@ import Footer from "@/components/Footer";
 import ImageGallery from "@/components/Home/homeImage";
 import instance from "@/utils/axios";
 import { Button, Pagination, Spinner } from "@nextui-org/react";
+import {SpinnerLoader} from '@/components/loader/loaders';
 import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/app/redux/hooks";
 import { setImagePage } from "@/app/redux/feature/product/slice";
@@ -157,9 +158,7 @@ const Page = () => {
                   </h4>
                   <div className="mx-auto mt-4">
                     {loading ? (
-                      <div className="flex items-center justify-center min-h-screen text-center m-auto">
-                        <Spinner label="Loading..." color="danger" />
-                      </div>
+                      <SpinnerLoader />
                     ) : (
                       <div className="columns-1 min-h-screen sm:columns-2 md:columns-3 lg:columns-4 gap-2 mt-2 relative">
                         {displayData.length > 0 ? (

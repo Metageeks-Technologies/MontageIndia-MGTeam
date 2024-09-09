@@ -5,6 +5,7 @@ import { useRouter, usePathname } from 'next/navigation';
 import Sidebar from "../../admin/sidebar";
 import instance from '@/utils/axios';
 import { Spinner } from '@nextui-org/react';
+import {SpinnerLoader} from '@/components/loader/loaders';
 
 const AuthWrapper = ( { children }: { children: React.ReactNode; } ) =>
 {
@@ -59,9 +60,9 @@ const AuthWrapper = ( { children }: { children: React.ReactNode; } ) =>
 
     if ( isLoading )
     {
-        return <div className="flex justify-center items-center h-screen">
-            <Spinner label="Loading..." color="danger" />
-        </div>;
+        return (
+            <SpinnerLoader />
+        )
     }
 
     return (

@@ -2,13 +2,15 @@
 import React, { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/app/redux/hooks";
 import {Spinner,Button,Pagination} from "@nextui-org/react";
+import {SpinnerLoader} from '@/components/loader/loaders';
 import { getCurrCustomer } from "@/app/redux/feature/user/api";
 import { FaRupeeSign } from "react-icons/fa";
 import { IoSearchOutline } from "react-icons/io5";
 import { IoEyeOutline } from "react-icons/io5";
-import {useRouter} from 'next/navigation'
+import {useRouter} from 'next/navigation';
 import instance from "@/utils/axios";
-import {formatDateTime} from '@/utils/DateFormat'
+import {formatDateTime} from '@/utils/DateFormat';
+import { AiFillProduct } from "react-icons/ai";
 
 interface Order {
   _id: string;
@@ -117,7 +119,7 @@ const ProductList: React.FC = () => {
       </div>
        {loading?(
               <div className="w-full flex justify-center items-center ">
-              <Spinner color="danger" size="lg" />
+              <SpinnerLoader/>
             </div>
             ):(
               <>
@@ -134,8 +136,20 @@ const ProductList: React.FC = () => {
             </tr>
           </thead>
           <tbody className="bg-white">
-            
-            {orders.map((order) => (
+            {
+              orders && orders.length === 0 && (
+               <tr>
+                    <td
+                      colSpan={6}
+                      className="text-center text-gray-600 py-4"
+                    >
+                    <div className="flex gap-1 justify-center items-center " ><AiFillProduct/><span>No purchase history found</span></div>
+                     
+                    </td>
+                  </tr>
+              )
+            }
+            {orders && orders.map((order) => (
               <tr
                 key={order._id}
                 className="border-b hover:bg-gray-100 transition duration-200"
@@ -160,7 +174,7 @@ const ProductList: React.FC = () => {
         </table>
       </div>
 
-      {totalPages > 0 && (
+      {totalPages > 0 && orders.length>0 && (
         <div className="z-index-1 flex flex-wrap md:flex-nowrap justify-center md:justify-between items-center">
         <div className="text-[#999999] md:w-1/3 ">Showing {(((currentPage-1)*dataPerPage)+1)} to {((currentPage-1)*dataPerPage+dataPerPage)>totalOrder?totalOrder:((currentPage-1)*dataPerPage+dataPerPage)}  of {totalOrder} Entries </div>
         <div className="md:w-1/3 flex justify-center items-center gap-4 my-4">

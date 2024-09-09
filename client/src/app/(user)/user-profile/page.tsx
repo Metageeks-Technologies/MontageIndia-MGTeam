@@ -3,7 +3,8 @@ import { useAppSelector } from "@/app/redux/hooks";
 import { FaCoins } from "react-icons/fa";
 import { useRouter } from "next/navigation";
 import { MdOutlineDateRange } from "react-icons/md";
-import {Spinner} from "@nextui-org/react"
+import {Spinner} from "@nextui-org/react";
+import {SpinnerLoader} from '@/components/loader/loaders';
 import { FC } from "react";
 import { sendVerifyEmailLink } from "@/utils/loginOptions";
 import Swal from "sweetalert2";
@@ -49,7 +50,7 @@ const Home: FC = () => {
         <div className="mb-8">
           <h2 className="text-xl font-bold mb-2">Profile</h2>
           <hr className="mb-4" />
-          {!user && <div className="flex justify-center items-center min-h-screen"><Spinner color="danger" /></div>}
+          {!user && <SpinnerLoader/>} 
           {user && (
             <div className="flex flex-col">
             <div className="flex justify-end items-center mb-2">

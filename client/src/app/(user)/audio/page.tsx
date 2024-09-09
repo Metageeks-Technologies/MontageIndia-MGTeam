@@ -16,6 +16,7 @@ import { getAudio } from "@/app/redux/feature/product/audio/api";
 import Waveform from "@/components/Home/AudioWaveForm";
 import Banner from "@/components/Banner";
 import AudioBanner from "@/components/AudioBaner";
+import { SpinnerLoader } from "@/components/loader/loaders";
 
 const filterOptions = {
   sortBy: ["Most Popular", "Newest", "Oldest"],
@@ -149,7 +150,7 @@ const Page = () => {
                 <div className="overflow-y-auto mt-2">
                   {loading ? (
                     <div className="min-h-screen flex justify-center items-center">
-                      <Spinner label="Loading..." color="danger" />
+                      <SpinnerLoader />
                     </div>
                   ) : (
                     <>

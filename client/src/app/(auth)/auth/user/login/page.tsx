@@ -10,6 +10,7 @@ import { notifySuccess } from "@/utils/toast";
 import instance from "@/utils/axios";
 import Link from "next/link";
 import { Spinner } from "@nextui-org/react";
+import { SpinnerLoader } from "@/components/loader/loaders";
 import Swal from "sweetalert2";
 import { ThreeDotsLoader } from "@/components/loader/loaders";
 import { useSearchParams } from "next/navigation";
@@ -344,7 +345,7 @@ const LoginPage = () => {
 
                       {loaders.loader ? (
                         <button className="flex items-center rounded-md justify-center w-full px-4 py-2 bg-webgreen">
-                          <Spinner color="current" />
+                          <SpinnerLoader />
                         </button>
                       ) : (
                         <button

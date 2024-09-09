@@ -10,6 +10,7 @@ import { useRouter } from "next/navigation";
 import { notifySuccess } from "@/utils/toast";
 import { FaTrashRestoreAlt } from "react-icons/fa";
 import Swal from "sweetalert2";
+import { SpinnerLoader } from "@/components/loader/loaders";
 
 // Define the interfaces for the product and variant types
 interface Variant
@@ -287,7 +288,7 @@ const Home: React.FC = () =>
             { loading ? (
               <tr>
                 <td colSpan={ 7 } className="text-center py-4">
-                  <Spinner label="Loading..." color="danger" />
+                  <SpinnerLoader />
                 </td>
               </tr>
             ) : (

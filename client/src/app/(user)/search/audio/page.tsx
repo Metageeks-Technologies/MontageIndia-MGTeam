@@ -3,6 +3,7 @@ import Footer from "@/components/Footer";
 import ImageGallery from "@/components/Home/homeImage";
 import instance from "@/utils/axios";
 import {Button, Pagination, Spinner} from "@nextui-org/react";
+import {SpinnerLoader} from '@/components/loader/loaders';
 import {useEffect, useState} from "react";
 import {useAppDispatch, useAppSelector} from "@/app/redux/hooks";
 import {setAudioPage, setImagePage} from "@/app/redux/feature/product/slice";
@@ -136,7 +137,7 @@ const Page = () => {
                 <div className="overflow-y-auto mt-2">
                   {loading ? (
                     <div className="min-h-screen flex justify-center items-center">
-                      <Spinner label="Loading..." color="danger" />
+                      <SpinnerLoader />
                     </div>
                   ) : (
                     <>

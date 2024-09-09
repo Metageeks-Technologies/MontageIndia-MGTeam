@@ -3,11 +3,13 @@ import instance from "@/utils/axios";
 import React, { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/app/redux/hooks";
 import { Spinner, Button, Pagination } from "@nextui-org/react";
+import {SpinnerLoader} from '@/components/loader/loaders';
 import { CiImageOn } from "react-icons/ci";
 import { MdOutlineSlowMotionVideo } from "react-icons/md";
 import { SiAudioboom } from "react-icons/si";
 import { FaRupeeSign } from "react-icons/fa";
 import { IoSearchOutline } from "react-icons/io5";
+import { AiFillProduct } from "react-icons/ai";
 import { IoMdDownload } from "react-icons/io";
 import { IoEyeOutline } from "react-icons/io5";
 import Link from "next/link";
@@ -141,9 +143,7 @@ const Page: React.FC = () => {
         </div>
       </div>
       {loading ? (
-        <div className="w-full flex justify-center items-center ">
-          <Spinner color="danger" size="lg" />
-        </div>
+        <SpinnerLoader />
       ) : (
         <>
           <div className="overflow-x-scroll shadow-md rounded-lg mb-4">
@@ -171,6 +171,17 @@ const Page: React.FC = () => {
                 </tr>
               </thead>
               <tbody className="bg-white">
+                {purchasedProducts && purchasedProducts.length === 0 && (
+                  <tr>
+                    <td
+                      colSpan={6}
+                      className="text-center text-gray-600 py-4"
+                    >
+                    <div className="flex gap-1 justify-center items-center " ><AiFillProduct/><span>No purchased products found</span></div>
+                     
+                    </td>
+                  </tr>
+                )}
                 {purchasedProducts &&
                   purchasedProducts.length > 0 &&
                   purchasedProducts?.map((purchasedProduct) => (

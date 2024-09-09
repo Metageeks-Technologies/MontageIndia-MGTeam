@@ -7,6 +7,7 @@ import Searchbar from "@/components/searchBar/search";
 import FAQ from "@/components/Video/fag";
 import Trending from "@/components/Video/trendingVideos";
 import { Button, Pagination, Spinner } from "@nextui-org/react";
+import {SpinnerLoader} from '@/components/loader/loaders';
 import { useSearchParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { IoIosSearch } from "react-icons/io";

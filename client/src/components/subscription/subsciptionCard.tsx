@@ -5,6 +5,7 @@ import instance from "@/utils/axios";
 import { ScrollShadow } from "@nextui-org/react";
 import { FaRupeeSign } from "react-icons/fa";
 import Swal from "sweetalert2";
+import { ThreeDotsLoader } from "@/components/loader/loaders";
 interface SubscriptionPlan {
   _id: string;
   planId: string;
@@ -42,6 +43,8 @@ interface Props {
 const SubscriptionCard: React.FC<Props> = ({ plan }) => {
   const router = useRouter();
   const [loaded, setLoaded] = useState(false);
+  const [subsLoader, setSubsLoader] = useState(false);
+
   const handlePaymentSuccess =async () => {
     // console.log("payment success");
     Swal.fire({
@@ -57,17 +60,30 @@ const SubscriptionCard: React.FC<Props> = ({ plan }) => {
     return;
   };
   const handlePayment = (options: any) => {
-    console.log("payment called", options);
-    if (!loaded || typeof window.Razorpay === "undefined") {
-      alert("Razorpay SDK not loaded. Please try again later.");
+
+    try{
+      console.log("payment called", options);
+      if (!loaded || typeof window.Razorpay === "undefined") {
+        alert("Razorpay SDK not loaded. Please try again later.");
+        setSubsLoader(false);
+        return;
+      }
+      const razorpayObject = new window.Razorpay(options);
+      razorpayObject.on("payment.failed", (response: any) => {
+        console.log("payment failed", response);
+        alert("This step of Payment Failed");
+        setSubsLoader(false);
+      });
+      razorpayObject.open();
+
+      setSubsLoader(false);
+    }
+    catch(err){
+      console.error("Error in creating subscription", err);
+      setSubsLoader(false);
       return;
     }
-    const razorpayObject = new window.Razorpay(options);
-    razorpayObject.on("payment.failed", (response: any) => {
-      console.log("payment failed", response);
-      alert("This step of Payment Failed");
-    });
-    razorpayObject.open();
+    
   };
 
   useEffect(() => {
@@ -77,7 +93,6 @@ const SubscriptionCard: React.FC<Props> = ({ plan }) => {
   }, []);
 
   const handleSubsription = async () => {
-    console.log("subscription clicked", plan);
 
     const subsciptionOption = {
       plan_id: plan.planId,
@@ -88,8 +103,11 @@ const SubscriptionCard: React.FC<Props> = ({ plan }) => {
         subscriptionId: plan._id,
       },
     };
-    console.log("subsciptionOption", subsciptionOption);
-    const response: any = await instance.post(
+    // console.log("subsciptionOption", subsciptionOption);
+    setSubsLoader(true);
+
+    try{
+      const response: any = await instance.post(
       "/subscription/create",
       subsciptionOption, // This is the request body
       {
@@ -99,9 +117,6 @@ const SubscriptionCard: React.FC<Props> = ({ plan }) => {
         withCredentials: true,
       }
     );
-
-    console.log("subscription response", response);
-
     const options = {
       key: process.env.NEXT_PUBLIC_RAZORPAY_KEY as string,
       name: "MontageIndia",
@@ -116,13 +131,17 @@ const SubscriptionCard: React.FC<Props> = ({ plan }) => {
         color: "#2300a3",
       },
     };
+      handlePayment(options);
 
-    console.log("options", options);
-
-    handlePayment(options);
+    }
+    catch(err){
+      console.error("Error in creating subscription", err);
+      setSubsLoader(false);
+      return;
+    } 
   };
 
-  console.log(plan);
+  // console.log(plan);
   return (
     <div className="flex-1 text-xl rounded-xl text-black border border-[#E3B4EF]/25 bg-[#FDF8FF] p-10">
       <div className="text-center md:h-[10vh] font-semibold mb-2 md:mb-4">
@@ -149,7 +168,7 @@ const SubscriptionCard: React.FC<Props> = ({ plan }) => {
         onClick={handleSubsription}
         className="my-2 w-full text-white px-6 py-2 rounded-lg bg-webred text-lg hover:bg-[#f63c3c] transition-all"
       >
-        Subscribe
+        {subsLoader ? <ThreeDotsLoader /> : "Subscribe"}
       </button>
     </div>
   );

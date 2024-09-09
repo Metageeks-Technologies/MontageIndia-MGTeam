@@ -1,7 +1,7 @@
 "use client";
 import instance from "@/utils/axios";
-import { Pagination, Button, Spinner } from "@nextui-org/react";
 import React, { useEffect, useState } from "react";
+import { SpinnerLoader } from "@/components/loader/loaders";
 
 interface Subscription
 {
@@ -144,7 +144,7 @@ const Page = () =>
             { isLoading ? (
               <tr>
                 <td colSpan={ 7 } className="text-center py-4">
-                  <Spinner label="Loading..." color="danger" />
+                  <SpinnerLoader/>
                 </td>
               </tr>
             ) : (
@@ -158,10 +158,10 @@ const Page = () =>
                       </div>
                     </td>
                     <td className="px-4 py-4 border-b border-gray-200 bg-white">
-                      <div className="text-sm text-gray-900">{ item.userId.email }</div>
+                      <div className="text-sm text-gray-900">{ item?.userId?.email }</div>
                     </td>
                     <td className="px-4 py-4 border-b border-gray-200 bg-white">
-                      <div className="text-sm text-gray-900">{ item.planId.item.name }</div>
+                      <div className="text-sm text-gray-900">{ item?.planId?.item?.name }</div>
                     </td>
                     <td className="px-4 py-4 border-b border-gray-200 bg-white">
                       <div className="text-sm text-gray-900">{ new Date( item.startDate ).toLocaleDateString() } </div>

@@ -6,6 +6,7 @@ import { notifyError, notifySuccess } from '@/utils/toast';
 import { adminRolesOptions, categoriesOptions, mediaTypesOptions } from '@/utils/tempData';
 import Multiselect from 'multiselect-react-dropdown';
 import { Spinner } from '@nextui-org/react';
+import {SpinnerLoader} from '@/components/loader/loaders';
 import Swal from 'sweetalert2';
 
 interface User
@@ -205,9 +206,9 @@ export default function UserDetails ( { params }: { params: { id: string; }; } )
     setIsEditing( false );
   };
 
-  if ( !user ) return <div className="flex justify-center items-center h-screen">
-    <Spinner label="Loading..." color="danger" />
-  </div>;
+  if ( !user ) return (
+    <SpinnerLoader/>
+  );
 
   return (
     <div className="container p-4 min-h-screen bg-pureWhite-light rounded-md">
@@ -221,7 +222,7 @@ export default function UserDetails ( { params }: { params: { id: string; }; } )
         <hr className="border-t border-gray-300 mb-4" />
 
         <div className="p-6">
-          { !user && <Spinner label='Loading..' color="danger" /> }
+          { !user && <SpinnerLoader/> }
 
           <div className="flex justify-center mb-6 bg-pageBg-light">
             { user && <div className="mb-8 text-center">

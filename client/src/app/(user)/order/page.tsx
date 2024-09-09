@@ -19,6 +19,7 @@ import {
 } from "@/app/redux/feature/product/slice";
 import { removeCartProduct } from "@/app/redux/feature/product/slice";
 import { Spinner } from "@nextui-org/react";
+import {SpinnerLoader} from '@/components/loader/loaders';
 import { useRouter, usePathname } from "next/navigation";
 import Swal from "sweetalert2";
 import { notifyInfo, notifySuccess } from "@/utils/toast";
@@ -255,7 +256,7 @@ const PlaceOrder = () => {
       <h1 className="text-2xl font-bold mb-4">Shopping Cart</h1>
       {loader && (
         <div className="flex justify-center items-center min-h-screen">
-          <Spinner />
+          <SpinnerLoader />
         </div>
       )}
       {!loader && cart.length === 0 && (

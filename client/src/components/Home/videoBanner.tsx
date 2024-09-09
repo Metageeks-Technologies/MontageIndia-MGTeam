@@ -52,7 +52,7 @@ const VideoBanner = ({
         {isSearch && (
           <div className="flex flex-col  mt-5  text-lg rounded-none">
             <div className="flex flex-col w-full opacity-80 rounded-xl max-md:max-w-full">
-              <div className="flex relative  z-10 flex-wrap gap-5 justify-between   mx-0 max-w-full bg-white rounded-lg lg:w-[900px] md:w-[600px]  lg:pl-5 md:pl-5 pl-2 max-md:mr-2.5">
+              <div className="flex relative z-10 flex-wrap gap-5 justify-between mx-0 max-w-full bg-white rounded-lg lg:w-[900px] md:w-[600px]  lg:pl-5 md:pl-5 pl-2 max-md:mr-2.5">
                 <input
                   type="text"
                   value={searchTerm}

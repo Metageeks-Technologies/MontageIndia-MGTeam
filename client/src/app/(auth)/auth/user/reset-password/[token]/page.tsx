@@ -6,6 +6,7 @@ import { FaEye, FaEyeSlash } from "react-icons/fa";
 import instance from '@/utils/axios';
 import Swal from 'sweetalert2';
 import { Spinner } from '@nextui-org/react';
+import {SpinnerLoader} from '@/components/loader/loaders';
 
 const ResetPassword = ( { params }: { params: { token: string; }; } ) =>
 {
@@ -161,7 +162,7 @@ const ResetPassword = ( { params }: { params: { token: string; }; } ) =>
                     <button
                         className="flex items-center rounded-md justify-center w-full px-4 py-2 mt-4  bg-webgreen"
                     >
-                        <Spinner color="danger"/>
+                        <SpinnerLoader/>
                          </button>:
                         <button
                             type="submit"
