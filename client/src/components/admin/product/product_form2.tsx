@@ -206,13 +206,13 @@ const Form2: React.FC<Form2Props> = ({ onPrev, onNext, formData }) => {
         throw new Error("Timeout: mcMediaJob not found");
       }
 
-      const { mainJobId, watermarkJobId } = emcMediaJob;
+      const { mainJobId, watermarkJobId, thumbnailJobId } = emcMediaJob;
 
       // Poll for transcoding progress
       const id = setInterval(async () => {
         try {
           const res = await instance(
-            `/media/video/transcode/progress/?watermarkJobId=${watermarkJobId}&mainJobId=${mainJobId}`
+            `/media/video/transcode/progress/?watermarkJobId=${watermarkJobId}&mainJobId=${mainJobId}&thumbnailJobId=${thumbnailJobId}`
           );
 
           if (res.data.process.status === "complete") {

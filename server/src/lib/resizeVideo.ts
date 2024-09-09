@@ -2,6 +2,7 @@ import {
   CreateJobCommand,
   ListJobsCommand,
   GetJobCommand,
+  CreateJobCommandInput,
 } from "@aws-sdk/client-mediaconvert";
 import { emcClient } from "@src/lib/awsClients";
 import config from "@src/utils/config";
@@ -64,6 +65,53 @@ export const handleReduceVideos = async (inputFile: string, uuid: string) => {
             },
           },
         },
+      ],
+
+      Inputs: [
+        {
+          AudioSelectors: {
+            "Audio Selector 1": {
+              DefaultSelection: "DEFAULT",
+            },
+          },
+          VideoSelector: {},
+          TimecodeSource: "ZEROBASED",
+          FileInput: inputFile,
+        },
+      ],
+    },
+    AccelerationSettings: {
+      Mode: "DISABLED",
+    },
+    StatusUpdateInterval: "SECONDS_60",
+    Priority: 2,
+  };
+
+  try {
+    const data = await emcClient.send(new CreateJobCommand(params));
+
+    return data.Job?.Id;
+  } catch (err) {
+    console.log("Error", err);
+  }
+};
+
+export const handleReduceThumbnail = async (
+  inputFile: string,
+  uuid: string
+) => {
+  const destination = `s3://${awsBucketName}/${uuid}/video/`;
+
+  const params: any = {
+    Queue: awsMediaConvertQueue,
+    UserMetadata: {},
+    Role: awsMediaConvertRole,
+    Settings: {
+      TimecodeConfig: {
+        Source: "ZEROBASED",
+      },
+
+      OutputGroups: [
         {
           Name: "File Group",
           // Outputs: [
@@ -114,6 +162,7 @@ export const handleReduceVideos = async (inputFile: string, uuid: string) => {
           },
         },
       ],
+
       Inputs: [
         {
           AudioSelectors: {
@@ -124,6 +173,12 @@ export const handleReduceVideos = async (inputFile: string, uuid: string) => {
           VideoSelector: {},
           TimecodeSource: "ZEROBASED",
           FileInput: inputFile,
+          InputClippings: [
+            {
+              StartTimecode: "00:00:00:00",
+              EndTimecode: "00:00:10:00",
+            },
+          ],
         },
       ],
     },

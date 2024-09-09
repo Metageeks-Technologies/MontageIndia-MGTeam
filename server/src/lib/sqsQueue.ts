@@ -4,6 +4,7 @@ import {
 } from "@aws-sdk/client-sqs";
 import type { S3Event } from "aws-lambda";
 import {
+  handleReduceThumbnail,
   handleReduceVideos,
   handleVideoWithWaterMark,
 } from "@src/lib/resizeVideo";
@@ -70,9 +71,12 @@ export const processSQSMessages = async () => {
             product?.height
           );
           const mainJobId = await handleReduceVideos(inputFile, uuid);
+          const thumbnailJobId = await handleReduceThumbnail(inputFile, uuid);
+
           await EmcMedia.create({
             mainJobId,
             watermarkJobId,
+            thumbnailJobId,
             uuid,
             product: product._id,
           });

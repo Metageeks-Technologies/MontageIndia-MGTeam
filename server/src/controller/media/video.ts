@@ -37,24 +37,31 @@ export const getJobIds = catchAsyncError(async (req, res, next) => {
 });
 
 export const getJobStatus = catchAsyncError(async (req, res, next) => {
-  const { mainJobId, watermarkJobId } = req.query;
+  const { mainJobId, watermarkJobId, thumbnailJobId } = req.query;
 
   console.log(req.query);
 
   const mainStatus = await getTranscodeStatus(mainJobId as string);
   const watermarkStatus = await getTranscodeStatus(watermarkJobId as string);
+  const thumbnailStatus = await getTranscodeStatus(thumbnailJobId as string);
 
-  console.log(mainStatus, watermarkStatus);
+  console.log(mainStatus, watermarkStatus, thumbnailStatus);
   // "SUBMITTED" || "PROGRESSING" || "COMPLETE" || "CANCELED" || "ERROR",
   let status = "progressing";
   if (
     mainStatus?.status == "ERROR" ||
     watermarkStatus?.status == "ERROR" ||
     watermarkStatus?.status == "CANCELED" ||
-    mainStatus?.status == "CANCELED"
+    mainStatus?.status == "CANCELED" ||
+    thumbnailStatus?.status == "CANCELED" ||
+    thumbnailStatus?.status == "ERROR"
   )
     status = "error";
-  if (mainStatus?.status == "COMPLETE" && watermarkStatus?.status == "COMPLETE")
+  if (
+    mainStatus?.status == "COMPLETE" &&
+    watermarkStatus?.status == "COMPLETE" &&
+    thumbnailStatus?.status == "COMPLETE"
+  )
     status = "complete";
 
   res.json({
