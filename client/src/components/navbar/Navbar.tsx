@@ -125,10 +125,12 @@ const Navbar: React.FC = () => {
   const DropdownItem: React.FC<{ href: string; children: React.ReactNode }> = ({
     href,
     children,
+
   }) => (
     <Link
       href={href}
-      className="text-gray-600 hover:text-gray-800 block py-2 ps-4 pe-8 hover:bg-gray-100 transition duration-200"
+      className="text-gray-600 rounded-md py-2 px-6 hover:bg-webgreen-light hover:text-pureWhite-light transition duration-200  items-center flex gap-2"
+
     >
       {children}
     </Link>
@@ -168,7 +170,7 @@ const Navbar: React.FC = () => {
 
             {!isMobile && (
               <nav className="hidden md:block">
-                <ul className="flex items-start space-x-4 cursor-pointer">
+                <ul className="flex items-start space-x-6 cursor-pointer">
                   <NavItem href="/video">Video</NavItem>
                   <NavItem href="/image">Images</NavItem>
                   <NavItem href="/audio">Audio</NavItem>
@@ -185,23 +187,33 @@ const Navbar: React.FC = () => {
                         } transition-transform duration-200`}
                       />
                     </button>
-                    {isEditorChosePopupOpen && (
+                   {isEditorChosePopupOpen && (
                       <div
-                        onClick={() => setIsDropdownOpen(false)}
+                        onClick={() => setIsDropdownOpen( false )}
                         ref={editorChoiceRef}
-                        className="absolute  mt-2 w-fit bg-white border rounded shadow-xl z-50 flex flex-col items-center justify-start  top-full  "
+                        className="absolute mt-2 bg-white border rounded-lg shadow-xl z-50 flex flex-col items-start justify-center top-full"
                       >
-                        <DropdownItem href="/search/video?category=editor choice&mediaType=video">
-                          Video
+                        <DropdownItem
+                          href="/search/video?category=editor choice&mediaType=video"
+                        >
+                          <img src="/asset/video_logo.svg" alt="Video Logo" className="w-5 h-5 mr-2" />
+                          <span>Video</span>
                         </DropdownItem>
-                        <DropdownItem href="/search/image?category=editor choice&mediaType=image">
-                          Image
+                        <DropdownItem
+                          href="/search/image?category=editor choice&mediaType=image"
+                        >
+                          <img src="/asset/image_logo.svg" alt="Image Logo" className="w-5 h-5 mr-2" />
+                          <span>Image</span>
                         </DropdownItem>
-                        <DropdownItem href="/search/audio?category=editor choice&mediaType=audio">
-                          Audio
+                        <DropdownItem
+                          href="/search/audio?category=editor choice&mediaType=audio"
+                        >
+                          <img src="/asset/Vector.svg" alt="Icon" className="w-5 h-5 mr-2" />
+                          <span>Audio</span>
                         </DropdownItem>
                       </div>
                     )}
+
                   </li>
                   <NavItem href="/ondemand">On Demand</NavItem>
                 </ul>
@@ -226,12 +238,12 @@ const Navbar: React.FC = () => {
                   <img
                     src={user.image}
                     alt={user.name}
-                    className="w-10 h-10 rounded-full cursor-pointer"
+                    className="w-7 h-7 rounded-full cursor-pointer"
                   />
                 </button>
               ) : (
                 <button disabled={isUserOpen} onClick={handleUserIconClick}>
-                  <FaUserCircle className="w-10 h-10 rounded-full cursor-pointer" />
+                  <FaUserCircle className="w-7 h-7 rounded-full cursor-pointer" />
                 </button>
               )}
               {isUserOpen && (
@@ -311,7 +323,7 @@ const Navbar: React.FC = () => {
                   className="w-8 h-8 rounded-full"
                 />
               ) : (
-                <FaUserCircle className="w-8 h-8 text-gray-700" />
+                <FaUserCircle className="w-5 h-5 text-gray-700" />
               )}
               <div className="ml-3">
                 <div className="text-base font-medium text-gray-800">
