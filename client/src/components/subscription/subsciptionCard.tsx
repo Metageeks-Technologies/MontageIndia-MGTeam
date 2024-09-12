@@ -147,7 +147,7 @@ const SubscriptionCard: React.FC<Props> = ({ plan }) => {
       <div className="text-center md:h-[10vh] font-semibold mb-2 md:mb-4">
         {plan.item.name}
       </div>
-      <div className="flex justify-center items-center  mb-4 text-center text-[#7828c8]">
+      <div className="flex justify-center items-center  mb-4 text-center text-[#8D529C]">
         <span className="md:text-3xl font-bold mr-2">
           <FaRupeeSign />
         </span>

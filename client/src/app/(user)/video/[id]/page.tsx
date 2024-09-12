@@ -158,11 +158,11 @@ const Home = () => {
         <hr />
 
         <div className="bg-pageBg mx-auto ">
-          <div className="flex flex-col lg:flex-row lg:space-x-8 px-4 lg:px-4 xl:px-24 md:px-4 ">
+          <div className="flex flex-col lg:flex-row lg:space-x-8 px-4 lg:px-4 xl:px-16 md:px-4 gap-12 ">
             <div className="w-full lg:w-2/3">
               {!!product ? (
                 <div className="relative">
-                  <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 pt-4 pr-6">
+                  <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 pt-4 ">
                     <h1 className="text-xl sm:text-2xl font-semibold mb-2 sm:mb-0">
                       {product.title}
                     </h1>
@@ -201,7 +201,7 @@ const Home = () => {
                       </button>
                     </div>
                   </div>
-                  <div className="w-auto h-48 sm:h-64 md:h-80 lg:h-[32rem] rounded-lg overflow-hidden flex items-center justify-center">
+                  <div className="w-auto h-full sm:h-full md:h-full lg:h-full rounded-lg overflow-hidden flex items-center justify-center bg-[#fff]">
                     <video
                       controls
                       className="w-auto rounded-lg max-h-full object-contain"
@@ -228,7 +228,7 @@ const Home = () => {
             <div className="w-full lg:w-1/3 mt-8 lg:mt-0 border-t lg:border-l lg:border-t-0 pt-8 lg:pt-0 ">
               {product && (
                 <>
-                  <div className="border p-4 sm:p-6 bg-white rounded-lg">
+                  <div className="border-b p-4 sm:p-6 bg-white rounded-lg">
                     <h3 className="font-bold text-lg sm:text-xl mb-4">
                       Purchase a License
                     </h3>
@@ -237,11 +237,11 @@ const Home = () => {
                       comprehensive protection, and simple pricing with volume
                       discounts available
                     </p>
-                    <div className="space-y-4">
+                    <div className="border rounded-md">
                       {product.variants.map((license, index) => (
                         <div
                           key={index}
-                          className="border w-full cursor-pointer hover:bg-[#F4F4F4] p-3 flex flex-row justify-between items-center rounded-md"
+                          className="border-t w-full cursor-pointer hover:bg-[#F4F4F4] p-3 flex flex-row justify-between items-center "
                           onClick={() => handleCart(license._id)}
                         >
                           <div className=" items-center gap-3">
@@ -401,7 +401,7 @@ const Home = () => {
           </div>
 
           {!!product && (
-            <div className="pt-8 sm:pt-12 bg-pureWhite-light w-full px-4 sm:px-6 lg:px-4 xl:px-24 md:px-4 py-8">
+            <div className="pt-8 sm:pt-12 bg-pureWhite-light w-full px-4 sm:px-6 lg:px-4 xl:px-16 md:px-4 py-8">
               <h1 className="font-semibold text-lg sm:text-xl">
                 Similar Videos
               </h1>
@@ -414,7 +414,7 @@ const Home = () => {
           )}
 
           {product && (
-            <div className="px-4 sm:px-6 lg:px-4 xl:px-24 md:px-4 bg-pureWhite-light">
+            <div className="px-4 sm:px-6 lg:px-4 xl:px-16 md:px-4 bg-pureWhite-light">
               <div className="pt-8">
                 <h2 className="font-bold text-lg sm:text-xl">
                   Related keywords
@@ -430,18 +430,20 @@ const Home = () => {
                   ))}
                 </div>
               </div>
-              <div className="mt-8 mb-3">
+
+              <div className="py-10">
                 <h1 className="font-semibold text-lg sm:text-xl">Category</h1>
                 <div className="flex flex-wrap gap-2 mt-2">
                   {product.category.map((keyword, index) => (
                     <span key={index}>
-                      <button className="border rounded-md py-1 px-3 sm:px-4 flex gap-1 items-center text-sm">
+                      <button className="border rounded py-1 px-3 sm:px-4 flex gap-1 items-center text-sm">
                         {keyword}
                       </button>
                     </span>
                   ))}
                 </div>
               </div>
+
             </div>
           )}
         </div>

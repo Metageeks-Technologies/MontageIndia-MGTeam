@@ -2,6 +2,7 @@ import React, {useState} from "react";
 import {useRouter} from "next/navigation";
 import {IoSearch} from "react-icons/io5";
 import {toast} from "react-toastify";
+import { FaImage } from "react-icons/fa";
 
 const VideoBanner = ( {
   isSearch,
@@ -66,7 +67,7 @@ const VideoBanner = ( {
                   />
                 </div>
                 <div className="flex gap-5">
-                  <div className="sm:hidden flex items-center justify-center">
+                  <div className="sm:hidden  flex items-center justify-center">
                     <select
                       value={searchType}
                       onChange={( e ) => {
@@ -77,10 +78,10 @@ const VideoBanner = ( {
                       <option>
                         <button
                           onClick={() => setSearchType( "image" )}
-                          className={`p-2 rounded-full bg-red-500`}
+                          className={`p-2 rounded-full bg-red-500 text-xs`}
                         >
                           <img src="/asset/image_logo.svg" alt="Image Logo" className="w-6 h-6 bg-black" />
-                          {/* image */}
+                          
                         </button>
                       </option>
                       <option >
@@ -113,17 +114,17 @@ const VideoBanner = ( {
                     onChange={( e ) => {
                       setSearchType( e.target.value );
                     }}
-                    className="sm:block hidden outline-none cursor-pointer  text-black rounded-lg p-1.5 text-center"
+                    className=" outline-none cursor-pointer  text-black rounded-lg p-1.5 text-center"
                   >
-                    <option value="image">Image</option>
-                    <option value="audio">Audio</option>
-                    <option value="video">Video</option>
+                    <option className="lg:text-medium sm:text-xs text-xs" value="image">Image</option>
+                    <option className="lg:text-medium sm:text-xs text-xs" value="audio">Audio</option>
+                    <option className="lg:text-medium sm:text-xs text-xs" value="video">Video</option>
                   </select>
                   <button
                     onClick={() => {
                       handleSearch();
                     }}
-                    className="bg-red-500 text-white py-8 relative sm:p-4 p-2 rounded-r-lg"
+                    className="bg-red-500 text-white lg:py-4 sm:py-4 py-2 relative sm:p-4 p-2 rounded-r-lg"
                     type="button"
                     aria-label="Search"
                   >

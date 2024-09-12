@@ -246,25 +246,30 @@ const Filter: React.FC<FilterProps> = ({
   return (
     <div
       className={`h-fit sticky top-36 left-0  text-gray-800 overflow-y-auto transition-all duration-300 ease-in-out ${
-        isOpen ? "w-80" : "w-0"
+        isOpen ? "lg:w-80 sm:w-72 w-64" : "w-0"
       }`}
     >
       <div className="p-4 ">
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-xl font-semibold ">Filters</h2>
+        <div className="flex sm:flex-row flex-col justify-between items-center mb-6">
+          
+          <h2 className="text-xl   font-semibold  ">Filters</h2>
+          
           <div className="flex items-center">
+            
             <button
               onClick={onClearFilter}
-              className="mr-4 px-3 py-1 bg-red-500 text-white rounded-full text-sm hover:bg-red-600 transition-colors"
+              className="mr-4 px-3 py-1 sm:mt-0 mt-2 bg-red-500 text-white rounded-full text-sm hover:bg-red-600 transition-colors"
             >
               Clear All
             </button>
+
             <button onClick={onToggle} className="">
               <span className="sr-only">Close</span>
               <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
+
           </div>
         </div>
 

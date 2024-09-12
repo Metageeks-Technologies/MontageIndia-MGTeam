@@ -4,7 +4,7 @@ import { Key } from "@react-types/shared";
 import SubscriptionCard from "@/components/subscription/subsciptionCard";
 import { Tabs, Tab, Input, Link, Button, Spinner } from "@nextui-org/react";
 import instance from "@/utils/axios";
-import { SpinnerLoader} from "@/components/loader/loaders";
+import { SpinnerLoader } from "@/components/loader/loaders";
 
 interface SubscriptionPlan {
   _id: string;
@@ -55,12 +55,12 @@ const SubscriptionTable = () => {
     fetchPlans();
   }, []);
   return (
-    <div className="flex flex-col justify-start items-center min-h-screen rounded-lg overflow-hidden bg-white text-white">
-      <div className="w-full font-bold text-md md:text-xl mb-8 rounded-lg bg-[#7828c8] text-white px-4 py-2 md:px-6 md:py-4">
+    <div className="flex flex-col justify-start items-center  min-h-screen rounded-lg overflow-hidden bg-white text-white">
+      <div className="w-full font-bold text-md md:text-xl mb-8 rounded-lg bg-[#8D529C] text-white px-4 py-2 md:px-6 md:py-4">
         Subscription Plan
       </div>
       {loader ? (
-          <SpinnerLoader/>
+        <SpinnerLoader />
       ) : (
         <div className="flex flex-col justify-center px-8 items-center">
           <Tabs
@@ -69,6 +69,7 @@ const SubscriptionTable = () => {
             radius="full"
             size="lg"
             selectedKey={selected}
+            
             onSelectionChange={setSelected}
           >
             <Tab key="Monthly" title="Monthly Plans">
@@ -81,7 +82,11 @@ const SubscriptionTable = () => {
                 )}
               </div>
             </Tab>
-            <Tab key="Yearly" title="Yearly Plans">
+            <Tab
+              
+              key="Yearly"
+              title="Yearly Plans"
+            >
               <div className="flex flex-wrap justify-center items-center gap-4">
                 {plans.map(
                   (plan) =>

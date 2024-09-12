@@ -19,6 +19,10 @@ import Banner from "@/components/Banner";
 import VideoBanner from "@/components/Home/videoBanner";
 import {useRouter} from "next/navigation";
 import Link from "next/link";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
+import Slider from "react-slick";
+
 
 // Collection data
 interface Card {
@@ -235,6 +239,32 @@ export default function Home () {
     getCategory();
   };
 
+  const settings = {
+    dots: false,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 6,
+    slidesToScroll: 1,
+    arrows: true,
+    autoplay: false,
+    responsive: [
+      {
+        breakpoint: 1050,
+        settings: {
+          slidesToShow: 3,
+          slidesToScroll: 1,
+        }
+      },
+      {
+        breakpoint: 710,
+        settings: {
+          slidesToShow: 2,
+          slidesToScroll: 1
+        }
+      }
+    ]
+  }
+
   return (
     <div className="main  ">
       {/* <TopBanner
@@ -377,25 +407,29 @@ export default function Home () {
           </div>
         )}
       </div>
+      
       {/* dummy commit */}
       <div className="bg-[#eeeeee] mt-8">
         <div className="container w-full m-auto py-4 md:py-14 flex flex-col bg-[#eeeeee] items-center">
           <h2 className="text-2xl text-[#333333] md:text-3xl lg:text-3xl font-bold mb-5 text-center">
             Trusted by the world's largest companies
           </h2>
-          <div className="grid lg:grid-cols-6 md:grid-cols-4 grid-cols-2 gap-2">
+          <div className="w-[80%] m-auto mt-2">
+          <Slider { ...settings } className="gap-5">  
             {companies.map((company, index) => (
               <div
                 key={index}
-                className="flex items-center md:mb-4 p-4 md:gap-5 border border-neutral-200 "
+                className="flex items-center md:mb-4  md:gap-5  border-neutral-200 "
               >
                 <img
                   src={company.logo}
                   alt={company.name}
-                  className="h-16 w-32 md:h-20 md:w-40 object-cover"
+                  className="h-24 w-36 md:h-28 md:w-48 object-cover"
                 />
               </div>
             ))}
+            </Slider>
+            </div>
             {/* provide the slider  */}
 
 {/* 
@@ -433,7 +467,7 @@ export default function Home () {
               </div>
              
             </div> */}
-          </div>
+         
         </div>
       </div>
       <Footer />

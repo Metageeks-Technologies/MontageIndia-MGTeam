@@ -4,6 +4,7 @@ import Footer from "@/components/Footer";
 import React, { useState } from "react";
 import ReCAPTCHA from "react-google-recaptcha";
 import instance from "@/utils/axios";
+import { useRouter } from 'next/navigation';
 import Swal from "sweetalert2";
 import { ThreeDotsLoader } from "@/components/loader/loaders";
 
@@ -25,8 +26,9 @@ const onDemandPage = () => {
     message: "",
     capValue: "",
   });
-
+  const [isSubmited, setIsSubmited] = useState(false);
   const [capValue, setCapValue] = useState();
+  const router = useRouter();
 
   const onCaptchaChange = (value: any) => {
     if (errors.capValue) setErrors({ ...errors, capValue: "" });
@@ -88,12 +90,14 @@ const onDemandPage = () => {
           return;
         }
 
-        Swal.fire({
-          icon: "success",
-          title: "Email sent successfully",
-          text: "We will get back to you soon",
-        });
+        // Swal.fire({
+        //   icon: "success",
+        //   title: "Email sent successfully",
+        //   text: "We will get back to you soon",
+        // });
         setLoading(false);
+        setIsSubmited(true);
+
       } catch (e) {
         Swal.fire({
           icon: "error",
@@ -117,14 +121,33 @@ const onDemandPage = () => {
 
   return (
     <div className="bg-white">
-      <div className="mx-auto my-10 p-6 bg-white rounded-lg shadow-md w-1/2 ">
+      {isSubmited ? (
+       <div className="h-screen flex justify-center items-center px-4">
+       <div className="flex flex-col space-y-2 items-center text-center max-w-lg">
+         <img src="/asset/Thank.svg" alt="Not Found" className="mb-4" />
+         <h1 className="text-3xl md:text-4xl  font-semibold">Thank you for your subscription!</h1>
+         <p className="text-sm md:text-base text-[#333333]">
+         We just sent you a confirmation email.<br/> Check out your inbox.
+         </p>
+         <div className='py-3'>
+         <button className="bg-[#FE423F] py-2 px-6 md:py-2.5 md:px-8 text-[#ffff] rounded-md shadow-md"
+           onClick={() => router.push( "/" )}
+         >
+           CLOSE
+         </button>
+         </div>
+       </div>
+     </div>
+      ) : (
+        <div className="mx-auto my-10 p-6 bg-white rounded-lg shadow-md sm:w-1/2  w-full  ">
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-xl font-bold">Describe your need!</h2>
         </div>
+
         <form
           onSubmit={handleSubmit}
-          className="grid grid-cols-1 md:grid-cols-2 gap-4"
         >
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label htmlFor="name" className="block font-medium">
               Name <span className="text-red-500">*</span>
@@ -189,7 +212,8 @@ const onDemandPage = () => {
               <p className="text-red-500 text-sm mt-1">{errors.subject}</p>
             )}
           </div>
-          <div className="col-span-2">
+          </div>
+          <div className="col-span-2 mt-2">
             <label htmlFor="message" className="block font-medium">
               Message <span className="text-red-500">*</span>
             </label>
@@ -205,7 +229,7 @@ const onDemandPage = () => {
               <p className="text-red-500 text-sm mt-1">{errors.message}</p>
             )}
           </div>
-          <div className="col-span-2 mx-auto">
+          <div className="col-span-2 mx-auto flex justify-center">
             <div className="d-flex mt-2 mb-2 flex-column align-items-center">
               <ReCAPTCHA
                 sitekey={`${process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY}`}
@@ -226,7 +250,10 @@ const onDemandPage = () => {
             </button>
           </div>
         </form>
+
       </div>
+      )}
+      
       <Footer />
     </div>
   );

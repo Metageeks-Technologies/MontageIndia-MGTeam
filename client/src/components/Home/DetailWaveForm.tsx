@@ -13,9 +13,42 @@ const DetailWaveform = ({ product }: { product: TCustomerProduct }) => {
   const [waveform, setWaveform] = useState<WaveSurfer | null>(null);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
+  const [viewMode, setViewMode] = useState("desktop");
+  const [waveHeight, setWaveHeight] = useState <Number>(300);
 
   const thumbRef = useRef<HTMLDivElement | null>(null);
   const router = useRouter();
+
+ 
+  useEffect(() => {
+    const handleResize = () => {
+      const width = window.innerWidth;
+      
+      if (width >= 1024) {
+        setViewMode("desktop");
+        setWaveHeight(300);
+      } else if (width >= 768) {
+        setViewMode("tablet");
+        setWaveHeight(250);
+      } else {
+        setViewMode("mobile");
+        setWaveHeight(100);
+      }
+    };
+
+    // Set the initial viewMode based on current width
+    handleResize();
+
+    // Add event listener to handle resize
+    window.addEventListener("resize", handleResize);
+
+    // Clean up the event listener when the component is unmounted
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+  
+  console.log("data", viewMode)
 
   useEffect(() => {
     const id = `waveform-${product._id}`;
@@ -35,7 +68,7 @@ const DetailWaveform = ({ product }: { product: TCustomerProduct }) => {
       barGap: 5,
       container: `#${id}`,
       backend: "WebAudio",
-      height: 300,
+      height: waveHeight as number,
       progressColor: "#BBE445",
       waveColor: "#666666",
       cursorColor: "transparent",
@@ -134,10 +167,10 @@ const DetailWaveform = ({ product }: { product: TCustomerProduct }) => {
   }, [currentTime, duration]);
 
   return (
-    <div className="bg-gradient-to-r px-8 from-[#111721] to-[#323233] h-[32rem] w-full flex-col rounded-lg p-4 mb-2 flex items-center justify-center">
-      <div className="w-full detail-waveform-container ">
-        <div className="detail-wave" id={`waveform-${product._id}`} />
-        <audio id={`track-${product._id}`} src={url} />
+    <div className="bg-gradient-to-r from-[#111721] to-[#323233] h-[24rem]  md:h-[32rem] lg:h-[32rem] px-8  w-full flex-col rounded-lg p-4 mb-2 flex items-center justify-center">
+      <div className="w-full detail-waveform-container  flex items-start ">
+        <div className="detail-wave  " id={`waveform-${product._id}`} />
+        <audio className="" id={`track-${product._id}`} src={url} />
       </div>
       <div className="flex w-full items-center justify-center px-4 gap-4 cursor-pointer">
         <button

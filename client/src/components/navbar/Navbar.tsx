@@ -129,7 +129,7 @@ const Navbar: React.FC = () => {
   }) => (
     <Link
       href={href}
-      className="text-gray-600 rounded-md py-2 px-6 hover:bg-webgreen-light hover:text-pureWhite-light transition duration-200  items-center flex gap-2"
+      className="text-gray-600 rounded-md py-2 px-8 hover:bg-gray-100 transition duration-200 justify-center items-center flex gap-2"
 
     >
       {children}

@@ -19,6 +19,24 @@ const Footer = () => {
             <GoogleTranslate />
           </div>
         </div>
+
+        <div className=" sm:hidden block w-full md:w-1/4 mt-4">
+          <h2 className="font-bold mb-7">Newsletter</h2>
+          <form className="flex flex-col space-y-2">
+            <input
+              type="email"
+              placeholder="Enter your email address"
+              className="w-full border border-[#444444] rounded-md p-2 mb-3 text-white bg-black"
+            />
+            <button
+              type="submit"
+              className="bg-[#222222] text-gray-400 rounded-md py-2 px-4"
+            >
+              Subscribe
+            </button>
+          </form>
+        </div>
+
         <div className="mt-5 md:w-3/4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 gap-6">
           <div className="w-full">
             <h2 className="font-bold mb-3">Our Company</h2>
@@ -65,7 +83,7 @@ const Footer = () => {
             </ul>
           </div>
         </div>
-        <div className="w-full md:w-1/4 mt-4">
+        <div className=" sm:block hidden w-full md:w-1/4 mt-4">
           <h2 className="font-bold mb-7">Newsletter</h2>
           <form className="flex flex-col space-y-2">
             <input
@@ -75,7 +93,7 @@ const Footer = () => {
             />
             <button
               type="submit"
-              className="bg-webgreen hover:bg-webgreen-light text-gray-400 rounded-md py-2 px-4"
+              className="bg-webgreen hover:bg-webgreen-light text-[#FFFFFF] rounded-md py-2 px-4"
             >
               Subscribe
             </button>
