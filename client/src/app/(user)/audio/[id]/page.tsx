@@ -164,15 +164,16 @@ const page = () => {
   return (
     <>
       <Searchbar />
-      <div className="main h-full">
+      <div className="main ">
         <hr />
 
         <div className="bg-pageBg mx-auto ">
-          <div className="flex flex-col lg:flex-row lg:space-x-8 px-4 lg:px-4 xl:px-24 md:px-4 ">
-            <div className="w-full lg:w-2/3">
+          <div className="flex flex-col sm:flex-col border  lg:flex-row lg:space-x-8 px-4 lg:px-4 xl:px-16 md:px-4 gap-12  ">
+            <div className="w-full lg:w-2/3 lg:pb-8 ">
               {product && (
+                <>
                 <div className="relative">
-                  <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 pt-4 pr-6">
+                  <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 pt-4 ">
                     <h1 className="text-xl sm:text-2xl font-semibold mb-2 sm:mb-0">
                       {product.title}
                     </h1>
@@ -211,10 +212,10 @@ const page = () => {
                       </button>
                     </div>
                   </div>
-                  <div className="w-full h-48 sm:h-64 md:h-80 lg:h-[32rem] rounded-lg">
+                  {/* <div className="w-full h-[24rem]  md:h-[32rem] lg:h-[32rem] rounded-lg border "> */}
                     {product && <DetailWaveform product={product} />}
-                  </div>
-                  <div className="mt-2 w-full lg:w-[50rem]">
+                  {/* </div> */}
+                  <div className="mt-2 w-full lg:w-[50rem] ">
                     <h2 className="font-bold">Description</h2>
                     <p className="text-sm text-neutral-700">
                       Stock Audio ID: {product._id}
@@ -222,12 +223,13 @@ const page = () => {
                     <p className="text-sm w-3/4">{product.description}</p>
                   </div>
                 </div>
+                </>
               )}
             </div>
             <div className="w-full lg:w-1/3 mt-8 lg:mt-0 border-t lg:border-l lg:border-t-0 pt-8 lg:pt-0 ">
               {product && (
                 <>
-                  <div className="border p-4 sm:p-6 bg-white rounded-lg">
+                  <div className="border p-4 sm:p-6 bg-white rounded-b-lg">
                     <h3 className="font-bold text-lg sm:text-xl mb-4">
                       Music Standard a License
                     </h3>
@@ -380,8 +382,8 @@ const page = () => {
             </div>
           </div>
 
-          <div className="pt-8 sm:pt-12 bg-pureWhite-light w-full px-4 sm:px-6 lg:px-4 xl:px-24 md:px-4 py-8">
-            <h1 className="font-semibold text-lg sm:text-xl">Similar Audios</h1>
+          <div className="pt-8 sm:pt-12 bg-pureWhite-light w-full px-4 sm:px-6 lg:px-4 xl:px-16 md:px-4 py-8">
+            <h1 className="font-semibold text-lg sm:text-xl mb-2">Similar Audios</h1>
             {similarProducts.map((product, index) => (
               <Waveform
                 key={index}
@@ -392,12 +394,12 @@ const page = () => {
           </div>
 
           {product && (
-            <div className="px-4 sm:px-6 lg:px-4 xl:px-24 md:px-4 bg-pureWhite-light">
-              <div className="pt-8">
+            <div className="px-4 sm:px-6 lg:px-4 xl:px-16 md:px-4 bg-pureWhite-light py-8">
+              <div className="">
                 <h2 className="font-bold text-lg sm:text-xl">
                   Related keywords
                 </h2>
-                <div className="flex flex-wrap gap-2 mt-2">
+                <div className="flex flex-wrap gap-2">
                   {product.tags.map((keyword, index) => (
                     <span key={index}>
                       <button className="border rounded-md py-1 px-3 sm:px-4 flex gap-1 items-center text-sm">

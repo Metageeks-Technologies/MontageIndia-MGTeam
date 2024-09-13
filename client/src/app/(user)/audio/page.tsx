@@ -140,14 +140,18 @@ const Page = () => {
         <div className="flex-1 transition-all duration-300 ease-in-out">
           <div className="p-4">
             <div className="main">
-              <div className="py-10 px-4 md:px-8 lg:px-12">
+              <div className="py-6 px-0 md:px-8 lg:px-12">
+
+                <div className="sm:py-6 py-0">
+                <h1 className="text-4xl sm:block hidden font-semibold  text-center">See what’s trending now</h1>
                 {totalAudioData > 0 && (
-                  <h4 className="text-lg text-neutral-700 mb-4">
-                    {totalAudioData} Audio Files
+                  <h4 className="sm:text-lg sm:font-normal font-semibold text-sm mt-1 text-neutral-700 sm:text-center text-start">
+                    {totalAudioData} Bring your projects to life with PremiumBeat’s top-quality music.
                   </h4>
                 )}
+                </div>
 
-                <div className="overflow-y-auto mt-2">
+                <div className=" mt-2">
                   {loading ? (
                     <div className="min-h-screen flex justify-center items-center">
                       <SpinnerLoader />
@@ -166,7 +170,7 @@ const Page = () => {
                 </div>
 
                 {totalNumOfPage > 1 && (
-                  <div className="flex flex-wrap justify-center items-center gap-4 my-10">
+                  <div className="flex flex-wrap justify-center items-center gap-4 mt-10">
                     <Button
                       size="sm"
                       type="button"

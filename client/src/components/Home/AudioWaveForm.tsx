@@ -223,9 +223,9 @@ const Waveform = ({
   return (
     <div
       onClick={() => handleClick(product.uuid)}
-      className="bg-gray-800 w-full justify-between rounded-lg px-4 py-2 mb-2 flex items-center cursor-pointer"
+      className="bg-gradient-to-r from-[#111721] to-[#323233] w-full justify-between sm:flex-row flex-col rounded-lg sm:px-4 sm:py-2 py-3 px-6 mb-2 flex items-center cursor-pointer"
     >
-      <div className="flex justify-start items-center lg:gap-3 md:gap-2 gap-1 w-4/12">
+      <div className="flex justify-start items-center lg:gap-3 md:gap-2 gap-4 sm:w-4/12 w-full sm:mt-0 mt-2 ">
         <button
           className="play-button"
           onClick={(e) => {
@@ -291,14 +291,15 @@ const Waveform = ({
             ))}
           </p>
         </div>
+       
       </div>
 
-      <div className="lg:w-4/12 md:w-40 w-28 waveform-container hidden sm:block">
+      <div className="lg:w-4/12 md:w-40 w-full waveform-container hidden sm:block">
         <div className="wave" id={`waveform-${product._id}`} />
         <audio id={`track-${product._id}`} src={url} />
       </div>
 
-      <div className="w-4/12 lg:gap-9 md:gap-5 gap-3 items-center justify-end flex text-right text-gray-400">
+      <div className="sm:w-4/12 w-full  lg:gap-9 md:gap-5 flex gap-3 items-center sm:justify-end justify-start text-right text-gray-400">
         <div className="flex items-center gap-2 text-right text-white">
           <p>{formatSecToMin(product.variants[0].metadata?.length || 0)} min</p>
           <p className="capitalize">{product.variants[0].metadata?.format}</p>

@@ -169,17 +169,19 @@ const Page = () => {
               {/* Trending Videos */}
               <div className="">
                 <div
-                  className={`py-10 lg:mx-4 ${
+                  className={`py-6 lg:mx-4 ${
                     !isFilterOpen ? "xl:mx-16 md:mx-4 mx-4" : "ml-0"
                   } `}
                 >
-                  <h1 className="text-2xl font-bold  text-start">
+                  <div className="sm:py-6 py-0">
+                  <h1 className="text-4xl sm:block hidden font-semibold  text-center">
                     Today's Trending Video
                   </h1>
-                  <h4 className="text-lg text-neutral-700">
+                  <h4 className="sm:text-lg sm:font-normal font-semibold text-sm mt-1 text-neutral-700 sm:text-center text-start">
                     {totalVideoData} Product stock Photos and High-res Pictures
                   </h4>
-                  <div className="mx-auto min-h-screen mt-4">
+                  </div>
+                  <div className="mx-auto min-h-screen mt-2">
                     {loading ? (
                       <div className="flex items-center justify-center text-center m-auto">
                         <Spinner label="Loading..." color="danger" />

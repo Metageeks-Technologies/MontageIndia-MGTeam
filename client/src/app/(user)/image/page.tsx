@@ -155,7 +155,7 @@ const Page = () => {
   const displayData = hasFilterParams() ? filteredData : product;
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen ">
       <Searchbar />
       <div className="w-full h-full lg:block md:hidden hidden">
         <Hero />
@@ -171,17 +171,19 @@ const Page = () => {
                     !isFilterOpen ? "xl:mx-16 md:mx-4 mx-4" : "ml-0"
                   } `}
                 >
-                  <h1 className="text-2xl font-bold  text-start">
-                    Today's Trending Images
+                  <div className="sm:py-6 py-0 ">
+                  <h1 className="text-4xl sm:block hidden font-semibold  text-center">
+                  Current Trending Visuals
                   </h1>
-                  <h4 className="text-lg text-neutral-700">
+                  <h4 className="sm:text-lg sm:font-normal font-semibold text-sm mt-1 text-neutral-700 sm:text-center text-start">
                     {totalImageData} Product stock Photos and High-res Pictures
                   </h4>
-                  <div className="mx-auto mt-4">
+                  </div>
+                  <div className="mx-auto sm:mt-4 mt-1">
                     {loading ? (
                       <SpinnerLoader />
                     ) : (
-                      <div className="columns-1 min-h-screen sm:columns-2 md:columns-3 lg:columns-4 gap-2 mt-2 relative">
+                      <div className="columns-1 min-h-screen sm:columns-2 md:columns-2 lg:columns-4 gap-2 mt-2 relative">
                         {displayData.length > 0 ? (
                           displayData.map((data: any) => (
                             <ImageGallery key={data._id} data={data} />
@@ -197,7 +199,7 @@ const Page = () => {
 
               {/* Pagination */}
               {totalImageNumOfPage > 1 && (
-                <div className="flex justify-center items-center gap-4 my-4">
+                <div className="flex justify-center items-center gap-4 my-4 pb-8">
                   <Button
                     size="sm"
                     type="button"
@@ -244,7 +246,9 @@ const Page = () => {
           </div>
         </div>
       </div>
+     
       <Footer />
+      
     </div>
   );
 };

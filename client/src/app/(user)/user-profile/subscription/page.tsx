@@ -4,7 +4,7 @@ import { Key } from "@react-types/shared";
 import SubscriptionCard from "@/components/subscription/subsciptionCard";
 import { Tabs, Tab, Input, Link, Button, Spinner } from "@nextui-org/react";
 import instance from "@/utils/axios";
-import { SpinnerLoader} from "@/components/loader/loaders";
+import { SpinnerLoader } from "@/components/loader/loaders";
 
 interface SubscriptionPlan {
   _id: string;
@@ -66,7 +66,7 @@ const SubscriptionTable = () => {
         Subscription Plan
       </div>
       {loader ? (
-          <SpinnerLoader/>
+        <SpinnerLoader />
       ) : (
         <div className="w-full flex flex-col justify-center items-center">
         <div className="mb-4">

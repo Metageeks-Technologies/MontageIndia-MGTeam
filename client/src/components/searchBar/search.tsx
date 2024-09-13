@@ -107,6 +107,7 @@ const Searchbar = () => {
 
     const currentCategories = searchParams.get("searchTerm");
 
+
     const categoriesArray = currentCategories
       ? currentCategories.split(",").map((cat) => cat.trim())
       : [];
@@ -142,9 +143,9 @@ const Searchbar = () => {
         <div className="flex relative justify-between items-center gap-4 bg-gray-100 border border-gray-300 rounded-md mx-4 px-4 lg:mx-4 xl:mx-16 md:mx-4">
           <div className="flex flex-row w-full gap-2">
             {/* Desktop view */}
-            <div className="hidden md:flex w-full items-center">
+            <div className="hidden md:flex w-full items-center ">
               <select
-                className="bg-gray-100 w-40 outline-none cursor-pointer text-gray-600 text-sm rounded-lg p-2.5"
+                className="bg-gray-100 lg:w-36 md:w-24 w-32 outline-none cursor-pointer text-gray-600 lg:text-sm md:text-xs text-xs  rounded-lg p-2.5"
                 value={selectedOption}
                 onChange={(e) => setSelectedOption(e.target.value)}
               >
@@ -178,7 +179,7 @@ const Searchbar = () => {
                     Audio
                   </option>
                 )}
-                <option className="cursor-pointer" value="editorialImage">
+                <option className="cursor-pointer lg:text-medium sm:text-" value="editorialImage">
                   Editorial Image
                 </option>
                 <option className="cursor-pointer" value="editorialAudio">
@@ -191,7 +192,7 @@ const Searchbar = () => {
 
               <img src="/asset/Rectangle 15.png" className="mx-2" alt="" />
 
-              <div className="relative w-full">
+              <div className="relative sm:w-full w-[60%] ">
                 <input
                   type="text"
                   placeholder="Search"
@@ -214,18 +215,21 @@ const Searchbar = () => {
             {/* Mobile view */}
             <div className="md:hidden flex items-center w-full">
               <select
-                className="bg-gray-100 w-12 outline-none cursor-pointer text-gray-600 text-sm rounded-l-md"
+                className="bg-gray-100 w-24 outline-none cursor-pointer text-gray-600 text-xs rounded-l-md"
                 value={selectedOption}
                 onChange={(e) => setSelectedOption(e.target.value)}
               >
                 <option value="Image">
+                  Image
                   <CiCamera />
                 </option>
                 <option value="Audio">
                   <CiMusicNote1 />
+                  Video
                 </option>
                 <option value="Video">
                   <FaVideo />
+                  Audio
                 </option>
               </select>
 
@@ -262,6 +266,7 @@ const Searchbar = () => {
           <div className="flex py-1 gap-4 items-center justify-between w-[92%] flex-col md:flex-row mx-auto">
             <div className="flex flex-row gap-3 justify-between md:w-fit">
               {/* <Filter /> */}
+              <div className="sm:block hidden">
               <div className="md:hidden">
                 <button
                   onClick={handleClear}
@@ -277,17 +282,18 @@ const Searchbar = () => {
               </div>
             </div>
             {terms && terms.length > 0 && (
-              <div className="font-bold w-44 whitespace-nowrap text-md text-start">
+              <div  className="font-bold w-44 sm:block hidden whitespace-nowrap text-md text-start">
                 Related Searches :
               </div>
             )}
-            <div className="rounded-md flex flex-row scrollbar-hide overflow-x-scroll items-center text-center justify-start">
+            </div>
+            <div className="rounded-md flex lg:w-full sm:w-full w-full flex-row scrollbar-hide overflow-x-scroll items-center text-center justify-start">
               {terms.map((category) => {
                 return (
-                  <button
+                  <button 
                     key={category}
                     onClick={() => handleCategoryClick(category)}
-                    className={`flex text-sm items-center whitespace-nowrap m-2 hover:bg-slate-400 px-3 py-[6px] sm:px-4 sm:py-2 border border-gray-300 rounded-md capitalize backdrop-blur-sm hover:bg-opacity-30 transition duration-300 ${
+                    className={`flex text-sm items-center whitespace-nowrap m-2  hover:bg-slate-400 px-3 py-[6px] sm:px-4 sm:py-2 border border-gray-300 rounded-md capitalize backdrop-blur-sm hover:bg-opacity-30 transition duration-300 ${
                       searchRenderTerm === category
                         ? "bg-red-500 text-white"
                         : "bg-transparent"
