@@ -155,7 +155,7 @@ const Navbar: React.FC = () => {
   }, []);
 
   return (
-    <div className="bg-white shadow-md">
+    <div className="bg-white shadow-md ">
       <div className=" mx-auto px-4 sm:px-4 lg:px-16 ">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center space-x-5">
