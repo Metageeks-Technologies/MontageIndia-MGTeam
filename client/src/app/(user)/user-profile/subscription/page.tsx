@@ -35,6 +35,12 @@ const SubscriptionTable = () => {
   const [loader, setLoader] = useState(false);
   const [plans, setPlans] = useState<SubscriptionPlan[]>([]);
   const [selected, setSelected] = useState<Key | null | undefined>("login");
+  const [activeTab, setActiveTab] = useState("monthly");
+
+  const handleTabClick = (tab: string) => {
+    setActiveTab(tab);
+  }
+
   const fetchPlans = async () => {
     try {
       setLoader(true);
@@ -55,24 +61,55 @@ const SubscriptionTable = () => {
     fetchPlans();
   }, []);
   return (
-    <div className="flex flex-col justify-start items-center min-h-screen rounded-lg overflow-hidden bg-white text-white">
-      <div className="w-full font-bold text-md md:text-xl mb-8 rounded-lg bg-[#7828c8] text-white px-4 py-2 md:px-6 md:py-4">
+    <div className="w-full flex flex-col justify-start items-center min-h-screen rounded-lg overflow-hidden bg-white text-white">
+      <div className="w-full font-bold text-md md:text-xl mb-8 rounded-lg bg-[#8d529c] text-white px-4 py-2 md:px-6 md:py-4">
         Subscription Plan
       </div>
       {loader ? (
           <SpinnerLoader/>
       ) : (
-        <div className="flex flex-col justify-center px-8 items-center">
-          <Tabs
-            color={"secondary"}
-            aria-label="Tabs price"
-            radius="full"
-            size="lg"
-            selectedKey={selected}
-            onSelectionChange={setSelected}
-          >
-            <Tab key="Monthly" title="Monthly Plans">
-              <div className="flex flex-wrap justify-center items-center gap-4">
+        <div className="w-full flex flex-col justify-center items-center">
+        <div className="mb-4">
+                <ul
+                  className="flex justify-center text-sm font-medium text-center"
+                  role="tablist"
+                >
+                  <li className="me-2" role="presentation">
+                    <button
+                      className={`inline-block px-6 py-2 rounded-md ${
+                        activeTab === "monthly"
+                          ? "text-white bg-[#8d529c]"
+                          : "hover:text-gray-600 text-black bg-gray-200 hover:border-gray-300"
+                      }`}
+                      onClick={() => handleTabClick("monthly")}
+                      role="tab"
+                      aria-controls="monthly"
+                      aria-selected={activeTab === "monthly"}
+                    >
+                      Monthly
+                    </button>
+                  </li>
+                  <li className="me-2" role="presentation">
+                    <button
+                      className={`inline-block px-6 py-2 rounded-md ${
+                        activeTab === "yearly"
+                          ? "text-white bg-[#8d529c]"
+                          : "hover:text-gray-600 text-black bg-gray-200 hover:border-gray-300"
+                      }`}
+                      onClick={() => handleTabClick("yearly")}
+                      role="tab"
+                      aria-controls="yearly"
+                      aria-selected={activeTab === "yearly"}
+                    >
+                     Yearly
+                    </button>
+                  </li>
+                </ul>
+              </div>
+              <div className="w-full px-4" >
+              {
+                activeTab === "monthly" ? (
+                  <div className="w-full flex flex-wrap lg:flex-nowrap flex-col md:flex-row justify-center items-center gap-4">
                 {plans.map(
                   (plan) =>
                     plan.period === "monthly" && (
@@ -80,16 +117,17 @@ const SubscriptionTable = () => {
                     )
                 )}
               </div>
-            </Tab>
-            <Tab key="Yearly" title="Yearly Plans">
-              <div className="flex flex-wrap justify-center items-center gap-4">
+                ):(
+                   <div className="w-full flex-wrap lg:flex-nowrap flex flex-col md:flex-row justify-center items-center gap-4">
                 {plans.map(
                   (plan) =>
                     plan.period === "yearly" && <SubscriptionCard plan={plan} />
                 )}
               </div>
-            </Tab>
-          </Tabs>
+                )
+              }
+              
+              </div>
         </div>
       )}
     </div>

@@ -257,10 +257,6 @@ export default function Home() {
           </h2>
         </div>
         <div className="container mx-auto gap-4 grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 lg:mt-3">
-          {/* {cards.map((card, index) => (
-            <CardSlider key={index} {...card} />
-          ))} */}
-
           <div
             className="relative group border cursor-pointer"
             onClick={() => router.push("/video")}
@@ -352,7 +348,7 @@ export default function Home() {
                   src={data.image}
                   alt={`Product Image `}
                   // loading="lazy"
-                  className="w-full h-28 md:h-52 object-cover rounded"
+                  className="w-full h-28 md:h-52 object-cover hover:opacity-90 rounded"
                 />
                 <div className="absolute bottom-0 py-0.5 md:py-1.5 w-full bg-[#00000089] ">
                   <h1 className="text-white text-sm md:text-md font-bold capitalize text-center">
@@ -370,7 +366,7 @@ export default function Home() {
           <div className="flex justify-center">
             <button
               onClick={() => handleLoadMore()}
-              className="bg-red-500 text-white py-1 px-2 md:py-2 md:px-4 mt-8 rounded "
+              className="bg-webred hover:bg-red-600 text-white py-1 px-2 md:py-2 md:px-4 mt-8 rounded-md "
             >
               Load More
             </button>

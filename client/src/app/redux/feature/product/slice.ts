@@ -1,8 +1,8 @@
 "use client";
+import { getCartFromLocalStorage } from "./api";
 import { TCustomerProduct } from "@/types/product";
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
-import { getCartFromLocalStorage } from "./api";
 
 export type CartItem = {
   productId: TCustomerProduct;

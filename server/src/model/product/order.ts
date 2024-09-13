@@ -34,7 +34,7 @@ const OrderSchema: Schema = new Schema(
       enum: ["pending", "paid", "completed", "cancelled"],
       required: true,
     },
-    method: { type: String, enum: ["razorpay", "credit"], required: true },
+    method: { type: String, enum: ["razorpay", "credits"], required: true },
   },
   {
     timestamps: true,

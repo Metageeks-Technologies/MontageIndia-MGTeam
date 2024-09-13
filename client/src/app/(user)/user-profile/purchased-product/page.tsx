@@ -14,6 +14,7 @@ import { IoMdDownload } from "react-icons/io";
 import { IoEyeOutline } from "react-icons/io5";
 import Link from "next/link";
 import { downloadProduct } from "@/app/redux/feature/product/api";
+import { truncateWords } from "@/utils/helper";
 
 type Variant = {
   _id: string;
@@ -103,7 +104,7 @@ const Page: React.FC = () => {
   };
 
   return (
-    <div className="w-full rounded-lg overflow-hidden min-h-screen bg-white px-2 py-1 md:px-6 md:py-4">
+    <div className="rounded-lg min-h-screen bg-white px-6 py-4">
       <h1 className="md:text-xl font-semibold mb-6 text-gray-800">
         Purchased Products
       </h1>
@@ -129,68 +130,40 @@ const Page: React.FC = () => {
           </div>
         </div>
         <div className="flex items-center flex-wrap md:gap-4">
-          <div>
             <select
               className="border rounded px-4 py-2"
               onChange={handleDataPerPageChange}
               value={dataPerPage}
             >
-              <option value={6}>6 Data per page</option>
-              <option value={12}>12 Data per page</option>
-              <option value={24}>24 Data per page</option>
+              <option className="md:text-md text-sm px-2 py-1" value={6}>6 Data per page</option>
+              <option className="md:text-md text-sm px-2 py-1" value={12}>12 Data per page</option>
+              <option className="md:text-md text-sm px-2 py-1" value={24}>24 Data per page</option>
             </select>
-          </div>
         </div>
       </div>
       {loading ? (
+        // <div className="flex justify-center items-center min-h-[50vh]">
         <SpinnerLoader />
+        // </div>
       ) : (
         <>
-          <div className="overflow-x-scroll shadow-md rounded-lg mb-4">
-            <table className="w-full border-collapse">
-              <thead className="bg-[#F1F1F1] text-black">
-                <tr>
-                  <th className="md:px-6 md:py-3 border-b text-sm font-medium tracking-wider">
-                    Media Type
-                  </th>
-                  <th className="md:px-6 md:py-3 border-b text-sm font-medium tracking-wider">
-                    Name
-                  </th>
-                  <th className="md:px-6 md:py-3 border-b text-sm font-medium tracking-wider">
-                    Categroy
-                  </th>
-                  <th className="md:px-6 md:py-3 border-b text-sm font-medium tracking-wider">
-                    Amount
-                  </th>
-                  <th className="md:px-6 md:py-3 border-b text-sm font-medium tracking-wider">
-                    ProductId
-                  </th>
-                  <th className="md:px-6 md:py-3 border-b text-center text-sm font-medium tracking-wider">
-                    Actions
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="bg-white">
+          <div className="overflow-x-scroll rounded-lg mb-4">
+            <div className="w-full border-collapse">
+              <div className="bg-white">
                 {purchasedProducts && purchasedProducts.length === 0 && (
-                  <tr>
-                    <td
-                      colSpan={6}
-                      className="text-center text-gray-600 py-4"
-                    >
                     <div className="flex gap-1 justify-center items-center " ><AiFillProduct/><span>No purchased products found</span></div>
-                     
-                    </td>
-                  </tr>
                 )}
                 {purchasedProducts &&
                   purchasedProducts.length > 0 &&
                   purchasedProducts?.map((purchasedProduct) => (
-                    <tr
+                    <div
                       key={purchasedProduct.product._id}
-                      className="border-b hover:bg-gray-100 transition duration-200"
+                      className="w-full border-t hover:bg-gray-100 transition duration-200"
                     >
-                      <td className="md:px-6 md:py-4 text-gray-700">
-                        <div className="relative w-40 h-20">
+                      <div className="w-full flex flex-col md:flex-row justify-between gap-2 p-4">
+
+                      <div className="xl:w-3/5 sm:w-1/2 flex flex-col lg:flex-row gap-4">
+                        <div className="relative h-48 sm:w-48 sm:h-28 xl:h-32 xl:w-60">
                           {/* Media Type Icon */}
                           <div className="absolute -top-1 -left-1 bg-opacity-75 rounded-full flex items-center justify-center">
                             {purchasedProduct.product.mediaType === "image" && (
@@ -210,12 +183,7 @@ const Page: React.FC = () => {
                             )}
                           </div>
                           {/* Image */}
-                          <div className=" h-full rounded-lg overflow-hidden">
-                            {/* <img
-                              className="w-full h-full object-cover"
-                              src={`${process.env.NEXT_PUBLIC_AWS_PREFIX}${purchasedProduct.product.thumbnailKey}`}
-                              alt={purchasedProduct.product.title}
-                            /> */}
+                          <div className="h-48 sm:w-48 sm:h-28 xl:h-32 xl:w-60 overflow-hidden rounded-lg">
                             {purchasedProduct.product?.mediaType ===
                               "image" && (
                               <img
@@ -248,17 +216,18 @@ const Page: React.FC = () => {
                             )}
                           </div>
                         </div>
-                      </td>
-                      <td className="md:px-6 md:py-4 text-gray-700">
-                        {purchasedProduct.product.title}
-                      </td>
-                      <td className="md:px-6 md:py-4 text-gray-700">
-                        {purchasedProduct.product.category
+                        <div className="flex flex-col" >
+                        <div className="text-zinc-950 mb-1 font-semibold " > {purchasedProduct.product.title}</div>
+                        <div className="text-gray-700 mb-2 text-xs text-wrap" >{purchasedProduct.product.uuid}</div>
+                        {/* <div className="text-gray-700 text-sm mb-1 text-wrap "><span className="text-zinc-900 font-semibold " >Category : </span> 
+                        {purchasedProduct.product.category?.slice(0,purchasedProduct.product.category.length > 3 ? 3 : purchasedProduct.product.category.length)
                           ?.map((category) => category)
                           .join(", ")}
-                      </td>
-                      <td className="md:px-6 md:py-4 text-gray-600">
-                        <div className="flex justify-center gap-1 items-center">
+                        </div> */}
+                         <div className="lg:hidden flex">
+                       <div className="items-center justify-center flex flex-row gap-1" >
+                       <div className="text-zinc-900 font-semibold " >Price :</div>
+                       <div className="flex justify-center items-center" >
                           <span>
                             <FaRupeeSign />
                           </span>
@@ -270,13 +239,34 @@ const Page: React.FC = () => {
                               )?.price
                             }
                           </span>
+                          </div>
+                       </div>
+                          
                         </div>
-                      </td>
-                      <td className="md:px-6 md:py-4 text-gray-600">
-                        {purchasedProduct.product.uuid}
-                      </td>
-                      <td className="md:px-6 md:py-4 ">
-                        <div className="flex gap-2 justify-center items-center">
+                         <div className="text-gray-700 text-wrap text-sm">{truncateWords(purchasedProduct.product.description,20) }</div>
+                      </div>
+                        </div>
+                       
+                       <div className="xl:w-1/5 lg:w-1/4 hidden lg:flex xl:gap-2 md:justify-center items-start">
+                       <div className="items-center justify-center flex xl:flex-row flex-col lg:gap-1" >
+                       <div className="text-zinc-900 font-semibold " >Price :</div>
+                       <div className="flex justify-center items-center" >
+                          <span>
+                            <FaRupeeSign />
+                          </span>
+                          <span>
+                            {
+                              getVariant(
+                                purchasedProduct?.product?.variants,
+                                purchasedProduct?.variant
+                              )?.price
+                            }
+                          </span>
+                          </div>
+                       </div>
+                          
+                        </div>
+                       <div className="xl:w-1/5 lg:w-1/4 flex flex-row gap-1 xl:gap-2 md:justify-center items-start">
                           <DownloadButton
                             product={purchasedProduct.product}
                             variant={purchasedProduct.variant}
@@ -286,18 +276,18 @@ const Page: React.FC = () => {
                               href={`/${purchasedProduct.product.mediaType}/${purchasedProduct.product.uuid}`}
                               className="flex gap-2 justify-start items-center"
                             >
-                              <span>View</span>
+                              <span >View</span>
                               <span>
                                 <IoEyeOutline />
                               </span>
                             </Link>
                           </button>
                         </div>
-                      </td>
-                    </tr>
+                      </div>
+                    </div>
                   ))}
-              </tbody>
-            </table>
+              </div>
+            </div>
           </div>
 
           {totalPages > 0 && (
@@ -408,8 +398,8 @@ const DownloadButton = ({
       onClick={handleDownload}
       className="px-2 py-1 border-1 border-[#22C55E] rounded-lg text-[#22C55E] hover:text-white hover:bg-[#22C55E]"
     >
-      <div className="flex gap-2 justify-center  items-center">
-        <span>Download</span>
+      <div className="flex gap-2 justify-center items-center">
+        <span >Download</span>
         {downloading ? (
           <Spinner color="current" size="sm" />
         ) : (
