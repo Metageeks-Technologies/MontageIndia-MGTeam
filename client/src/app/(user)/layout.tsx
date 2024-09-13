@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import "../globals.css";
+// import "../globals.css";
 const inter = Inter({ subsets: ["latin"] });
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -21,14 +21,13 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default function UserLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={inter.className + " overflow-x-hidden"}>
+      <div className={inter.className + " overflow-x-hidden"}>
         <ToastContainer />
         <ReduxProvider>
           <InitialLoad>
@@ -41,7 +40,6 @@ export default function RootLayout({
           src="https://checkout.razorpay.com/v1/checkout.js"
           strategy="beforeInteractive"
         />
-      </body>
-    </html>
+      </div>
   );
 }
