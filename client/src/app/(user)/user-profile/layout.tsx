@@ -18,9 +18,9 @@ export default function ProfileLayout({
 }>) {
   return (
     <>
-      <div className="flex md:gap-4">
+      <div className="flex gap-1 lg:gap-2">
         <ProfileSidebar />
-        <div className="w-full px-2 py-4 md:px-4 md:py-8 ">{children}</div>
+        <div className="w-full px-2 py-4 lg:px-4 lg:py-6" >{children}</div>
       </div>
       <Footer />
     </>

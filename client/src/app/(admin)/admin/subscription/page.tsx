@@ -24,6 +24,7 @@ import instance from "@/utils/axios";
 import { notifySuccess } from "@/utils/toast";
 import { FaRupeeSign } from "react-icons/fa";
 import Swal from "sweetalert2";
+import { SpinnerLoader } from "@/components/loader/loaders";
 
 interface SubscriptionPlan
 {
@@ -259,9 +260,7 @@ const SubscriptionPage = () =>
             <div className="w-full font-bold text-xl mb-8 rounded-t-lg bg-[#7828c8] text-white px-6 py-4">   Subscription Plans
             </div>
             { loader ? (
-              <div className="flex justify-center items-center">
-                <Spinner color="danger" size="lg" />
-              </div>
+              <SpinnerLoader />
             ) :
               (
                 <div className="flex flex-col justify-center px-8 items-center">

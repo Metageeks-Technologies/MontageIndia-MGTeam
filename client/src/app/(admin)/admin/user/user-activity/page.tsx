@@ -2,6 +2,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import instance from "@/utils/axios";
 import { Spinner, Button } from "@nextui-org/react";
+import {SpinnerLoader} from "@/components/loader/loaders";
 
 interface UserActivity
 {
@@ -234,7 +235,7 @@ const UserActivityPage = () =>
                 { loading ? (
                   <tr>
                     <td colSpan={ 7 } className="text-center py-4">
-                      <Spinner label="Loading..." color="danger" />
+                      <SpinnerLoader />
                     </td>
                   </tr>
                 ) : data === null || data.length === 0 ? (

@@ -5,7 +5,7 @@ import instance from "@/utils/axios";
 import { Spinner, Pagination, Button } from "@nextui-org/react";
 import Multiselect from 'multiselect-react-dropdown';
 import { categoriesOptions, mediaTypesOptions } from "@/utils/tempData";
-import { LuDot } from "react-icons/lu";
+import { SpinnerLoader } from "@/components/loader/loaders";
 
 
 // Define the interfaces for the product and variant types
@@ -254,7 +254,7 @@ const Home: React.FC = () =>
             { loading ? (
               <tr>
                 <td colSpan={ 6 } className="text-center py-4">
-                  <Spinner label="Loading..." color="danger" />
+                  <SpinnerLoader />
                 </td>
               </tr>
             ) : (

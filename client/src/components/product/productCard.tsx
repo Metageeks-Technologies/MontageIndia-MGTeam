@@ -112,11 +112,11 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, status }) => {
             </div>
           </div>
           <div className="md:w-2/3 md:h-[40vh] flex flex-col justify-between items-start">
-            <div className="mb-2">
+            <div className="mb-1">
               <div className="md:text-2xl capitalize font-bold">
                 {product.title}
               </div>
-              <div className=" text-left">
+              <div className="text-left">
                 <span className="text-gray-500 font-semibold">
                   ProductId :{" "}
                 </span>
@@ -144,7 +144,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, status }) => {
             </div>
             <div className="text-left mb-4">
               <span className="text-gray-500 font-semibold">Sizes : </span>
-              <span className="text-sm">{product.variants[0].size}</span>
+              <span className="text-sm">{product.variants[0].metadata.dimension}</span>
             </div>
             <div className="flex flex-col md:flex-row gap-2 justify-center items-center">
               <button className="w-full px-4 py-2 rounded-lg  hover:bg-[#ef3a3abe] text-white bg-webred">

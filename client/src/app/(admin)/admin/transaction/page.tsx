@@ -2,6 +2,7 @@
 import instance from "@/utils/axios";
 import { Pagination, Button, Spinner } from '@nextui-org/react';
 import React, { useEffect, useState } from "react";
+import { SpinnerLoader } from "@/components/loader/loaders";
 
 interface Transaction
 {
@@ -138,7 +139,7 @@ const Page = () =>
             { loading ? (
               <tr>
                 <td colSpan={ 7 } className="text-center py-4">
-                  <Spinner label="Loading..." color="danger" />
+                  <SpinnerLoader />
                 </td>
               </tr>
             ) : (

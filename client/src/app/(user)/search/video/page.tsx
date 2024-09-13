@@ -7,6 +7,7 @@ import Searchbar from "@/components/searchBar/search";
 import FAQ from "@/components/Video/fag";
 import Trending from "@/components/Video/trendingVideos";
 import { Button, Pagination, Spinner } from "@nextui-org/react";
+import {SpinnerLoader} from '@/components/loader/loaders';
 import { useSearchParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { IoIosSearch } from "react-icons/io";
@@ -16,6 +17,7 @@ import { BsFilterLeft } from "react-icons/bs";
 import instance from "@/utils/axios";
 import Banner from "@/components/Banner";
 import Masonry from "react-masonry-css";
+import Category from "@/components/Category";
 
 const filterOptions = {
   sortBy: ["newest", "oldest", "popular"],
@@ -148,7 +150,9 @@ const Page = () => {
                     !isFilterOpen ? "xl:mx-12 md:mx-4 mx-4" : "ml-0"
                   } `}
                 >
-                  <h1 className="text-2xl font-bold  text-start">
+                  {product.length > 0 ? ( 
+                    <>
+                    <h1 className="text-2xl font-bold  text-start">
                     Today's Trending Video
                   </h1>
                   <h4 className="text-lg text-neutral-700">
@@ -157,26 +161,36 @@ const Page = () => {
                   <div className="mx-auto min-h-screen mt-4">
                     {loading ? (
                       <div className="flex items-center justify-center text-center m-auto">
-                        <Spinner label="Loading..." color="danger" />
+                        <SpinnerLoader />
                       </div>
                     ) : (
-                      <div className="mt-5 lg:border">
+                      <div className="mt-5">
                         <Masonry
                           breakpointCols={breakpointColumnsObj}
                           className="my-masonry-grid"
                           columnClassName="my-masonry-grid_column"
                         >
-                          {product.length > 0 ? (
-                            product.map((data: any) => (
+                        
+                            {product?.map((data: any) => (
                               <Trending key={data._id} data={data} />
-                            ))
-                          ) : (
-                            <p>No Video found.</p>
-                          )}
+                            ))}
+                         
                         </Masonry>
                       </div>
                     )}
                   </div>
+                  </>
+                  ):(
+                    <>
+                    <div className="text-center py-12">
+                    <h1 className="text-xl font-semibold text-gray-700">
+                      Sorry, we couldn't find any matches for "{searchTerm}"
+                    </h1>
+                    <p className="text-gray-500 mt-2">Try making your search simpler and double-check your spelling</p>
+                  </div>
+                   <Category mediaType="video"/>
+                   </>
+                  )}
                 </div>
               </div>
 

@@ -22,7 +22,7 @@ const CollageEffectSection = ({
                 {"ART YOU'LL "}
                 <br /> LOVE
               </h4>
-              <button className="py-4 px-6 text-3xl border-[3px] border-gray-600 bg-[#F2F2F2] hover:bg-black hover:text-white transition-all mb-10">
+              <button className="py-4 px-6 text-3xl  border-webgreen-light bg-webred rounded-lg text-white transition-all mb-10">
                 SHOP NOW
               </button>
               <div className="flex items-center gap-2 text-lg text-slate-500">

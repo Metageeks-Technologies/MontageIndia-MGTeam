@@ -10,6 +10,7 @@ import { GoDotFill } from "react-icons/go";
 import { LuDot } from "react-icons/lu";
 import { FaStarOfLife } from "react-icons/fa";
 import { useRouter } from "next/navigation";
+import { SpinnerLoader } from "@/components/loader/loaders";
 interface Variant {
   label: string;
   price: number;
@@ -268,7 +269,7 @@ const Home: React.FC = () => {
             {loading ? (
               <tr>
                 <td colSpan={7} className="text-center py-4">
-                  <Spinner label="Loading..." color="danger" />
+                  <SpinnerLoader />
                 </td>
               </tr>
             ) : productData && productData.length > 0 ? (

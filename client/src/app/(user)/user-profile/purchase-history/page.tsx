@@ -2,13 +2,16 @@
 import React, { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/app/redux/hooks";
 import {Spinner,Button,Pagination} from "@nextui-org/react";
+import {SpinnerLoader} from '@/components/loader/loaders';
 import { getCurrCustomer } from "@/app/redux/feature/user/api";
 import { FaRupeeSign } from "react-icons/fa";
 import { IoSearchOutline } from "react-icons/io5";
 import { IoEyeOutline } from "react-icons/io5";
-import {useRouter} from 'next/navigation'
+import {useRouter} from 'next/navigation';
 import instance from "@/utils/axios";
-import {formatDateTime} from '@/utils/DateFormat'
+import {formatDateTime} from '@/utils/DateFormat';
+import { AiFillProduct } from "react-icons/ai";
+import { FaCoins } from "react-icons/fa";
 
 interface Order {
   _id: string;
@@ -83,7 +86,7 @@ const ProductList: React.FC = () => {
   }, [currentPage, dataPerPage,user]);
 
   return (
-    <div className="w-full rounded-lg min-h-screen overflow-hidden bg-white px-2 py-1 md:px-6 md:py-4">
+    <div className="w-full rounded-lg min-h-screen bg-white px-6 py-4 ">
       <h1 className="md:text-xl text-md font-semibold mb-6 text-gray-800">Purchase History</h1>
       <div className="flex justify-between items-center gap-4 flex-wrap my-6 ">
       <div className="flex">
@@ -117,50 +120,57 @@ const ProductList: React.FC = () => {
       </div>
        {loading?(
               <div className="w-full flex justify-center items-center ">
-              <Spinner color="danger" size="lg" />
+              <SpinnerLoader/>
             </div>
             ):(
               <>
                <div className="overflow-x-auto mb-4 shadow-md rounded-lg">
-        <table className="w-full border-collapse">
-          <thead className="bg-[#F1F1F1] text-black">
-            <tr>
-              <th className="md:px-6 md:py-3 border-b text-sm font-medium tracking-wider">Order id</th>
-              <th className="md:px-6 md:py-3 border-b text-sm font-medium tracking-wider">Amount</th>
-              <th className="md:px-6 md:py-3 border-b text-sm font-medium tracking-wider">Method</th>
-              <th className="md:px-6 md:py-3 border-b text-sm font-medium tracking-wider">Date</th>
-              <th className="md:px-6 md:py-3 border-b text-sm font-medium tracking-wider">Status</th>
-              <th className="md:px-6 md:py-3 border-b text-center text-sm font-medium tracking-wider">Order Details</th>
-            </tr>
-          </thead>
-          <tbody className="bg-white">
-            
-            {orders.map((order) => (
-              <tr
+        <div className="w-full border-collapse">
+          <div className="bg-white">
+            {
+              orders && orders.length === 0 && (
+                <div className="flex gap-1 justify-center items-center " ><AiFillProduct/><span>No purchase history found</span></div>
+              )
+            }
+            {orders && orders.map((order) => (
+              <div
                 key={order._id}
-                className="border-b hover:bg-gray-100 transition duration-200"
+                className="border-t border-zinc-300 hover:bg-gray-100 p-4 flex flex-col gap-4 sm:flex-row justify-between transition duration-200"
               >
-                <td className="md:px-6 md:py-4 text-gray-700">{order.razorpayOrderId}</td>
-                <td className="md:px-6 md:py-4 text-gray-700"><div className="flex gap-1 justify-start items-center"><span><FaRupeeSign /></span> <span>{order.totalAmount}</span></div></td>
-                <td className="md:px-6 md:py-4 text-gray-700">{order.method}</td>
-                <td className="md:px-6 md:py-4 text-gray-600">
+              <div className="flex flex-col px-4 sm:w-1/3 overflow-x-hidden" >
+              <div className="text-gray-700">
+              <span className="text-zinc-700 font-semibold" >Order id : </span><span className="text-wrap " >{order.razorpayOrderId}</span>
+              </div>
+               
+                <div className="text-gray-700 capitalize "><span className="text-zinc-700 font-semibold" >Method : </span> {order.method}</div>
+                <div className="text-gray-600 capitalize ">
+                  <span className="text-zinc-700 font-semibold" >Date and Time : </span>
                   {formatDateTime(order.createdAt)}
-                </td>
-                <td
-                  className={`md:px-6 md:py-4 font-semibold ${
+                </div>
+                </div>
+                <div className="sm:w-1/3 px-4 sm:px-0 flex xl:gap-2 xl:justify-between md:justify-start xl:flex-row flex-col items-start">
+                  <div className="text-gray-700  capitalize"><div className="flex gap-1 justify-start items-center"><span className="text-zinc-700 font-semibold " >Total Amount : </span> <span>{order.method==="razorpay"?<FaRupeeSign />:<FaCoins/>}</span> <span>{order.totalAmount}</span></div></div>
+                <div
+                  className={`justify-start ${
                     order.status === "paid" ? "text-green-600" : "text-red-600"
                   }`}
                 >
-                  {order.status}
-                </td>
-                <td className="md:px-6 md:py-4 flex justify-center items-center" > <button onClick={()=>{router.push(`/user-profile/purchase-history/${order._id}`);}} className="px-4 py-2 border-1 border-[#8D529C] rounded-lg text-[#8D529C] hover:text-white hover:bg-[#8D529C]"><div className="flex gap-2 justify-start items-center"><span>View Order</span> <span><IoEyeOutline/></span></div> </button> </td>
-              </tr>
+                <div className="text-start font-semibold capitalize" >
+                 <span className="text-zinc-700" >Status : </span>
+                  {order.status==="pending"?"Fail":order.status}
+                </div>
+               
+                </div>
+                </div>
+                 
+                <div className="px-4 my-2 sm:my-0 flex sm:justify-center items-start" > <button onClick={()=>{router.push(`/user-profile/purchase-history/${order._id}`);}} className="px-4 py-2 border-1 border-[#8D529C] rounded-lg text-[#8D529C] hover:text-white hover:bg-[#8D529C]"><div className="flex gap-2 justify-start items-center"><span className="block sm:block md:hidden lg:block" >View Order</span> <span><IoEyeOutline/></span></div> </button> </div>
+              </div>
             ))}
-          </tbody>
-        </table>
+          </div>
+        </div>
       </div>
 
-      {totalPages > 0 && (
+      {totalPages > 0 && orders.length>0 && (
         <div className="z-index-1 flex flex-wrap md:flex-nowrap justify-center md:justify-between items-center">
         <div className="text-[#999999] md:w-1/3 ">Showing {(((currentPage-1)*dataPerPage)+1)} to {((currentPage-1)*dataPerPage+dataPerPage)>totalOrder?totalOrder:((currentPage-1)*dataPerPage+dataPerPage)}  of {totalOrder} Entries </div>
         <div className="md:w-1/3 flex justify-center items-center gap-4 my-4">

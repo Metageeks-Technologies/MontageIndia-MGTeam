@@ -3,6 +3,7 @@ import Footer from "@/components/Footer";
 import ImageGallery from "@/components/Home/homeImage";
 import instance from "@/utils/axios";
 import { Button, Pagination, Spinner } from "@nextui-org/react";
+import {SpinnerLoader} from '@/components/loader/loaders';
 import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/app/redux/hooks";
 import { setImagePage } from "@/app/redux/feature/product/slice";
@@ -13,6 +14,7 @@ import Filter from "@/components/searchBar/filtersidebar";
 import { BsFilterLeft } from "react-icons/bs";
 import { getImage } from "@/app/redux/feature/product/image/api";
 import Hero from "@/components/Home/gallary/Hero";
+import Category from "@/components/Category";
 
 const filterOptions = {
   sortBy: ["newest", "oldest", "popular"],
@@ -116,17 +118,12 @@ const Page = () => {
 
   const displayData = product;
 
+  console.log("prams", )
+
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col ">
       <Searchbar />
-      <div className="flex flex-1">
-        {/* <Filter
-          isOpen={isFilterOpen}
-          onToggle={toggleFilter}
-          filterOptions={filterOptions}
-          onFilterChange={handleFilterChange}
-          onclearFilter={handleClearFilters}
-        /> */}
+      <div className="flex flex-1 "> 
         <Filter
           isOpen={isFilterOpen}
           onToggle={toggleFilter}
@@ -149,29 +146,39 @@ const Page = () => {
                     !isFilterOpen ? "xl:mx-12 md:mx-4 mx-4" : "ml-0"
                   } `}
                 >
-                  <h1 className="text-2xl font-bold  text-start">
-                    Today's Trending Images
-                  </h1>
-                  <h4 className="text-lg text-neutral-700">
-                    {totalImageData} Product stock Photos and High-res Pictures
-                  </h4>
-                  <div className="mx-auto mt-4">
-                    {loading ? (
-                      <div className="flex items-center justify-center min-h-screen text-center m-auto">
-                        <Spinner label="Loading..." color="danger" />
-                      </div>
-                    ) : (
-                      <div className="columns-1 min-h-screen sm:columns-2 md:columns-3 lg:columns-4 gap-2 mt-2 relative">
-                        {displayData.length > 0 ? (
-                          displayData.map((data: any) => (
-                            <ImageGallery key={data._id} data={data} />
-                          ))
-                        ) : (
-                          <p>No Images found.</p>
-                        )}
-                      </div>
-                    )}
+                  {displayData.length > 0 ? (
+                    <>
+                     <h1 className="text-2xl font-bold  text-start">
+                     Today's Trending Images
+                   </h1>
+                   <h4 className="text-lg text-neutral-700">
+                     {totalImageData} Product stock Photos and High-res Pictures
+                   </h4>
+                   <div className="mx-auto mt-4">
+                     {loading ? (
+                       <SpinnerLoader />
+                     ) : (
+                       <div className="columns-1 sm:columns-2 md:columns-2 lg:columns-4 gap-2 mt-2 relative">
+                        
+                           {displayData?.map((data: any) => (
+                             <ImageGallery key={data._id} data={data} />
+                           ))}
+                         
+                       </div>
+                     )}
+                   </div>
+                   </>
+                  ):(
+                  <>
+                    <div className="text-center py-12">
+                    <h1 className="text-xl font-semibold text-gray-700">
+                      Sorry, we couldn't find any matches for "{searchTerm}"
+                    </h1>
+                    <p className="text-gray-500 mt-2">Try making your search simpler and double-check your spelling</p>
                   </div>
+                  <Category mediaType="image"/>
+                   </>
+                  )}
                 </div>
               </div>
 
@@ -224,6 +231,7 @@ const Page = () => {
           </div>
         </div>
       </div>
+     
       <Footer />
     </div>
   );

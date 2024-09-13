@@ -37,6 +37,7 @@ const customerSchema = new mongoose.Schema<TCustomer>(
     },
     phone: {
       type: String,
+      
       required:false,
     },
     password: {

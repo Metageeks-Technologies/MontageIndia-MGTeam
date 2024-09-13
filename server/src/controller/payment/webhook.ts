@@ -119,17 +119,21 @@ const subscriptionCharged = async (payload: any) => {
     const { start_at, end_at, status, expire_by, plan_id, id, notes } =
       payload.subscription.entity;
     console.log("Notes", notes);
-    const razorpay=razorpayInstance();
+    const razorpay = razorpayInstance();
 
-    const response:any =await razorpay.plans.fetch(plan_id);
-    console.log("response",response);
+    const response: any = await razorpay.plans.fetch(plan_id);
+    console.log("response", response);
     const user = await customer.findOneAndUpdate(
       { "subscription.subscriptionId": id },
       {
         $set: {
           "subscription.status": status,
           "subscription.PlanId": notes.subscriptionId,
-          "subscription.planValidity": Date.now()+(response.period==='yearly'?365*24*60*60*1000:30*24*60*60*1000),
+          "subscription.planValidity":
+            Date.now() +
+            (response.period === "yearly"
+              ? 365 * 24 * 60 * 60 * 1000
+              : 30 * 24 * 60 * 60 * 1000),
         },
         $inc: { "subscription.credits": Number(notes.credits) },
       },
@@ -141,7 +145,11 @@ const subscriptionCharged = async (payload: any) => {
       userId: user?._id,
       planId: notes.subscriptionId,
       startDate: Date.now(),
-      endDate: Date.now()+(response.period==='yearly'?365*24*60*60*1000:30*24*60*60*1000),
+      endDate:
+        Date.now() +
+        (response.period === "yearly"
+          ? 365 * 24 * 60 * 60 * 1000
+          : 30 * 24 * 60 * 60 * 1000),
       status: status,
     });
   } catch (error) {
@@ -149,7 +157,7 @@ const subscriptionCharged = async (payload: any) => {
   }
 };
 const subscriptionHandler = async (payload: any) => {
-    console.log("subscription handler",payload);
+  console.log("subscription handler", payload);
   try {
     const { start_at, end_at, status, expire_by, plan_id, id } =
       payload.subscription.entity;
@@ -212,7 +220,7 @@ const orderPaid = async (payload: any) => {
       { status: "paid" },
       { new: true } // Return the updated document
     );
-    console.log("Order not found",Order);
+    console.log("Order not found", Order);
 
     if (!Order) return;
 
@@ -263,9 +271,9 @@ const orderPaid = async (payload: any) => {
   }
 };
 
-const paymentHandler = async (payload: any) => {
+const paymentCaptured = async (payload: any) => {
   try {
-    console.log("payment handler", payload);
+    console.log("payment captured", payload);
     const { amount, contact, email, id, order_id, method, currency, status } =
       payload.payment.entity;
 
@@ -276,7 +284,36 @@ const paymentHandler = async (payload: any) => {
 
     const newPayment = {
       userId: userId ? userId : "",
-      amount: (amount/100) as number,
+      amount: (amount / 100) as number,
+      email,
+      method,
+      currency,
+      status,
+      rp_payment_id: id,
+      rp_order_id: order_id ? order_id : "",
+      phone: contact,
+    };
+
+    await Transaction.create(newPayment);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const paymentFailed = async (payload: any) => {
+  try {
+    console.log("payment failed", payload);
+    const { amount, contact, email, id, order_id, method, currency, status } =
+      payload.payment.entity;
+
+    const Order = await order.findOne({ razorpayOrderId: order_id });
+    if (!Order) return;
+    // console.log(Order);
+    const userId = Order?.userId;
+
+    const newPayment = {
+      userId: userId ? userId : "",
+      amount: (amount / 100) as number,
       email,
       method,
       currency,
@@ -304,12 +341,20 @@ export const paymentWebHook = catchAsyncError(async (req, res, next) => {
     const { event, payload } = req.body;
 
     // console.log(event, payload);
-
+    
     switch (event) {
-      case "payment.authorized":
-      case "payment.captured":
+      case "payment.authorized": {
+        console.log("payment authorized");
+        break;
+      }
+      case "payment.captured": {
+        console.log("payment captured");
+        paymentCaptured(payload);
+        break;
+      }
       case "payment.failed": {
-        paymentHandler(payload);
+        console.log("payment failed");
+        paymentFailed(payload);
         break;
       }
       case "order.paid": {

@@ -5,8 +5,7 @@ import instance from "@/utils/axios";
 import { OrderOption } from "@/types/order";
 import { useRouter, usePathname } from "next/navigation";
 import { useAppDispatch, useAppSelector } from "@/app/redux/hooks";
-import { setCart } from "@/app/redux/feature/product/slice";
-import { Spinner } from "@nextui-org/react";
+import { ThreeDotsLoader } from "@/components/loader/loaders";
 import Swal from "sweetalert2";
 import { redirectToLogin } from "@/utils/redirectToLogin";
 declare global {
@@ -41,6 +40,7 @@ const PayButton: React.FC<props> = ({ orderOption }) => {
   const handlePayment = (options: any) => {
     if (!loaded || typeof window.Razorpay === "undefined") {
       alert("Razorpay SDK not loaded. Please try again later.");
+      setLoading(false);
       return;
     }
     const razorpayObject = new window.Razorpay(options);
@@ -49,6 +49,7 @@ const PayButton: React.FC<props> = ({ orderOption }) => {
       alert("This step of Payment Failed");
     });
     razorpayObject.open();
+    setLoading(false);
   };
 
   //this function creates a order in razorpay and store order information in Montage India database
@@ -58,7 +59,9 @@ const PayButton: React.FC<props> = ({ orderOption }) => {
       redirectToLogin(router, pathname);
       return null;
     }
-    const response: any = await instance.post("/order/", orderOption, {
+    try{
+      setLoading(true);
+      const response: any = await instance.post("/order/", orderOption, {
       headers: {
         "ngrok-skip-browser-warning": true,
       },
@@ -67,8 +70,8 @@ const PayButton: React.FC<props> = ({ orderOption }) => {
     console.log("step 1:", response);
 
     if (!response.data.success) {
-      alert("Something went wrong. Please try again later");
       setLoading(false);
+      alert("Something went wrong. Please try again later");
       return;
     }
     const paymentOptions = {
@@ -91,6 +94,14 @@ const PayButton: React.FC<props> = ({ orderOption }) => {
     };
 
     handlePayment(paymentOptions);
+
+    }
+    catch(err){
+      console.log(err);
+      setLoading(false);
+    }
+    
+    
   };
   useEffect(() => {
     loadScript("https://checkout.razorpay.com/v1/checkout.js")
@@ -103,7 +114,7 @@ const PayButton: React.FC<props> = ({ orderOption }) => {
       onClick={handleOrderPlace}
       className="text-white px-4 py-2 rounded-md bg-webgreen text-md max-sm:text-lg hover:bg-webgreen-light transition-all whitespace-nowrap"
     >
-      Place Order
+      {loading?(<ThreeDotsLoader/>):"Place Order"}
     </button>
   );
 };

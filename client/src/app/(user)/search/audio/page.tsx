@@ -2,19 +2,21 @@
 import Footer from "@/components/Footer";
 import ImageGallery from "@/components/Home/homeImage";
 import instance from "@/utils/axios";
-import {Button, Pagination, Spinner} from "@nextui-org/react";
-import {useEffect, useState} from "react";
-import {useAppDispatch, useAppSelector} from "@/app/redux/hooks";
-import {setAudioPage, setImagePage} from "@/app/redux/feature/product/slice";
-import {useRouter, useSearchParams} from "next/navigation";
-import {clearKeywords} from "@/app/redux/feature/product/api";
+import { Button, Pagination, Spinner } from "@nextui-org/react";
+import { SpinnerLoader } from "@/components/loader/loaders";
+import { useEffect, useState } from "react";
+import { useAppDispatch, useAppSelector } from "@/app/redux/hooks";
+import { setAudioPage, setImagePage } from "@/app/redux/feature/product/slice";
+import { useRouter, useSearchParams } from "next/navigation";
+import { clearKeywords } from "@/app/redux/feature/product/api";
 import Searchbar from "@/components/searchBar/search";
 import Filter from "@/components/searchBar/filtersidebar";
-import {BsFilterLeft} from "react-icons/bs";
-import {getImage} from "@/app/redux/feature/product/image/api";
-import {getAudio} from "@/app/redux/feature/product/audio/api";
+import { BsFilterLeft } from "react-icons/bs";
+import { getImage } from "@/app/redux/feature/product/image/api";
+import { getAudio } from "@/app/redux/feature/product/audio/api";
 import Waveform from "@/components/Home/AudioWaveForm";
 import Banner from "@/components/Banner";
+import Category from "@/components/Category";
 
 const filterOptions = {
   sortBy: ["newest", "oldest", "popular"],
@@ -26,39 +28,39 @@ const Page = () => {
   const dispatch = useAppDispatch();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const category = searchParams.get( "category" );
-  const [totalPages, setTotalPages] = useState( 1 );
-  const [currentPage, setCurrentPage] = useState( 1 );
-  const searchTerm = searchParams.get( "searchTerm" ) || "";
+  const category = searchParams.get("category");
+  const [totalPages, setTotalPages] = useState(1);
+  const [currentPage, setCurrentPage] = useState(1);
+  const searchTerm = searchParams.get("searchTerm") || "";
   const categoryParam = category ? ["editor choice"] : "";
-  const [isFilterOpen, setIsFilterOpen] = useState( false );
-  const [loading, setLoading] = useState( false );
-  const [filteredData, setFilteredData] = useState( [] );
-  const {audioData, page, totalNumOfPage, totalAudioData} = useAppSelector(
-    ( state ) => state.product
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [filteredData, setFilteredData] = useState([]);
+  const { audioData, page, totalNumOfPage, totalAudioData } = useAppSelector(
+    (state) => state.product
   );
-  const {user} = useAppSelector( ( state ) => state.user );
+  const { user } = useAppSelector((state) => state.user);
 
-  const handlePageChange = ( page: number ) => {
-    dispatch( setAudioPage( page ) );
+  const handlePageChange = (page: number) => {
+    dispatch(setAudioPage(page));
   };
 
   const handleNextPage = () => {
-    handlePageChange( page === totalNumOfPage ? 1 : page + 1 );
+    handlePageChange(page === totalNumOfPage ? 1 : page + 1);
   };
 
   const handlePrevPage = () => {
-    handlePageChange( page === 1 ? totalNumOfPage : page - 1 );
+    handlePageChange(page === 1 ? totalNumOfPage : page - 1);
   };
 
   const toggleFilter = () => {
-    setIsFilterOpen( !isFilterOpen );
+    setIsFilterOpen(!isFilterOpen);
   };
 
-  const fetchData = async ( page: number ) => {
-    setLoading( true );
-    const filters = Object.fromEntries( searchParams );
-    const response = await getAudio( dispatch, !!user, {
+  const fetchData = async (page: number) => {
+    setLoading(true);
+    const filters = Object.fromEntries(searchParams);
+    const response = await getAudio(dispatch, !!user, {
       page: page,
       productsPerPage: 8,
       mediaType: ["audio"],
@@ -67,41 +69,41 @@ const Page = () => {
       sortBy: filters.sortBy || "newest",
       audioLength: filters.audioLength,
       audioBitrate: filters.audioBitrate,
-    } );
+    });
 
-    setLoading( false );
+    setLoading(false);
   };
 
-  const handleFilterChange = ( filterType: string, value: string | number ) => {
-    const currentParams = new URLSearchParams( searchParams.toString() );
-    currentParams.set( filterType, value.toString() );
-    router.push( `?${currentParams.toString()}`, {scroll: false} );
-    fetchData( page );
+  const handleFilterChange = (filterType: string, value: string | number) => {
+    const currentParams = new URLSearchParams(searchParams.toString());
+    currentParams.set(filterType, value.toString());
+    router.push(`?${currentParams.toString()}`, { scroll: false });
+    fetchData(page);
   };
 
   const handleClearFilters = () => {
-    const currentParams = new URLSearchParams( searchParams.toString() );
-    Object.keys( filterOptions ).forEach( ( key ) => {
-      currentParams.delete( key );
-    } );
-    router.push( `?${currentParams.toString()}`, {scroll: false} );
-    fetchData( page );
+    const currentParams = new URLSearchParams(searchParams.toString());
+    Object.keys(filterOptions).forEach((key) => {
+      currentParams.delete(key);
+    });
+    router.push(`?${currentParams.toString()}`, { scroll: false });
+    fetchData(page);
   };
 
   const hasFilterParams = () => {
-    return Array.from( searchParams.keys() ).some( ( key ) =>
-      ["sortBy", "audioBitrate", "audioLength"].includes( key )
+    return Array.from(searchParams.keys()).some((key) =>
+      ["sortBy", "audioBitrate", "audioLength"].includes(key)
     );
   };
 
-  useEffect( () => {
+  useEffect(() => {
     const filterParamsExist = hasFilterParams();
-    setIsFilterOpen( filterParamsExist );
-    fetchData( page );
+    setIsFilterOpen(filterParamsExist);
+    fetchData(page);
     return () => {
-      clearKeywords( dispatch );
+      clearKeywords(dispatch);
     };
-  }, [page, searchParams] );
+  }, [page, searchParams]);
 
   const displayData = audioData;
 
@@ -127,29 +129,42 @@ const Page = () => {
             </button>
             <div className="main">
               <div className="py-10 px-4 md:px-4  lg:px-12">
-                {totalAudioData > 0 && (
-                  <h4 className="text-lg text-neutral-700 mb-4">
-                    {totalAudioData} Audio Files
-                  </h4>
-                )}
+                {displayData.length > 0 ? (
+                  <>
+                    {totalAudioData > 0 && (
+                      <h4 className="text-lg text-neutral-700 mb-4">
+                        {totalAudioData} Audio Files
+                      </h4>
+                    )}
 
-                <div className="overflow-y-auto mt-2">
-                  {loading ? (
-                    <div className="min-h-screen flex justify-center items-center">
-                      <Spinner label="Loading..." color="danger" />
-                    </div>
-                  ) : (
-                    <>
-                      {displayData.length > 0 ? (
-                        displayData.map( ( product, index ) => (
-                          <Waveform key={index} product={product} />
-                        ) )
+                    <div className="overflow-y-auto mt-2">
+                      {loading ? (
+                        <div className="min-h-screen flex justify-center items-center">
+                          <SpinnerLoader />
+                        </div>
                       ) : (
-                        <p>No Audio found.</p>
+                        <>
+                          {displayData.map((product, index) => (
+                            <Waveform key={index} product={product} />
+                          ))}
+                        </>
                       )}
-                    </>
-                  )}
-                </div>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div className="text-center py-12">
+                      <h1 className="text-xl font-semibold text-gray-700">
+                        Sorry, we couldn't find any matches for "{searchTerm}"
+                      </h1>
+                      <p className="text-gray-500 mt-2">
+                        Try making your search simpler and double-check your
+                        spelling
+                      </p>
+                    </div>
+                    <Category mediaType="audio"/>
+                  </>
+                )}
 
                 {totalNumOfPage > 1 && (
                   <div className="flex flex-wrap justify-center items-center gap-4 my-10">
@@ -158,10 +173,11 @@ const Page = () => {
                       type="button"
                       disabled={page === 1}
                       variant="flat"
-                      className={`${page === 1
-                        ? "opacity-70 cursor-not-allowed"
-                        : "hover:bg-webred"
-                        } bg-webred text-white rounded-full font-bold`}
+                      className={`${
+                        page === 1
+                          ? "opacity-70 cursor-not-allowed"
+                          : "hover:bg-webred"
+                      } bg-webred text-white rounded-full font-bold`}
                       onPress={handlePrevPage}
                     >
                       Prev
@@ -184,10 +200,11 @@ const Page = () => {
                       size="sm"
                       disabled={page === totalNumOfPage}
                       variant="flat"
-                      className={`${page === totalNumOfPage
-                        ? "opacity-70 cursor-not-allowed"
-                        : "hover:bg-webred"
-                        } bg-webred text-white rounded-full font-bold`}
+                      className={`${
+                        page === totalNumOfPage
+                          ? "opacity-70 cursor-not-allowed"
+                          : "hover:bg-webred"
+                      } bg-webred text-white rounded-full font-bold`}
                       onPress={handleNextPage}
                     >
                       Next

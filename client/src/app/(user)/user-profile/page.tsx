@@ -3,7 +3,8 @@ import { useAppSelector } from "@/app/redux/hooks";
 import { FaCoins } from "react-icons/fa";
 import { useRouter } from "next/navigation";
 import { MdOutlineDateRange } from "react-icons/md";
-import {Spinner} from "@nextui-org/react"
+import {Spinner} from "@nextui-org/react";
+import {SpinnerLoader} from '@/components/loader/loaders';
 import { FC } from "react";
 import { sendVerifyEmailLink } from "@/utils/loginOptions";
 import Swal from "sweetalert2";
@@ -45,15 +46,16 @@ const Home: FC = () => {
 
   return (
     <>
-      <div className="w-full px-4 py-2 md:px-6 md:py-4 min-h-full flex flex-col rounded-lg overflow-hidden bg-white">
+      <div className="w-full p-6 min-h-full flex flex-col rounded-lg bg-white">
         <div className="mb-8">
-          <h2 className="text-xl font-bold mb-2">Profile</h2>
+  
           <hr className="mb-4" />
-          {!user && <div className="flex justify-center items-center min-h-screen"><Spinner color="danger" /></div>}
+          {!user && <SpinnerLoader/>} 
           {user && (
             <div className="flex flex-col">
-            <div className="flex justify-end items-center mb-2">
-            <button onClick={()=>router.push('/user-profile/settings')} className="text-md text-center md:text-start cursor-pointer px-2 py-1 md:px-8 md:py-2 bg-webred text-white rounded-lg hover:bg-webredHover-light " > Edit Profile</button>
+            <div className="flex justify-between items-center mb-2">
+            <h2 className="text-xl font-bold mb-2">Profile</h2>
+            <button onClick={()=>router.push('/user-profile/settings')} className="text-md text-center md:text-start cursor-pointer px-2 py-1 sm:px-4 sm:py-2 md:px-8 md:py-2 bg-webred text-white rounded-md hover:bg-webredHover-light " > Edit Profile</button>
             </div>
             <div className="w-full min-h-fit flex md:flex-row flex-col-reverse gap-4 justify-between items-center">
               <div className="md:w-3/4 w-full border border-gray-200 rounded-lg overflow-scroll md:overflow-hidden">
@@ -87,7 +89,7 @@ const Home: FC = () => {
                 </div>
                 <div className="flex justify-between bg-gray-100 border-gray-30 items-center px-4 py-3 border-b">
                   <div className="text-black md:w-1/3 ">
-                    E-mail
+                    Email
                   </div>
                   {/* {
                     !user?.emailVerified && (
@@ -96,7 +98,7 @@ const Home: FC = () => {
                       </div>
                     )
                   } */}
-                  <div className="text-black md:w-1/3">
+                  <div className="text-black text-wrap md:w-1/3">
                     {user.email}
                   </div>
                 </div>
@@ -109,8 +111,8 @@ const Home: FC = () => {
                   </div>
                 </div>
               </div>
-              <div className="md:w-1/4 bg-gray-100 h-full p-4 rounded-lg flex justify-center items-center">
-                <div className="w-40 h-40  rounded-full overflow-hidden ">
+              <div className="md:w-1/4 w-full lg:bg-gray-100 h-full p-4 rounded-lg flex justify-center items-center">
+                <div className="w-40 h-40 md:w-24 md:h-24 lg:w-40 lg:h-40 rounded-full overflow-hidden ">
                   <img
                     className="w-full h-full object-cover"
                     src={user.image}
@@ -128,10 +130,10 @@ const Home: FC = () => {
               Subscription plan
             </div>
             <div
-              onClick={() => router.push(`/user-profile/subscription`)}
-              className="text-md text-center md:text-start cursor-pointer px-2 py-1 md:px-8 md:py-2 bg-webred text-white rounded-lg hover:bg-webredHover-light"
+              className="flex justify-end items-center"
             >
-              Buy Credits
+            <button className="text-md text-center md:text-start cursor-pointer px-2 py-1 sm:px-4 sm:py-2 md:px-8 md:py-2 bg-webred text-white rounded-md hover:bg-webredHover-light" onClick={() => router.push(`/user-profile/subscription`)} >Buy Credits</button>
+              
             </div>
           </div>
            

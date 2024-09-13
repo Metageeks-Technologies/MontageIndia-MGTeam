@@ -6,6 +6,8 @@ import type { TAdmin, TCustomer } from "@src/types/user";
 import Customer from "@src/model/user/customer.js";
 import { getObject } from "@src/lib/uploadToS3";
 import { MetaData } from "@src/types/product";
+import Transaction from "@src/model/transaction/transaction";
+import Order from "@src/model/product/order";
 
 export const createProduct = catchAsyncError(async (req: any, res, next) => {
   req.body.createdBy = req.user._id;
@@ -270,6 +272,12 @@ export const getProductsByIds = catchAsyncError(async (req: any, res, next) => {
   }
 });
 
+const generateOrderId=()=> {
+  const timestamp = Date.now().toString(36); // Convert current time to base36 (shorter)
+  const randomString = Math.random().toString(36).substr(2, 8); // Generate a random string
+  return `order_${timestamp}${randomString}`;
+}
+
 export const buyWithCredits = catchAsyncError(async (req: any, res, next) => {
   const { id } = req.user;
   const { productBody } = req.body;
@@ -280,6 +288,8 @@ export const buyWithCredits = catchAsyncError(async (req: any, res, next) => {
   if (!user) {
     return next(new ErrorHandler("User not found", 404));
   }
+
+  // if(user.subscription.planValidity)
 
   const product = await Product.findById(productId);
 
@@ -341,7 +351,21 @@ export const buyWithCredits = catchAsyncError(async (req: any, res, next) => {
 
   await user.save();
 
-  res.send({ success: true, user, message: "Purchased successfully" });
+  const order_id=generateOrderId();
+
+  const newOrder={
+    userId: user._id,
+    razorpayOrderId: order_id,
+    products: [{ productId, variantId }],
+    totalAmount: productCredit,
+    currency: "credits",
+    status: "paid",
+    method: "credits",
+  }
+
+  await Order.create(newOrder);
+
+  return  res.send({ success: true, user, message: "Purchased successfully" });
 });
 
 export const buyAllCartWithCredits = catchAsyncError(
@@ -410,8 +434,24 @@ export const buyAllCartWithCredits = catchAsyncError(
     // Deduct credits
     user.subscription.credits = totalUserCredit - totalCredit;
 
-    user.cart = [];
+    
     await user.save();
+    const order_id=generateOrderId();
+
+     const newOrder={
+      userId: user._id,
+      razorpayOrderId: order_id,
+      products: user.cart,
+      totalAmount: totalCredit,
+      currency: "credits",
+      status: "paid",
+      method: "credits",
+    }
+
+  await Order.create(newOrder);
+
+  user.cart = [];
+
     res.send({ success: true, user, message: "Purchased successfully" });
   }
 );

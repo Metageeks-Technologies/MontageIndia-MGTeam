@@ -6,6 +6,7 @@ import Swal from "sweetalert2";
 import { useAppDispatch, useAppSelector } from "@/app/redux/hooks";
 import { getCurrCustomer } from "@/app/redux/feature/user/api";
 import { Spinner } from "@nextui-org/react";
+import {SpinnerLoader} from '@/components/loader/loaders';
 import { FaCamera } from "react-icons/fa";
 import { FileUploader } from "react-drag-drop-files";
 import { FaEye } from "react-icons/fa";
@@ -227,9 +228,7 @@ const ProfileSetting: FC = () => {
           <h2 className="md:text-xl font-bold mb-2">Profile Settings</h2>
           <hr className="mb-4" />
           {loading && (
-            <div className="flex justify-center items-center min-h-screen">
-              <Spinner color="danger" size="lg" />
-            </div>
+           <SpinnerLoader/>
           )}
           {!loading && user && (
             <>

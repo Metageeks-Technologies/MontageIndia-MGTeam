@@ -3,7 +3,8 @@ import { useEffect,useState } from 'react';
 import {useParams} from 'next/navigation';
 import instance from '@/utils/axios';
 import ProductCard from '@/components/product/productCard';
-import {Spinner} from "@nextui-org/react";
+import {SpinnerLoader} from '@/components/loader/loaders';
+
 const OrderPage = () => {
     const params = useParams();
     const id  = params.id as string;
@@ -25,22 +26,23 @@ const OrderPage = () => {
         }
 
     }
-
     useEffect(() => {
       fetchOrder();
     }, [id]);
 
+
+
+
+
   return (
     <div className='w-full rounded-lg overflow-hidden min-h-screen bg-white px-6 py-4'>
-      <h1 className="text-xl font-semibold mb-6 text-gray-800">Order ID # {id}</h1>
+      <h1 className="text-xl font-semibold mb-6 text-gray-800">Order ID # {order?.razorpayOrderId}</h1>
       <hr className='mb-6' />
 
       <div className="flex flex-col gap-4 overflow-y-scroll">
 
       {loading ? (
-        <div className="flex justify-center items-center min-h-screen">
-        <Spinner color="danger" size="lg" />
-        </div>
+        <SpinnerLoader />
       ) : (
         order && order?.products?.length > 0  && order?.products?.map((product: any, index: number) => (
           <ProductCard key={index} product={product.productId} />

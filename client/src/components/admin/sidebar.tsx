@@ -118,7 +118,7 @@ const Sidebar = () =>
   return (
       <div
         id="r"
-        className=" w-64 top-0 left-0 z-40 overflow-scroll p-4 rounded-md bg-pureWhite-light"
+        className=" w-64 top-0 left-0 z-40 overflow-y-scroll overflow-x-hidden  p-4 rounded-md bg-pureWhite-light"
         aria-label="Sidebar"
       >
         <div className=" py-2 w-full bg-pureWhite-light flex flex-col justify-between ">
@@ -458,11 +458,11 @@ const Sidebar = () =>
               onClick={ () => {initialState(); router.push( "/admin/profile" ); }}
             >
               <FaUserCircle className="w-10 h-10 mr-3 text-gray-800" />
-              <div>
+              <div className="flex flex-col overflow-clip" >
                 <h3 className="text-sm font-semibold text-gray-800">
                   { currentUser.name }
                 </h3>
-                <p className="text-sm text-gray-600">{ currentUser.email }</p>
+                <p title={currentUser.email} className="text-sm w-[70%] text-gray-600 truncate ">{ currentUser.email }</p>
               </div>
             </div>
             <ul>

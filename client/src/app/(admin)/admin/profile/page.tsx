@@ -8,6 +8,7 @@ import { FiUser, FiMail, FiTag, FiFilm, FiEdit2, FiLock } from 'react-icons/fi';
 import { MdOutlineAdminPanelSettings } from "react-icons/md";
 import Swal from 'sweetalert2';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
+import {SpinnerLoader} from '@/components/loader/loaders';
 
 interface User
 {
@@ -219,7 +220,7 @@ export default function UserDetails ( { params }: { params: { id: string; }; } )
 
     if ( !user ) return (
         <div className="flex justify-center items-center h-screen">
-            <Spinner label="Loading..." color="danger" />
+            <SpinnerLoader />
         </div>
     );
 

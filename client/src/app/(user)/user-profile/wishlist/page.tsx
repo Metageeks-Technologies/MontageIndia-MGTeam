@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import instance from "@/utils/axios";
 import ProductCard from "@/components/product/productCard";
 import { Spinner } from "@nextui-org/react";
+import {SpinnerLoader} from '@/components/loader/loaders';
 import { useAppDispatch, useAppSelector } from "@/app/redux/hooks";
 import { getWishlist } from "@/app/redux/feature/product/api";
 import { PiSmileySadThin } from "react-icons/pi";
@@ -32,9 +33,7 @@ const WishListPage = () => {
       <hr className="mb-6" />
       <div className="flex flex-col gap-4 overflow-y-scroll">
         {loading && (
-          <div className="flex justify-center items-center min-h-screen">
-            <Spinner color="danger" size="lg" />
-          </div>
+         <SpinnerLoader />
         )}
         {!loading && wishlist && wishlist.length === 0 && (
           <div className="flex justify-center items-start min-h-screen">

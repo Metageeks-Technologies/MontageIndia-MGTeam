@@ -5,23 +5,20 @@ export const metadata = {
 import { ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 
-import "../globals.css";
+// import "../globals.css";
 import { ReduxProvider } from "../redux/provider";
 
-export default function RootLayout({
+export default function AuthLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
-      <body>
+      <div>
       <ReduxProvider>        
-
       <ToastContainer />
       {children}
       </ReduxProvider>        
-      </body>
-    </html>
+      </div>
   )
 }
