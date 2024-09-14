@@ -172,57 +172,59 @@ const page = () => {
             <div className="w-full lg:w-2/3 lg:pb-8 ">
               {product && (
                 <>
-                <div className="relative">
-                  <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 pt-4 ">
-                    <h1 className="text-xl sm:text-2xl font-semibold mb-2 sm:mb-0">
-                      {product.title}
-                    </h1>
-                    <div className="flex flex-wrap gap-2">
-                      <button
-                        onClick={handleeWishlist}
-                        disabled={wishlistLoading}
-                        title={
-                          product.isWhitelisted
-                            ? "Remove from Saved"
-                            : "Save Image"
-                        }
-                        className="flex gap-2 border py-1 items-center rounded bg-white px-3 text-sm"
-                      >
-                        {wishlistLoading ? (
-                          <span className="h-4 w-4 border-t-2 border-b-2 border-gray-900 rounded-full animate-spin"></span>
-                        ) : product.isWhitelisted ? (
-                          <IoMdHeart className="h-4 w-4 text-red-500" />
-                        ) : (
-                          <IoMdHeartEmpty className="h-4 w-4" />
-                        )}
-                        <span>{product.isWhitelisted ? "Saved" : "Save"}</span>
-                      </button>
-                      <CustomShareButton />
-                      <button
-                        onClick={handleDownload}
-                        disabled={tryLoading}
-                        className="flex gap-2 border py-1 items-center rounded bg-white px-3 text-sm"
-                      >
-                        {tryLoading ? (
-                          <span className="h-4 w-4 border-t-2 border-b-2 border-gray-900 rounded-full animate-spin"></span>
-                        ) : (
-                          <AiOutlineDownload className="h-4 w-4" />
-                        )}
-                        <span>Try</span>
-                      </button>
+                  <div className="relative">
+                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 pt-4 ">
+                      <h1 className="text-xl sm:text-2xl font-semibold mb-2 sm:mb-0">
+                        {product.title}
+                      </h1>
+                      <div className="flex flex-wrap max-sm:justify-evenly gap-2">
+                        <button
+                          onClick={handleeWishlist}
+                          disabled={wishlistLoading}
+                          title={
+                            product.isWhitelisted
+                              ? "Remove from Saved"
+                              : "Save Image"
+                          }
+                          className="flex gap-2 border py-1 items-center rounded bg-white px-3 text-sm"
+                        >
+                          {wishlistLoading ? (
+                            <span className="h-4 w-4 border-t-2 border-b-2 border-gray-900 rounded-full animate-spin"></span>
+                          ) : product.isWhitelisted ? (
+                            <IoMdHeart className="h-4 w-4 text-red-500" />
+                          ) : (
+                            <IoMdHeartEmpty className="h-4 w-4" />
+                          )}
+                          <span>
+                            {product.isWhitelisted ? "Saved" : "Save"}
+                          </span>
+                        </button>
+                        <CustomShareButton />
+                        <button
+                          onClick={handleDownload}
+                          disabled={tryLoading}
+                          className="flex gap-2 border py-1 items-center rounded bg-white px-3 text-sm"
+                        >
+                          {tryLoading ? (
+                            <span className="h-4 w-4 border-t-2 border-b-2 border-gray-900 rounded-full animate-spin"></span>
+                          ) : (
+                            <AiOutlineDownload className="h-4 w-4" />
+                          )}
+                          <span>Try</span>
+                        </button>
+                      </div>
+                    </div>
+                    {/* <div className="w-full h-[24rem]  md:h-[32rem] lg:h-[32rem] rounded-lg border "> */}
+                    {product && <DetailWaveform product={product} />}
+                    {/* </div> */}
+                    <div className="mt-2 w-full lg:w-[50rem] ">
+                      <h2 className="font-bold">Description</h2>
+                      <p className="text-sm text-neutral-700">
+                        Stock Audio ID: {product._id}
+                      </p>
+                      <p className="text-sm w-3/4">{product.description}</p>
                     </div>
                   </div>
-                  {/* <div className="w-full h-[24rem]  md:h-[32rem] lg:h-[32rem] rounded-lg border "> */}
-                    {product && <DetailWaveform product={product} />}
-                  {/* </div> */}
-                  <div className="mt-2 w-full lg:w-[50rem] ">
-                    <h2 className="font-bold">Description</h2>
-                    <p className="text-sm text-neutral-700">
-                      Stock Audio ID: {product._id}
-                    </p>
-                    <p className="text-sm w-3/4">{product.description}</p>
-                  </div>
-                </div>
                 </>
               )}
             </div>
@@ -383,7 +385,9 @@ const page = () => {
           </div>
 
           <div className="pt-8 sm:pt-12 bg-pureWhite-light w-full px-4 sm:px-6 lg:px-4 xl:px-16 md:px-4 py-8">
-            <h1 className="font-semibold text-lg sm:text-xl mb-2">Similar Audios</h1>
+            <h1 className="font-semibold text-lg sm:text-xl mb-2">
+              Similar Audios
+            </h1>
             {similarProducts.map((product, index) => (
               <Waveform
                 key={index}

@@ -1,10 +1,10 @@
-import React, {useState} from "react";
-import {useRouter} from "next/navigation";
-import {IoSearch} from "react-icons/io5";
-import {toast} from "react-toastify";
+import React, { useState } from "react";
+import { useRouter } from "next/navigation";
+import { IoSearch } from "react-icons/io5";
+import { toast } from "react-toastify";
 import { FaImage } from "react-icons/fa";
 
-const VideoBanner = ( {
+const VideoBanner = ({
   isSearch,
   videoPath,
   heading,
@@ -14,10 +14,10 @@ const VideoBanner = ( {
   videoPath: string;
   heading: string;
   description: string;
-} ) => {
+}) => {
   const router = useRouter();
-  const [searchTerm, setSearchTerm] = useState<string>( "" );
-  const [searchType, setSearchType] = useState<string>( "image" );
+  const [searchTerm, setSearchTerm] = useState<string>("");
+  const [searchType, setSearchType] = useState<string>("image");
 
   const handleSearch = () => {
     router.push(
@@ -28,8 +28,9 @@ const VideoBanner = ( {
 
   return (
     <div
-      className={`relative w-full ${isSearch ? "h-[600px] sm:h-[400px]" : "h-[24rem] sm:h-[20rem]"
-        } overflow-hidden`}
+      className={`relative w-full ${
+        isSearch ? "h-[600px] sm:h-[400px]" : "h-[24rem] sm:h-[20rem]"
+      } overflow-hidden`}
     >
       <video
         className="absolute top-0 left-0 w-full h-full object-cover"
@@ -56,9 +57,9 @@ const VideoBanner = ( {
                   <input
                     type="text"
                     value={searchTerm}
-                    onChange={( e ) => setSearchTerm( e.target.value )}
-                    onKeyDown={( e ) => {
-                      if ( e.key === "Enter" ) {
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
                         handleSearch();
                       }
                     }}
@@ -67,58 +68,31 @@ const VideoBanner = ( {
                   />
                 </div>
                 <div className="flex gap-5">
-                  <div className="sm:hidden  flex items-center justify-center">
-                    <select
-                      value={searchType}
-                      onChange={( e ) => {
-                        setSearchType( e.target.value );
-                      }}
-                      className="w-8 outline-none cursor-pointer text-black rounded-lg p-1.5 text-center"
-                    >
-                      <option>
-                        <button
-                          onClick={() => setSearchType( "image" )}
-                          className={`p-2 rounded-full bg-red-500 text-xs`}
-                        >
-                          <img src="/asset/image_logo.svg" alt="Image Logo" className="w-6 h-6 bg-black" />
-                          
-                        </button>
-                      </option>
-                      <option >
-                        <button
-                          onClick={() => setSearchType( "audio" )}
-                          className={`p-2 rounded-full ${searchType === "audio"
-                            ? "bg-red-500 text-white"
-                            : "text-gray-400 hover:text-white"
-                            }`}
-                        >
-                          <img src="/asset/Vector.svg" alt="Icon" className="w-6 h-6 mr-2" />
-                        </button>
-                      </option>
-                      <option>
-                        <button
-                          onClick={() => setSearchType( "video" )}
-                          className={`p-2 rounded-full ${searchType === "video"
-                            ? "bg-red-500 text-white"
-                            : "text-gray-400 hover:text-white"
-                            }`}
-                        >
-                          <img src="/asset/video_logo.svg" alt="Video Logo" className="w-6 h-6 mr-2" />
-                        </button>
-                      </option>
-                    </select>
-
-                  </div>
                   <select
                     value={searchType}
-                    onChange={( e ) => {
-                      setSearchType( e.target.value );
+                    onChange={(e) => {
+                      setSearchType(e.target.value);
                     }}
                     className=" outline-none cursor-pointer  text-black rounded-lg p-1.5 text-center"
                   >
-                    <option className="lg:text-medium sm:text-xs text-xs" value="image">Image</option>
-                    <option className="lg:text-medium sm:text-xs text-xs" value="audio">Audio</option>
-                    <option className="lg:text-medium sm:text-xs text-xs" value="video">Video</option>
+                    <option
+                      className="lg:text-medium sm:text-xs text-xs"
+                      value="image"
+                    >
+                      Image
+                    </option>
+                    <option
+                      className="lg:text-medium sm:text-xs text-xs"
+                      value="audio"
+                    >
+                      Audio
+                    </option>
+                    <option
+                      className="lg:text-medium sm:text-xs text-xs"
+                      value="video"
+                    >
+                      Video
+                    </option>
                   </select>
                   <button
                     onClick={() => {
