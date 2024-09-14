@@ -3,17 +3,18 @@ import { useAppSelector } from "@/app/redux/hooks";
 import { FaCoins } from "react-icons/fa";
 import { useRouter } from "next/navigation";
 import { MdOutlineDateRange } from "react-icons/md";
-import {Spinner} from "@nextui-org/react";
+import UserDropdown from "@/components/userDropdown";
 import {SpinnerLoader} from '@/components/loader/loaders';
-import { FC } from "react";
 import { sendVerifyEmailLink } from "@/utils/loginOptions";
 import Swal from "sweetalert2";
+import useAuthStatus from "@/components/hooks/useCustomerAuth";
 
-const Home: FC = () => {
+const UserProfilePage = () => {
 
   const router = useRouter();
+  const { isAuthenticated, authLoading} = useAuthStatus();
   const { user }:{user:any} = useAppSelector((state) => state.user);
-  console.log("user::::", user);
+  // console.log("user::::", user);
 
   const handleVerifyEmail= async ()=>{
     if(!user || !user.email){
@@ -44,12 +45,16 @@ const Home: FC = () => {
       return;
   }
 
+  if(!isAuthenticated && !authLoading){
+    router.push('/auth/user/login');
+    return;
+  }
+
   return (
     <>
       <div className="w-full p-6 min-h-full flex flex-col rounded-lg bg-white">
+        <UserDropdown/>
         <div className="mb-8">
-  
-          <hr className="mb-4" />
           {!user && <SpinnerLoader/>} 
           {user && (
             <div className="flex flex-col">
@@ -98,7 +103,7 @@ const Home: FC = () => {
                       </div>
                     )
                   } */}
-                  <div className="text-black text-wrap md:w-1/3">
+                  <div className="text-black w-[30px] truncate md:w-1/3">
                     {user.email}
                   </div>
                 </div>
@@ -189,20 +194,10 @@ const Home: FC = () => {
             
         </div>
         )}
-        {/* <div className="mt-10 pb-2">
-          <h1 className="text-lg font-bold mb-1">Delete my Account</h1>
-          <div className="w-full flex flex-col">
-            <p className="text-sm text-black">
-              This will remove all of your personal data forever.
-            </p>
-            <p className="text-webred text-sm font-bold underline cursor-pointer">
-              Delete my Account
-            </p>
-          </div>
-        </div> */}
+       
       </div>
     </>
   );
 };
 
-export default Home;
+export default UserProfilePage;

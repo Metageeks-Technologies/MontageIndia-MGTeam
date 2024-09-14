@@ -51,7 +51,7 @@ function CartPopup() {
         !popupElement.contains(event.target as Node) &&
         isOpen
       ) {
-        setIsOpen(false);
+        // setIsOpen(false);
       }
     };
 
@@ -70,7 +70,7 @@ function CartPopup() {
           content={cart.length}
           shape="circle"
         >
-          <AiOutlineShoppingCart className="text-gray-700 cursor-pointer w-7 h-7 transition-transform duration-200 ease-in-out hover:scale-110 -700 mt-1" />
+          <AiOutlineShoppingCart className="text-gray-700 cursor-pointer w-6 h-6 transition-transform duration-200 ease-in-out hover:scale-110 -700 mt-1" />
         </Badge>
       </button>
       <div
@@ -78,12 +78,12 @@ function CartPopup() {
         className={`${
           !isOpen
             ? "hidden"
-            : "absolute  shadow-xl bg-white rounded-md w-[30rem] max-h-[22rem] top-16 right-4 md:right-14  z-50"
+            : "absolute  shadow-xl bg-white rounded-md sm:w-[30rem] sm:max-h-[22rem] w-[25rem]  top-16 right-0 md:right-14  z-50"
         }`}
       >
-        <div className=" rounded-md  bg-white  justify-self-end w-full max-w-2xl">
+        <div className=" rounded-md  bg-white  justify-self-end sm:w-full sm:max-w-2xl ">
           <div className="flex justify-between pb-5 rounded-t-md p-3 px-7  bg-webred-light  items-center ">
-            <h2 className="text-base leading-6  font-bold">My Cart</h2>
+            <h2 className="text-base leading-6 font-bold">My Cart</h2>
             <AiOutlineClose
               className="text-gray-700   cursor-pointer"
               onClick={() => setIsOpen(false)}

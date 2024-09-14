@@ -15,6 +15,8 @@ import { IoEyeOutline } from "react-icons/io5";
 import Link from "next/link";
 import { downloadProduct } from "@/app/redux/feature/product/api";
 import { truncateWords } from "@/utils/helper";
+import UserDropdown from "@/components/userDropdown";
+import { FaChevronRight,FaChevronDown } from "react-icons/fa";
 
 type Variant = {
   _id: string;
@@ -55,6 +57,7 @@ const Page: React.FC = () => {
   const [totalPurchased, setTotalPurchased] = useState(0);
   const [loading, setLoading] = useState<boolean>(false);
   const [downloading, setDownloading] = useState<boolean>(false);
+  const [showDataPerPage, setShowDataPerPage] = useState<boolean>(false);
   const dispatch = useAppDispatch();
 
   const fetchProducts = async () => {
@@ -82,8 +85,8 @@ const Page: React.FC = () => {
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
-  const handleDataPerPageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setDataPerPage(Number(e.target.value));
+  const handleDataPerPageChange = (num:number) => {
+    setDataPerPage(Number(num));
     setCurrentPage(1);
   };
 
@@ -104,16 +107,17 @@ const Page: React.FC = () => {
   };
 
   return (
-    <div className="rounded-lg min-h-screen bg-white px-6 py-4">
+    <div className="rounded-lg min-h-screen bg-white px-4 py-2 sm:px-6 sm:py-4">
+      <UserDropdown />
       <h1 className="md:text-xl font-semibold mb-6 text-gray-800">
         Purchased Products
       </h1>
-      <div className="flex justify-between items-center gap-4 flex-wrap my-6 mb-4 ">
-        <div className="flex">
+      <div className="flex flex-col sm:flex-row justify-between items-center gap-4 flex-wrap my-6 mb-4 ">
+        <div className="flex w-full sm:w-fit ">
           <input
             type="text"
             placeholder="Search"
-            className="border rounded-r-none rounded-l-md px-4 py-2 w-full max-w-sm"
+            className="border rounded-r-none rounded-l-md px-4 py-2 w-full "
             value={searchTerm}
             onChange={handleSearch}
             onKeyDown={(e) => {
@@ -129,16 +133,37 @@ const Page: React.FC = () => {
             <IoSearchOutline />
           </div>
         </div>
-        <div className="flex items-center flex-wrap md:gap-4">
-            <select
-              className="border rounded px-4 py-2"
-              onChange={handleDataPerPageChange}
-              value={dataPerPage}
-            >
-              <option className="md:text-md text-sm px-2 py-1" value={6}>6 Data per page</option>
-              <option className="md:text-md text-sm px-2 py-1" value={12}>12 Data per page</option>
-              <option className="md:text-md text-sm px-2 py-1" value={24}>24 Data per page</option>
-            </select>
+        <div className="w-full sm:w-fit flex flex-col items-start flex-wrap">
+          <button onClick={()=>setShowDataPerPage((prev)=>!prev)} className="flex items-center border px-4 py-2 bg-gray-50 border-gray-300 text-gray-900 text-sm rounded-lg">
+          <span>{dataPerPage} Data per page</span><span> {
+              showDataPerPage ? <FaChevronDown className="ml-2"/> : <FaChevronRight className="ml-2"/>
+       }</span>
+          </button>
+          <div className="relative w-full" >
+           <div 
+        className={`${!showDataPerPage && "hidden"} absolute top-full mt-2 z-10 flex px-2 py-2 sm:px-0 flex-col justify-center items-start border-2 rounded-lg bg-gray-200`}
+      >
+        <button 
+          onClick={() => handleDataPerPageChange(6)} 
+          className={`md:text-md w-full text-sm px-4 py-2 rounded-lg border-b ${dataPerPage === 6 ? "bg-webred text-white" : "bg-gray-200 text-black"}`}
+        >
+          6 Data Per Page
+        </button>
+        <button 
+          onClick={() => handleDataPerPageChange(12)} 
+          className={`md:text-md w-full text-sm px-4 py-2 rounded-lg border-b ${dataPerPage === 12 ? "bg-webred text-white" : "bg-gray-200 text-black"}`}
+        >
+          12 Data Per Page
+        </button>
+        <button 
+          onClick={() => handleDataPerPageChange(24)} 
+          className={`md:text-md w-full text-sm px-4 py-2 rounded-lg ${dataPerPage === 24 ? "bg-webred text-white" : "bg-gray-200 text-black"}`}
+        >
+          24 Data Per Page
+        </button>
+      </div>
+      </div>
+         
         </div>
       </div>
       {loading ? (
@@ -158,9 +183,9 @@ const Page: React.FC = () => {
                   purchasedProducts?.map((purchasedProduct) => (
                     <div
                       key={purchasedProduct.product._id}
-                      className="w-full border-t hover:bg-gray-100 transition duration-200"
+                      className="w-full border-t hover:bg-gray-100 my-2 sm:my-0 transition duration-200"
                     >
-                      <div className="w-full flex flex-col md:flex-row justify-between gap-2 p-4">
+                      <div className="w-full flex flex-col md:flex-row justify-between gap-2 sm:p-4">
 
                       <div className="xl:w-3/5 sm:w-1/2 flex flex-col lg:flex-row gap-4">
                         <div className="relative h-48 sm:w-48 sm:h-28 xl:h-32 xl:w-60">

@@ -68,6 +68,48 @@ const VideoBanner = ({
                   />
                 </div>
                 <div className="flex gap-5">
+                  {/* <div className="sm:hidden  flex items-center justify-center">
+                    <select
+                      value={searchType}
+                      onChange={( e ) => {
+                        setSearchType( e.target.value );
+                      }}
+                      className="w-8 outline-none cursor-pointer text-black rounded-lg p-1.5 text-center"
+                    >
+                      <option>
+                        <button
+                          onClick={() => setSearchType( "image" )}
+                          className={`p-2 rounded-full bg-red-500 text-xs`}
+                        >
+                          <img src="/asset/image_logo.svg" alt="Image Logo" className="w-6 h-6 bg-black" />
+                          
+                        </button>
+                      </option>
+                      <option >
+                        <button
+                          onClick={() => setSearchType( "audio" )}
+                          className={`p-2 rounded-full ${searchType === "audio"
+                            ? "bg-red-500 text-white"
+                            : "text-gray-400 hover:text-white"
+                            }`}
+                        >
+                          <img src="/asset/Vector.svg" alt="Icon" className="w-6 h-6 mr-2" />
+                        </button>
+                      </option>
+                      <option>
+                        <button
+                          onClick={() => setSearchType( "video" )}
+                          className={`p-2 rounded-full ${searchType === "video"
+                            ? "bg-red-500 text-white"
+                            : "text-gray-400 hover:text-white"
+                            }`}
+                        >
+                          <img src="/asset/video_logo.svg" alt="Video Logo" className="w-6 h-6 mr-2" />
+                        </button>
+                      </option>
+                    </select>
+
+                  </div> */}
                   <select
                     value={searchType}
                     onChange={(e) => {

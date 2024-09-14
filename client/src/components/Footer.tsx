@@ -50,7 +50,8 @@ const Footer = () => {
               <li><a href="#" className="hover:text-gray-200">Contact us</a></li>
             </ul>
           </div>
-          <div className="w-full">
+
+          <div className="w-full sm:block hidden">
             <h2 className="font-bold mb-3">Stock Photos and Videos</h2>
             <ul className="space-y-2 text-gray-400 text-sm">
               <li><a href="#" className="hover:text-gray-200">Stock Photos</a></li>
@@ -71,7 +72,32 @@ const Footer = () => {
               </ul>
             </div>
           </div>
-          <div className="w-full">
+           
+          <div className="w-full block sm:hidden ">
+            <h2 className="font-bold mb-3">Stock Photos and Videos</h2>
+            <ul className="space-y-2 text-gray-400 text-sm">
+              <li><a href="#" className="hover:text-gray-200">Stock Photos</a></li>
+              <li><a href="#" className="hover:text-gray-200">Stock videos</a></li>
+              <li><a href="#" className="hover:text-gray-200">Stock vectors</a></li>
+              <li><a href="#" className="hover:text-gray-200">Editorial images</a></li>
+              <li><a href="#" className="hover:text-gray-200">Featured photo collections</a></li>
+            </ul>
+           
+          </div>
+
+          <div className=" w-full block sm:hidden">
+              <h2 className="font-bold mb-2">Partners</h2>
+              <ul className="space-y-2 text-gray-400 text-sm">
+                <li><a href="#" className="hover:text-gray-200">Sell your content</a></li>
+                <li><a href="#" className="hover:text-gray-200">Affiliate/Reseller</a></li>
+                <li><a href="#" className="hover:text-gray-200">International reseller</a></li>
+                <li><a href="#" className="hover:text-gray-200">Live assignments</a></li>
+                <li><a href="#" className="hover:text-gray-200">Rights and clearance</a></li>
+                <li><a href="#" className="hover:text-gray-200">Developers</a></li>
+              </ul>
+            </div>
+
+          <div className="w-full ">
             <h2 className="font-bold mb-3">Legal</h2>
             <ul className="space-y-2 text-gray-400 text-sm">
               <li><a href="#" className="hover:text-gray-200">Website Terms of Use</a></li>
@@ -81,6 +107,15 @@ const Footer = () => {
               <li><a href="#" className="hover:text-gray-200">Patents</a></li>
               <li><a href="#" className="hover:text-gray-200">Cookies preferences</a></li>
             </ul>
+            <div className="mt-6 sm:block hidden">
+              <h2 className="font-bold mb-2">Our Brands</h2>
+              <ul className="space-y-2 text-gray-400 text-sm">
+                <li><a href="#" className="hover:text-gray-200">Pond5</a></li>
+                <li><a href="#" className="hover:text-gray-200">PremiumBeat</a></li>
+                <li><a href="#" className="hover:text-gray-200">TurboSquid</a></li>
+                <li><a href="#" className="hover:text-gray-200">Giphy</a></li>
+              </ul>
+            </div>
           </div>
         </div>
         <div className=" sm:block hidden w-full md:w-1/4 mt-4">

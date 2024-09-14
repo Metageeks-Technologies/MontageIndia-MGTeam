@@ -146,7 +146,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, status }) => {
               <span className="text-gray-500 font-semibold">Sizes : </span>
               <span className="text-sm">{product.variants[0].metadata.dimension}</span>
             </div>
-            <div className="flex flex-col md:flex-row gap-2 justify-center items-center">
+            <div className="flex flex-row sm:flex-col md:flex-row gap-2 justify-center items-center">
               <button className="w-full px-4 py-2 rounded-lg  hover:bg-[#ef3a3abe] text-white bg-webred">
                 <Link
                   href={`/${product.mediaType}/${product.uuid}`}

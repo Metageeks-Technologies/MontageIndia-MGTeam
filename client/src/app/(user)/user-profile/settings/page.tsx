@@ -5,13 +5,15 @@ import { useRouter } from "next/navigation";
 import Swal from "sweetalert2";
 import { useAppDispatch, useAppSelector } from "@/app/redux/hooks";
 import { getCurrCustomer } from "@/app/redux/feature/user/api";
-import { Spinner } from "@nextui-org/react";
 import {SpinnerLoader} from '@/components/loader/loaders';
 import { FaCamera } from "react-icons/fa";
 import { FileUploader } from "react-drag-drop-files";
 import { FaEye } from "react-icons/fa";
 import { FaEyeSlash } from "react-icons/fa";
 import axios from "axios";
+import UserDropdown from "@/components/userDropdown";
+import useAuthStatus  from "@/components/hooks/useCustomerAuth";
+
 const fileTypes = ["JPG", "PNG", "JPEG"];
 interface Subscription {
   PlanId: string;
@@ -43,6 +45,7 @@ interface Form {
 
 const ProfileSetting: FC = () => {
   const router = useRouter();
+  const { isAuthenticated, authLoading} = useAuthStatus();
   const [user, setUser] = useState<User | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
@@ -64,6 +67,11 @@ const ProfileSetting: FC = () => {
   const dispatch = useAppDispatch();
   const users = useAppSelector((state: any) => state.user);
   console.log("cuurent", users);
+
+
+  if(!isAuthenticated && !authLoading){
+    router.push("/auth/user/login");
+  }
 
   const handleChange = (file: File) => {
     setFile(file);
@@ -222,7 +230,8 @@ const ProfileSetting: FC = () => {
 
   return (
     <>
-      <div className="w-full md:px-6 md:py-4 min-h-full flex flex-col rounded-lg overflow-hidden bg-white">
+      <div className="w-full px-4 py-2 sm:px-6 sm:py-4 min-h-full flex flex-col rounded-lg overflow-hidden bg-white">
+        <UserDropdown />
         <div className="mb-8">
           {/* Sidebar */}
           <h2 className="md:text-xl font-bold mb-2">Profile Settings</h2>

@@ -7,6 +7,7 @@ import {SpinnerLoader} from '@/components/loader/loaders';
 import { useAppDispatch, useAppSelector } from "@/app/redux/hooks";
 import { getWishlist } from "@/app/redux/feature/product/api";
 import { PiSmileySadThin } from "react-icons/pi";
+import UserDropdown from "@/components/userDropdown";
 
 const WishListPage = () => {
   const [loading, setLoading] = useState(false);
@@ -27,6 +28,7 @@ const WishListPage = () => {
 
   return (
     <div className="w-full min-h-screen rounded-lg overflow-hidden bg-white px-4 py-2 md:px-6 md:py-4">
+      <UserDropdown />
       <h1 className="text-xl font-semibold md:mb-6 text-gray-800">
        WishList
       </h1>

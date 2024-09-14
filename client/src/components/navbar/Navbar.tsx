@@ -2,25 +2,18 @@
 import React, { useState, useEffect, useRef } from "react";
 import CartPopup from "../cart/cartPage";
 import { AiOutlineHeart, AiOutlineMenu, AiOutlineClose } from "react-icons/ai";
-import { IoIosArrowDropdown, IoMdArrowDropdown } from "react-icons/io";
-import { useRouter, useSearchParams } from "next/navigation";
+import { IoIosArrowDropdown } from "react-icons/io";
+import { useRouter} from "next/navigation";
 import { FaUserCircle } from "react-icons/fa";
-import instance from "@/utils/axios";
 import { BiLogInCircle, BiLogOutCircle } from "react-icons/bi";
-import { useAppDispatch, useAppSelector } from "@/app/redux/hooks";
+import { useAppSelector } from "@/app/redux/hooks";
 import Link from "next/link";
-import { BsBookmarkHeart } from "react-icons/bs";
 import { notifySuccess } from "@/utils/toast";
 import { signOutUser } from "@/utils/loginOptions";
-import { usePathname } from "next/navigation";
-import { FiSettings } from "react-icons/fi";
-import { MdHistory, MdLogout } from "react-icons/md";
-import { BsCartCheck } from "react-icons/bs";
-import { FaRegCreditCard } from "react-icons/fa";
 import { IoVideocamOutline } from "react-icons/io5";
 import { CiImageOn } from "react-icons/ci";
-import { MdAudiotrack } from "react-icons/md";
 import { FaWpforms } from "react-icons/fa6";
+import { IoMdStarOutline } from "react-icons/io";
 
 interface User {
   subscription: {
@@ -78,8 +71,6 @@ const Navbar: React.FC = () => {
   }, []);
 
   const toggleDropdown = () => setIsDropdownOpen(!isEditorChosePopupOpen);
-  const closeDropdown = () => setIsDropdownOpen(false);
-  const toggleMobileDropdown = () => setMobileDropdownOpen(!mobileDropdownOpen);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -121,6 +112,10 @@ const Navbar: React.FC = () => {
   const handleModalClick = (route:string) => {
     setMenuOpen(false);
     router.push(route);
+  }
+
+  const handleEditorClick = () => {
+    setIsDropdownOpen(!isEditorChosePopupOpen);
   }
 
   const NavItem: React.FC<NavItemProps> = ({ href, onClick, children }) => (
@@ -165,8 +160,8 @@ const Navbar: React.FC = () => {
   }, []);
 
   return (
-    <div className="bg-white shadow-md">
-      <div className="px-6">
+    <div className="bg-white shadow-md ">
+      <div className=" mx-auto px-4 sm:px-4 lg:px-16 ">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center space-x-5">
             <div className="flex items-center">
@@ -307,7 +302,7 @@ const Navbar: React.FC = () => {
 
       {menuOpen && (
         <div className="md:hidden">
-          <div className="px-4 pt-2 pb-3 space-y-1 sm:px-4 flex gap-2 flex-col">
+          <div className="px-6 pt-2 pb-3 space-y-1 sm:px-4 flex gap-2 flex-col">
             <Link href="/video" onClick={() => setMenuOpen(false)}>
               <div className="flex justify-start gap-2 items-center">
                 <span>
@@ -324,14 +319,49 @@ const Navbar: React.FC = () => {
                 <span>Image</span>
               </div>
             </Link>
-            <Link href="/audio" onClick={() => setMenuOpen(false)}>
-              <div className="flex justify-start gap-2 items-center">
-                <span>
-                  <MdAudiotrack className="w-6 h-6" />
-                </span>
-                <span>Audio</span>
-              </div>
-            </Link>
+           <div className="relative group">
+           <div className="flex justify-start gap-2 items-center">
+           <IoMdStarOutline className="w-6 h-6" />
+                    <button
+                      // disabled={isEditorChosePopupOpen}
+                      onClick={toggleDropdown}
+                      className="flex items-center text-gray-700 hover:text-black"
+                    >
+                      Editor Choice
+                      <IoIosArrowDropdown
+                        className={`ml-1 transform ${
+                          isEditorChosePopupOpen ? "rotate-180" : ""
+                        } transition-transform duration-200`}
+                      />
+                    </button>
+           </div>
+              {isEditorChosePopupOpen && (
+                <div
+                  onClick={() => setIsDropdownOpen( false )}
+                  ref={editorChoiceRef}
+                  className="absolute mt-2 bg-white border rounded-lg shadow-xl z-50 flex flex-col items-start justify-center top-full"
+                >
+                  <DropdownItem
+                    href="/search/video?category=editor choice&mediaType=video"
+                  >
+                    <img src="/asset/video_logo.svg" alt="Video Logo" className="w-5 h-5 mr-2" />
+                    <span>Video</span>
+                  </DropdownItem>
+                  <DropdownItem
+                    href="/search/image?category=editor choice&mediaType=image"
+                  >
+                    <img src="/asset/image_logo.svg" alt="Image Logo" className="w-5 h-5 mr-2" />
+                    <span>Image</span>
+                  </DropdownItem>
+                  <DropdownItem
+                    href="/search/audio?category=editor choice&mediaType=audio"
+                  >
+                    <img src="/asset/Vector.svg" alt="Icon" className="w-5 h-5 mr-2" />
+                    <span>Audio</span>
+                  </DropdownItem>
+                </div>
+              )}
+            </div>
             <Link href="/ondemand" onClick={() => setMenuOpen(false)}>
               <div className="flex justify-start gap-2 items-center">
                 <span>
@@ -347,7 +377,7 @@ const Navbar: React.FC = () => {
               <span>Cart</span>
             </div>
           </div>
-          <div className="py-4 px-4  border-t border-gray-200">
+          <div className="py-4 px-6  border-t border-gray-200">
             <div className="flex items-center">
               {user ? (
                 <img
@@ -367,56 +397,21 @@ const Navbar: React.FC = () => {
                 </div>
               </div>
             </div>
-            <div className="mt-3 px-2 space-y-1">
+            <div className="mt-3 sm:px-2 space-y-1">
               {user ? (
                 <>
                   <button
                     onClick={handleProfileClick}
-                    className="flex items-center w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100"
+                    className="flex items-center w-full text-left py-2 text-gray-800 hover:bg-gray-100"
                   >
-                    <FaUserCircle className="w-5 h-5 mr-3" />
+                    <FaUserCircle className="w-6 h-6 mr-3" />
                     User Profile
                   </button>
                   <button
-                    onClick={() =>handleModalClick("/user-profile/purchased-product")}
-                    className="flex items-center w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100 md:hidden"
-                  >
-                    <BsCartCheck className="h-6 w-6 mr-3" />
-                    Purchased Product
-                  </button>
-                  <button
-                    onClick={() => handleModalClick("/user-profile/purchase-history")}
-                    className="flex items-center w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100 md:hidden"
-                  >
-                    <MdHistory className=" h-6 w-6 mr-3" />
-                    Purchase History
-                  </button>
-                  <button
-                    onClick={() => handleModalClick("/user-profile/subscription")}
-                    className="flex items-center w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100 md:hidden"
-                  >
-                    <FaRegCreditCard className="h-6 w-6 mr-3" />
-                    Subscription Plan
-                  </button>
-                  <button
-                    onClick={() => handleModalClick("/user-profile/wishlist")}
-                    className="flex items-center w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100 md:hidden"
-                  >
-                    <BsBookmarkHeart className="h-6 w-6 mr-3" />
-                    Wishlist
-                  </button>
-                  <button
-                    onClick={() => handleModalClick("/user-profile/settings")}
-                    className="flex items-center w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100 md:hidden"
-                  >
-                    <FiSettings className="h-6 w-6 mr-3" />
-                    Settings
-                  </button>
-                  <button
                     onClick={handleLogout}
-                    className="flex items-center w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100"
+                    className="flex items-center w-full text-left py-2 text-gray-800 hover:bg-gray-100"
                   >
-                    <BiLogOutCircle className="w-5 h-5 mr-3" />
+                    <BiLogOutCircle className="w-6 h-6 mr-3" />
                     Logout
                   </button>
                 </>
