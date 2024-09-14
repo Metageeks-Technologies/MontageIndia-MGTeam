@@ -158,8 +158,8 @@ const Home = () => {
         <hr />
 
         <div className="bg-pageBg mx-auto ">
-          <div className="flex flex-col lg:flex-row lg:space-x-8 px-4 lg:px-4 xl:px-16 md:px-4 gap-12 ">
-            <div className="w-full lg:w-2/3">
+          <div className="flex flex-col lg:flex-row lg:space-x-8 px-4 border-b lg:px-4 xl:px-16 md:px-4 md:gap-12 gap-1 ">
+            <div className="w-full lg:w-2/3 lg:pb-6">
               {!!product ? (
                 <div className="relative">
                   <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 pt-4 ">
