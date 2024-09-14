@@ -42,10 +42,10 @@ const TopBanner = () => {
 
     return (
         <div className="bg-black text-white w-full py-2 px-4 flex justify-between items-center gap-5">
-            <div className="flex flex-col items-center gap-2"> </div>
-            <div className="flex items-center gap-2  justify-end">
-                <p className="text-sm lg:text-base">{description}</p>
-                <button className="bg-white hover:bg-red-600 text-black font-semibold py-3 px-4 rounded-full transition"  >
+            {/* <div className="flex flex-col items-center gap-2"> </div> */}
+            <div className="flex items-center w-full sm:justify-center gap-2 ">
+                <p className="sm:text-sm text-xs lg:text-base">{description}</p>
+                <button className="bg-white hover:bg-red-600 sm:w-40 w-44 text-black font-semibold py-3 sm:px-4 px-4 sm:text-medium text-xs rounded-full transition"  >
                     Explore Plans
                 </button>
             </div>

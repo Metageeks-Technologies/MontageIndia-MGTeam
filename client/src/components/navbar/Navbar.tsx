@@ -2,24 +2,16 @@
 import React, { useState, useEffect, useRef } from "react";
 import CartPopup from "../cart/cartPage";
 import { AiOutlineHeart, AiOutlineMenu, AiOutlineClose } from "react-icons/ai";
-import { IoIosArrowDropdown, IoMdArrowDropdown } from "react-icons/io";
-import { useRouter, useSearchParams } from "next/navigation";
+import { IoIosArrowDropdown } from "react-icons/io";
+import { useRouter} from "next/navigation";
 import { FaUserCircle } from "react-icons/fa";
-import instance from "@/utils/axios";
 import { BiLogInCircle, BiLogOutCircle } from "react-icons/bi";
-import { useAppDispatch, useAppSelector } from "@/app/redux/hooks";
+import { useAppSelector } from "@/app/redux/hooks";
 import Link from "next/link";
-import { BsBookmarkHeart } from "react-icons/bs";
 import { notifySuccess } from "@/utils/toast";
 import { signOutUser } from "@/utils/loginOptions";
-import { usePathname } from "next/navigation";
-import { FiSettings } from "react-icons/fi";
-import { MdHistory, MdLogout } from "react-icons/md";
-import { BsCartCheck } from "react-icons/bs";
-import { FaRegCreditCard } from "react-icons/fa";
 import { IoVideocamOutline } from "react-icons/io5";
 import { CiImageOn } from "react-icons/ci";
-import { MdAudiotrack } from "react-icons/md";
 import { FaWpforms } from "react-icons/fa6";
 import { IoMdStarOutline } from "react-icons/io";
 
@@ -168,8 +160,8 @@ const Navbar: React.FC = () => {
   }, []);
 
   return (
-    <div className="bg-white shadow-md">
-      <div className="px-6">
+    <div className="bg-white shadow-md ">
+      <div className=" mx-auto px-4 sm:px-4 lg:px-16 ">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center space-x-5">
             <div className="flex items-center">

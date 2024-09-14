@@ -67,7 +67,7 @@ const VideoBanner = ( {
                   />
                 </div>
                 <div className="flex gap-5">
-                  <div className="sm:hidden  flex items-center justify-center">
+                  {/* <div className="sm:hidden  flex items-center justify-center">
                     <select
                       value={searchType}
                       onChange={( e ) => {
@@ -108,7 +108,7 @@ const VideoBanner = ( {
                       </option>
                     </select>
 
-                  </div>
+                  </div> */}
                   <select
                     value={searchType}
                     onChange={( e ) => {
