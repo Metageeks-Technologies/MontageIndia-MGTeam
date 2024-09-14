@@ -1,11 +1,7 @@
 "use client";
 import { useRouter, usePathname } from "next/navigation";
 import React, { useEffect } from "react";
-import {
-  AiOutlineUser
-} from "react-icons/ai";
-
-import instance from "@/utils/axios";
+import {AiOutlineUser } from "react-icons/ai";
 import { notifyError, notifySuccess } from "@/utils/toast";
 import { useState } from "react";
 import { BsCartCheck } from "react-icons/bs";
@@ -21,7 +17,7 @@ const ProfileSidebar = () => {
   const [active, setActive] = useState<string>("");
 
   const pathname = usePathname();
-  console.log("pathname:::", pathname);
+  // console.log("pathname:::", pathname);
 
   useEffect(() => {
     if (pathname === "/user-profile") {
@@ -39,19 +35,8 @@ const ProfileSidebar = () => {
     }
   }, [pathname]);
 
-  const handleLogout = async () => {
-    try {
-      const response = await instance.get("/user/logout");
-
-      router.push("/auth/user/login");
-      notifySuccess("Logout successfully");
-    } catch (error) {
-      notifyError("Some error in Logout ");
-      console.error("Error in logout:", error);
-    }
-  };
-
   const handleLogOut = async () => {
+    console.log("logout");
     await signOutUser();
     notifySuccess("Logout successfully");
     router.push("/auth/user/login");
@@ -77,8 +62,8 @@ const ProfileSidebar = () => {
           >
             <div className="w-full flex justify-between items-center">
               <div className="flex gap-2 justify-start items-center">
-                <AiOutlineUser className="h-6 w-6" />
-                <span>Profile</span>
+                <AiOutlineUser className="h-5 w-5" />
+                <span className="text-md" >Profile</span>
               </div>
               <IoIosArrowForward />
             </div>
@@ -96,8 +81,8 @@ const ProfileSidebar = () => {
           >
             <div className="w-full flex justify-between items-center">
               <div className="flex gap-2 justify-start items-center">
-                <BsCartCheck className="h-6 w-6" />
-                <span>Purchased Product</span>
+                <BsCartCheck className="h-5 w-5" />
+                <span className="text-md" >My Product</span>
               </div>
               <IoIosArrowForward />
             </div>
@@ -115,8 +100,8 @@ const ProfileSidebar = () => {
           >
             <div className="w-full flex justify-between items-center">
               <div className="flex gap-2 justify-start items-center">
-                <MdHistory className=" h-6 w-6" />
-                <span>Purchase History</span>
+                <MdHistory className=" h-5 w-5" />
+                <span className="text-md" >Purchase History</span>
               </div>
               <IoIosArrowForward />
             </div>
@@ -134,8 +119,8 @@ const ProfileSidebar = () => {
           >
             <div className="w-full flex justify-between items-center">
               <div className="flex gap-2 justify-start items-center">
-                <FaRegCreditCard className="h-6 w-6" />
-                <span>Subscription Plan</span>
+                <FaRegCreditCard className="h-5 w-5" />
+                <span className="text-md" >Subscription</span>
               </div>
               <IoIosArrowForward />
             </div>
@@ -153,8 +138,8 @@ const ProfileSidebar = () => {
           >
             <div className="w-full flex justify-between items-center">
               <div className="flex gap-2 justify-start items-center">
-                <BsBookmarkHeart className="h-6 w-6" />
-                <span>Wishlist</span>
+                <BsBookmarkHeart className="h-5 w-5" />
+                <span className="text-md" >Wishlist</span>
               </div>
               <IoIosArrowForward />
             </div>
@@ -172,8 +157,8 @@ const ProfileSidebar = () => {
           >
             <div className="w-full flex justify-between items-center">
               <div className="flex gap-2 justify-start items-center">
-                <FiSettings className="h-6 w-6" />
-                <span>Settings</span>
+                <FiSettings className="h-5 w-5" />
+                <span className="text-md" >Settings</span>
               </div>
               <IoIosArrowForward />
             </div>
@@ -183,11 +168,11 @@ const ProfileSidebar = () => {
           >
             <div className="w-full flex justify-between items-center">
               <div
-                onClick={handleLogOut}
+                onClick={()=>handleLogOut()}
                 className="flex gap-2 justify-start items-center"
               >
-                <MdLogout className="h-6 w-6" />
-                <span>Log Out</span>
+                <MdLogout className="h-5 w-5" />
+                <span className="text-md" >Log Out</span>
               </div>
             </div>
           </div>

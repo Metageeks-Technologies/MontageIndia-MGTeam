@@ -6,7 +6,7 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { ReduxProvider } from "@/app/redux/provider";
 import Script from "next/script";
-import Sidebar from "@/components/navbar/Navbar";
+import Navbar from "@/components/navbar/Navbar";
 import InitialLoad from "@/components/provider/InitialLoad";
 import TopBanner from "@/components/navbar/TopBanner";
 import { ChatProvider } from "@/app/(user)/Provider/chatProvider";
@@ -31,8 +31,8 @@ export default function UserLayout({
         <ToastContainer />
         <ReduxProvider>
           <InitialLoad>
-            <TopBanner />
-            <Sidebar />
+            <TopBanner/>
+            <Navbar/>
             <ChatProvider>{children}</ChatProvider>
           </InitialLoad>
         </ReduxProvider>

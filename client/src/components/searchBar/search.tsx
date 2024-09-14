@@ -219,18 +219,54 @@ const Searchbar = () => {
                 value={selectedOption}
                 onChange={(e) => setSelectedOption(e.target.value)}
               >
-                <option value="Image">
-                  Image
-                  <CiCamera />
-                </option>
-                <option value="Audio">
-                  <CiMusicNote1 />
-                  Video
-                </option>
-                <option value="Video">
-                  <FaVideo />
-                  Audio
-                </option>
+                {
+                  isImagePage && (
+                    <option value="Image">
+                      Image
+                      <CiCamera />
+                    </option>
+                  )
+                }
+                {
+                  isVideoPage && (
+                    <option value="Video">
+                      Video
+                      <FaVideo />
+                    </option>
+                  )
+                }
+                {
+                  isAudioPage && (
+                    <option value="Audio">
+                      Audio
+                      <CiMusicNote1 />
+                    </option>
+                  )
+                }
+               {
+                !isImagePage && (
+                  <option value="Image">
+                    Image
+                    <CiCamera />
+                  </option>
+                )
+               } 
+               {
+                !isVideoPage && (
+                  <option value="Video">
+                    Video
+                    <FaVideo />
+                  </option>
+                )
+               }
+               {
+                !isAudioPage && (
+                  <option value="Audio">
+                    Audio
+                    <CiMusicNote1 />
+                  </option>
+                )
+               }
               </select>
 
               <input
