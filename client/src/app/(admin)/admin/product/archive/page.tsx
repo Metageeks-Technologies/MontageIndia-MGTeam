@@ -307,7 +307,7 @@ const Home: React.FC = () =>
                             <div
                             >
                               <video
-                                controls
+                                
                                 className="w-full h-28 object-cover rounded">
                                 <source
                                   src={ `https://mi2-public.s3.ap-southeast-1.amazonaws.com/${ prod?.thumbnailKey }` }

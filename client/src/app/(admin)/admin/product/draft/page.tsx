@@ -62,7 +62,7 @@ const Home: React.FC = () => {
     setSelectedMediaTypes(selectedList);
   };
   const capitalizeFirstLetter = (str: string): string => {
-    if(!str) return "";
+    if (!str) return "";
     return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
   };
   const showAllProducts = async () => {
@@ -304,10 +304,7 @@ const Home: React.FC = () => {
                         {prod?.mediaType === "video" && (
                           <div>
                             {" "}
-                            <video
-                              controls
-                              className="w-full h-28 object-cover rounded"
-                            >
+                            <video className="w-full h-28 object-cover rounded">
                               <source
                                 src={`https://mi2-public.s3.ap-southeast-1.amazonaws.com/${prod?.thumbnailKey}`}
                               />
