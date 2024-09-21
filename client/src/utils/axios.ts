@@ -1,7 +1,7 @@
 import axios from "axios";
 import { auth } from "@/utils/firebaseConfig";
 import { onAuthStateChanged } from "firebase/auth";
-
+// temp commit
 const getToken = () => {
   return new Promise((resolve, reject) => {
     onAuthStateChanged(auth, async (user) => {
