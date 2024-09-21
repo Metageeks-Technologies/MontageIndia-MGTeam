@@ -205,9 +205,10 @@ const LoginPage = () => {
     <>
       <div className="flex flex-col items-center justify-center min-h-screen relative px-4 sm:px-6 lg:px-8">
         <div className="flex items-center mb-8">
-          <div className="w-48 h-14 flex mb-4 top-12 justify-center items-center rounded-xl ">
+          <Link href={"/"} className="w-48 h-14 flex mb-4 top-12 justify-center items-center rounded-xl ">
             <img src={"/images/logo.png"} alt="logo" />
-          </div>
+          </Link>
+
         </div>
 
         <div className="w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-md p-8 bg-white border rounded-lg shadow-md">

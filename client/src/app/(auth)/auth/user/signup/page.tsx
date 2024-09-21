@@ -219,9 +219,13 @@ const SignUpPage = () => {
   return (
     <>
       <div className="flex flex-col items-center justify-center h-full relative px-4 sm:px-6 lg:px-8">
-        <div className="w-48 h-14 flex m-8    justify-center  rounded-xl ">
+        <Link
+          href={"/"}
+          className="w-48 h-14 flex m-8    justify-center  rounded-xl "
+        >
           <img src={"/images/logo.png"} alt="logo" />
-        </div>
+        </Link>
+
         <div className="w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-md   p-8 bg-white border rounded-lg shadow-md">
           <h2 className="text-2xl font-bold">Sign In</h2>
           <p className="mt-2 text-center text-gray-600">
