@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import instance from "@/utils/axios";
 import { Spinner, Pagination, Button } from "@nextui-org/react";
-import Multiselect from "multiselect-react-dropdown";
+import Multiselect from 'multiselect-react-dropdown';
 import { categoriesOptions, mediaTypesOptions } from "@/utils/tempData";
 import { LuDot } from "react-icons/lu";
 import { useRouter } from "next/navigation";
@@ -13,13 +13,15 @@ import Swal from "sweetalert2";
 import { SpinnerLoader } from "@/components/loader/loaders";
 
 // Define the interfaces for the product and variant types
-interface Variant {
+interface Variant
+{
   label: string;
   price: number;
   key: string;
 }
 
-interface Product {
+interface Product
+{
   _id: string;
   slug: string;
   title: string;
@@ -35,153 +37,166 @@ interface Product {
   uuid: string;
 }
 
-const Home: React.FC = () => {
-  const [productData, setProductData] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [productsPerPage, setProductsPerPage] = useState(6);
-  const [SearchTerm, setSearchTerm] = useState("");
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
-  const [selectedMediaTypes, setSelectedMediaTypes] = useState<string[]>([]);
-  const [shouldFetch, setShouldFetch] = useState(true);
-  const [availableCategories, setAvailableCategories] = useState<any[]>([]);
+const Home: React.FC = () =>
+{
+  const [ productData, setProductData ] = useState<Product[]>( [] );
+  const [ loading, setLoading ] = useState( false );
+  const [ currentPage, setCurrentPage ] = useState( 1 );
+  const [ totalPages, setTotalPages ] = useState( 1 );
+  const [ productsPerPage, setProductsPerPage ] = useState( 6 );
+  const [ SearchTerm, setSearchTerm ] = useState( "" );
+  const [ selectedCategories, setSelectedCategories ] = useState<string[]>( [] );
+  const [ selectedMediaTypes, setSelectedMediaTypes ] = useState<string[]>( [] );
+  const [ shouldFetch, setShouldFetch ] = useState( true );
+  const [ availableCategories, setAvailableCategories ] = useState<any[]>( [] );
   const router = useRouter();
-  const onSelectCategory = (selectedList: string[]) => {
-    setSelectedCategories(selectedList);
+  const onSelectCategory = ( selectedList: string[] ) =>
+  {
+    setSelectedCategories( selectedList );
   };
 
-  const onRemoveCategory = (selectedList: string[]) => {
-    setSelectedCategories(selectedList);
+  const onRemoveCategory = ( selectedList: string[] ) =>
+  {
+    setSelectedCategories( selectedList );
   };
 
-  const onSelectMediaType = (selectedList: string[]) => {
-    setSelectedMediaTypes(selectedList);
+  const onSelectMediaType = ( selectedList: string[] ) =>
+  {
+    setSelectedMediaTypes( selectedList );
   };
 
-  const onRemoveMediaType = (selectedList: string[]) => {
-    setSelectedMediaTypes(selectedList);
+  const onRemoveMediaType = ( selectedList: string[] ) =>
+  {
+    setSelectedMediaTypes( selectedList );
   };
-  const showAllProducts = async () => {
-    setSearchTerm("");
-    setSelectedCategories([]);
-    setSelectedMediaTypes([]);
-    setCurrentPage(1);
-    setShouldFetch(true);
+  const showAllProducts = async () =>
+  {
+    setSearchTerm( "" );
+    setSelectedCategories( [] );
+    setSelectedMediaTypes( [] );
+    setCurrentPage( 1 );
+    setShouldFetch( true );
   };
-  const getCategories = async () => {
-    try {
-      const response = await instance.get("/field/category");
-      const formattedCategories = response.data.categories.map(
-        (category: any) => ({
-          name: category.name ? category.name : "Unknown", // Handle undefined names
-        })
-      );
-      setAvailableCategories(formattedCategories);
-      console.log("sdsd", response);
-    } catch (error) {
-      console.log("error in getting the category:-", error);
+  const getCategories = async () =>
+  {
+    try
+    {
+      const response = await instance.get( '/field/category' );
+      const formattedCategories = response.data.categories.map( ( category: any ) => ( {
+        name: category.name ? category.name : 'Unknown' // Handle undefined names
+      } ) );
+      setAvailableCategories( formattedCategories );
+      console.log( "sdsd", response );
+    } catch ( error )
+    {
+      console.log( "error in getting the category:-", error );
     }
   };
-  const capitalizeFirstLetter = (str: string): string => {
-    return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+  const capitalizeFirstLetter = ( str: string ): string =>
+  {
+    return str.charAt( 0 ).toUpperCase() + str.slice( 1 ).toLowerCase();
   };
 
-  const handleStatusUpdate = async (uuid: string) => {
-    try {
+  const handleStatusUpdate = async ( uuid: string ) =>
+  {
+
+    try
+    {
       const updatedField = { status: "published" };
-      const response = await instance.patch(`/product/${uuid}`, updatedField);
-      if (response.status === 201) {
+      const response = await instance.patch( `/product/${ uuid }`, updatedField );
+      if ( response.status === 201 )
+      {
         // setloader( false );
         // notifySuccess( `Product updated successfully` );
-        Swal.fire({
-          icon: "success",
-          title: "Updated",
-          text: "Product updated successfully.",
-        });
+        Swal.fire( {
+          icon: 'success',
+          title: 'Updated',
+          text: 'Product updated successfully.',
+        } );
         fetchProduct();
       }
-    } catch (error) {
-      console.error("Error submitting form:", error);
+
+    } catch ( error )
+    {
+      console.error( 'Error submitting form:', error );
     }
   };
 
   // fetch data from Server
-  const fetchProduct = async () => {
-    setLoading(true);
-    try {
-      const response = await instance.get(`/product`, {
-        params: {
-          status: "archived",
-          productsPerPage,
-          page: currentPage,
-          category: selectedCategories,
-          mediaType: selectedMediaTypes,
-          searchTerm: SearchTerm,
-        },
+  const fetchProduct = async () =>
+  {
+    setLoading( true );
+    try
+    {
+      const response = await instance.get( `/product`, {
+        params: { status: 'archived', productsPerPage, page: currentPage, category: selectedCategories, mediaType: selectedMediaTypes, searchTerm: SearchTerm },
         withCredentials: true,
-      });
-      setProductData(response.data.products);
-      setTotalPages(response.data.numOfPages);
+      } );
+      setProductData( response.data.products );
+      setTotalPages( response.data.numOfPages );
 
-      console.log(response);
-    } catch (error) {
-      console.error("Error fetching products:", error);
-    } finally {
-      setLoading(false);
+      console.log( response );
+    } catch ( error )
+    {
+      console.error( "Error fetching products:", error );
+    } finally
+    {
+      setLoading( false );
     }
   };
-  useEffect(() => {
+  useEffect( () =>
+  {
     getCategories();
-    if (shouldFetch) {
+    if ( shouldFetch )
+    {
       fetchProduct();
-      setShouldFetch(false);
+      setShouldFetch( false );
     }
-  }, [currentPage, productsPerPage, shouldFetch]);
+
+  }, [ currentPage, productsPerPage, shouldFetch ] );
 
   // display words function
-  function truncateText(text: string, wordLimit: number): string {
-    const words = text.split(" ");
-    if (words.length > wordLimit) {
-      return words.slice(0, wordLimit).join(" ") + "...";
+  function truncateText ( text: string, wordLimit: number ): string
+  {
+    const words = text.split( " " );
+    if ( words.length > wordLimit )
+    {
+      return words.slice( 0, wordLimit ).join( " " ) + "...";
     }
     return text;
   }
 
-  const handleproductPerPage = (e: any) => {
+  const handleproductPerPage = ( e: any ) =>
+  {
     e.preventDefault();
-    setShouldFetch(true);
-    setCurrentPage(1);
-    setProductsPerPage(parseInt(e.target.value));
+    setShouldFetch( true );
+    setCurrentPage( 1 );
+    setProductsPerPage( parseInt( e.target.value ) );
   };
   // Handler to change page
-  const handlePageChange = (page: number) => {
-    setShouldFetch(true);
-    setCurrentPage(page);
+  const handlePageChange = ( page: number ) =>
+  {
+    setShouldFetch( true );
+    setCurrentPage( page );
   };
 
   return (
     <div className="container p-4 bg-pureWhite-light rounded-md min-h-screen ">
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-2xl font-bold">Deleted Product</h1>
-        <button
-          className="text-webred border-webred border px-4 py-2 rounded"
-          onClick={() => router.push("/admin/product/create")}
-        >
-          {" "}
-          Add Product
-        </button>
+        <button className="text-webred border-webred border px-4 py-2 rounded" onClick={ () => router.push( "/admin/product/create" ) }> Add Product</button>
       </div>
 
-      {/* one horixonal line */}
+      {/* one horixonal line */ }
       <hr className="border-t border-gray-300 mb-4" />
+
 
       <div className="flex items-center space-x-2 mb-4">
         <input
           type="text"
           placeholder="Search Products"
-          value={SearchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
+          value={ SearchTerm }
+          onChange={ ( e ) => setSearchTerm( e.target.value ) }
           className="border rounded px-4 py-2 flex-grow"
         />
         <div className="w-48 p-1">
@@ -189,25 +204,19 @@ const Home: React.FC = () => {
             avoidHighlightFirstOption
             showArrow
             placeholder="category"
-            style={{
+            style={ {
               chips: {
-                background: "red",
+                background: 'red'
               },
               searchBox: {
-                background: "white",
-                border: "1px solid #e5e7eb",
+                background: 'white',
+                border: '1px solid #e5e7eb',
               },
-            }}
-            options={availableCategories}
-            selectedValues={selectedCategories.map((category) => ({
-              name: category,
-            }))}
-            onSelect={(selectedList) =>
-              onSelectCategory(selectedList.map((item: any) => item.name))
-            }
-            onRemove={(selectedList) =>
-              onRemoveCategory(selectedList.map((item: any) => item.name))
-            }
+            } }
+            options={ availableCategories }
+            selectedValues={ selectedCategories.map( ( category ) => ( { name: category } ) ) }
+            onSelect={ ( selectedList ) => onSelectCategory( selectedList.map( ( item: any ) => item.name ) ) }
+            onRemove={ ( selectedList ) => onRemoveCategory( selectedList.map( ( item: any ) => item.name ) ) }
             showCheckbox
             displayValue="name"
           />
@@ -217,54 +226,37 @@ const Home: React.FC = () => {
             avoidHighlightFirstOption
             showArrow
             placeholder="media type"
-            options={mediaTypesOptions.map((option) => ({
-              name: option.name,
-              value: option.value,
-            }))}
-            selectedValues={selectedMediaTypes.map((type) => ({ name: type }))}
-            onSelect={(selectedList) =>
-              onSelectMediaType(selectedList.map((item: any) => item.name))
-            }
-            onRemove={(selectedList) =>
-              onRemoveMediaType(selectedList.map((item: any) => item.name))
-            }
+            options={ mediaTypesOptions.map( ( option ) => ( { name: option.name, value: option.value } ) ) }
+            selectedValues={ selectedMediaTypes.map( ( type ) => ( { name: type } ) ) }
+            onSelect={ ( selectedList ) => onSelectMediaType( selectedList.map( ( item: any ) => item.name ) ) }
+            onRemove={ ( selectedList ) => onRemoveMediaType( selectedList.map( ( item: any ) => item.name ) ) }
             showCheckbox
             displayValue="name"
-            style={{
+            style={ {
               chips: {
-                background: `{webred}`,
+                background: `{webred}`
               },
               searchBox: {
-                background: "white",
-                border: "1px solid #e5e7eb",
-              },
-            }}
+                background: 'white',
+                border: '1px solid #e5e7eb',
+              }
+            } }
           />
         </div>
-        <button
-          className="bg-red-500 text-white px-4 py-2 rounded"
-          onClick={fetchProduct}
-        >
+        <button className="bg-red-500 text-white px-4 py-2 rounded" onClick={ fetchProduct }>
           Search
         </button>
-        <button
-          className="bg-gray-200 text-gray-800 px-4 py-2 rounded"
-          onClick={showAllProducts}
-        >
+        <button className="bg-gray-200 text-gray-800 px-4 py-2 rounded" onClick={ showAllProducts }>
           Clear
         </button>
       </div>
 
       <div className="mb-4">
         <div>
-          <select
-            className="border rounded px-4 py-2"
-            value={productsPerPage}
-            onChange={(e) => handleproductPerPage(e)}
-          >
-            <option value={5}>5 Data per page</option>
-            <option value={10}>10 Data per page</option>
-            <option value={20}>20 Data per page</option>
+          <select className="border rounded px-4 py-2" value={ productsPerPage } onChange={ ( e ) => handleproductPerPage( e ) }>
+            <option value={ 5 } >5 Data per page</option>
+            <option value={ 10 }>10 Data per page</option>
+            <option value={ 20 }>20 Data per page</option>
           </select>
         </div>
       </div>
@@ -293,175 +285,113 @@ const Home: React.FC = () => {
             </tr>
           </thead>
           <tbody>
-            {loading ? (
+            { loading ? (
               <tr>
-                <td colSpan={7} className="text-center py-4">
+                <td colSpan={ 7 } className="text-center py-4">
                   <SpinnerLoader />
                 </td>
               </tr>
-            ) : productData && productData.length > 0 ? (
-              productData.map((prod) => (
-                <tr key={prod._id} className="hover:bg-gray-50">
-                  <td className="px-4 py-2 border-b border-gray-200 bg-pureWhite-light text-center">
-                    <div className="relative flex items-center justify-center">
-                      <div className="absolute top-0 left-0 ">
-                        {prod.mediaType === "image" && (
-                          <img
-                            src="/images/imageIcon.png"
-                            alt="Image"
-                            className="w-8 h-8 rounded-full"
-                          />
-                        )}
-                        {prod.mediaType === "audio" && (
-                          <img
-                            src="/images/speakerIcon.png"
-                            alt="Audio"
-                            className="w-8 h-8 rounded-full"
-                          />
-                        )}
-                        {prod.mediaType === "video" && (
-                          <img
-                            src="/images/videoIcon.png"
-                            alt="Video"
-                            className="w-8 h-8 rounded-full"
-                          />
-                        )}
-                      </div>
-                      <div className="flex items-center w-full p-3">
-                        {prod?.mediaType === "video" && prod?.thumbnailKey ? (
-                          <div>
-                            <video className="w-full h-28 object-cover rounded">
-                              <source
-                                src={`https://mi2-public.s3.ap-southeast-1.amazonaws.com/${prod?.thumbnailKey}`}
-                              />
-                            </video>
-                          </div>
-                        ) : (
-                          <img
-                            src={`/images/images.png`}
-                            alt={prod.title}
-                            className="w-3/4 h-16 object-cover rounded"
-                          />
-                        )}
-                        {prod.mediaType === "image" && prod?.thumbnailKey ? (
-                          <img
-                            src={`https://mi2-public.s3.ap-southeast-1.amazonaws.com/${prod.thumbnailKey}`}
-                            alt={prod.title}
-                            className="w-3/4 h-16 object-cover rounded"
-                          />
-                        ) : (
-                          <img
-                            src={`/images/images.png`}
-                            alt={prod.title}
-                            className="w-3/4 h-16 object-cover rounded"
-                          />
-                        )}
-                        {prod.mediaType === "audio" && prod?.thumbnailKey ? (
-                          <img
-                            src="/images/audioImage.png"
-                            alt={prod.title}
-                            className="w-3/4 h-16 object-cover rounded"
-                          />
-                        ) : (
-                          <img
-                            src={`/images/images.png`}
-                            alt={prod.title}
-                            className="w-3/4 h-16 object-cover rounded"
-                          />
-                        )}
-                      </div>
-                    </div>
-                  </td>
-
-                  <td className="px-4 py-4 border-b border-gray-200 bg-white">
-                    <div className="text-sm font-medium text-gray-900">
-                      {capitalizeFirstLetter(prod.title)}
-                    </div>
-                  </td>
-
-                  <td className="px-4 py-4 border-b border-gray-200 bg-white">
-                    <div className="text-sm text-gray-900">
-                      {prod.category.join(", ")}
-                    </div>
-                  </td>
-                  <td className="px-4 py-4 border-b border-gray-200 bg-white">
-                    <div className="text-sm text-gray-900">
-                      {truncateText(prod.description, 3)}
-                    </div>
-                  </td>
-                  <td className="px-4 py-4 border-b border-gray-200 bg-white">
-                    <div className="flex justify-center items-center space-x-2">
-                      <Link
-                        href={`/admin/product/update/${prod.uuid}`}
-                        className="text-blue-600 hover:text-blue-900"
-                      >
-                        <img
-                          src="/images/viewIcon.png"
-                          alt="View"
-                          className="w-6 h-6"
-                        />
-                      </Link>
-
-                      <button
-                        className="text-red-600 hover:text-red-900"
-                        onClick={() => handleStatusUpdate(prod.uuid)}
-                      >
-                        <FaTrashRestoreAlt className="w-6 h-6" />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))
             ) : (
-              <tr>
-                <td colSpan={7} className="text-center py-4">
-                  <p className="text-gray-500">No Data Found</p>
-                </td>
-              </tr>
-            )}
+              productData && productData.length > 0 ?
+                productData.map( ( prod ) => (
+                  <tr key={ prod._id } className="hover:bg-gray-50">
+                    <td className="px-4 py-2 border-b border-gray-200 bg-pureWhite-light text-center">
+                      <div className="relative flex items-center justify-center">
+                        <div className="absolute top-0 left-0 ">
+                          { prod.mediaType === "image" && <img src="/images/imageIcon.png" alt="Image" className="w-8 h-8 rounded-full" /> }
+                          { prod.mediaType === "audio" && <img src="/images/speakerIcon.png" alt="Audio" className="w-8 h-8 rounded-full" /> }
+                          { prod.mediaType === "video" && <img src="/images/videoIcon.png" alt="Video" className="w-8 h-8 rounded-full" /> }
+                        </div>
+                        <div className="flex items-center w-full p-3">
+                          { prod?.mediaType === "video" && (
+                            <div
+                            >
+                              <video
+                                className="w-full h-28 object-cover rounded">
+                                <source
+                                  src={ `https://mi2-public.s3.ap-southeast-1.amazonaws.com/${ prod?.thumbnailKey }` }
+                                />
+                              </video>
+                            </div>
+
+                          ) }
+                          { ( prod.mediaType === "image") &&
+                            <img src={ `https://mi2-public.s3.ap-southeast-1.amazonaws.com/${ prod.thumbnailKey }` } alt={ prod.title } className="w-3/4 h-16 object-cover rounded" /> }
+                          { prod.mediaType === "audio" && <img src='/images/audioImage.png' alt={ prod.title } className="w-3/4 h-16 object-cover rounded" /> }
+                        </div>
+                      </div>
+                    </td>
+
+                    <td className="px-4 py-4 border-b border-gray-200 bg-white">
+                      <div className="text-sm font-medium text-gray-900">
+                        { capitalizeFirstLetter( prod.title ) }
+                      </div>
+                    </td>
+
+                    <td className="px-4 py-4 border-b border-gray-200 bg-white">
+                      <div className="text-sm text-gray-900">{ prod.category.join( ", " ) }</div>
+                    </td>
+                    <td className="px-4 py-4 border-b border-gray-200 bg-white">
+                      <div className="text-sm text-gray-900">{ truncateText( prod.description, 3 ) }</div>
+                    </td>
+                    <td className="px-4 py-4 border-b border-gray-200 bg-white">
+                      <div className="flex justify-center items-center space-x-2">
+                        <Link href={ `/admin/product/update/${ prod.uuid }` } className="text-blue-600 hover:text-blue-900">
+                          <img src="/images/viewIcon.png" alt="View" className="w-6 h-6" />
+                        </Link>
+
+                        <button className="text-red-600 hover:text-red-900" onClick={ () => handleStatusUpdate( prod.uuid ) } >
+                          <FaTrashRestoreAlt className="w-6 h-6" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ) )
+                : (
+                  <tr>
+                    <td colSpan={ 7 } className="text-center py-4">
+                      <p className="text-gray-500">No Data Found</p>
+                    </td>
+                  </tr>
+                )
+            ) }
           </tbody>
         </table>
       </div>
 
-      {totalPages > 0 && (
+      { totalPages > 0 && (
         <div className="flex justify-between items-center mt-4">
           <div>
-            <p>
-              Showing 1 to {productsPerPage} of {totalPages * productsPerPage}{" "}
-              Entries
-            </p>
+            <p>Showing 1 to { productsPerPage } of { totalPages * productsPerPage } Entries</p>
           </div>
           <div className="flex items-center space-x-2">
             <button
               className="px-3 py-1 border rounded"
-              onClick={() => handlePageChange(currentPage - 1)}
-              disabled={currentPage === 1}
+              onClick={ () => handlePageChange( currentPage - 1 ) }
+              disabled={ currentPage === 1 }
             >
               &lt;
             </button>
-            {[...Array(totalPages)].map((_, index) => (
+            { [ ...Array( totalPages ) ].map( ( _, index ) => (
               <button
-                key={index}
-                className={`px-3 py-1 border rounded ${
-                  currentPage === index + 1
-                    ? "bg-red-500 text-white"
-                    : "bg-white"
-                }`}
-                onClick={() => handlePageChange(index + 1)}
+                key={ index }
+                className={ `px-3 py-1 border rounded ${ currentPage === index + 1 ? 'bg-red-500 text-white' : 'bg-white'
+                  }` }
+                onClick={ () => handlePageChange( index + 1 ) }
               >
-                {index + 1}
+                { index + 1 }
               </button>
-            ))}
+            ) ) }
             <button
               className="px-3 py-1 border rounded"
-              onClick={() => handlePageChange(currentPage + 1)}
-              disabled={currentPage === totalPages}
+              onClick={ () => handlePageChange( currentPage + 1 ) }
+              disabled={ currentPage === totalPages }
             >
               &gt;
             </button>
           </div>
         </div>
-      )}
+      ) }
     </div>
   );
 };

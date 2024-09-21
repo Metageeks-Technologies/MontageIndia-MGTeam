@@ -332,7 +332,7 @@ const Home: React.FC = () => {
                         )}
                       </div>
                       <div className="flex items-center w-full p-3">
-                        {prod?.mediaType === "video" && prod?.thumbnailKey ? (
+                        {prod?.mediaType === "video" && (
                           <div>
                             <video className="w-full h-28 object-cover rounded">
                               <source
@@ -340,35 +340,17 @@ const Home: React.FC = () => {
                               />
                             </video>
                           </div>
-                        ) : (
-                          <img
-                            src={`/images/images.png`}
-                            alt={prod.title}
-                            className="w-3/4 h-16 object-cover rounded"
-                          />
                         )}
-                        {prod.mediaType === "image" && prod?.thumbnailKey ? (
+                        {prod.mediaType === "image" && (
                           <img
                             src={`https://mi2-public.s3.ap-southeast-1.amazonaws.com/${prod.thumbnailKey}`}
                             alt={prod.title}
                             className="w-3/4 h-16 object-cover rounded"
                           />
-                        ) : (
-                          <img
-                            src={`/images/images.png`}
-                            alt={prod.title}
-                            className="w-3/4 h-16 object-cover rounded"
-                          />
                         )}
-                        {prod.mediaType === "audio" && prod?.thumbnailKey ? (
+                        {prod.mediaType === "audio" && (
                           <img
                             src="/images/audioImage.png"
-                            alt={prod.title}
-                            className="w-3/4 h-16 object-cover rounded"
-                          />
-                        ) : (
-                          <img
-                            src={`/images/images.png`}
                             alt={prod.title}
                             className="w-3/4 h-16 object-cover rounded"
                           />
