@@ -24,7 +24,8 @@ import axios from "axios";
 export const getSingleProduct = async (
   dispatch: AppDispatch,
   user: boolean,
-  uuid: string
+  uuid: string,
+  router: any
 ) => {
   dispatch(requestStart());
   try {
@@ -46,9 +47,14 @@ export const getSingleProduct = async (
     );
   } catch (error) {
     const e = error as AxiosError;
-    notifyError(e.message);
+    if(e?.response?.status === 404){
+      router.push("/not-found");
+    }
+    else notifyError(e.message);
+    
     console.error(e);
     dispatch(requestFail(e.message));
+    
   }
 };
 

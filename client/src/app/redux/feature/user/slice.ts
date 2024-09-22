@@ -5,6 +5,7 @@ import { TCustomer } from "@/types/customer";
 
 export interface InitialState {
   user: null | TCustomer;
+  message: string;
   loading?: boolean;
   error?: string;
   cartData: TCustomerProduct[];
@@ -12,6 +13,7 @@ export interface InitialState {
 
 const initialState: InitialState = {
   user: null,
+  message: "",
   loading: false,
   error: "",
   cartData: [],
@@ -23,6 +25,7 @@ export const userSlice = createSlice({
   reducers: {
     setCurrUser: (state, action: PayloadAction<InitialState>) => {
       state.user = action.payload.user;
+      state.message = action.payload.message;
       state.loading = false;
       state.error = "";
     },

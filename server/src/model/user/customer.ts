@@ -83,6 +83,7 @@ const customerSchema = new mongoose.Schema<TCustomer>(
       status: { type: String, default: "active" },
     },
     purchaseHistory: [{ type: mongoose.Schema.Types.ObjectId, ref: "Order" }],
+    isFirstLogin: { type: Boolean, default: true },
   },
   {
     timestamps: true,

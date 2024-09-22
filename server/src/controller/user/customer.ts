@@ -148,6 +148,16 @@ export const getCurrentCustomer = catchAsyncError(
     );
     console.log(user);
 
+    if(user?.isFirstLogin){
+      user.isFirstLogin = false;
+      await user.save();
+      return res.status(200).json({
+        success: true,
+        user,
+        message:`Hi ${user?.name},Welcome to Montage India!\n
+                  We're excited to have you onboard! `, 
+      })
+    }
     return res.status(200).json({
       success: true,
       user,
@@ -489,10 +499,10 @@ export const verifyEmail = catchAsyncError(async (req: any, res, next) => {
 });
 
 export const onDemandForm = catchAsyncError(async (req: any, res, next) => {
-  const { email, name, phone, message, subject } = req.body;
+  const { email, name, phone, message, mediaType } = req.body;
   console.log("req.body", req.body);
 
-  if (!email || !name || !phone || !message || !subject) {
+  if (!email || !name || !phone || !message || !mediaType) {
     return res
       .status(400)
       .json({ success: false, message: "Please provide all fields" });
@@ -504,12 +514,13 @@ export const onDemandForm = catchAsyncError(async (req: any, res, next) => {
   const mailOptions = {
     from: config.emailUser as string,
     to: config.montageEmail as string,
-    subject: subject as string,
+    subject: "User Product Request" as string,
     text: `Dear MontageIndia Team,\n
       We have received the following details from a MontageIndia user:\n
       Name: ${name}
       Email: ${email}
       Phone: ${phone}
+      MediaType:${mediaType}
       Message: ${message}\n
       Please review and respond as needed,
       Regards,

@@ -37,6 +37,7 @@ import { redirectToLogin } from "@/utils/redirectToLogin";
 
 const page = () => {
   const params = useParams();
+  const router = useRouter();
   const id = params.id as string | undefined;
   const [cartLoading, setCartLoading] = useState(false);
   const [wishlistLoading, setWishlistLoading] = useState(false);
@@ -48,7 +49,7 @@ const page = () => {
   const { user } = useAppSelector((state) => state.user);
 
   useEffect(() => {
-    if (id) getSingleProduct(dispatch, !!user, id);
+    if (id) getSingleProduct(dispatch, !!user, id, router);
     getAudio(dispatch, !!user, {
       page: page,
       productsPerPage: 4,
@@ -64,8 +65,6 @@ const page = () => {
     loading,
     cart,
   } = useAppSelector((state) => state.product);
-
-  const router = useRouter();
   const pathname = usePathname();
 
   const isVariantPurchased = (variantId: string) => {

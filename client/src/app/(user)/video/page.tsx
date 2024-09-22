@@ -183,9 +183,7 @@ const Page = () => {
                   </div>
                   <div className="mx-auto min-h-screen mt-2">
                     {loading ? (
-                      <div className="flex items-center justify-center text-center m-auto">
-                        <Spinner label="Loading..." color="danger" />
-                      </div>
+                      <SpinnerLoader/>
                     ) : (
                       <Masonry
                         breakpointCols={breakpointColumnsObj}

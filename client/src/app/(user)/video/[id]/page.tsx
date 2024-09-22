@@ -52,7 +52,7 @@ const Home = () => {
   useEffect(() => {
     getVideo(dispatch, !!user, { mediaType: ["video"] });
 
-    if (id) getSingleProduct(dispatch, !!user, id);
+    if (id) getSingleProduct(dispatch, !!user, id,router);
     return () => {
       clearSingleProductData(dispatch);
     };
