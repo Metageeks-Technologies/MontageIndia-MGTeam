@@ -41,7 +41,7 @@ const Home = () => {
   const pathname = usePathname();
 
   useEffect(() => {
-    if (id) getSingleProduct(dispatch,!!user, id);
+    if (id) getSingleProduct(dispatch,!!user, id,router);
     return () => {
       clearSingleProductData(dispatch);
     };
