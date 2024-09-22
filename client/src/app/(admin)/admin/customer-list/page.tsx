@@ -2,7 +2,7 @@
 import instance from '@/utils/axios';
 import React, { useEffect, useState } from 'react';
 import { SpinnerLoader } from '@/components/loader/loaders';
-
+import { IoCloseOutline } from "react-icons/io5";
 interface CustomerList
 {
   _id: string;
@@ -80,8 +80,7 @@ const Page = () =>
 
 
       <div className="flex items-center justify-between space-x-2 mb-4">
-        <div>
-
+        <div className="relative" >
           <input
             type="text"
             placeholder="Search "
@@ -89,6 +88,15 @@ const Page = () =>
             onChange={ handleSearch }
             className="border rounded px-4 py-2 flex-grow"
           />
+          {/* Clear Search Button */}
+  {searchTerm && (
+    <div
+      className="absolute right-2 top-1/2 transform -translate-y-1/2 cursor-pointer text-gray-500"
+      onClick={() => setSearchTerm('')} // Clears the search term
+    >
+      <IoCloseOutline size={20} />
+    </div>
+  )}
 
         </div>
 

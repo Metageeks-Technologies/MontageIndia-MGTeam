@@ -8,7 +8,6 @@ import { CiImageOn } from "react-icons/ci";
 import { MdOutlineSlowMotionVideo } from "react-icons/md";
 import { SiAudioboom } from "react-icons/si";
 import { FaRupeeSign } from "react-icons/fa";
-import { IoSearchOutline } from "react-icons/io5";
 import { AiFillProduct } from "react-icons/ai";
 import { IoMdDownload } from "react-icons/io";
 import { IoEyeOutline } from "react-icons/io5";
@@ -17,6 +16,7 @@ import { downloadProduct } from "@/app/redux/feature/product/api";
 import { truncateWords } from "@/utils/helper";
 import UserDropdown from "@/components/userDropdown";
 import { FaChevronRight,FaChevronDown } from "react-icons/fa";
+import { IoSearchOutline, IoCloseOutline } from "react-icons/io5";
 
 type Variant = {
   _id: string;
@@ -113,26 +113,38 @@ const Page: React.FC = () => {
         Purchased Products
       </h1>
       <div className="flex flex-col sm:flex-row justify-between items-center gap-4 flex-wrap my-6 mb-4 ">
-        <div className="flex w-full sm:w-fit ">
-          <input
-            type="text"
-            placeholder="Search"
-            className="border rounded-r-none rounded-l-md px-4 py-2 w-full "
-            value={searchTerm}
-            onChange={handleSearch}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                fetchProducts();
-              }
-            }}
-          />
-          <div
-            onClick={fetchProducts}
-            className="cursor-pointer bg-webred px-4 py-2 flex justify-center items-center text-white rounded-l-none rounded-r-md text-lg"
-          >
-            <IoSearchOutline />
-          </div>
-        </div>
+      <div className="relative flex w-full sm:w-fit">
+  <input
+    type="text"
+    placeholder="Search"
+    className="border rounded-r-none rounded-l-md px-4 py-2 w-full pr-8" // Adjust padding-right to make space for the icon
+    value={searchTerm}
+    onChange={handleSearch}
+    onKeyDown={(e) => {
+      if (e.key === "Enter") {
+        fetchProducts();
+      }
+    }}
+  />
+  
+  {/* Clear Search Button */}
+  {searchTerm && (
+    <div
+      className="absolute right-16 top-1/2 transform -translate-y-1/2 cursor-pointer"
+      onClick={() => setSearchTerm('')} // Clears the search term
+    >
+      <IoCloseOutline className="text-gray-500" />
+    </div>
+  )}
+
+  {/* Search Button */}
+  <div
+    onClick={fetchProducts}
+    className="cursor-pointer bg-webred px-4 py-2 flex justify-center items-center text-white rounded-l-none rounded-r-md text-lg"
+  >
+    <IoSearchOutline />
+  </div>
+</div>
         <div className="w-full sm:w-fit flex flex-col items-start flex-wrap">
           <button onClick={()=>setShowDataPerPage((prev)=>!prev)} className="flex items-center border px-4 py-2 bg-gray-50 border-gray-300 text-gray-900 text-sm rounded-lg">
           <span>{dataPerPage} Data per page</span><span> {

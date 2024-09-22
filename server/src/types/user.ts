@@ -39,6 +39,7 @@ export type TCustomer = Document & {
   phone?: string;
   resetPasswordToken?: string | undefined;
   resetPasswordExpires?: Number | undefined;
+  isFirstLogin: boolean;
   createJWT(): string;
   comparePassword(givenPassword: string): Promise<boolean>;
 };

@@ -15,14 +15,14 @@ const onDemandPage = () => {
     name: "",
     phone: "",
     email: "",
-    subject: "",
+    mediaType: "",
     message: "",
   });
   const [errors, setErrors] = useState({
     name: "",
     phone: "",
     email: "",
-    subject: "",
+    mediaType: "",
     message: "",
     capValue: "",
   });
@@ -113,7 +113,7 @@ const onDemandPage = () => {
         name: "",
         phone: "",
         email: "",
-        subject: "",
+        mediaType: "",
         message: "",
       });
     }
@@ -198,24 +198,31 @@ const onDemandPage = () => {
           </div>
           <div>
             <label htmlFor="subject" className="block font-medium">
-              Subject <span className="text-red-500">*</span>
+              Product Type <span className="text-red-500">*</span>
             </label>
-            <input
-              type="text"
-              name="subject"
-              placeholder="Write your subject in detail"
-              value={formData.subject}
-              onChange={handleChange}
-              className="w-full p-2 border rounded bg-pageBg-light"
-            />
-            {errors.subject && (
-              <p className="text-red-500 text-sm mt-1">{errors.subject}</p>
+             <select
+                className="w-full bg-pageBg-light border cursor-pointer rounded p-2.5"
+                value={formData.mediaType}
+                onChange={(e) => setFormData({ ...formData, mediaType: e.target.value })}
+              >
+                  <option className="cursor-pointer" value="image">
+                    Image
+                  </option>
+                  <option className="cursor-pointer" value="video">
+                    Video
+                  </option>
+                  <option className="cursor-pointer" value="audio">
+                    Audio
+                  </option>
+              </select>
+            {errors.mediaType && (
+              <p className="text-red-500 text-sm mt-1">{errors.mediaType}</p>
             )}
           </div>
           </div>
           <div className="col-span-2 mt-2">
             <label htmlFor="message" className="block font-medium">
-              Message <span className="text-red-500">*</span>
+              Describe your need <span className="text-red-500">*</span>
             </label>
             <textarea
               name="message"

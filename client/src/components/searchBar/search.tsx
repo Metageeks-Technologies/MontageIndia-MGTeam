@@ -18,7 +18,7 @@ import { FaVideo } from "react-icons/fa";
 
 const Searchbar = () => {
   const pathname = usePathname();
-  const [selectedOption, setSelectedOption] = useState("All Image");
+  const [selectedOption, setSelectedOption] = useState("image");
   const dispatch = useAppDispatch();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -28,36 +28,38 @@ const Searchbar = () => {
   const category = searchParams.get("category");
   const terms = useAppSelector((state) => state.product.relatedKeyword);
   console.log("path", pathname);
-  const isVideoPage = pathname.includes("/video");
-  const isAudioPage = pathname.includes("/audio");
-  const isImagePage = pathname.includes("/image");
 
   useEffect(() => {
+    console.log("selectedOption", selectedOption);
+    console.log("pathname", pathname);  
+    console.log("category", category);
     if (pathname.includes("/search/video")) {
       setSelectedOption(
         category && category.includes("editor choice")
-          ? "Editorial Video"
-          : "Video"
+          ? "editorialVideo"
+          : "video"
       );
     } else if (pathname.includes("/search/audio")) {
       setSelectedOption(
         category && category.includes("editor choice")
-          ? "Editorial Audio"
-          : "Audio"
+          ? "editorialAudio"
+          : "audio"
       );
     } else if (pathname.includes("/search/image")) {
       setSelectedOption(
         category && category.includes("editor choice")
-          ? "Editorial Image"
-          : "All Image"
+          ? "editorialImage"
+          : "image"
       );
     } else if (pathname.includes("/video")) {
-      setSelectedOption("Video");
+      setSelectedOption("video");
     } else if (pathname.includes("/audio")) {
-      setSelectedOption("Audio");
+      setSelectedOption("audio");
     } else if (pathname.includes("/image")) {
-      setSelectedOption("Image");
+      setSelectedOption("image");
     }
+
+    console.log("selectedOption", selectedOption);
   }, [pathname, category, searchRenderTerm]);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -69,22 +71,34 @@ const Searchbar = () => {
   const getData = () => {
     // Redirect based on the selected option
     let pathname = "/search/image";
+    console.log("selectedOption", selectedOption);
 
     let query: { searchTerm: string; mediaType: string; category?: string } = {
       searchTerm,
       mediaType: "image",
     };
-
-    if (selectedOption.includes("Video")) {
+    
+    if (selectedOption.includes("video")) {
       pathname = "/search/video";
       query.mediaType = "video";
-    } else if (selectedOption.includes("Audio")) {
+    } else if (selectedOption.includes("audio")) {
       pathname = "/search/audio";
       query.mediaType = "audio";
     }
-
-    if (selectedOption.includes("Editorial")) {
-      query = { ...query, category: "editor choice" };
+    if(selectedOption.includes("editorialVideo")){
+      pathname = "/search/video";
+      query.mediaType = "video";
+      query.category = "editor choice";
+    }
+    if(selectedOption.includes("editorialAudio")){
+      pathname = "/search/audio";
+      query.mediaType = "audio";
+      query.category = "editor choice";
+    }
+    if(selectedOption.includes("editorialImage")){
+      pathname = "/search/image";
+      query.mediaType = "image";
+      query.category = "editor choice";
     }
     console.log(pathname, "query");
     router.push(`${pathname}?${new URLSearchParams(query).toString()}`);
@@ -135,7 +149,7 @@ const Searchbar = () => {
 
   const isSearchPage = pathname.includes("/search") || false;
 
-  console.log(isSearchPage, "isSearchpage");
+  // console.log(isSearchPage, "isSearchpage");
 
   return (
     <div className="sticky top-0 z-40">
@@ -149,45 +163,78 @@ const Searchbar = () => {
                 value={selectedOption}
                 onChange={(e) => setSelectedOption(e.target.value)}
               >
-                {isImagePage && (
+                {selectedOption==="image" && (
+                  <option className="cursor-pointer bg-gray-500" value="image">
+                    Image
+                  </option>
+                )}
+                {selectedOption==="video" && (
+                  <option className="cursor-pointer bg-gray-500" value="video">
+                    Video
+                  </option>
+                )}
+                {selectedOption==="audio" && (
+                  <option className="cursor-pointer bg-gray-500" value="audio">
+                    Audio
+                  </option>
+                )}
+                {
+                  selectedOption==="editorialImage" && (
+                    <option className="cursor-pointer bg-gray-500" value="editorialImage">
+                      Editorial Image
+                    </option>
+                  )
+                }
+                {
+
+                  selectedOption==="editorialVideo" && (
+                  <option className="cursor bg-gray-500" value="editorialVideo">
+                    Editorial Video
+                  </option>
+                )}
+                 {
+                  selectedOption==="editorialAudio" && (
+                  <option className="cursor bg-gray-500" value="editorialAudio">
+                    Editorial Audio
+                  </option>
+                )
+                 }
+                {selectedOption!="image" && (
                   <option className="cursor-pointer" value="image">
                     Image
                   </option>
                 )}
-                {isVideoPage && (
+                {selectedOption!="video" && (
                   <option className="cursor-pointer" value="video">
                     Video
                   </option>
                 )}
-                {isAudioPage && (
+                {selectedOption!="audio" && (
                   <option className="cursor-pointer" value="audio">
                     Audio
                   </option>
                 )}
-                {!isImagePage && (
-                  <option className="cursor-pointer" value="image">
-                    Image
+                {
+                  selectedOption!="editorialImage" && (
+                  <option className="cursor-pointer" value="editorialImage">
+                    Editorial Image
                   </option>
-                )}
-                {!isVideoPage && (
-                  <option className="cursor-pointer" value="video">
-                    Video
+                )
+                }
+                {
+                  selectedOption!="editorialVideo" && (
+                  <option className="cursor-pointer" value="editorialVideo">
+                    Editorial Video
                   </option>
-                )}
-                {!isAudioPage && (
-                  <option className="cursor-pointer" value="audio">
-                    Audio
+                )
+                }
+                {
+                  selectedOption!="editorialAudio" && (
+                  <option className="cursor-pointer" value="editorialAudio">
+                    Editorial Audio
                   </option>
-                )}
-                <option className="cursor-pointer lg:text-medium sm:text-" value="editorialImage">
-                  Editorial Image
-                </option>
-                <option className="cursor-pointer" value="editorialAudio">
-                  Editorial Audio
-                </option>
-                <option className="cursor-pointer" value="editorialVideo">
-                  Editorial Video
-                </option>
+                )
+                }
               </select>
 
               <img src="/asset/Rectangle 15.png" className="mx-2" alt="" />
@@ -220,7 +267,7 @@ const Searchbar = () => {
                 onChange={(e) => setSelectedOption(e.target.value)}
               >
                 {
-                  isImagePage && (
+                  selectedOption==="image" && (
                     <option value="Image">
                       Image
                       <CiCamera />
@@ -228,7 +275,7 @@ const Searchbar = () => {
                   )
                 }
                 {
-                  isVideoPage && (
+                  selectedOption==="video" && (
                     <option value="Video">
                       Video
                       <FaVideo />
@@ -236,7 +283,7 @@ const Searchbar = () => {
                   )
                 }
                 {
-                  isAudioPage && (
+                  selectedOption==="audio" && (
                     <option value="Audio">
                       Audio
                       <CiMusicNote1 />
@@ -244,7 +291,7 @@ const Searchbar = () => {
                   )
                 }
                {
-                !isImagePage && (
+                selectedOption!="image" && (
                   <option value="Image">
                     Image
                     <CiCamera />
@@ -252,7 +299,7 @@ const Searchbar = () => {
                 )
                } 
                {
-                !isVideoPage && (
+                selectedOption!="video" && (
                   <option value="Video">
                     Video
                     <FaVideo />
@@ -260,7 +307,7 @@ const Searchbar = () => {
                 )
                }
                {
-                !isAudioPage && (
+                selectedOption!="audio" && (
                   <option value="Audio">
                     Audio
                     <CiMusicNote1 />

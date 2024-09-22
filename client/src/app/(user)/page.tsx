@@ -172,8 +172,10 @@ export default function Home () {
   const dispatch = useAppDispatch();
   const productIds = useAppSelector( ( state: any ) => state.user?.user?.cart );
   const user = useAppSelector( ( state: any ) => state.user?.user?._id );
+  const welcomeMessage=useAppSelector( ( state: any ) => state.user?.message);
   const initialLoad = useRef( true );
-
+  console.log("user",user);
+  console.log("message",welcomeMessage)
   const getProduct = async () => {
     try {
       const res = await instance.get( "/product/get" );
@@ -281,6 +283,9 @@ export default function Home () {
         description="Discover amazing content and services tailored just for you."
       />
       <div className="lg:mx-24 md:mx-4 mx-4 py-14 ">
+       {
+        welcomeMessage && <div className="flex justify-center items-center text-center mb-8 text-3xl text-[#333333] font-bold ">{welcomeMessage}</div>
+       } 
         <div className="flex flex-col md:flex-row justify-center items-center mb-4">
           <h2 className="text-2xl text-[#333333] sm:text-3xl lg:text-3xl text-center font-semibold mb-4 md:mb-0">
             Find the right content for your projects, at the right price.

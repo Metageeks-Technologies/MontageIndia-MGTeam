@@ -5,7 +5,7 @@ import Link from 'next/link';
 import Swal from 'sweetalert2';
 import { FaTrashRestoreAlt } from 'react-icons/fa';
 import { SpinnerLoader } from '@/components/loader/loaders';
-
+import { IoCloseOutline } from "react-icons/io5";
 interface User
 {
     _id: string;
@@ -122,7 +122,7 @@ export default function UserList ()
             <div>
 
                 <div className="flex items-center space-x-2 mb-4">
-
+<div className="relative">
                     <input
                         type="text"
                         placeholder="Search"
@@ -131,6 +131,16 @@ export default function UserList ()
                         onKeyDown={ ( e ) => e.key === "Enter" && fetchUsers() }
                         className="border rounded px-4 py-2 flex-grow"
                     />
+                     {/* Clear Search Button */}
+  {searchTerm && (
+    <div
+      className="absolute right-2 top-1/2 transform -translate-y-1/2 cursor-pointer text-gray-500"
+      onClick={() => setSearchTerm('')} // Clears the search term
+    >
+      <IoCloseOutline size={20} />
+    </div>
+  )}
+</div>
                     <div className="flex items-center flex-wrap gap-4 ">
                         <div>
                             <select className="border rounded px-4 py-2" onChange={ ( e ) => handleRoleSearch( e ) } value={ roleSearch } >

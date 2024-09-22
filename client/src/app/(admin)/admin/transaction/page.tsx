@@ -3,7 +3,7 @@ import instance from "@/utils/axios";
 import { Pagination, Button, Spinner } from '@nextui-org/react';
 import React, { useEffect, useState } from "react";
 import { SpinnerLoader } from "@/components/loader/loaders";
-
+import { IoCloseOutline } from "react-icons/io5";
 interface Transaction
 {
   _id: string;
@@ -82,17 +82,28 @@ const Page = () =>
 
 
       <div className="flex items-center justify-between space-x-2 mb-4">
-        <div>
+       
 
-          <input
-            type="text"
-            placeholder="Search Transaction"
-            value={ searchTerm }
-            onChange={ handleSearch }
-            className="border rounded px-4 py-2 flex-grow"
-          />
+<div className="relative">
+  <input
+    type="text"
+    placeholder="Search Transaction"
+    value={searchTerm}
+    onChange={handleSearch}
+    className="border rounded px-4 py-2 w-full pr-10" // Adjust padding-right for the clear icon
+  />
 
-        </div>
+  {/* Clear Search Button */}
+  {searchTerm && (
+    <div
+      className="absolute right-2 top-1/2 transform -translate-y-1/2 cursor-pointer text-gray-500"
+      onClick={() => setSearchTerm('')} // Clears the search term
+    >
+      <IoCloseOutline size={20} />
+    </div>
+  )}
+</div>
+
 
 
 
