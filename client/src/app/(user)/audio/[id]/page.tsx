@@ -262,7 +262,8 @@ const page = () => {
                               </span>
                             )}
                             <div className="text-sm py-2">
-                              {license?.metadata?.bitrate} Kbps
+                              {license?.metadata?.bitrate} Kbps,{" "}
+                              {license?.metadata?.format}
                             </div>
                           </div>
                           <div>
@@ -347,7 +348,10 @@ const page = () => {
                       <div className="flex justify-between">
                         <span className="font-medium w-1/3">Track Length:</span>
                         <span className="text-neutral-600 whitespace-nowrap">
-                          {product.variants[0].metadata?.length} Minutes
+                          {formatSecToMin(
+                            product.variants[0].metadata?.length || 0
+                          )}{" "}
+                          Minutes
                         </span>
                       </div>
                       <div className="flex justify-between">

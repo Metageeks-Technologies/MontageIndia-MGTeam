@@ -291,10 +291,14 @@ const Waveform = ({
             ))}
           </p>
         </div>
-       
       </div>
 
-      <div className="lg:w-4/12 md:w-40 w-full waveform-container hidden sm:block">
+      <div
+        onClick={(e) => {
+          e.stopPropagation();
+        }}
+        className="lg:w-4/12 md:w-40 w-full waveform-container hidden sm:block"
+      >
         <div className="wave" id={`waveform-${product._id}`} />
         <audio id={`track-${product._id}`} src={url} />
       </div>

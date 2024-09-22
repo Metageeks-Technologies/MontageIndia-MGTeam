@@ -158,13 +158,20 @@ export const addSizeAndKeysToVideo = catchAsyncError(
       return next(new ErrorHandler("media type should be video", 400));
     }
     const originalMetadata: MetaData = {
+      resolution: "3840x2160", //Px
+      bitrate: 12, //Mbps
+      frameRate: 30, //Hz
+      format: "mp4",
+      size: 1,
+    };
+    const mediumMetadata: MetaData = {
       resolution: "1920x1080", //Px
       bitrate: 5, //Mbps
       frameRate: 30, //Hz
       format: "mp4",
       size: 1,
     };
-    const mediumMetadata: MetaData = {
+    const smallMetadata: MetaData = {
       resolution: "1280x720", //Px
       bitrate: 2, //Mbps
       frameRate: 24, //Hz
@@ -175,6 +182,7 @@ export const addSizeAndKeysToVideo = catchAsyncError(
     const variants = [
       { metadata: originalMetadata, key: `${uuid}/video/${uuid}-original.mp4` },
       { metadata: mediumMetadata, key: `${uuid}/video/${uuid}-medium.mp4` },
+      { metadata: smallMetadata, key: `${uuid}/video/${uuid}-small.mp4` },
     ];
 
     const publicKey = `${uuid}/video/${uuid}-product_page.webm`;
@@ -272,11 +280,11 @@ export const getProductsByIds = catchAsyncError(async (req: any, res, next) => {
   }
 });
 
-const generateOrderId=()=> {
+const generateOrderId = () => {
   const timestamp = Date.now().toString(36); // Convert current time to base36 (shorter)
   const randomString = Math.random().toString(36).substr(2, 8); // Generate a random string
   return `order_${timestamp}${randomString}`;
-}
+};
 
 export const buyWithCredits = catchAsyncError(async (req: any, res, next) => {
   const { id } = req.user;
@@ -351,9 +359,9 @@ export const buyWithCredits = catchAsyncError(async (req: any, res, next) => {
 
   await user.save();
 
-  const order_id=generateOrderId();
+  const order_id = generateOrderId();
 
-  const newOrder={
+  const newOrder = {
     userId: user._id,
     razorpayOrderId: order_id,
     products: [{ productId, variantId }],
@@ -361,11 +369,11 @@ export const buyWithCredits = catchAsyncError(async (req: any, res, next) => {
     currency: "credits",
     status: "paid",
     method: "credits",
-  }
+  };
 
   await Order.create(newOrder);
 
-  return  res.send({ success: true, user, message: "Purchased successfully" });
+  return res.send({ success: true, user, message: "Purchased successfully" });
 });
 
 export const buyAllCartWithCredits = catchAsyncError(
@@ -434,11 +442,10 @@ export const buyAllCartWithCredits = catchAsyncError(
     // Deduct credits
     user.subscription.credits = totalUserCredit - totalCredit;
 
-    
     await user.save();
-    const order_id=generateOrderId();
+    const order_id = generateOrderId();
 
-     const newOrder={
+    const newOrder = {
       userId: user._id,
       razorpayOrderId: order_id,
       products: user.cart,
@@ -446,11 +453,11 @@ export const buyAllCartWithCredits = catchAsyncError(
       currency: "credits",
       status: "paid",
       method: "credits",
-    }
+    };
 
-  await Order.create(newOrder);
+    await Order.create(newOrder);
 
-  user.cart = [];
+    user.cart = [];
 
     res.send({ success: true, user, message: "Purchased successfully" });
   }
@@ -884,13 +891,8 @@ export const getProductForCustomer = catchAsyncError(
 
     const relatedKeywords = new Set<string>();
     products.forEach((product) => {
-      const { title, description, category, tags } = product;
-      const words = [
-        ...title.split(" "),
-        ...description.split(" "),
-        ...category,
-        ...tags,
-      ];
+      const { category, tags } = product;
+      const words = [...category, ...tags];
       words.forEach((word) => {
         if (word.length > 3) {
           relatedKeywords.add(word.toLowerCase());
@@ -1268,7 +1270,7 @@ export const getSingleProductForCustomer = catchAsyncError(
       return next(new ErrorHandler(`Product ID is required`, 400));
     }
 
-    const product = await Product.findOne({ uuid });
+    const product = await Product.findOne({ uuid, status: "published" });
 
     if (!product) {
       return next(new ErrorHandler(`Product not found`, 404));

@@ -183,7 +183,7 @@ export const reduceAudio = catchAsyncError(
     const variants = [
       {
         metadata,
-        key: `${uuid}-original.${fileExtension}`,
+        key: `${uuid}/audio/${uuid}-original.${fileExtension}`,
       },
     ];
     product.variants.push(...variants);

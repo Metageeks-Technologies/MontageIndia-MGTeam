@@ -49,7 +49,7 @@ export const processSQSMessages = async () => {
         if ("Service" in event && "Event" in event) {
           if (event.Event === "s3:TestEvent") continue;
         }
-        // console.log("in the prosess");
+
         for (const record of event.Records) {
           const {
             bucket,
@@ -64,6 +64,7 @@ export const processSQSMessages = async () => {
           if (isJobExist) continue;
           const product = await Product.findOne({ uuid });
           if (!product) continue;
+          console.log("process is running");
           const watermarkJobId = await handleVideoWithWaterMark(
             inputFile,
             uuid,

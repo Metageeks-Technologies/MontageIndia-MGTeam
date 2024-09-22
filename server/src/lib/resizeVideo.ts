@@ -34,7 +34,7 @@ export const handleReduceVideos = async (inputFile: string, uuid: string) => {
           Outputs: [
             {
               Preset:
-                "System-Generic_Hd_Mp4_Av1_Aac_16x9_1920x1080p_30Hz_5Mbps_Qvbr_Vq7",
+                "System-Generic_Uhd_Mp4_Hev1_Aac_16x9_Sdr_3840x2160p_30Hz_12Mbps_Qvbr_Vq9",
               Extension: ".mp4",
               NameModifier: "-original",
             },
@@ -52,9 +52,27 @@ export const handleReduceVideos = async (inputFile: string, uuid: string) => {
           Outputs: [
             {
               Preset:
-                "System-Generic_Hd_Mp4_Av1_Aac_16x9_1280x720p_24Hz_2Mbps_Qvbr_Vq7",
+                "System-Generic_Hd_Mp4_Av1_Aac_16x9_1920x1080p_30Hz_5Mbps_Qvbr_Vq7",
               Extension: ".mp4",
               NameModifier: "-medium",
+            },
+          ],
+
+          OutputGroupSettings: {
+            Type: "FILE_GROUP_SETTINGS",
+            FileGroupSettings: {
+              Destination: destination,
+            },
+          },
+        },
+        {
+          Name: "File Group",
+          Outputs: [
+            {
+              Preset:
+                "System-Generic_Hd_Mp4_Av1_Aac_16x9_1280x720p_24Hz_2Mbps_Qvbr_Vq7",
+              Extension: ".mp4",
+              NameModifier: "-small",
             },
           ],
 
@@ -286,7 +304,7 @@ export const handleVideoWithWaterMark = async (
                 ImageY: centerY > 0 ? centerY : 240,
                 Layer: 1,
                 ImageInserterInput: `s3://${awsBucketName}/${watermarkImgName}`,
-                Opacity: 50,
+                Opacity: 70,
               },
             ],
           },
