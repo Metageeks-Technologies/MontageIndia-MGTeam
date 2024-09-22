@@ -10,8 +10,6 @@ import { setImagePage } from "@/app/redux/feature/product/slice";
 import { useRouter, useSearchParams } from "next/navigation";
 import { clearKeywords } from "@/app/redux/feature/product/api";
 import Searchbar from "@/components/searchBar/search";
-import Filter from "@/components/searchBar/filtersidebar";
-import { BsFilterLeft } from "react-icons/bs";
 import { getImage } from "@/app/redux/feature/product/image/api";
 import Hero from "@/components/Home/gallary/Hero";
 

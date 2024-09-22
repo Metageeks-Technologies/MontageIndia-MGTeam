@@ -65,6 +65,7 @@ const Home: React.FC = () => {
     if (!str) return "";
     return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
   };
+
   const showAllProducts = async () => {
     setSearchTerm("");
     setSelectedCategories([]);
@@ -304,20 +305,38 @@ const Home: React.FC = () => {
                         {prod?.mediaType === "video" && (
                           <div>
                             {" "}
-                            <video className="w-full h-28 object-cover rounded">
-                              <source
-                                src={`https://mi2-public.s3.ap-southeast-1.amazonaws.com/${prod?.thumbnailKey}`}
+                            {prod?.thumbnailKey ? (
+                              <video
+                                controls
+                                className="w-full h-28 object-cover rounded"
+                              >
+                                <source
+                                  src={`https://mi2-public.s3.ap-southeast-1.amazonaws.com/${prod?.thumbnailKey}`}
+                                />
+                              </video>
+                            ) : (
+                              <img
+                                src="/images/images.png"
+                                className="h-16"
+                                alt="product image unavailable"
                               />
-                            </video>
+                            )}
                           </div>
                         )}
-                        {prod.mediaType === "image" && (
-                          <img
-                            src={`https://mi2-public.s3.ap-southeast-1.amazonaws.com/${prod.thumbnailKey}`}
-                            alt={prod.title}
-                            className="w-3/4 h-16 object-cover rounded"
-                          />
-                        )}
+                        {prod.mediaType === "image" &&
+                          (prod?.thumbnailKey ? (
+                            <img
+                              src={`https://mi2-public.s3.ap-southeast-1.amazonaws.com/${prod.thumbnailKey}`}
+                              alt={prod.title}
+                              className="w-3/4 h-16 object-cover rounded"
+                            />
+                          ) : (
+                            <img
+                              src="/images/images.png"
+                              className="h-16"
+                              alt="product image unavailable"
+                            />
+                          ))}
                         {prod.mediaType === "audio" && (
                           <img
                             src="/images/audioImage.png"
@@ -345,19 +364,7 @@ const Home: React.FC = () => {
                       {truncateText(prod.description, 3)}
                     </div>
                   </td>
-                  {/* <td className="px-4 py-4 border-b border-gray-200 bg-white">
-                      <div className="flex justify-center items-center space-x-2">
-                        <Link href={ `/admin/product/update/${ prod.uuid }` } className="text-blue-600 hover:text-blue-900">
-                          <img src="/images/editIcon.png" alt="Edit" className="w-6 h-6" />
-                        </Link>
-                        <button className="text-green-600 hover:text-green-900">
-                          <img src="/images/viewIcon.png" alt="View" className="w-6 h-6" />
-                        </button>
-                        <button className="text-red-600 hover:text-red-900" >
-                          <img src="/images/deleteIcon.png" alt="Delete" className="w-6 h-6" />
-                        </button>
-                      </div>
-                    </td> */}
+
                   <td className="px-4 py-4 border-b text-center border-gray-200 bg-white">
                     <button className="text-gray-600 hover:text-gray-900">
                       <Link

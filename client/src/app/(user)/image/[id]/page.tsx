@@ -26,6 +26,8 @@ import Searchbar from "@/components/searchBar/search";
 import CustomShareButton from "@/components/Home/gallary/share";
 import { LuIndianRupee } from "react-icons/lu";
 import { redirectToLogin } from "@/utils/redirectToLogin";
+import {SiBasicattentiontoken} from "react-icons/si";
+import {FaCoins} from "react-icons/fa";
 
 const Home = () => {
   const [selectedVariantId, setSelectedVariantId] = useState("");
@@ -242,6 +244,11 @@ const Home = () => {
                                 className="p-2 flex items-center gap-1 bg-red-500 text-white rounded-full"
                               >
                                 <LuIndianRupee /> {license.price}{" "}
+                                <span className="text-sm text-neutral-600 flex items-center justify-center">
+                                  {" /"}
+                                  <FaCoins />
+                                  {license?.credit}
+                                </span>
                                 <BiSolidPurchaseTagAlt />
                               </div>
                             ) : (
@@ -252,9 +259,14 @@ const Home = () => {
                                     : "Add to cart"
                                 }
                                 className="p-2 flex items-center gap-1 text-black rounded-full"
-                              >
+                                >
                                 <LuIndianRupee />
-                                {license.price}
+                                  {license.price}
+                                  <span className="text-sm text-neutral-600 flex items-center justify-center"> 
+                                  {" /"}
+                                  <FaCoins/>
+                                  {license?.credit} 
+                                  </span>
                                 <span
                                   className={`p-2 ${
                                     isVariantInCart(license._id)
@@ -345,12 +357,9 @@ const Home = () => {
                         <span className="font-medium w-1/3">Categories:</span>
                         <div className="flex flex-wrap ">
                           {product.category.map((category, index) => (
-                            <p
-                              key={index}
-                              className="text-blue-600 hover:underline"
-                            >
+                            <p key={index} className="text-blue-600 hover:underline" >
                               {category}
-                              {index !== product.category.length - 1 && ","}
+                              {index !== product.category.length - 1 && ","}  
                             </p>
                           ))}
                         </div>
@@ -363,7 +372,7 @@ const Home = () => {
           </div>
 
           <div className="pt-8 sm:pt-12 bg-pureWhite-light w-full px-4 sm:px-6 lg:px-4 xl:px-16 md:px-4 py-8">
-            <h1 className="font-semibold text-lg sm:text-xl">Similar Videos</h1>
+            <h1 className="font-semibold text-lg sm:text-xl">Similar Images</h1>
             <div className="columns-1 sm:columns-2 md:columns-3 lg:columns-4 gap-2 mt-2 relative">
               {similarProducts?.map((data, index) => (
                 <ImageGallery

@@ -1,58 +1,49 @@
 "use client";
 
-import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { FaEye, FaEyeSlash } from "react-icons/fa";
+import React, {useState} from 'react';
+import {useRouter} from 'next/navigation';
+import {FaEye, FaEyeSlash} from "react-icons/fa";
 import instance from '@/utils/axios';
-import { notifyError, notifySuccess } from '@/utils/toast';
+import {notifyError, notifySuccess} from '@/utils/toast';
 import Swal from 'sweetalert2';
 
-const ChangePassword = ( { params }: { params: { id: string; }; } ) =>
-{
-    const [ oldPassword, setOldPassword ] = useState( '' );
-    const [ newPassword, setNewPassword ] = useState( '' );
-    const [ confirmPassword, setConfirmPassword ] = useState( '' );
-    const [ error, setError ] = useState( '' );
-    const [ success, setSuccess ] = useState( '' );
-    const [ showOldPassword, setShowOldPassword ] = useState( false );
-    const [ showNewPassword, setShowNewPassword ] = useState( false );
-    const [ showConfirmPassword, setShowConfirmPassword ] = useState( false );
+const ChangePassword = ( {params}: {params: {id: string;};} ) => {
+    const [oldPassword, setOldPassword] = useState( '' );
+    const [newPassword, setNewPassword] = useState( '' );
+    const [confirmPassword, setConfirmPassword] = useState( '' );
+    const [error, setError] = useState( '' );
+    const [success, setSuccess] = useState( '' );
+    const [showOldPassword, setShowOldPassword] = useState( false );
+    const [showNewPassword, setShowNewPassword] = useState( false );
+    const [showConfirmPassword, setShowConfirmPassword] = useState( false );
     const router = useRouter();
 
-    const togglePasswordVisibility = ( field: string ) =>
-    {
-        if ( field === 'oldPassword' )
-        {
+    const togglePasswordVisibility = ( field: string ) => {
+        if ( field === 'oldPassword' ) {
             setShowOldPassword( !showOldPassword );
-        } else if ( field === 'newPassword' )
-        {
+        } else if ( field === 'newPassword' ) {
             setShowNewPassword( !showNewPassword );
-        } else if ( field === 'confirmPassword' )
-        {
+        } else if ( field === 'confirmPassword' ) {
             setShowConfirmPassword( !showConfirmPassword );
         }
     };
 
-    const handleChangePassword = async ( e: React.FormEvent ) =>
-    {
+    const handleChangePassword = async ( e: React.FormEvent ) => {
         e.preventDefault();
         setError( '' );
         setSuccess( '' );
 
-        if ( newPassword !== confirmPassword )
-        {
+        if ( newPassword !== confirmPassword ) {
             setError( 'New passwords do not match' );
             return;
         }
 
-        if ( newPassword.length < 8 )
-        {
+        if ( newPassword.length < 8 ) {
             setError( 'New password must be at least 8 characters long' );
             return;
         }
 
-        try
-        {
+        try {
             const response = await instance.patch(
                 '/auth/admin/changePassword',
                 {
@@ -76,13 +67,11 @@ const ChangePassword = ( { params }: { params: { id: string; }; } ) =>
                 timer: 2000,
                 showConfirmButton: false
             } );
-            setTimeout( () =>
-            {
+            setTimeout( () => {
                 router.push( '/admin/profile' );
             }, 5000 );
 
-        } catch ( error: any )
-        {
+        } catch ( error: any ) {
             console.error( 'Password change error:', error );
             setError( error.response?.data?.message || 'An error occurred while changing the password. Please try again.' );
 
@@ -94,36 +83,36 @@ const ChangePassword = ( { params }: { params: { id: string; }; } ) =>
             <div className="max-w-md w-full space-y-8 bg-white p-10 rounded-xl shadow-md">
                 <div className="flex items-center mb-6 justify-center gap-3 rounded-lg">
                     <div className="w-48 h-14">
-                        <img src={ '/images/logo.png' } alt="logo" />
+                        <img src={'/images/logo.png'} alt="logo" />
                     </div>
                 </div>
                 <div>
                     <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">Change Your Password</h2>
                 </div>
-                <form className="mt-8 space-y-8" onSubmit={ handleChangePassword }>
+                <form className="mt-8 space-y-8" onSubmit={handleChangePassword}>
                     <div className="rounded-md shadow-sm space-y-4">
                         <div className="relative">
                             <label htmlFor="old-password" className="sr-only">Old Password</label>
                             <input
                                 id="old-password"
                                 name="oldPassword"
-                                type={ showOldPassword ? "text" : "password" }
+                                type={showOldPassword ? "text" : "password"}
                                 required
                                 className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-webgreen focus:border-webgreen focus:z-10 sm:text-sm"
                                 placeholder="Old Password"
-                                value={ oldPassword }
-                                onChange={ ( e ) => setOldPassword( e.target.value ) }
+                                value={oldPassword}
+                                onChange={( e ) => setOldPassword( e.target.value )}
                             />
                             <button
                                 type="button"
                                 className="absolute inset-y-0 right-0 pr-3 flex items-center z-20"
-                                onClick={ () => togglePasswordVisibility( 'oldPassword' ) }
+                                onClick={() => togglePasswordVisibility( 'oldPassword' )}
                             >
-                                { showOldPassword ? (
+                                {showOldPassword ? (
                                     <FaEyeSlash className="h-5 w-5 text-gray-400" />
                                 ) : (
                                     <FaEye className="h-5 w-5 text-gray-400" />
-                                ) }
+                                )}
                             </button>
                         </div>
                         <div className="relative">
@@ -131,23 +120,23 @@ const ChangePassword = ( { params }: { params: { id: string; }; } ) =>
                             <input
                                 id="new-password"
                                 name="newPassword"
-                                type={ showNewPassword ? "text" : "password" }
+                                type={showNewPassword ? "text" : "password"}
                                 required
                                 className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-webgreen focus:border-webgreen focus:z-10 sm:text-sm"
                                 placeholder="New Password"
-                                value={ newPassword }
-                                onChange={ ( e ) => setNewPassword( e.target.value ) }
+                                value={newPassword}
+                                onChange={( e ) => setNewPassword( e.target.value )}
                             />
                             <button
                                 type="button"
                                 className="absolute inset-y-0 right-0 pr-3 flex items-center z-20"
-                                onClick={ () => togglePasswordVisibility( 'newPassword' ) }
+                                onClick={() => togglePasswordVisibility( 'newPassword' )}
                             >
-                                { showNewPassword ? (
+                                {showNewPassword ? (
                                     <FaEyeSlash className="h-5 w-5 text-gray-400" />
                                 ) : (
                                     <FaEye className="h-5 w-5 text-gray-400" />
-                                ) }
+                                )}
                             </button>
                         </div>
                         <div className="relative">
@@ -155,33 +144,33 @@ const ChangePassword = ( { params }: { params: { id: string; }; } ) =>
                             <input
                                 id="confirm-password"
                                 name="confirmPassword"
-                                type={ showConfirmPassword ? "text" : "password" }
+                                type={showConfirmPassword ? "text" : "password"}
                                 required
                                 className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-webgreen focus:border-webgreen focus:z-10 sm:text-sm"
                                 placeholder="Confirm New Password"
-                                value={ confirmPassword }
-                                onChange={ ( e ) => setConfirmPassword( e.target.value ) }
+                                value={confirmPassword}
+                                onChange={( e ) => setConfirmPassword( e.target.value )}
                             />
                             <button
                                 type="button"
                                 className="absolute inset-y-0 right-0 pr-3 flex items-center z-20"
-                                onClick={ () => togglePasswordVisibility( 'confirmPassword' ) }
+                                onClick={() => togglePasswordVisibility( 'confirmPassword' )}
                             >
-                                { showConfirmPassword ? (
+                                {showConfirmPassword ? (
                                     <FaEyeSlash className="h-5 w-5 text-gray-400" />
                                 ) : (
                                     <FaEye className="h-5 w-5 text-gray-400" />
-                                ) }
+                                )}
                             </button>
                         </div>
                     </div>
 
-                    { error && (
-                        <div className="text-red-500 text-sm mt-2">{ error }</div>
-                    ) }
-                    { success && (
-                        <div className="text-green-500 text-sm mt-2">{ success }</div>
-                    ) }
+                    {error && (
+                        <div className="text-red-500 text-sm mt-2">{error}</div>
+                    )}
+                    {success && (
+                        <div className="text-green-500 text-sm mt-2">{success}</div>
+                    )}
 
                     <div>
                         <button

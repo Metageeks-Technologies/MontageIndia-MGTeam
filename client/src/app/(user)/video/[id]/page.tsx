@@ -10,7 +10,6 @@ import {
   removeSingleProductFromLocalStorage,
   setSingleProductInLocalStorage,
 } from "@/app/redux/feature/product/api";
-import {} from "@/app/redux/feature/product/image/api";
 import { useAppDispatch, useAppSelector } from "@/app/redux/hooks";
 import Footer from "@/components/Footer";
 import { useParams } from "next/navigation";
@@ -25,7 +24,7 @@ import Trending from "@/components/Video/trendingVideos";
 import { getVideo } from "@/app/redux/feature/product/video/api";
 import { BiSolidPurchaseTagAlt } from "react-icons/bi";
 import { LuIndianRupee } from "react-icons/lu";
-import { FaShareAlt } from "react-icons/fa";
+import { FaCoins, FaShareAlt } from "react-icons/fa";
 import CustomShareButton from "@/components/Home/gallary/share";
 import Searchbar from "@/components/searchBar/search";
 import { formatSecToMin } from "@/utils/DateFormat";
@@ -173,9 +172,10 @@ const Home = () => {
                         title={
                           product.isWhitelisted
                             ? "Remove from Saved"
-                            : "Save Image"
+                            : "Save Video"
                         }
                         className="flex gap-2 border py-1 items-center rounded bg-white px-3 text-sm"
+
                       >
                         {wishlistLoading ? (
                           <span className="h-4 w-4 border-t-2 border-b-2 border-gray-900 rounded-full animate-spin"></span>
@@ -265,6 +265,11 @@ const Home = () => {
                                 className="p-2 flex items-center gap-1 bg-red-500 text-white rounded-full"
                               >
                                 <LuIndianRupee /> {license.price}{" "}
+                                <span className="text-sm text-neutral-600 flex items-center justify-center">
+                                  {" /"}
+                                  <FaCoins />
+                                  {license?.credit}
+                                </span>
                                 <BiSolidPurchaseTagAlt />
                               </div>
                             ) : (
@@ -277,7 +282,12 @@ const Home = () => {
                                 className="p-2 flex items-center gap-1 text-black rounded-full"
                               >
                                 <LuIndianRupee />
-                                {license.price}
+                                  {license.price}
+                                  <span className="text-sm text-neutral-600 flex items-center justify-center">
+                                    {" /"}
+                                    <FaCoins />
+                                    {license?.credit}
+                                  </span>
                                 <span
                                   className={`p-2 ${
                                     isVariantInCart(license._id)

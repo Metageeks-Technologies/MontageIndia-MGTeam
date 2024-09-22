@@ -7,6 +7,7 @@ import React, { useState, useEffect } from 'react';
 import Multiselect from 'multiselect-react-dropdown';
 import { adminRolesOptions, categoriesOptions, mediaTypesOptions } from "@/utils/tempData";
 import Swal from 'sweetalert2';
+import {FaEye, FaEyeSlash} from 'react-icons/fa';
 interface User
 {
     name: string;
@@ -32,7 +33,12 @@ const UserCreate: React.FC = () =>
     } );
     // const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
     const [ selectedMediaTypes, setSelectedMediaTypes ] = useState<string[]>( [] );
-    const [ error, setError ] = useState<string | null>( null );
+    const [error, setError] = useState<string | null>( null );
+    const [showPassword, setShowPassword] = useState( false );
+
+    const togglePasswordVisibility = () => {
+        setShowPassword(!showPassword);
+    };
 
     useEffect( () =>
     {
@@ -170,14 +176,23 @@ const UserCreate: React.FC = () =>
                         </div>
                         <div>
                             <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">Password  <span className="text-red-500">*</span></label>
-                            <input required
-                                type="password"
-                                id="password"
-                                name="password"
-                                value={ user.password }
-                                onChange={ handleChange }
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none   transition duration-150 ease-in-out bg-pageBg-light"
-                            />
+                            <div className="relative">
+                                <input required
+                                    type={showPassword ? "text" : "password"}
+                                    id="password"
+                                    name="password"
+                                    value={user.password}
+                                    onChange={handleChange}
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none transition duration-150 ease-in-out bg-pageBg-light pr-10"
+                                />
+                                <button
+                                    type="button"
+                                    onClick={togglePasswordVisibility}
+                                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5"
+                                >
+                                    {showPassword ? <FaEyeSlash className="h-5 w-5 text-gray-500" /> : <FaEye className="h-5 w-5 text-gray-500" />}
+                                </button>
+                            </div>
                         </div>
                         <div>
                             <label htmlFor="role" className="block text-sm font-medium text-gray-700 mb-1">Role  <span className="text-red-500">*</span></label>

@@ -5,11 +5,11 @@ interface FilterProps {
   isOpen: boolean;
   onToggle: () => void;
   mediaType: "image" | "audio" | "video";
-  onFilterChange: (filterType: string, value: string | number) => void;
+  onFilterChange: ( filterType: string, value: string | number ) => void;
   onClearFilter: () => void;
 }
 
-const Filter: React.FC<FilterProps> = ({
+const Filter: React.FC<FilterProps> = ( {
   isOpen,
   onToggle,
   mediaType,
@@ -22,35 +22,43 @@ const Filter: React.FC<FilterProps> = ({
   const debounceTimers = useRef<{[key: string]: NodeJS.Timeout | null;}>( {} );
 
   const updateURL = useCallback(
-    (params: URLSearchParams) => {
-      router.push(`?${params.toString()}`, { scroll: false });
+    ( params: URLSearchParams ) => {
+      // Remove parameters with empty values
+      Array.from( params.entries() ).forEach( ( [key, value] ) => {
+        if ( !value || value === "0" ) {
+          params.delete( key );
+        }
+      } );
+
+      const queryString = params.toString();
+      router.push( queryString ? `?${queryString}` : "", {scroll: false} );
     },
     [router]
   );
-
+  
   const handleFilterClick = useCallback(
-    (filterType: string, value: string | number) => {
-      const currentParams = new URLSearchParams(searchParams.toString());
+    ( filterType: string, value: string | number ) => {
+      const currentParams = new URLSearchParams( searchParams.toString() );
 
-      if (currentParams.get(filterType) === value.toString()) {
+      if ( currentParams.get( filterType ) === value.toString() ) {
         // Remove the filter if it's already selected
-        currentParams.delete(filterType);
-        setActiveFilters((prev) => {
-          const newFilters = { ...prev };
+        currentParams.delete( filterType );
+        setActiveFilters( ( prev ) => {
+          const newFilters = {...prev};
           delete newFilters[filterType];
           return newFilters;
-        });
+        } );
       } else {
         // Set the new filter value
-        currentParams.set(filterType, value.toString());
-        setActiveFilters((prev) => ({
+        currentParams.set( filterType, value.toString() );
+        setActiveFilters( ( prev ) => ( {
           ...prev,
           [filterType]: value,
-        }));
+        } ) );
       }
 
-      updateURL(currentParams);
-      onFilterChange(filterType, currentParams.get(filterType) || "");
+      updateURL( currentParams );
+      onFilterChange( filterType, currentParams.get( filterType ) || "" );
     },
     [searchParams, updateURL, onFilterChange]
   );
@@ -65,29 +73,29 @@ const Filter: React.FC<FilterProps> = ({
         debounceTimers.current[key] = null;
       }, delay );
     };
-  }; 
+  };
 
   const handleInputChange = useCallback(
     ( key: string, value: string ) => {
       const currentParams = new URLSearchParams( searchParams.toString() );
-      if ( value === "" ) {
+      if ( value === "" || value === "0" ) {
         currentParams.delete( key );
         setActiveFilters( ( prev ) => {
           const newFilters = {...prev};
           delete newFilters[key];
           return newFilters;
-        });
+        } );
       } else {
-        const numValue = parseInt(value) || 0;
-        currentParams.set(key, numValue.toString());
-        setActiveFilters((prev) => ({
+        const numValue = parseInt( value ) || 0;
+        currentParams.set( key, numValue.toString() );
+        setActiveFilters( ( prev ) => ( {
           ...prev,
           [key]: numValue,
-        }));
+        } ) );
       }
 
-      updateURL(currentParams);
-      onFilterChange(key, value === "" ? "" : parseInt(value) || 0);
+      updateURL( currentParams );
+      onFilterChange( key, value === "" ? "" : parseInt( value ) || 0 );
     },
     [searchParams, updateURL, onFilterChange]
   );
@@ -97,7 +105,7 @@ const Filter: React.FC<FilterProps> = ({
   useEffect( () => {
     const filtersFromQuery: {[key: string]: string | number;} = {};
     searchParams.forEach( ( value, key ) => {
-      console.log("Key:-",key,"value:-",value)
+      // console.log( "Key:-", key, "value:-", value );
       if (
         [
           "imageWidth",
@@ -114,16 +122,16 @@ const Filter: React.FC<FilterProps> = ({
         if ( value == "1080" ) filtersFromQuery[key] = "fhd";
         else if ( value == "720" ) filtersFromQuery[key] = "hd";
       } else {
-        console.log(key)
+        // console.log( key );
         filtersFromQuery[key] = value;
       }
-    });
-    setActiveFilters(filtersFromQuery);
-  }, [searchParams]);
+    } );
+    setActiveFilters( filtersFromQuery );
+  }, [searchParams] );
 
   const renderFilterButton = ( option: string, filterType: string ) => {
-    console.log( "option:-", filterType );
-    console.log( "active filters:-", activeFilters );
+    // console.log( "option:-", filterType );
+    // console.log( "active filters:-", activeFilters );
     return (
       <button
         key={option}
@@ -245,17 +253,16 @@ const Filter: React.FC<FilterProps> = ({
 
   return (
     <div
-      className={`h-fit sticky top-36 left-0  text-gray-800 overflow-y-auto transition-all duration-300 ease-in-out ${
-        isOpen ? "lg:w-80 sm:w-72 w-64" : "w-0"
-      }`}
+      className={`h-fit sticky top-36 left-0  text-gray-800 overflow-y-auto transition-all duration-300 ease-in-out ${isOpen ? "lg:w-80 sm:w-72 w-64" : "w-0"
+        }`}
     >
       <div className="p-4 ">
         <div className="flex sm:flex-row flex-col justify-between items-center mb-6">
-          
+
           <h2 className="text-xl   font-semibold  ">Filters</h2>
-          
+
           <div className="flex items-center">
-            
+
             <button
               onClick={onClearFilter}
               className="mr-4 px-3 py-1 sm:mt-0 mt-2 bg-red-500 text-white rounded-full text-sm hover:bg-red-600 transition-colors"

@@ -1,7 +1,8 @@
 "use client";
 import instance from "@/utils/axios";
 import React, { useEffect, useState } from "react";
-import { SpinnerLoader } from "@/components/loader/loaders";
+import {SpinnerLoader} from "@/components/loader/loaders";
+import * as XLSX from 'xlsx';
 
 interface Subscription
 {
@@ -31,7 +32,7 @@ const Page = () =>
   const [ searchTerm, setSearchTerm ] = useState<string>( "" );
   const [ totalPages, setTotalPages ] = useState<number>( 1 );
   const [ isLoading, setIsLoading ] = useState( false );
-
+  const [ isExporting, setIsExporting ] = useState( false );
   const fetchSubscription = async () =>
   {
     setIsLoading( true );
@@ -76,12 +77,35 @@ const Page = () =>
   useEffect( () =>
   {
     fetchSubscription();
-  }, [ currentPage, dataPerPage, searchTerm ] );
+  }, [currentPage, dataPerPage, searchTerm] );
+  
+  const ExportUsersList = async () => {
+    setIsExporting( true );
+    // get all data from the database
+    const response = await instance.get( '/subscription/history', {
+      params: {searchTerm:'', currentPage:1, dataPerPage:1000}, withCredentials: true
+    } );
+    const ws = XLSX.utils.json_to_sheet( response.data.subscriptionHistory );
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet( wb, ws, "SubscriptionHistory" );
+
+    // Generate Excel file and trigger download
+    XLSX.writeFile( wb, "SubscriptionHistory.xlsx" );
+    setIsExporting( false );
+  };
 
   return (
     <div className="container p-4 min-h-screen bg-pureWhite-light rounded-md">
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-2xl font-bold">Subscription History</h1>
+        <button
+          className={`px-4 py-2 bg-red-500 text-white rounded ${isExporting ? 'opacity-50 cursor-not-allowed' : 'hover:bg-red-600'
+            }`}
+          onClick={ExportUsersList}
+          disabled={isExporting}
+        >
+          {isExporting ? "Exporting subscription history..." : "Export Subscription History"}
+        </button>
       </div>
 
       {/* one horixonal line */ }
