@@ -2,7 +2,9 @@
 import instance from "@/utils/axios";
 import { Pagination, Button, Spinner } from '@nextui-org/react';
 import React, { useEffect, useState } from "react";
-import { SpinnerLoader } from "@/components/loader/loaders";
+import {SpinnerLoader} from "@/components/loader/loaders";
+import * as XLSX from 'xlsx';
+
 
 interface Transaction
 {
@@ -24,7 +26,8 @@ const Page = () =>
   const [ currentPage, setCurrentPage ] = useState<number>( 1 );
   const [ dataPerPage, setDataPerPage ] = useState<number>( 6 );
   const [ searchTerm, setSearchTerm ] = useState<string>( '' );
-  const [ totalPages, setTotalPages ] = useState<number>( 1 );
+  const [totalPages, setTotalPages] = useState<number>( 1 );
+  const [isExporting, setIsExporting] = useState<boolean>( false );
 
   const fetchTransactions = async () =>
   {
@@ -71,10 +74,31 @@ const Page = () =>
     setCurrentPage( 1 );
   };
 
+  const ExportTransactions = async () => {
+    setIsExporting( true );
+    // get all data from the database
+    const response = await instance.get( '/payment/transactions', {
+      params: {searchTerm:'', currentPage:1, dataPerPage:1000}, withCredentials: true
+    } );
+    const ws = XLSX.utils.json_to_sheet( response.data.transactions );
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet( wb, ws, "Transactions" );
+    XLSX.writeFile( wb, "Transactions.xlsx" );
+    setIsExporting(false)
+  };
+
   return (
     <div className="container p-4 min-h-screen bg-pureWhite-light rounded-md">
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-2xl font-bold">Transaction History</h1>
+        <button
+          className={`px-4 py-2 bg-red-500 text-white rounded ${isExporting ? 'opacity-50 cursor-not-allowed' : 'hover:bg-red-600'
+            }`}
+          onClick={ExportTransactions}
+          disabled={isExporting}
+        >
+          {isExporting ? "Exporting transaction history..." : "Export Transaction History"}
+        </button>
       </div>
 
       {/* one horixonal line */ }

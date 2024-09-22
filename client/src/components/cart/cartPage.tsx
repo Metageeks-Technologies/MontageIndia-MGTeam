@@ -17,6 +17,7 @@ import {
   removeItemFromCart,
 } from "@/app/redux/feature/product/api";
 import { LuIndianRupee } from "react-icons/lu";
+import {FaCoins} from "react-icons/fa";
 function CartPopup() {
   const [isOpen, setIsOpen] = useState(false);
   const dispatch = useAppDispatch();
@@ -134,6 +135,15 @@ function CartPopup() {
                             item?.variantId?.includes(variant._id)
                           )?.price
                         }
+                        <span className="text-sm text-neutral-600 flex items-center justify-center"> 
+                          {" /"}
+                          <FaCoins />
+                          {
+                          item?.productId?.variants?.find((variant: any) =>
+                            item?.variantId?.includes(variant._id)
+                          )?.credit
+                        }
+                        </span>
                       </span>
                     </span>
                   </div>

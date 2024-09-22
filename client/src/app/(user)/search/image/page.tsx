@@ -1,68 +1,54 @@
 "use client";
 import Footer from "@/components/Footer";
 import ImageGallery from "@/components/Home/homeImage";
-import instance from "@/utils/axios";
-import { Button, Pagination, Spinner } from "@nextui-org/react";
+import {Button, Pagination} from "@nextui-org/react";
 import {SpinnerLoader} from '@/components/loader/loaders';
-import { useEffect, useState } from "react";
-import { useAppDispatch, useAppSelector } from "@/app/redux/hooks";
-import { setImagePage } from "@/app/redux/feature/product/slice";
-import { useRouter, useSearchParams } from "next/navigation";
-import { clearKeywords } from "@/app/redux/feature/product/api";
+import {useEffect, useState} from "react";
+import {useAppDispatch, useAppSelector} from "@/app/redux/hooks";
+import {setImagePage, requestStart} from "@/app/redux/feature/product/slice";
+import {useRouter, useSearchParams} from "next/navigation";
+import {clearKeywords} from "@/app/redux/feature/product/api";
 import Searchbar from "@/components/searchBar/search";
 import Filter from "@/components/searchBar/filtersidebar";
-import { BsFilterLeft } from "react-icons/bs";
-import { getImage } from "@/app/redux/feature/product/image/api";
-import Hero from "@/components/Home/gallary/Hero";
+import {BsFilterLeft} from "react-icons/bs";
+import {getImage} from "@/app/redux/feature/product/image/api";
 import Category from "@/components/Category";
 
 const filterOptions = {
   sortBy: ["newest", "oldest", "popular"],
   imageOrientation: ["vertical", "horizontal"],
   imageFileType: ["jpeg", "png"],
-  imageWidth: 0, // input
-  imageHeight: 0, // input
-  imageDensity: 0, // input
+  imageWidth: 0,
+  imageHeight: 0,
+  imageDensity: 0,
 };
 
 const Page = () => {
   const dispatch = useAppDispatch();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const category = searchParams.get("category");
-  const [totalPages, setTotalPages] = useState(1);
-  const [currentPage, setCurrentPage] = useState(1);
-  const searchTerm = searchParams.get("searchTerm") || "";
+  const category = searchParams.get( "category" );
+  const [isFilterOpen, setIsFilterOpen] = useState( false );
+  const searchTerm = searchParams.get( "searchTerm" ) || "";
   const categoryParam = category ? ["editor choice"] : "";
-  const [isFilterOpen, setIsFilterOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const {
-    imageData: product,
-    imagePage,
-    totalImageData,
-    totalImageNumOfPage,
-  } = useAppSelector((state) => state.product);
-  const { user } = useAppSelector((state) => state.user);
+
+  const {imageData: product, imagePage, totalImageData, totalImageNumOfPage, loading} = useAppSelector( ( state ) => state.product );
+  const {user} = useAppSelector( ( state ) => state.user );
 
   const toggleFilter = () => {
-    setIsFilterOpen(!isFilterOpen);
+    setIsFilterOpen( !isFilterOpen );
   };
 
-  const handlePageChange = (page: number) => {
-    dispatch(setImagePage(page));
+  const handlePageChange = ( page: number ) => {
+    dispatch( setImagePage( page ) );
   };
 
-  const handleNextPage = () => {
-    handlePageChange(imagePage === totalImageNumOfPage ? 1 : imagePage + 1);
-  };
-  const handlePrevPage = () => {
-    handlePageChange(imagePage === 1 ? totalImageNumOfPage : imagePage - 1);
-  };
+  const fetchData = async ( page: number ) => {
+    // dispatch( setLoading( true ) );
+    dispatch(requestStart());
 
-  const fetchData = async (page: number) => {
-    setLoading(true);
-    const filters = Object.fromEntries(searchParams);
-    const response = await getImage(dispatch, !!user, {
+    const filters = Object.fromEntries( searchParams );
+    await getImage( dispatch, !!user, {
       page,
       mediaType: ["image"],
       searchTerm,
@@ -74,56 +60,42 @@ const Page = () => {
       imageWidth: filters.imageWidth,
       imageHeight: filters.imageHeight,
       imageDensity: filters.imageDensity,
-    });
-    setLoading(false);
+    } );
   };
 
-  const handleFilterChange = (filterType: string, value: string | number) => {
-    const currentParams = new URLSearchParams(searchParams.toString());
-    currentParams.set(filterType, value.toString());
-    router.push(`?${currentParams.toString()}`, { scroll: false });
-    fetchData(imagePage);
+  const handleFilterChange = ( filterType: string, value: string | number ) => {
+    const currentParams = new URLSearchParams( searchParams.toString() );
+    currentParams.set( filterType, value.toString() );
+    router.push( `?${currentParams.toString()}`, {scroll: false} );
   };
 
   const handleClearFilters = () => {
-    const currentParams = new URLSearchParams(searchParams.toString());
-    Object.keys(filterOptions).forEach((key) => {
-      currentParams.delete(key);
-    });
-    router.push(`?${currentParams.toString()}`, { scroll: false });
-    fetchData(imagePage);
+    const currentParams = new URLSearchParams( searchParams.toString() );
+    Object.keys( filterOptions ).forEach( ( key ) => {
+      currentParams.delete( key );
+    } );
+    router.push( `?${currentParams.toString()}`, {scroll: false} );
   };
 
   const hasFilterParams = () => {
-    return Array.from(searchParams.keys()).some((key) =>
-      [
-        "sortBy",
-        "imageOrientation",
-        "imageFileType",
-        "imageWidth",
-        "imageHeight",
-        "imageDensity",
-      ].includes(key)
+    return Array.from( searchParams.keys() ).some( ( key ) =>
+      Object.keys( filterOptions ).includes( key )
     );
   };
 
-  useEffect(() => {
+  useEffect( () => {
     const filterParamsExist = hasFilterParams();
-    setIsFilterOpen(filterParamsExist);
-    fetchData(imagePage);
+    setIsFilterOpen( filterParamsExist );
+    fetchData( imagePage );
     return () => {
-      clearKeywords(dispatch);
+      clearKeywords( dispatch );
     };
-  }, [imagePage, searchParams]);
-
-  const displayData = product;
-
-  console.log("prams", )
+  }, [imagePage, searchParams] );
 
   return (
-    <div className="flex flex-col ">
+    <div className="flex flex-col">
       <Searchbar />
-      <div className="flex flex-1 "> 
+      <div className="flex flex-1">
         <Filter
           isOpen={isFilterOpen}
           onToggle={toggleFilter}
@@ -131,53 +103,43 @@ const Page = () => {
           onFilterChange={handleFilterChange}
           onClearFilter={handleClearFilters}
         />
-        <div className={`flex-1 transition-all duration-300 ease-in-out `}>
+        <div className={`flex-1 transition-all duration-300 ease-in-out`}>
           <div className="lg:p-4 md:p-0 p-0">
             <button
-              className="py-2 lg:ml-12 md:ml-4 ml-4  text-gray-800 bg-white border flex flex-row items-center gap-2 border-gray-300 px-5 rounded-md mb-4"
+              className="py-2 lg:ml-12 md:ml-4 ml-4 text-gray-800 bg-white border flex flex-row items-center gap-2 border-gray-300 px-5 rounded-md mb-4"
               onClick={toggleFilter}
             >
               Filters <BsFilterLeft />
             </button>
             <div className="main items-center">
               <div className="">
-                <div
-                  className={`py-10 lg:mx-4 ${
-                    !isFilterOpen ? "xl:mx-12 md:mx-4 mx-4" : "ml-0"
-                  } `}
-                >
-                  {displayData.length > 0 ? (
+                <div className={`py-10 lg:mx-4 ${!isFilterOpen ? "xl:mx-12 md:mx-4 mx-4" : "ml-0"}`}>
+                  {loading ? (
+                    <SpinnerLoader />
+                  ) : product.length > 0 ? (
                     <>
-                     <h1 className="text-2xl font-bold  text-start">
-                     Today's Trending Images
-                   </h1>
-                   <h4 className="text-lg text-neutral-700">
-                     {totalImageData} Product stock Photos and High-res Pictures
-                   </h4>
-                   <div className="mx-auto mt-4">
-                     {loading ? (
-                       <SpinnerLoader />
-                     ) : (
-                       <div className="columns-1 sm:columns-2 md:columns-2 lg:columns-4 gap-2 mt-2 relative">
-                        
-                           {displayData?.map((data: any) => (
-                             <ImageGallery key={data._id} data={data} />
-                           ))}
-                         
-                       </div>
-                     )}
-                   </div>
-                   </>
-                  ):(
-                  <>
-                    <div className="text-center py-12">
-                    <h1 className="text-xl font-semibold text-gray-700">
-                      Sorry, we couldn't find any matches for "{searchTerm}"
-                    </h1>
-                    <p className="text-gray-500 mt-2">Try making your search simpler and double-check your spelling</p>
-                  </div>
-                  <Category mediaType="image"/>
-                   </>
+                      <h1 className="text-2xl font-bold text-start">Today's Trending Images</h1>
+                      <h4 className="text-lg text-neutral-700">
+                        {totalImageData} Product stock Photos and High-res Pictures
+                      </h4>
+                      <div className="mx-auto mt-4">
+                        <div className="columns-1 sm:columns-2 md:columns-2 lg:columns-4 gap-2 mt-2 relative">
+                          {product.map( ( data: any ) => (
+                            <ImageGallery key={data._id} data={data} />
+                          ) )}
+                        </div>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <div className="text-center py-12">
+                        <h1 className="text-xl font-semibold text-gray-700">
+                          Sorry, we couldn't find any matches for "{searchTerm}"
+                        </h1>
+                        <p className="text-gray-500 mt-2">Try making your search simpler and double-check your spelling</p>
+                      </div>
+                      <Category mediaType="image" />
+                    </>
                   )}
                 </div>
               </div>
@@ -188,14 +150,13 @@ const Page = () => {
                   <Button
                     size="sm"
                     type="button"
-                    disabled={currentPage === 1}
+                    disabled={imagePage === 1}
                     variant="flat"
-                    className={`${
-                      currentPage === 1
+                    className={`${imagePage === 1
                         ? "opacity-70 cursor-not-allowed"
                         : "hover:bg-webred"
-                    } bg-webred text-white rounded-full font-bold`}
-                    onPress={handlePrevPage}
+                      } bg-webred text-white rounded-full font-bold`}
+                    onPress={() => handlePageChange( imagePage - 1 )}
                   >
                     Prev
                   </Button>
@@ -203,8 +164,7 @@ const Page = () => {
                     color="success"
                     classNames={{
                       item: "w-8 h-8 text-small bg-gray-100 hover:bg-gray-300 rounded-full",
-                      cursor:
-                        "bg-webred hover:bg-red text-white rounded-full font-bold",
+                      cursor: "bg-webred hover:bg-red text-white rounded-full font-bold",
                     }}
                     total={totalImageNumOfPage}
                     page={imagePage}
@@ -214,14 +174,13 @@ const Page = () => {
                   <Button
                     type="button"
                     size="sm"
-                    disabled={currentPage === totalPages}
+                    disabled={imagePage === totalImageNumOfPage}
                     variant="flat"
-                    className={`${
-                      currentPage === totalPages
+                    className={`${imagePage === totalImageNumOfPage
                         ? "opacity-70 cursor-not-allowed"
                         : "hover:bg-webred"
-                    } bg-webred text-white rounded-full font-bold`}
-                    onPress={handleNextPage}
+                      } bg-webred text-white rounded-full font-bold`}
+                    onPress={() => handlePageChange( imagePage + 1 )}
                   >
                     Next
                   </Button>
@@ -231,7 +190,6 @@ const Page = () => {
           </div>
         </div>
       </div>
-     
       <Footer />
     </div>
   );

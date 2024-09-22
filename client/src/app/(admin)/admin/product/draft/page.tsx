@@ -1,16 +1,16 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useState} from "react";
 import Link from "next/link";
 import instance from "@/utils/axios";
-import { Spinner, Pagination, Button } from "@nextui-org/react";
+import {Spinner, Pagination, Button} from "@nextui-org/react";
 import Multiselect from "multiselect-react-dropdown";
-import { categoriesOptions, mediaTypesOptions } from "@/utils/tempData";
-import { BsThreeDots } from "react-icons/bs";
-import { GoDotFill } from "react-icons/go";
-import { LuDot } from "react-icons/lu";
-import { FaStarOfLife } from "react-icons/fa";
-import { useRouter } from "next/navigation";
-import { SpinnerLoader } from "@/components/loader/loaders";
+import {categoriesOptions, mediaTypesOptions} from "@/utils/tempData";
+import {BsThreeDots} from "react-icons/bs";
+import {GoDotFill} from "react-icons/go";
+import {LuDot} from "react-icons/lu";
+import {FaStarOfLife} from "react-icons/fa";
+import {useRouter} from "next/navigation";
+import {SpinnerLoader} from "@/components/loader/loaders";
 interface Variant {
   label: string;
   price: number;
@@ -34,49 +34,49 @@ interface Product {
 }
 
 const Home: React.FC = () => {
-  const [productData, setProductData] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [productsPerPage, setProductsPerPage] = useState(5);
-  const [SearchTerm, setSearchTerm] = useState("");
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
-  const [selectedMediaTypes, setSelectedMediaTypes] = useState<string[]>([]);
-  const [shouldFetch, setShouldFetch] = useState(true);
-  const [availableCategories, setAvailableCategories] = useState<any[]>([]);
+  const [productData, setProductData] = useState<Product[]>( [] );
+  const [loading, setLoading] = useState( false );
+  const [currentPage, setCurrentPage] = useState( 1 );
+  const [totalPages, setTotalPages] = useState( 1 );
+  const [productsPerPage, setProductsPerPage] = useState( 5 );
+  const [SearchTerm, setSearchTerm] = useState( "" );
+  const [selectedCategories, setSelectedCategories] = useState<string[]>( [] );
+  const [selectedMediaTypes, setSelectedMediaTypes] = useState<string[]>( [] );
+  const [shouldFetch, setShouldFetch] = useState( true );
+  const [availableCategories, setAvailableCategories] = useState<any[]>( [] );
 
   const router = useRouter();
-  const onSelectCategory = (selectedList: string[]) => {
-    setSelectedCategories(selectedList);
+  const onSelectCategory = ( selectedList: string[] ) => {
+    setSelectedCategories( selectedList );
   };
 
-  const onRemoveCategory = (selectedList: string[]) => {
-    setSelectedCategories(selectedList);
+  const onRemoveCategory = ( selectedList: string[] ) => {
+    setSelectedCategories( selectedList );
   };
 
-  const onSelectMediaType = (selectedList: string[]) => {
-    setSelectedMediaTypes(selectedList);
+  const onSelectMediaType = ( selectedList: string[] ) => {
+    setSelectedMediaTypes( selectedList );
   };
 
-  const onRemoveMediaType = (selectedList: string[]) => {
-    setSelectedMediaTypes(selectedList);
+  const onRemoveMediaType = ( selectedList: string[] ) => {
+    setSelectedMediaTypes( selectedList );
   };
-  const capitalizeFirstLetter = (str: string): string => {
-    if(!str) return "";
-    return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+  const capitalizeFirstLetter = ( str: string ): string => {
+    if ( !str ) return "";
+    return str.charAt( 0 ).toUpperCase() + str.slice( 1 ).toLowerCase();
   };
   const showAllProducts = async () => {
-    setSearchTerm("");
-    setSelectedCategories([]);
-    setSelectedMediaTypes([]);
-    setCurrentPage(1);
-    setShouldFetch(true);
+    setSearchTerm( "" );
+    setSelectedCategories( [] );
+    setSelectedMediaTypes( [] );
+    setCurrentPage( 1 );
+    setShouldFetch( true );
   };
   // fetch data from Server
   const fetchProduct = async () => {
-    setLoading(true);
+    setLoading( true );
     try {
-      const response = await instance.get(`/product`, {
+      const response = await instance.get( `/product`, {
         params: {
           status: "draft",
           productsPerPage,
@@ -86,56 +86,56 @@ const Home: React.FC = () => {
           searchTerm: SearchTerm,
         },
         withCredentials: true,
-      });
-      console.log(response);
-      setProductData(response.data.products);
-      setTotalPages(response.data.numOfPages);
-    } catch (error) {
-      console.error("Error fetching products:", error);
+      } );
+      console.log( response );
+      setProductData( response.data.products );
+      setTotalPages( response.data.numOfPages );
+    } catch ( error ) {
+      console.error( "Error fetching products:", error );
     } finally {
-      setLoading(false);
+      setLoading( false );
     }
   };
 
   const getCategories = async () => {
     try {
-      const response = await instance.get("/field/category");
+      const response = await instance.get( "/field/category" );
       const formattedCategories = response.data.categories.map(
-        (category: any) => ({
+        ( category: any ) => ( {
           name: category.name ? category.name : "Unknown", // Handle undefined names
-        })
+        } )
       );
-      setAvailableCategories(formattedCategories);
-      console.log("sdsd", response);
-    } catch (error) {
-      console.log("error in getting the category:-", error);
+      setAvailableCategories( formattedCategories );
+      console.log( "sdsd", response );
+    } catch ( error ) {
+      console.log( "error in getting the category:-", error );
     }
   };
 
-  useEffect(() => {
+  useEffect( () => {
     getCategories();
-    if (shouldFetch) {
+    if ( shouldFetch ) {
       fetchProduct();
-      setShouldFetch(false);
+      setShouldFetch( false );
     }
-  }, [currentPage, productsPerPage, shouldFetch]);
+  }, [currentPage, productsPerPage, shouldFetch] );
 
-  const handleproductPerPage = (e: any) => {
+  const handleproductPerPage = ( e: any ) => {
     e.preventDefault();
-    setShouldFetch(true);
-    setCurrentPage(1);
-    setProductsPerPage(parseInt(e.target.value));
+    setShouldFetch( true );
+    setCurrentPage( 1 );
+    setProductsPerPage( parseInt( e.target.value ) );
   };
   // Handler to change page
-  const handlePageChange = (page: number) => {
-    setShouldFetch(true);
-    setCurrentPage(page);
+  const handlePageChange = ( page: number ) => {
+    setShouldFetch( true );
+    setCurrentPage( page );
   };
 
-  function truncateText(text: string, wordLimit: number): string {
-    const words = text.split(" ");
-    if (words.length > wordLimit) {
-      return words.slice(0, wordLimit).join(" ") + "...";
+  function truncateText ( text: string, wordLimit: number ): string {
+    const words = text.split( " " );
+    if ( words.length > wordLimit ) {
+      return words.slice( 0, wordLimit ).join( " " ) + "...";
     }
     return text;
   }
@@ -154,7 +154,7 @@ const Home: React.FC = () => {
           type="text"
           placeholder="Search Products"
           value={SearchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
+          onChange={( e ) => setSearchTerm( e.target.value )}
           className="border rounded px-4 py-2 flex-grow"
         />
         <div className="w-48 p-1">
@@ -172,14 +172,14 @@ const Home: React.FC = () => {
               },
             }}
             options={availableCategories}
-            selectedValues={selectedCategories.map((category) => ({
+            selectedValues={selectedCategories.map( ( category ) => ( {
               name: category,
-            }))}
-            onSelect={(selectedList) =>
-              onSelectCategory(selectedList.map((item: any) => item.name))
+            } ) )}
+            onSelect={( selectedList ) =>
+              onSelectCategory( selectedList.map( ( item: any ) => item.name ) )
             }
-            onRemove={(selectedList) =>
-              onRemoveCategory(selectedList.map((item: any) => item.name))
+            onRemove={( selectedList ) =>
+              onRemoveCategory( selectedList.map( ( item: any ) => item.name ) )
             }
             showCheckbox
             displayValue="name"
@@ -190,16 +190,16 @@ const Home: React.FC = () => {
             avoidHighlightFirstOption
             showArrow
             placeholder="media type"
-            options={mediaTypesOptions.map((option) => ({
+            options={mediaTypesOptions.map( ( option ) => ( {
               name: option.name,
               value: option.value,
-            }))}
-            selectedValues={selectedMediaTypes.map((type) => ({ name: type }))}
-            onSelect={(selectedList) =>
-              onSelectMediaType(selectedList.map((item: any) => item.name))
+            } ) )}
+            selectedValues={selectedMediaTypes.map( ( type ) => ( {name: type} ) )}
+            onSelect={( selectedList ) =>
+              onSelectMediaType( selectedList.map( ( item: any ) => item.name ) )
             }
-            onRemove={(selectedList) =>
-              onRemoveMediaType(selectedList.map((item: any) => item.name))
+            onRemove={( selectedList ) =>
+              onRemoveMediaType( selectedList.map( ( item: any ) => item.name ) )
             }
             showCheckbox
             displayValue="name"
@@ -233,7 +233,7 @@ const Home: React.FC = () => {
           <select
             className="border rounded px-4 py-2"
             value={productsPerPage}
-            onChange={(e) => handleproductPerPage(e)}
+            onChange={( e ) => handleproductPerPage( e )}
           >
             <option value={5}>5 Data per page</option>
             <option value={10}>10 Data per page</option>
@@ -273,7 +273,7 @@ const Home: React.FC = () => {
                 </td>
               </tr>
             ) : productData && productData.length > 0 ? (
-              productData.map((prod) => (
+              productData.map( ( prod ) => (
                 <tr key={prod._id} className="hover:bg-gray-50">
                   <td className="px-4 py-2 border-b border-gray-200 bg-pureWhite-light text-center">
                     <div className="relative flex items-center justify-center">
@@ -304,22 +304,30 @@ const Home: React.FC = () => {
                         {prod?.mediaType === "video" && (
                           <div>
                             {" "}
-                            <video
-                              controls
-                              className="w-full h-28 object-cover rounded"
-                            >
-                              <source
-                                src={`https://mi2-public.s3.ap-southeast-1.amazonaws.com/${prod?.thumbnailKey}`}
-                              />
-                            </video>
+                            {prod?.thumbnailKey ?
+                              <video
+                                controls
+                                className="w-full h-28 object-cover rounded"
+                              >
+                                <source
+                                  src={`https://mi2-public.s3.ap-southeast-1.amazonaws.com/${prod?.thumbnailKey}`}
+                                />
+                              </video>
+                              :
+                              <img src='/images/images.png' className='h-16' alt='product image unavailable' />
+                            }
                           </div>
                         )}
                         {prod.mediaType === "image" && (
-                          <img
-                            src={`https://mi2-public.s3.ap-southeast-1.amazonaws.com/${prod.thumbnailKey}`}
-                            alt={prod.title}
-                            className="w-3/4 h-16 object-cover rounded"
-                          />
+                          prod?.thumbnailKey ? (
+                            <img
+                              src={`https://mi2-public.s3.ap-southeast-1.amazonaws.com/${prod.thumbnailKey}`}
+                              alt={prod.title}
+                              className="w-3/4 h-16 object-cover rounded"
+                            />
+                          ) : (
+                            <img src='/images/images.png' className='h-16' alt='product image unavailable' />
+                          )
                         )}
                         {prod.mediaType === "audio" && (
                           <img
@@ -334,33 +342,21 @@ const Home: React.FC = () => {
 
                   <td className="px-4 py-4 border-b border-gray-200 bg-white">
                     <div className="text-sm font-medium text-gray-900">
-                      {capitalizeFirstLetter(prod.title)}
+                      {capitalizeFirstLetter( prod.title )}
                     </div>
                   </td>
 
                   <td className="px-4 py-4 border-b border-gray-200 bg-white">
                     <div className="text-sm text-gray-900">
-                      {prod.category.join(", ")}
+                      {prod.category.join( ", " )}
                     </div>
                   </td>
                   <td className="px-4 py-4 border-b border-gray-200 bg-white">
                     <div className="text-sm text-gray-900">
-                      {truncateText(prod.description, 3)}
+                      {truncateText( prod.description, 3 )}
                     </div>
                   </td>
-                  {/* <td className="px-4 py-4 border-b border-gray-200 bg-white">
-                      <div className="flex justify-center items-center space-x-2">
-                        <Link href={ `/admin/product/update/${ prod.uuid }` } className="text-blue-600 hover:text-blue-900">
-                          <img src="/images/editIcon.png" alt="Edit" className="w-6 h-6" />
-                        </Link>
-                        <button className="text-green-600 hover:text-green-900">
-                          <img src="/images/viewIcon.png" alt="View" className="w-6 h-6" />
-                        </button>
-                        <button className="text-red-600 hover:text-red-900" >
-                          <img src="/images/deleteIcon.png" alt="Delete" className="w-6 h-6" />
-                        </button>
-                      </div>
-                    </td> */}
+                  
                   <td className="px-4 py-4 border-b text-center border-gray-200 bg-white">
                     <button className="text-gray-600 hover:text-gray-900">
                       <Link
@@ -372,7 +368,7 @@ const Home: React.FC = () => {
                     </button>
                   </td>
                 </tr>
-              ))
+              ) )
             ) : (
               <tr>
                 <td colSpan={7} className="text-center py-4">
@@ -395,27 +391,26 @@ const Home: React.FC = () => {
           <div className="flex items-center space-x-2">
             <button
               className="px-3 py-1 border rounded"
-              onClick={() => handlePageChange(currentPage - 1)}
+              onClick={() => handlePageChange( currentPage - 1 )}
               disabled={currentPage === 1}
             >
               &lt;
             </button>
-            {[...Array(totalPages)].map((_, index) => (
+            {[...Array( totalPages )].map( ( _, index ) => (
               <button
                 key={index}
-                className={`px-3 py-1 border rounded ${
-                  currentPage === index + 1
-                    ? "bg-red-500 text-white"
-                    : "bg-white"
-                }`}
-                onClick={() => handlePageChange(index + 1)}
+                className={`px-3 py-1 border rounded ${currentPage === index + 1
+                  ? "bg-red-500 text-white"
+                  : "bg-white"
+                  }`}
+                onClick={() => handlePageChange( index + 1 )}
               >
                 {index + 1}
               </button>
-            ))}
+            ) )}
             <button
               className="px-3 py-1 border rounded"
-              onClick={() => handlePageChange(currentPage + 1)}
+              onClick={() => handlePageChange( currentPage + 1 )}
               disabled={currentPage === totalPages}
             >
               &gt;

@@ -1,17 +1,15 @@
 "use client";
 import Footer from "@/components/Footer";
-import ImageGallery from "@/components/Home/homeImage";
 import instance from "@/utils/axios";
 import { Button, Pagination, Spinner } from "@nextui-org/react";
 import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/app/redux/hooks";
-import { setAudioPage, setImagePage } from "@/app/redux/feature/product/slice";
+import { setAudioPage } from "@/app/redux/feature/product/slice";
 import { useRouter, useSearchParams } from "next/navigation";
 import { clearKeywords } from "@/app/redux/feature/product/api";
 import Searchbar from "@/components/searchBar/search";
 import Filter from "@/components/searchBar/filtersidebar";
 import { BsFilterLeft } from "react-icons/bs";
-import { getImage } from "@/app/redux/feature/product/image/api";
 import { getAudio } from "@/app/redux/feature/product/audio/api";
 import Waveform from "@/components/Home/AudioWaveForm";
 import Banner from "@/components/Banner";

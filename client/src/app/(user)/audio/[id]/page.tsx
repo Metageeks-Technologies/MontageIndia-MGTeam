@@ -21,8 +21,6 @@ import { IoMdHeart, IoMdHeartEmpty } from "react-icons/io";
 import { MdOutlineAddAPhoto } from "react-icons/md";
 import { CiHeart } from "react-icons/ci";
 import { AiOutlineDownload } from "react-icons/ai";
-import Trending from "@/components/Video/trendingVideos";
-import { getVideo } from "@/app/redux/feature/product/video/api";
 import { FiDownload } from "react-icons/fi";
 import { Spinner } from "@nextui-org/react";
 import { downloadProduct } from "@/app/redux/feature/product/api";
@@ -34,6 +32,7 @@ import { notifyWarn } from "@/utils/toast";
 import CustomShareButton from "@/components/Home/gallary/share";
 import { LuIndianRupee } from "react-icons/lu";
 import { redirectToLogin } from "@/utils/redirectToLogin";
+import {FaCoins} from "react-icons/fa";
 
 const page = () => {
   const params = useParams();
@@ -184,7 +183,7 @@ const page = () => {
                           title={
                             product.isWhitelisted
                               ? "Remove from Saved"
-                              : "Save Image"
+                              : "Save Audio"
                           }
                           className="flex gap-2 border py-1 items-center rounded bg-white px-3 text-sm"
                         >
@@ -272,6 +271,11 @@ const page = () => {
                                 className="p-2 flex items-center gap-1 bg-red-500 text-white rounded-full"
                               >
                                 <LuIndianRupee /> {license.price}{" "}
+                                <span className="text-sm text-neutral-600 flex items-center justify-center">
+                                  {" /"}
+                                  <FaCoins />
+                                  {license?.credit}
+                                </span>
                                 <BiSolidPurchaseTagAlt />
                               </div>
                             ) : (
@@ -284,7 +288,12 @@ const page = () => {
                                 className="p-2 flex items-center gap-1 text-black rounded-full"
                               >
                                 <LuIndianRupee />
-                                {license.price}
+                                  {license.price}
+                                  <span className="text-sm text-neutral-600 flex items-center justify-center">
+                                    {" /"}
+                                    <FaCoins />
+                                    {license?.credit}
+                                  </span>
                                 <span
                                   className={`p-2 ${
                                     isVariantInCart(license._id)

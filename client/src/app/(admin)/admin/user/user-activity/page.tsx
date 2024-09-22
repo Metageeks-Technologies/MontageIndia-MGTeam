@@ -3,7 +3,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import instance from "@/utils/axios";
 import { Spinner, Button } from "@nextui-org/react";
 import {SpinnerLoader} from "@/components/loader/loaders";
-
+import * as XLSX from 'xlsx';
 interface UserActivity
 {
   _id: string;
@@ -27,7 +27,8 @@ const UserActivityPage = () =>
   const [ totalPages, setTotalPages ] = useState<number>( 1 );
   const [ searchTerm, setSearchTerm ] = useState<string>( "" );
   const [ dataPerPage, setDataPerPage ] = useState<number>( 10 );
-  const [ timeRange, setTimeRange ] = useState<string>( "all" );
+  const [timeRange, setTimeRange] = useState<string>( "all" );
+  const [isExporting, setIsExporting] = useState<boolean>( false );
 
   const fetchUsers = async () =>
   {
@@ -160,10 +161,30 @@ const UserActivityPage = () =>
     dataPerPage,
   ] );
 
+  // export data to excel
+  const ExportUsersList = async () => {
+    setIsExporting( true );
+    // get all data from the database
+    const response = await instance.get( `auth/admin/Activity/getAllActivity`, {
+      params: {timeRange, dataPerPage:1000, currentPage:1, searchTerm: ""} , withCredentials: true
+    } );
+    const ws = XLSX.utils.json_to_sheet( response.data.activities );
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet( wb, ws, "StaffActivity" );
+
+    // Generate Excel file and trigger download
+    XLSX.writeFile( wb, "StaffActivity.xlsx" );
+    setIsExporting( false );
+  };
+
+
   return (
     <div className="container p-4 bg-pureWhite-light rounded-md">
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-2xl font-bold">User Activity</h1>
+        <button className={`px-4 py-2 bg-red-500 text-white rounded ${isExporting ? 'opacity-50 cursor-not-allowed' : 'hover:bg-red-600' }`} onClick={ExportUsersList} disabled={isExporting} >
+          {isExporting ? "Exporting staff activity list..." : "Export Staff Activity List"}
+        </button>
       </div>
       <hr className="border-t border-gray-300 mb-4" />
       <div>

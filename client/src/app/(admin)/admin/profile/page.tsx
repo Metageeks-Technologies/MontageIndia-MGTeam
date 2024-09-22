@@ -245,14 +245,14 @@ export default function UserDetails ( { params }: { params: { id: string; }; } )
                         </div>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        { [ 'name', 'email', 'role', 'mediaType', 'category' ].map( ( key ) => (
+                        { [ 'name', 'email', 'role', 'mediaType' ].map( ( key ) => (
                             <div key={ key } className="flex flex-col">
                                 <label className="text-sm font-medium text-gray-700 mb-1 capitalize flex items-center">
                                     { key === 'name' && <FiUser className="mr-2" /> }
                                     { key === 'email' && <FiMail className="mr-2" /> }
                                     { key === 'role' && <MdOutlineAdminPanelSettings className="mr-2" /> }
                                     { key === 'mediaType' && <FiFilm className="mr-2" /> }
-                                    { key === 'category' && <FiTag className="mr-2" /> }
+                                    {/* { key === 'category' && <FiTag className="mr-2" /> } */}
                                     { key.replace( /([A-Z])/g, ' $1' ).trim() }
                                 </label>
                                 { isEditing && ( key === 'name' || key === 'email' ) ? (

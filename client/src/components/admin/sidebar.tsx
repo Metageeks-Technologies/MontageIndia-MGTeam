@@ -1,128 +1,117 @@
 "use client";
 
-import React, { useEffect, useState, useCallback } from "react";
-import
-{
-  FaHome,
-  FaUserFriends,
-  FaUsers,
-  FaBullhorn,
-  FaChartBar,
-  FaShoppingCart,
-  FaCog,
-  FaUserCircle,
-  FaCampground,
+import React, {useEffect, useState, useCallback} from "react";
+import {
+FaHome,
+FaUserFriends,
+FaUsers,
+FaBullhorn,
+FaChartBar,
+FaShoppingCart,
+FaCog,
+FaUserCircle,
+FaCampground,
 } from "react-icons/fa";
-import
-{
-  BiCategoryAlt,
-  BiPlus,
-  BiLogOutCircle,
-  BiLogInCircle,
+import {
+BiCategoryAlt,
+BiPlus,
+BiLogOutCircle,
+BiLogInCircle,
 } from "react-icons/bi";
-import { IoIosSearch } from "react-icons/io";
-import
-{
-  MdOutlineKeyboardArrowDown,
-  MdOutlineKeyboardArrowUp,
-  MdOutlinePayment,
+import {IoIosSearch} from "react-icons/io";
+import {
+MdOutlineKeyboardArrowDown,
+MdOutlineKeyboardArrowUp,
+MdOutlinePayment,
 } from "react-icons/md";
-import { RiLinksFill } from "react-icons/ri";
-import { usePathname, useRouter } from "next/navigation";
-import { images } from "../../../public/images/image";
+import {RiLinksFill} from "react-icons/ri";
+import {usePathname, useRouter} from "next/navigation";
+import {images} from "../../../public/images/image";
 import instance from "@/utils/axios";
-import { notifySuccess } from "@/utils/toast";
+import {notifySuccess} from "@/utils/toast";
 import Link from "next/link";
 import Swal from "sweetalert2";
 
-const Sidebar = () =>
-{
-  const [ isProductOpen, setIsProductOpen ] = useState( false );
-  const [ isUserOpen, setIsUserOpen ] = useState( false );
-  const [ isCustomerOpen, setIsCustomerOpen ] = useState( false );
-  const [ isCategoryOpen, setIsCategoryOpen ] = useState( false );
-  const [ currentUser, setCurrentUser ] = useState<any>( "" );
+const Sidebar = () => {
+  const [isProductOpen, setIsProductOpen] = useState( false );
+  const [isUserOpen, setIsUserOpen] = useState( false );
+  const [isCustomerOpen, setIsCustomerOpen] = useState( false );
+  const [isCategoryOpen, setIsCategoryOpen] = useState( false );
+  const [currentUser, setCurrentUser] = useState<any>( "" );
   const router = useRouter();
   const pathname = usePathname();
 
-  const toggleMenu = (state:string)=>{
-    if(state === "product"){
-      setIsProductOpen(!isProductOpen);
-      setIsUserOpen(false);
-      setIsCustomerOpen(false);
-      setIsCategoryOpen(false);
+  const toggleMenu = ( state: string ) => {
+    if ( state === "product" ) {
+      setIsProductOpen( !isProductOpen );
+      setIsUserOpen( false );
+      setIsCustomerOpen( false );
+      setIsCategoryOpen( false );
     }
-    if(state === "user"){
-      setIsUserOpen(!isUserOpen);
-      setIsProductOpen(false);
-      setIsCustomerOpen(false);
-      setIsCategoryOpen(false);
+    if ( state === "user" ) {
+      setIsUserOpen( !isUserOpen );
+      setIsProductOpen( false );
+      setIsCustomerOpen( false );
+      setIsCategoryOpen( false );
     }
-    if(state === "customer"){
-      setIsCustomerOpen(!isCustomerOpen);
-      setIsProductOpen(false);
-      setIsUserOpen(false);
-      setIsCategoryOpen(false);
+    if ( state === "customer" ) {
+      setIsCustomerOpen( !isCustomerOpen );
+      setIsProductOpen( false );
+      setIsUserOpen( false );
+      setIsCategoryOpen( false );
     }
-    if(state === "category"){
-      setIsCategoryOpen(!isCategoryOpen);
-      setIsProductOpen(false);
-      setIsUserOpen(false);
-      setIsCustomerOpen(false);
-  }
-  }
+    if ( state === "category" ) {
+      setIsCategoryOpen( !isCategoryOpen );
+      setIsProductOpen( false );
+      setIsUserOpen( false );
+      setIsCustomerOpen( false );
+    }
+  };
 
-  const initialState = ()=>{
-    setIsProductOpen(false);
-    setIsUserOpen(false);
-    setIsCustomerOpen(false);
-    setIsCategoryOpen(false);
-  }
+  const initialState = () => {
+    setIsProductOpen( false );
+    setIsUserOpen( false );
+    setIsCustomerOpen( false );
+    setIsCategoryOpen( false );
+  };
 
-  const handleLogout = async () =>
-  {
-    try
-    {
+  const handleLogout = async () => {
+    try {
       const response = await instance.get( "/auth/admin/logout" );
-      notifySuccess( response.data.message  ); 
+      notifySuccess( response.data.message );
       setCurrentUser( "" );
       router.push( "/auth/admin/login" );
-    } catch ( error )
-    {
+    } catch ( error ) {
       console.error( "Error in logout:", error );
     }
   };
 
-  useEffect( () =>
-  {
+  useEffect( () => {
     // Fetching user details
     instance
       .get( "/auth/admin/getCurrAdmin" )
-      .then( ( response ) =>
-      {
+      .then( ( response ) => {
         // console.log( 'User details:', response.data );
         setCurrentUser( response.data.user );
       } )
-      .catch( ( error ) =>
-      {
+      .catch( ( error ) => {
         console.error( "Error fetching user details:", error );
       } );
   }, [] );
 
-  const isActiveLink = ( path: string ) =>
-  {
-    return pathname === path ;
+  const isActiveLink = ( path: string ) => {
+    return pathname === path;
   };
 
 
   return (
-      <div
-        id="r"
-        className=" w-64 top-0 left-0 z-40 overflow-y-scroll overflow-x-hidden  p-4 rounded-md bg-pureWhite-light"
-        aria-label="Sidebar"
-      >
-        <div className=" py-2 w-full bg-pureWhite-light flex flex-col justify-between ">
-          {/* <div className="flex items-center mb-4 justify-between w-[80%]">
+    <div
+      id="r"
+      className=" w-64 top-0 left-0 z-40 overflow-y-scroll overflow-x-hidden  p-4 rounded-md bg-pureWhite-light"
+      aria-label="Sidebar"
+    >
+      <div className=" py-2 w-full bg-pureWhite-light flex flex-col justify-between ">
+        {/* <div className="flex items-center mb-4 justify-between w-[80%]">
             <div>
               <img src={images.logo.src} alt="logo" className="h-8 mr-3" />
             </div>
@@ -142,7 +131,7 @@ const Sidebar = () =>
             </div>
           </div> */}
 
-          {/* <div className="relative mb-4">
+        {/* <div className="relative mb-4">
             <input
               type="text"
               placeholder="Search"
@@ -150,208 +139,211 @@ const Sidebar = () =>
             />
             <IoIosSearch className="absolute right-2 top-1/2 transform -translate-y-1/2 h-6 w-6 text-gray-400" />
           </div> */}
-          <div className="flex flex-col  justify-between">
-            <ul className="space-y-2 font-medium">
-              <li  className={ `rounded-lg cursor-pointer ${ isActiveLink( "/admin/dashboard" ) ? "bg-webred text-white " : "hover:bg-webred-light text-gray-700" }` } >
-                <Link href='/admin/dashboard' onClick={()=>{initialState()}} className="flex items-center w-full p-2 text-base  transition duration-75 rounded-lg group   ">
+        <div className="flex flex-col  justify-between">
+          <ul className="space-y-2 font-medium">
+            {
+              currentUser && currentUser.role === "superadmin" &&
+              <li className={`rounded-lg cursor-pointer ${isActiveLink( "/admin/dashboard" ) ? "bg-webred text-white " : "hover:bg-webred-light text-gray-700"}`} >
+                <Link href='/admin/dashboard' onClick={() => {initialState();}} className="flex items-center w-full p-2 text-base  transition duration-75 rounded-lg group   ">
                   <FaHome className="w-5 h-5  transition duration-75 " />
                   <span className="flex-1 ms-3 text-left rtl:text-right whitespace-nowrap">Dashboard</span>
                 </Link>
               </li>
 
+            }
 
 
-              { currentUser && (
+            {currentUser && (
+              <li>
+                <Link
+                  href="/admin/product/available"
+                  onClick={() => toggleMenu( "product" )}
+                  className={`flex cursor-pointer items-center w-full p-2 text-base transition duration-75 rounded-lg group ${!isProductOpen ? 'hover:bg-webred-light text-gray-700' : 'bg-webred text-white mb-1'}`}
+                >
+                  <BiCategoryAlt className="w-5 h-5 transition duration-75" />
+                  <span className="flex-1 ms-3 text-left rtl:text-right whitespace-nowrap">
+                    Product
+                  </span>
+                  {isProductOpen ? (
+                    <MdOutlineKeyboardArrowUp className="w-5 h-5 " />
+                  ) : (
+                    <MdOutlineKeyboardArrowDown className="w-5 h-5" />
+                  )}
+                </Link>
+                {isProductOpen && (
+                  <ul className={`py-2 space-y-2 ${isProductOpen ? "bg-pageBg-light px-2 rounded-md" : ""}`}>
+                    <li>
+
+                      <Link
+                        href="/admin/product/create"
+                        className={`flex items-start w-full p-2 transition duration-75 rounded-lg pl-7 group  ${isActiveLink( "/admin/product/create" )
+                          ? "bg-webred text-pureWhite-light"
+                          : "hover:bg-[#f56d6d] hover:text-white "
+                          }`}
+                      >
+                        Create
+                      </Link>
+                    </li>
+                    <li>
+                      <Link href="/admin/product/available" className={`flex items-center w-full p-2  transition duration-75 rounded-lg pl-7 group  cursor-pointer ${isActiveLink( '/admin/product/available' ) ? 'bg-webred text-pureWhite-light' : 'hover:bg-[#f56d6d] hover:text-white'}`}>Published</Link>
+
+                    </li>
+                    <li>
+                      <Link
+                        href="/admin/product/draft"
+                        className={`flex items-center w-full p-2  transition duration-75 rounded-lg pl-7 group  cursor-pointer ${isActiveLink( "/admin/product/draft" )
+                          ? "bg-webred text-pureWhite-light"
+                          : "hover:bg-[#f56d6d] hover:text-white"
+                          }`}
+                      >
+                        Draft
+                      </Link>
+                    </li>
+                    <li>
+                      <Link href="/admin/product/archive" className={`flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-7 group  cursor-pointer ${isActiveLink( '/admin/product/archive' ) ? 'bg-webred text-pureWhite-light' : 'hover:bg-[#f56d6d] hover:text-white'}`}>Deleted</Link>
+                    </li>
+                    <li>
+                      {/* <Link href="/admin/product/unavailable" className={ `flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-webred-light cursor-pointer ${ isActiveLink( '/admin/product/unavailable' ) ? 'bg-webred text-pureWhite-light' : '' }` }>Unavailable</Link> */}
+                    </li>
+
+                  </ul>
+                )}
+              </li>
+            )}
+            {currentUser && currentUser.role === "superadmin" && (
+              <li>
+                <Link
+                  href="/admin/user/userList"
+                  onClick={() => toggleMenu( "user" )}
+                  className={`flex cursor-pointer items-center w-full p-2 text-base transition duration-75 rounded-lg group ${!isUserOpen ? "hover:bg-webred-light text-gray-700" : "bg-webred text-white mb-1 "}`}
+                >
+                  <FaUserFriends className="w-5 h-5 transition duration-75" />
+                  <span className="flex-1 ms-3 text-left rtl:text-right whitespace-nowrap">Staff</span>
+                  {isUserOpen ? (
+                    <MdOutlineKeyboardArrowUp className="w-5 h-5" />
+                  ) : (
+                    <MdOutlineKeyboardArrowDown className="w-5 h-5" />
+                  )}
+                </Link>
+                {isUserOpen && (
+                  <ul className={`py-2 space-y-2 ${!isUserOpen ? "" : "bg-pageBg-light rounded-md px-2"}`}>
+                    <li>
+                      <Link href="/admin/user/userList" className={`flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-7 group cursor-pointer ${isActiveLink( '/admin/user/userList' ) ? 'bg-webred text-pureWhite-light' : 'hover:bg-[#f56d6d] hover:text-white'}`}>Staff List</Link>
+                    </li>
+                    <li>
+                      <Link href="/admin/user/user-create" className={`flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-7 group  cursor-pointer ${isActiveLink( '/admin/user/user-create' ) ? 'bg-webred text-pureWhite-light' : 'hover:bg-[#f56d6d] hover:text-white'}`}> Create Staff</Link>
+                    </li>
+                    <li>
+                      <Link href="/admin/user/user-activity" className={`flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-7 group  cursor-pointer ${isActiveLink( '/admin/user/user-activity' ) ? 'bg-webred text-pureWhite-light' : 'hover:bg-[#f56d6d] hover:text-white'}`}>Staff Activity</Link>
+                    </li>
+                  </ul>
+                )}
+              </li>
+            )}
+            {currentUser && currentUser.role === "superadmin" && (
+              <>
+
+
                 <li>
                   <Link
-                    href="/admin/product/available"
-                    onClick={ () => toggleMenu("product") }
-                    className={ `flex cursor-pointer items-center w-full p-2 text-base transition duration-75 rounded-lg group ${ !isProductOpen ? 'hover:bg-webred-light text-gray-700' : 'bg-webred text-white mb-1' }` }
+                    href="/admin/category/create"
+                    onClick={() => toggleMenu( "category" )}
+                    className={`flex cursor-pointer items-center w-full p-2 text-base transition duration-75 rounded-lg group  ${!isCategoryOpen ? "hover:bg-webred-light text-gray-700" : "bg-webred text-white rounded-md mb-1"}`}
                   >
-                    <BiCategoryAlt className="w-5 h-5 transition duration-75" />
-                    <span className="flex-1 ms-3 text-left rtl:text-right whitespace-nowrap">
-                      Product
-                    </span>
-                    { isProductOpen ? (
-                      <MdOutlineKeyboardArrowUp className="w-5 h-5 " />
-                    ) : (
-                      <MdOutlineKeyboardArrowDown className="w-5 h-5" />
-                    ) }
-                  </Link>
-                  { isProductOpen && (
-                    <ul className={ `py-2 space-y-2 ${ isProductOpen ? "bg-pageBg-light px-2 rounded-md" : "" }` }>
-                      <li>
-                      
-                        <Link
-                          href="/admin/product/create"
-                          className={ `flex items-start w-full p-2 transition duration-75 rounded-lg pl-7 group  ${ isActiveLink( "/admin/product/create" )
-                            ? "bg-webred text-pureWhite-light"
-                            : "hover:bg-[#f56d6d] hover:text-white "
-                            }` }
-                        >
-                          Create
-                        </Link>
-                      </li>
-                      <li>
-                        <Link href="/admin/product/available" className={ `flex items-center w-full p-2  transition duration-75 rounded-lg pl-7 group  cursor-pointer ${ isActiveLink( '/admin/product/available' ) ? 'bg-webred text-pureWhite-light' : 'hover:bg-[#f56d6d] hover:text-white' }` }>Published</Link>
-
-                      </li>
-                      <li>
-                        <Link
-                          href="/admin/product/draft"
-                          className={ `flex items-center w-full p-2  transition duration-75 rounded-lg pl-7 group  cursor-pointer ${ isActiveLink( "/admin/product/draft" )
-                            ? "bg-webred text-pureWhite-light"
-                            : "hover:bg-[#f56d6d] hover:text-white"
-                            }` }
-                        >
-                          Draft
-                        </Link>
-                      </li>
-                      <li>
-                        <Link href="/admin/product/archive" className={ `flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-7 group  cursor-pointer ${ isActiveLink( '/admin/product/archive' ) ? 'bg-webred text-pureWhite-light' : 'hover:bg-[#f56d6d] hover:text-white' }` }>Deleted</Link>
-                      </li>
-                      <li>
-                        {/* <Link href="/admin/product/unavailable" className={ `flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-webred-light cursor-pointer ${ isActiveLink( '/admin/product/unavailable' ) ? 'bg-webred text-pureWhite-light' : '' }` }>Unavailable</Link> */ }
-                      </li>
-
-                    </ul>
-                  ) }
-                </li>
-              ) }
-              { currentUser && currentUser.role === "superadmin" && (
-                <li>
-                  <Link
-                    href="/admin/user/userList"
-                    onClick={ () => toggleMenu("user") }
-                    className={ `flex cursor-pointer items-center w-full p-2 text-base transition duration-75 rounded-lg group ${ !isUserOpen ? "hover:bg-webred-light text-gray-700" : "bg-webred text-white mb-1 " }` }
-                  >
-                    <FaUserFriends className="w-5 h-5 transition duration-75" />
-                    <span className="flex-1 ms-3 text-left rtl:text-right whitespace-nowrap">Staff</span>
-                    { isUserOpen ? (
+                    <FaCampground className="w-5 h-5 transition duration-75" />
+                    <span className="flex-1 ms-3 text-left rtl:text-right whitespace-nowrap">Category</span>
+                    {isCategoryOpen ? (
                       <MdOutlineKeyboardArrowUp className="w-5 h-5" />
                     ) : (
                       <MdOutlineKeyboardArrowDown className="w-5 h-5" />
-                    ) }
+                    )}
                   </Link>
-                  { isUserOpen && (
-                    <ul className={ `py-2 space-y-2 ${ !isUserOpen ? "" : "bg-pageBg-light rounded-md px-2" }` }>
+                  {isCategoryOpen && (
+                    <ul className={`py-2 space-y-2 ${!isCategoryOpen ? "" : "bg-pageBg-light rounded-md px-2"}`}>
                       <li>
-                        <Link href="/admin/user/userList" className={ `flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-7 group cursor-pointer ${ isActiveLink( '/admin/user/userList' ) ? 'bg-webred text-pureWhite-light' : 'hover:bg-[#f56d6d] hover:text-white' }` }>Staff List</Link>
+                        <Link href="/admin/category/create" className={`flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-7 group cursor-pointer ${isActiveLink( '/admin/category/create' ) ? 'bg-webred text-pureWhite-light' : 'hover:bg-[#f56d6d] hover:text-white'}`}>Add Category</Link>
                       </li>
                       <li>
-                        <Link href="/admin/user/user-create" className={ `flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-7 group  cursor-pointer ${ isActiveLink( '/admin/user/user-create' ) ? 'bg-webred text-pureWhite-light' : 'hover:bg-[#f56d6d] hover:text-white' }` }> Create Staff</Link>
+                        <Link href="/admin/category" className={`flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-7  group  cursor-pointer ${isActiveLink( '/admin/category' ) ? 'bg-webred text-pureWhite-light' : 'hover:bg-[#f56d6d] hover:text-white'}`}>Categories List</Link>
                       </li>
-                      <li>
-                        <Link href="/admin/user/user-activity" className={ `flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-7 group  cursor-pointer ${ isActiveLink( '/admin/user/user-activity' ) ? 'bg-webred text-pureWhite-light' : 'hover:bg-[#f56d6d] hover:text-white' }` }>Staff Activity</Link>
-                      </li>
+
                     </ul>
-                  ) }
+                  )}
                 </li>
-              ) }
-              { currentUser && currentUser.role === "superadmin" && (
-                <>
 
+                <li>
+                  <Link
+                    href="/admin/subscription"
+                    onClick={() => toggleMenu( "customer" )}
+                    className={`flex items-center p-2 rounded-lg cursor-pointer group ${isCustomerOpen ? 'bg-webred text-white rounded-md mb-1' : 'hover:bg-webred-light text-gray-700'}`}
+                  >
+                    <FaUsers className="w-5 h-5 transition duration-75 " />
+                    <span className="flex-1 ms-3 whitespace-nowrap">
+                      Customers
+                    </span>
+                    {isCustomerOpen ? (
+                      <MdOutlineKeyboardArrowUp className="w-5 h-5" />
+                    ) : (
+                      <MdOutlineKeyboardArrowDown className="w-5 h-5" />
+                    )}
+                  </Link>
+                  {isCustomerOpen && (
+                    <ul className={`py-2 space-y-2 ${!isCustomerOpen ? "" : "bg-pageBg-light rounded-md px-2"}`}>
+                      <li>
+                        <Link
+                          href="/admin/subscription"
+                          className={`flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-7 group  cursor-pointer ${isActiveLink( "/admin/subscription" )
+                            ? "bg-webred text-pureWhite-light"
+                            : "hover:bg-[#f56d6d] hover:text-white"
+                            }`}
+                        >
+                          Subscription
+                        </Link>
+                      </li>
 
-                  <li>
-                    <Link
-                      href="/admin/category/create"
-                      onClick={ () => toggleMenu( "category" ) }
-                      className={ `flex cursor-pointer items-center w-full p-2 text-base transition duration-75 rounded-lg group  ${ !isCategoryOpen ? "hover:bg-webred-light text-gray-700" : "bg-webred text-white rounded-md mb-1" }` }
-                    >
-                      <FaCampground className="w-5 h-5 transition duration-75" />
-                      <span className="flex-1 ms-3 text-left rtl:text-right whitespace-nowrap">Category</span>
-                      { isCategoryOpen ? (
-                        <MdOutlineKeyboardArrowUp className="w-5 h-5" />
-                      ) : (
-                        <MdOutlineKeyboardArrowDown className="w-5 h-5" />
-                      ) }
-                    </Link>
-                    { isCategoryOpen && (
-                      <ul className={ `py-2 space-y-2 ${ !isCategoryOpen ? "" : "bg-pageBg-light rounded-md px-2" }` }>
-                        <li>
-                          <Link href="/admin/category/create" className={ `flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-7 group cursor-pointer ${ isActiveLink( '/admin/category/create' ) ? 'bg-webred text-pureWhite-light' : 'hover:bg-[#f56d6d] hover:text-white' }` }>Add Category</Link>
-                        </li>
-                        <li>
-                          <Link href="/admin/category" className={ `flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-7  group  cursor-pointer ${ isActiveLink( '/admin/category' ) ? 'bg-webred text-pureWhite-light' : 'hover:bg-[#f56d6d] hover:text-white' }` }>Categories List</Link>
-                        </li>
+                      <li>
+                        <Link
+                          href="/admin/subscription-history"
+                          className={`flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-7 group  cursor-pointer ${isActiveLink( "/admin/subscription-history" )
+                            ? "bg-webred text-pureWhite-light"
+                            : "hover:bg-[#f56d6d] hover:text-white"
+                            }`}
+                        >
+                          Subscription History
+                        </Link>
+                      </li>
 
-                      </ul>
-                    ) }
-                  </li>
+                      <li>
+                        <Link
+                          href="/admin/transaction"
+                          className={`flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-7 group  cursor-pointer ${isActiveLink( "/admin/transaction" )
+                            ? "bg-webred text-pureWhite-light"
+                            : "hover:bg-[#f56d6d] hover:text-white"
+                            }`}
+                        >
+                          Transaction History
+                        </Link>
+                      </li>
 
-                  <li>
-                    <Link
-                      href="/admin/subscription"
-                      onClick={ () => toggleMenu( "customer" ) }
-                      className={ `flex items-center p-2 rounded-lg cursor-pointer group ${ isCustomerOpen ? 'bg-webred text-white rounded-md mb-1' : 'hover:bg-webred-light text-gray-700' }` }
-                    >
-                      <FaUsers className="w-5 h-5 transition duration-75 " />
-                      <span className="flex-1 ms-3 whitespace-nowrap">
-                        Customers
-                      </span>
-                      { isCustomerOpen ? (
-                        <MdOutlineKeyboardArrowUp className="w-5 h-5" />
-                      ) : (
-                        <MdOutlineKeyboardArrowDown className="w-5 h-5" />
-                      ) }
-                    </Link>
-                    { isCustomerOpen && (
-                      <ul className={ `py-2 space-y-2 ${ !isCustomerOpen ? "" : "bg-pageBg-light rounded-md px-2" }` }>
-                        <li>
-                          <Link
-                            href="/admin/subscription"
-                            className={ `flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-7 group  cursor-pointer ${ isActiveLink( "/admin/subscription" )
-                              ? "bg-webred text-pureWhite-light"
-                              : "hover:bg-[#f56d6d] hover:text-white"
-                              }` }
-                          >
-                            Subscription
-                          </Link>
-                        </li>
+                      <li>
+                        <Link
+                          href="/admin/customer-list"
+                          className={`flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-7 group  cursor-pointer ${isActiveLink( "/admin/customer-list" )
+                            ? "bg-webred text-pureWhite-light"
+                            : "hover:bg-[#f56d6d] hover:text-white"
+                            }`}
+                        >
+                          Customer List
+                        </Link>
+                      </li>
 
-                        <li>
-                          <Link
-                            href="/admin/subscription-history"
-                            className={ `flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-7 group  cursor-pointer ${ isActiveLink( "/admin/subscription-history" )
-                              ? "bg-webred text-pureWhite-light"
-                              : "hover:bg-[#f56d6d] hover:text-white"
-                              }` }
-                          >
-                            Subscription History
-                          </Link>
-                        </li>
+                    </ul>
+                  )}
+                </li>
+              </>
+            )}
 
-                        <li>
-                          <Link
-                            href="/admin/transaction"
-                            className={ `flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-7 group  cursor-pointer ${ isActiveLink( "/admin/transaction" )
-                              ? "bg-webred text-pureWhite-light"
-                              : "hover:bg-[#f56d6d] hover:text-white"
-                              }` }
-                          >
-                            Transaction History
-                          </Link>
-                        </li>
-
-                        <li>
-                          <Link
-                            href="/admin/customer-list"
-                            className={ `flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-7 group  cursor-pointer ${ isActiveLink( "/admin/customer-list" )
-                              ? "bg-webred text-pureWhite-light"
-                              : "hover:bg-[#f56d6d] hover:text-white"
-                              }` }
-                          >
-                            Customer List
-                          </Link>
-                        </li>
-
-                      </ul>
-                    ) }
-                  </li>
-                </>
-              ) }
-
-              {/* <li>
+            {/* <li>
                 <a
                   href="/Not-Found"
                   className="flex items-center p-2 text-gray-900 rounded-lg  hover:bg-webred-light   group"
@@ -449,24 +441,24 @@ const Sidebar = () =>
                   />
                 </svg>
               </li> */}
-            </ul>
-          </div>
+          </ul>
+        </div>
 
-          <div className="border-t bg-white py-4 mt-5 rounded-md w-[90%]">
-            <div
-              className="flex items-center mb-4 border-b pb-2 cursor-pointer"
-              onClick={ () => {initialState(); router.push( "/admin/profile" ); }}
-            >
-              <FaUserCircle className="w-10 h-10 mr-3 text-gray-800" />
-              <div className="flex flex-col overflow-clip" >
-                <h3 className="text-sm font-semibold text-gray-800">
-                  { currentUser.name }
-                </h3>
-                <p title={currentUser.email} className="text-sm w-[70%] text-gray-600 truncate ">{ currentUser.email }</p>
-              </div>
+        <div className="border-t bg-white py-4 mt-5 rounded-md w-[90%]">
+          <div
+            className="flex items-center mb-4 border-b pb-2 cursor-pointer"
+            onClick={() => {initialState(); router.push( "/admin/profile" );}}
+          >
+            <FaUserCircle className="w-10 h-10 mr-3 text-gray-800" />
+            <div className="flex flex-col overflow-clip" >
+              <h3 className="text-sm font-semibold text-gray-800">
+                {currentUser.name}
+              </h3>
+              <p title={currentUser.email} className="text-sm w-[70%] text-gray-600 truncate ">{currentUser.email}</p>
             </div>
-            <ul>
-              {/* <li className="mb-1 flex justify-between items-center hover:bg-gray-200">
+          </div>
+          <ul>
+            {/* <li className="mb-1 flex justify-between items-center hover:bg-gray-200">
                 <a
                   href="/Not-Found"
                   className="flex items-center text-gray-800  px-4 py-2"
@@ -476,30 +468,30 @@ const Sidebar = () =>
                 </a>
                 <MdOutlineKeyboardArrowDown className="w-6 h-6 mr-3 cursor-pointer" />
               </li> */}
-              <li className="mb-1 cursor-pointer">
-                { currentUser ? (
-                  <a
-                    onClick={ handleLogout }
-                    className="flex gap-2 justify-start w-full rounded-md text-webred hover:bg-webred-light px-2 py-2"
-                  >
-                    <BiLogOutCircle className="w-6 h-6" />
-                    Log out
-                  </a>
-                ) : (
-                  <a
-                    href="/auth/admin/login"
-                    className="flex items-center text-gray-800 hover:bg-gray-200 px-3 py-2"
-                  >
-                    <BiLogInCircle className="w-6 h-6 mr-3" />
-                    Log in
-                  </a>
-                ) }
-              </li>
-            </ul>
-          </div>
+            <li className="mb-1 cursor-pointer">
+              {currentUser ? (
+                <a
+                  onClick={handleLogout}
+                  className="flex gap-2 justify-start w-full rounded-md text-webred hover:bg-webred-light px-2 py-2"
+                >
+                  <BiLogOutCircle className="w-6 h-6" />
+                  Log out
+                </a>
+              ) : (
+                <a
+                  href="/auth/admin/login"
+                  className="flex items-center text-gray-800 hover:bg-gray-200 px-3 py-2"
+                >
+                  <BiLogInCircle className="w-6 h-6 mr-3" />
+                  Log in
+                </a>
+              )}
+            </li>
+          </ul>
         </div>
       </div>
-  
+    </div>
+
   );
 };
 

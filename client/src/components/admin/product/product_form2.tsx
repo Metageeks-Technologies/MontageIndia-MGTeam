@@ -306,7 +306,7 @@ const Form2: React.FC<Form2Props> = ({ onPrev, onNext, formData }) => {
           Choose a file or drag & drop it here
         </p>
         <p className="mt-1 text-xs text-gray-500">
-          {acceptedFileTypes[data.mediaType] || "Any file"} formats, up to 5MB
+          {acceptedFileTypes[data.mediaType] || "Any file"} formats
         </p>
         <button className="mt-4 px-4 py-2 bg-webred text-pureWhite-light rounded-md hover:bg-webred focus:outline-none focus:ring-2 focus:ring-webred focus:ring-opacity-50">
           Browse File

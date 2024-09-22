@@ -5,6 +5,7 @@ import Link from 'next/link';
 import Swal from 'sweetalert2';
 import { FaTrashRestoreAlt } from 'react-icons/fa';
 import { SpinnerLoader } from '@/components/loader/loaders';
+import * as XLSX from 'xlsx';
 
 interface User
 {
@@ -26,7 +27,8 @@ export default function UserList ()
     const [ searchTerm, setSearchTerm ] = useState( '' );
     const [ dataPerPage, setDataPerPage ] = useState( 6 );
     const [ roleSearch, setRoleSearch ] = useState( 'all' );
-    const [ loading, setLoading ] = useState( false );
+    const [loading, setLoading] = useState( false );
+    const [isExporting, setIsExporting] = useState( false );
 
     useEffect( () =>
     {
@@ -110,12 +112,36 @@ export default function UserList ()
                 console.error( 'Error deleting user:', error );
             }
         }
+    }; 
+
+    const ExportUsersList = async () => {
+        setIsExporting( true );
+        // get all data from the database
+        const response = await instance.get( `auth/admin/getAllAdmin`, {
+            params: { searchTerm:"", currentPage:1, dataPerPage:1000, roleSearch:"" }, withCredentials: true
+        } );
+        const ws = XLSX.utils.json_to_sheet( response.data.admins ); 
+        const wb = XLSX.utils.book_new(); 
+        XLSX.utils.book_append_sheet( wb, ws, "UsersList" ); 
+
+        // Generate Excel file and trigger download
+        XLSX.writeFile( wb, "UsersList.xlsx" );
+        setIsExporting( false );
     };
+    
 
     return (
         <div className="container p-4 min-h-screen bg-pureWhite-light rounded-md">
             <div className="flex justify-between items-center mb-4">
                 <h1 className="text-2xl font-bold">Staff List</h1>
+                <button
+                    className={`px-4 py-2 bg-red-500 text-white rounded ${isExporting ? 'opacity-50 cursor-not-allowed' : 'hover:bg-red-600'
+                        }`}
+                    onClick={ExportUsersList}
+                    disabled={isExporting}
+                >
+                    {isExporting ? "Exporting user list..." : "Export User List"}
+                </button>
             </div>
             {/* one horixonal line */ }
             <hr className="border-t border-gray-300 mb-4" />
@@ -260,4 +286,4 @@ export default function UserList ()
             ) }
         </div>
     );
-}
+} 
