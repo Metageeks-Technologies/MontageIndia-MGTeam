@@ -165,7 +165,7 @@ const Home = () => {
                     <h1 className="text-xl sm:text-2xl font-semibold mb-2 sm:mb-0">
                       {product.title}
                     </h1>
-                    <div className="flex flex-wrap gap-2">
+                    <div className="flex whitespace-nowrap gap-2">
                       <button
                         onClick={handleeWishlist}
                         disabled={wishlistLoading}
@@ -210,12 +210,12 @@ const Home = () => {
                       />
                     </video>
                   </div>
-                  <div className="mt-2 w-full lg:w-[50rem]">
+                  <div className="mt-2 w-full">
                     <h2 className="font-bold">Description</h2>
                     <p className="text-sm text-neutral-700">
                       Stock Video ID: {product._id}
                     </p>
-                    <p className="text-sm">{product.description}</p>
+                    <p className="text-sm text-justify">{product.description}</p>
                   </div>
                 </div>
               ) : (

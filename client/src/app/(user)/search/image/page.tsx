@@ -117,8 +117,9 @@ const Page = () => {
                   {loading ? (
                     <SpinnerLoader />
                   ) : product.length > 0 ? (
-                    <>
-                      <h1 className="text-2xl font-bold text-start">Today's Trending Images</h1>
+                      <>
+                        
+                      <h1 className="text-2xl font-bold text-start"> {searchTerm ? "Trending Images" : "Today's Trending Images"}</h1>
                       <h4 className="text-lg text-neutral-700">
                         {totalImageData} Product stock Photos and High-res Pictures
                       </h4>

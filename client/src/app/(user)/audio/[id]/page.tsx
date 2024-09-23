@@ -179,7 +179,7 @@ const page = () => {
                       <h1 className="text-xl sm:text-2xl font-semibold mb-2 sm:mb-0">
                         {product.title}
                       </h1>
-                      <div className="flex flex-wrap max-sm:justify-evenly gap-2">
+                      <div className="flex whitespace-nowrap max-sm:justify-evenly gap-2">
                         <button
                           onClick={handleeWishlist}
                           disabled={wishlistLoading}
@@ -219,12 +219,12 @@ const page = () => {
                     {/* <div className="w-full h-[24rem]  md:h-[32rem] lg:h-[32rem] rounded-lg border "> */}
                     {product && <DetailWaveform product={product} />}
                     {/* </div> */}
-                    <div className="mt-2 w-full lg:w-[50rem] ">
+                    <div className="mt-2 w-full ">
                       <h2 className="font-bold">Description</h2>
                       <p className="text-sm text-neutral-700">
                         Stock Audio ID: {product._id}
                       </p>
-                      <p className="text-sm w-3/4">{product.description}</p>
+                      <p className="text-sm text-justify">{product.description}</p>
                     </div>
                   </div>
                 </>
@@ -345,19 +345,19 @@ const page = () => {
                     <div className="space-y-3 text-sm">
                       <div className="flex justify-between">
                         <span className="font-medium w-1/3">Title:</span>
-                        <p className="text-blue-600 hover:underline">
+                        <p className="text-blue-600 hover:underline w-2/3">
                           {product?.title}
                         </p>
                       </div>
                       <div className="flex justify-between">
                         <span className="font-medium w-1/3">Audio Format:</span>
-                        <span className="text-neutral-600">
+                        <span className="text-neutral-600 w-2/3">
                           {product.variants[0].metadata?.format}
                         </span>
                       </div>
                       <div className="flex justify-between">
                         <span className="font-medium w-1/3">Track Length:</span>
-                        <span className="text-neutral-600 whitespace-nowrap">
+                        <span className="text-neutral-600 whitespace-nowrap w-2/3">
                           {formatSecToMin(
                             product.variants?.[0]?.metadata?.length || 0
                           )}{" "}
@@ -366,24 +366,24 @@ const page = () => {
                       </div>
                       <div className="flex justify-between">
                         <span className="font-medium w-1/3">Bit Rate:</span>
-                        <span className="text-neutral-600 whitespace-nowrap">
+                        <span className="text-neutral-600 whitespace-nowrap w-2/3 ">
                           {product.variants?.[0]?.metadata?.bitrate} Kbps{" "}
                         </span>
                       </div>
                       <div className="flex justify-between">
                         <span className="font-medium w-1/3">Max Size:</span>
-                        <span className="capitalize text-neutral-600">
+                        <span className="capitalize text-neutral-600 w-2/3  ">
                           {product.variants?.[0]?.metadata?.size} Mb
                         </span>
                       </div>
 
                       <div className="flex justify-between">
                         <span className="font-medium w-1/3">Categories:</span>
-                        <div className="flex flex-wrap ">
+                        <div className="flex flex-wrap  w-2/3">
                           {product.category.map((category, index) => (
                             <p
                               key={index}
-                              className="text-blue-600 hover:underline"
+                              className="text-blue-600 hover:underline w-2/3"
                             >
                               {category}
                               {index !== product.category.length - 1 && ","}
