@@ -3,7 +3,7 @@ import Footer from "@/components/Footer";
 import ImageGallery from "@/components/Home/homeImage";
 import instance from "@/utils/axios";
 import { Button, Pagination, Spinner } from "@nextui-org/react";
-import {SpinnerLoader} from '@/components/loader/loaders';
+import { SpinnerLoader } from "@/components/loader/loaders";
 import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/app/redux/hooks";
 import { setImagePage } from "@/app/redux/feature/product/slice";
@@ -65,7 +65,7 @@ const Page = () => {
     setLoading(true);
     const response = await getImage(dispatch, !!user, {
       page: imagePage,
-      productsPerPage: 10,
+      productsPerPage: 20,
       mediaType: ["image"],
       searchTerm,
       category: categoryParam,
@@ -161,7 +161,6 @@ const Page = () => {
       <div className="flex flex-1">
         <div className={`flex-1 transition-all duration-300 ease-in-out `}>
           <div className="">
-           
             <div className="main items-center">
               <div className="">
                 <div
@@ -170,12 +169,13 @@ const Page = () => {
                   } `}
                 >
                   <div className="sm:py-6 py-0 ">
-                  <h1 className="text-4xl sm:block hidden font-semibold  text-center">
-                  Current Trending Visuals
-                  </h1>
-                  <h4 className="sm:text-lg sm:font-normal font-semibold text-sm mt-1 text-neutral-700 sm:text-center text-start">
-                    {totalImageData} Product stock Photos and High-res Pictures
-                  </h4>
+                    <h1 className="text-4xl sm:block hidden font-semibold  text-center">
+                      Current Trending Visuals
+                    </h1>
+                    <h4 className="sm:text-lg sm:font-normal font-semibold text-sm mt-1 text-neutral-700 sm:text-center text-start">
+                      {totalImageData} Product stock Photos and High-res
+                      Pictures
+                    </h4>
                   </div>
                   <div className="mx-auto sm:mt-4 mt-1">
                     {loading ? (
@@ -244,9 +244,8 @@ const Page = () => {
           </div>
         </div>
       </div>
-     
+
       <Footer />
-      
     </div>
   );
 };
