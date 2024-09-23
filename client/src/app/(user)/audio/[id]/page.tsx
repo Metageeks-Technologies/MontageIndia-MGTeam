@@ -32,7 +32,7 @@ import { notifyWarn } from "@/utils/toast";
 import CustomShareButton from "@/components/Home/gallary/share";
 import { LuIndianRupee } from "react-icons/lu";
 import { redirectToLogin } from "@/utils/redirectToLogin";
-import {FaCoins} from "react-icons/fa";
+import { FaCoins } from "react-icons/fa";
 
 const page = () => {
   const params = useParams();
@@ -108,7 +108,11 @@ const page = () => {
       if (product.isInCart) {
         await removeProductFromCart(dispatch, product._id);
       } else {
-        await addProductToCart(dispatch, product._id, product.variants[0]._id);
+        await addProductToCart(
+          dispatch,
+          product._id,
+          product.variants?.[0]?._id
+        );
       }
     } catch (error) {
       console.error("Error updating cart:", error);
@@ -131,7 +135,7 @@ const page = () => {
         await addProductToWishlist(
           dispatch,
           product._id,
-          product.variants[0]._id
+          product.variants?.[0]._id
         );
       }
     } catch (error) {
@@ -273,9 +277,7 @@ const page = () => {
                                 <LuIndianRupee /> {license.price}
                                 <span className="text-sm text-neutral-600 flex items-center gap-1 justify-center">
                                   {"/"}
-                                  <FaCoins />
-                                  {" "}
-                                  {license?.credit}
+                                  <FaCoins /> {license?.credit}
                                 </span>
                                 <BiSolidPurchaseTagAlt />
                               </div>
@@ -289,13 +291,11 @@ const page = () => {
                                 className="p-2 flex items-center gap-1 text-black rounded-full"
                               >
                                 <LuIndianRupee />
-                                  {license.price}
-                                  <span className="text-sm text-neutral-600 flex items-center gap-1 justify-center">
-                                    {" /"}
-                                    <FaCoins />
-                                    {" "}
-                                    {license?.credit}
-                                  </span>
+                                {license.price}
+                                <span className="text-sm text-neutral-600 flex items-center gap-1 justify-center">
+                                  {" /"}
+                                  <FaCoins /> {license?.credit}
+                                </span>
                                 <span
                                   className={`p-2 ${
                                     isVariantInCart(license._id)
