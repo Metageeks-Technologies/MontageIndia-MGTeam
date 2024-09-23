@@ -3,11 +3,9 @@ import { v4 as uuidv4 } from "uuid";
 import slugify from "slugify";
 import instance from "@/utils/axios";
 import { notifyError } from "@/utils/toast";
-import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import Select, { MultiValue, ActionMeta, components } from "react-select";
 import useAdminAuth from "@/components/hooks/useAdminAuth";
-import { categoriesOptions } from "@/utils/tempData";
 import { Spinner } from "@nextui-org/react";
 import Swal from "sweetalert2";
 
@@ -30,63 +28,7 @@ const Form1 = ({ onNext }: any) => {
   const [selectedCategories, setSelectedCategories] = useState<any[]>([]);
   const [availableCategories, setAvailableCategories] = useState<any[]>([]);
   const [availableMediaOptions, setAvailableMediaOptions] = useState<any[]>([]);
-  const [selected, setSelectedcheck] = useState(false);
-  const CustomMenu = React.memo((props: any) => {
-    const { selectProps, options, getValue } = props;
-    const searchValue = selectProps.inputValue;
-    const isExisting = options.some(
-      (option: any) =>
-        option?.label?.toLowerCase() === searchValue?.toLowerCase()
-    );
-    const isSearching = searchValue && searchValue.length > 0;
-
-    const handleAddClick = () => {
-      handleAddCategory(searchValue);
-    };
-
-    if (isSearching && !isExisting && searchValue.trim() !== "") {
-      return (
-        <components.MenuList {...props}>
-          {props.children}
-          <div className="p-2">
-            <button
-              className="w-full bg-lime-400 text-white font-semibold py-2 px-4 rounded-lg"
-              onClick={handleAddClick}
-            >
-              Add "{searchValue}"
-            </button>
-          </div>
-        </components.MenuList>
-      );
-    }
-    return (
-      <components.MenuList {...props}>{props.children}</components.MenuList>
-    );
-  });
-
-  const handleAddCategory = React.useCallback(async (categoryName: string) => {
-    console.log("category naem:", categoryName);
-    try {
-      const response = await instance.post("/field/category", {
-        category: categoryName,
-      });
-      if (response.status === 201) {
-        const newCategory = {
-          value: response.data.category._id,
-          label: response.data.category.name,
-        };
-        setAvailableCategories((prev) => [...prev, newCategory]);
-        setSelectedCategories((prev) => [...prev, newCategory]);
-      }
-    } catch (error) {
-      console.error("Error adding new category:", error);
-      Swal.fire({
-        icon: "error",
-        title: "Oops...",
-        text: "Failed to add new category. Please try again.",
-      });
-    }
-  }, []);
+  const [selected, setSelectedcheck] = useState( false ); 
 
   useEffect(() => {
     if (user) {
@@ -108,13 +50,13 @@ const Form1 = ({ onNext }: any) => {
   };
   const getCategories = async () => {
     try {
-      const response = await instance.get("/field/category");
+      const response = await instance.get( "/field/category?page=1&limit=100" );
       const formattedCategories = response.data.categories
         .filter((category: any) => category.name !== "editor choice")
         .map((category: any) => ({
           value: category._id,
           label: category.name,
-        }));
+        } ) );
       setAvailableCategories(formattedCategories);
     } catch (error) {
       console.log("error in getting the category:-", error);
