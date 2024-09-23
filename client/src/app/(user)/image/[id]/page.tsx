@@ -26,8 +26,8 @@ import Searchbar from "@/components/searchBar/search";
 import CustomShareButton from "@/components/Home/gallary/share";
 import { LuIndianRupee } from "react-icons/lu";
 import { redirectToLogin } from "@/utils/redirectToLogin";
-import {SiBasicattentiontoken} from "react-icons/si";
-import {FaCoins} from "react-icons/fa";
+import { SiBasicattentiontoken } from "react-icons/si";
+import { FaCoins } from "react-icons/fa";
 
 const Home = () => {
   const [selectedVariantId, setSelectedVariantId] = useState("");
@@ -43,7 +43,7 @@ const Home = () => {
   const pathname = usePathname();
 
   useEffect(() => {
-    if (id) getSingleProduct(dispatch,!!user, id,router);
+    if (id) getSingleProduct(dispatch, !!user, id, router);
     return () => {
       clearSingleProductData(dispatch);
     };
@@ -166,7 +166,7 @@ const Home = () => {
                         ) : (
                           <IoMdHeartEmpty className="h-4 w-4" />
                         )}
-                        <span >{product.isWhitelisted ? "Saved" : "Save"}</span>
+                        <span>{product.isWhitelisted ? "Saved" : "Save"}</span>
                       </button>
                       <CustomShareButton />
                       <button
@@ -185,7 +185,7 @@ const Home = () => {
                   </div>
                   <div className="w-full h-full sm:h-64 md:h-80 lg:h-[32rem] rounded-lg bg-[#ffff]">
                     <img
-                      src={`${process.env.NEXT_PUBLIC_AWS_PREFIX}/${product.thumbnailKey}`}
+                      src={`${process.env.NEXT_PUBLIC_AWS_PREFIX}/${product.publicKey}`}
                       alt={product.title}
                       className="mx-auto object-contain h-full w-full rounded-lg"
                     />
@@ -259,14 +259,14 @@ const Home = () => {
                                     : "Add to cart"
                                 }
                                 className="p-2 flex items-center gap-1 text-black rounded-full"
-                                >
+                              >
                                 <LuIndianRupee />
-                                  {license.price}
-                                  <span className="text-sm text-neutral-600 gap-1 flex items-center justify-center"> 
+                                {license.price}
+                                <span className="text-sm text-neutral-600 gap-1 flex items-center justify-center">
                                   {" /"}
-                                  <FaCoins/>
-                                  {license?.credit} 
-                                  </span>
+                                  <FaCoins />
+                                  {license?.credit}
+                                </span>
                                 <span
                                   className={`p-2 ${
                                     isVariantInCart(license._id)
@@ -357,9 +357,12 @@ const Home = () => {
                         <span className="font-medium w-1/3">Categories:</span>
                         <div className="flex flex-wrap ">
                           {product.category.map((category, index) => (
-                            <p key={index} className="text-blue-600 hover:underline" >
+                            <p
+                              key={index}
+                              className="text-blue-600 hover:underline"
+                            >
                               {category}
-                              {index !== product.category.length - 1 && ","}  
+                              {index !== product.category.length - 1 && ","}
                             </p>
                           ))}
                         </div>
