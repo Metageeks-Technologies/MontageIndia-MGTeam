@@ -135,7 +135,7 @@ function CartPopup() {
                             item?.variantId?.includes(variant._id)
                           )?.price
                         }
-                        <span className="text-sm text-neutral-600 flex items-center justify-center"> 
+                        <span className="text-sm text-neutral-600 gap-1 flex items-center justify-center"> 
                           {" /"}
                           <FaCoins />
                           {

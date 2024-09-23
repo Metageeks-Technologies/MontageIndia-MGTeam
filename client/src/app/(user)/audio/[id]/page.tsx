@@ -270,10 +270,11 @@ const page = () => {
                                 title="Purchased Product"
                                 className="p-2 flex items-center gap-1 bg-red-500 text-white rounded-full"
                               >
-                                <LuIndianRupee /> {license.price}{" "}
-                                <span className="text-sm text-neutral-600 flex items-center justify-center">
-                                  {" /"}
+                                <LuIndianRupee /> {license.price}
+                                <span className="text-sm text-neutral-600 flex items-center gap-1 justify-center">
+                                  {"/"}
                                   <FaCoins />
+                                  {" "}
                                   {license?.credit}
                                 </span>
                                 <BiSolidPurchaseTagAlt />
@@ -289,9 +290,10 @@ const page = () => {
                               >
                                 <LuIndianRupee />
                                   {license.price}
-                                  <span className="text-sm text-neutral-600 flex items-center justify-center">
+                                  <span className="text-sm text-neutral-600 flex items-center gap-1 justify-center">
                                     {" /"}
                                     <FaCoins />
+                                    {" "}
                                     {license?.credit}
                                   </span>
                                 <span

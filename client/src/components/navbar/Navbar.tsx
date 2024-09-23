@@ -230,6 +230,8 @@ const Navbar: React.FC = () => {
                       On Demand
                     </NavItem>
                   )}
+                  {/* pricing table */}
+                  {/* <NavItem href="/pricing">Pricing </NavItem> */}
                 </ul>
               </nav>
             )}

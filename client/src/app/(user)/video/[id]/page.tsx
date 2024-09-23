@@ -248,10 +248,12 @@ const Home = () => {
                             <img
                               src={
                                 index === 0
-                                  ? "/asset/full-hd.svg"
+                                  ? "/asset/4k.svg"
+                                  : index == 1 ? "/asset/full HD.svg"
                                   : "/asset/hd.svg"
                               }
-                              className={index === 0 ? "w-20" : "w-10 h-5"}
+                              // className={index === 1 || index === 0 ? "w-20" : "w-10 h-5"}
+                              className={index === 0 ? "w-24" : index ==1 ? "w-20" : "w-10 h-5"}
                               alt={index === 0 ? "Full HD" : "HD"}
                             />
                             <div className="text-sm py-2">
@@ -265,7 +267,7 @@ const Home = () => {
                                 className="p-2 flex items-center gap-1 bg-red-500 text-white rounded-full"
                               >
                                 <LuIndianRupee /> {license.price}{" "}
-                                <span className="text-sm text-neutral-600 flex items-center justify-center">
+                                <span className="text-sm text-neutral-600 gap-1 flex items-center justify-center">
                                   {" /"}
                                   <FaCoins />
                                   {license?.credit}
@@ -283,7 +285,7 @@ const Home = () => {
                               >
                                 <LuIndianRupee />
                                   {license.price}
-                                  <span className="text-sm text-neutral-600 flex items-center justify-center">
+                                  <span className="text-sm text-neutral-600 gap-1 flex items-center justify-center">
                                     {" /"}
                                     <FaCoins />
                                     {license?.credit}

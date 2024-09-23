@@ -6,9 +6,8 @@ const TopBanner = () => {
     const [isVisible, setIsVisible] = useState( true );
     const [description, setDescription] = useState( '' );
     const router = useRouter();
-    // console.log("Widnorw:-",window.location)
-
-    // Function to close the banner
+   
+    
     const handleCloseBanner = () => {
         setIsVisible( false );
     };
@@ -34,9 +33,7 @@ const TopBanner = () => {
         };
 
         checkMediaTypeFromURL(); // Check initially when the component mounts 
-    }, [] );
-
-
+    }, [] ); 
 
     if ( !isVisible ) return null;
 
@@ -45,7 +42,7 @@ const TopBanner = () => {
             {/* <div className="flex flex-col items-center gap-2"> </div> */}
             <div className="flex items-center w-full sm:justify-center gap-2 ">
                 <p className="sm:text-sm text-xs lg:text-base">{description}</p>
-                <button className="bg-white hover:bg-red-600 sm:w-40 w-44 text-black font-semibold py-3 sm:px-4 px-4 sm:text-medium text-xs rounded-full transition"  >
+                <button className="bg-white hover:bg-red-600 sm:w-40 w-44 text-black font-semibold py-3 sm:px-4 px-4 sm:text-medium text-xs rounded-full transition" onClick={() => router.push("/pricing")}  >
                     Explore Plans
                 </button>
             </div>
