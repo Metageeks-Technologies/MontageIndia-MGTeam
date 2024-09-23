@@ -244,7 +244,7 @@ const Home = () => {
                                 className="p-2 flex items-center gap-1 bg-red-500 text-white rounded-full"
                               >
                                 <LuIndianRupee /> {license.price}{" "}
-                                <span className="text-sm text-neutral-600 flex items-center justify-center">
+                                <span className="text-sm text-neutral-600 flex items-center gap-1 justify-center">
                                   {" /"}
                                   <FaCoins />
                                   {license?.credit}
@@ -262,7 +262,7 @@ const Home = () => {
                                 >
                                 <LuIndianRupee />
                                   {license.price}
-                                  <span className="text-sm text-neutral-600 flex items-center justify-center"> 
+                                  <span className="text-sm text-neutral-600 gap-1 flex items-center justify-center"> 
                                   {" /"}
                                   <FaCoins/>
                                   {license?.credit} 

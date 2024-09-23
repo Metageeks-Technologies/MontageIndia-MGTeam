@@ -116,35 +116,16 @@ const Searchbar = () => {
     // console.log(newUrl, "newUrl");
     router.replace(newUrl);
   };
-  const handleCategoryClick = (category: string) => {
-    setSearchTerm(category);
 
-    const currentCategories = searchParams.get("searchTerm");
+  const handleCategoryClick = ( category: string ) => {
+    setSearchTerm( category );
 
+    const updatedSearchParams = new URLSearchParams( searchParams.toString() );
+    updatedSearchParams.set( "searchTerm", category );
 
-    const categoriesArray = currentCategories
-      ? currentCategories.split(",").map((cat) => cat.trim())
-      : [];
+    const newUrl = `${window.location.pathname}?${updatedSearchParams.toString()}`;
 
-    let updatedCategory;
-    if (categoriesArray.includes(category)) {
-      updatedCategory = categoriesArray.filter((cat) => cat !== category);
-    } else {
-      updatedCategory = [...categoriesArray, category];
-    }
-
-    const updatedSearchParams = new URLSearchParams(searchParams.toString());
-    if (updatedCategory.length > 0) {
-      updatedSearchParams.set("searchTerm", updatedCategory.join(","));
-    } else {
-      updatedSearchParams.delete("searchTerm");
-    }
-
-    const newUrl = `${
-      window.location.pathname
-    }?${updatedSearchParams.toString()}`;
-
-    window.history.pushState({}, "", newUrl);
+    window.history.pushState( {}, "", newUrl );
   };
 
   const isSearchPage = pathname.includes("/search") || false;
