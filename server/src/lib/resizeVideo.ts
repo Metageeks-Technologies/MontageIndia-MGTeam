@@ -304,7 +304,7 @@ export const handleVideoWithWaterMark = async (
                 ImageY: centerY > 0 ? centerY : 240,
                 Layer: 1,
                 ImageInserterInput: `s3://${awsBucketName}/${watermarkImgName}`,
-                Opacity: 70,
+                Opacity: 90,
               },
             ],
           },
