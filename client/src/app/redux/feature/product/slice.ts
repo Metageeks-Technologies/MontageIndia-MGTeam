@@ -80,7 +80,7 @@ const initialState: InitialState = {
   videoPage: 1,
   totalVideoNumOfPage: 1,
   totalVideoData: 0,
-  cart: getCartFromLocalStorage() || [],
+  cart: typeof window !== "undefined" ? getCartFromLocalStorage() || [] : [],
 
   relatedKeyword: [],
   similarProducts: [],
