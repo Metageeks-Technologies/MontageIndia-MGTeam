@@ -1,76 +1,46 @@
 import Image, { StaticImageData } from "next/image";
 import "./banner-style.css";
 
-const image2 = "/images/banner/2.jpg";
-const image3 = "/images/banner/3.jpg";
-const image5 = "/images/banner/5.jpg";
-const image6 = "/images/banner/6.jpg";
-const image7 = "/images/banner/7.jpg";
-const image8 = "/images/banner/8.jpg";
-const image9 = "/images/banner/9.jpg";
+const image1 = "/images/banner/2.jpg";
+const image2 = "/images/banner/3.jpg";
+const image3 = "/images/banner/5.jpg";
+const image4 = "/images/banner/6.jpg";
+const image5 = "/images/banner/7.jpg";
+const image6 = "/images/banner/9.jpg";
+const image7 = "/images/banner/11.jpg";
+const image8 = "/images/banner/12.jpg";
+const image9 = "/images/banner/13.jpg";
+const image10 = "/images/banner/14.jpg";
+const image11 = "/images/banner/15.jpg";
 
 import CollageEffectSection from "./CollageEffectSection";
 const imagesData = [
+  // {
+  //   frontImageUrl: image2,
+  //   backImageUrl: image5,
+  // },
+  // {
+  //   frontImageUrl: image3,
+  //   backImageUrl: image2,
+  // },
+  // {
+  //   frontImageUrl: image5,
+  //   backImageUrl: image3,
+  // },
+  {
+    frontImageUrl: image10,
+    backImageUrl: image11,
+  },
+
   {
     frontImageUrl: image2,
-    backImageUrl: image5,
-  },
-  {
-    frontImageUrl: image3,
-    backImageUrl: image2,
+    backImageUrl: image4,
   },
   {
     frontImageUrl: image5,
-    backImageUrl: image3,
-  },
-  {
-    frontImageUrl: image6,
-    backImageUrl: image5,
-  },
-  {
-    frontImageUrl: image7,
     backImageUrl: image6,
   },
-  {
-    frontImageUrl: image8,
-    backImageUrl: image7,
-  },
-  {
-    frontImageUrl: image9,
-    backImageUrl: image8,
-  },
-  {
-    frontImageUrl: image3,
-    backImageUrl: image9,
-  },
-  {
-    frontImageUrl: image2,
-    backImageUrl: image5,
-  },
-  {
-    frontImageUrl: image3,
-    backImageUrl: image2,
-  },
-  {
-    frontImageUrl: image5,
-    backImageUrl: image3,
-  },
-  {
-    frontImageUrl: image6,
-    backImageUrl: image5,
-  },
-  {
-    frontImageUrl: image7,
-    backImageUrl: image6,
-  },
-  {
-    frontImageUrl: image8,
-    backImageUrl: image7,
-  },
-  {
-    frontImageUrl: image9,
-    backImageUrl: image8,
-  },
+
   {
     frontImageUrl: image3,
     backImageUrl: image9,
@@ -79,10 +49,46 @@ const imagesData = [
     frontImageUrl: image8,
     backImageUrl: image7,
   },
-  {
-    frontImageUrl: image9,
-    backImageUrl: image8,
-  },
+  // {
+  //   frontImageUrl: image2,
+  //   backImageUrl: image5,
+  // },
+  // {
+  //   frontImageUrl: image3,
+  //   backImageUrl: image2,
+  // },
+  // {
+  //   frontImageUrl: image5,
+  //   backImageUrl: image3,
+  // },
+  // {
+  //   frontImageUrl: image6,
+  //   backImageUrl: image5,
+  // },
+  // {
+  //   frontImageUrl: image7,
+  //   backImageUrl: image6,
+  // },
+  // {
+  //   frontImageUrl: image8,
+  //   backImageUrl: image7,
+  // },
+  // {
+  //   frontImageUrl: image9,
+  //   backImageUrl: image8,
+  // },
+  // {
+  //   frontImageUrl: image3,
+  //   backImageUrl: image9,
+  // },
+  // {
+  //   frontImageUrl: image8,
+  //   backImageUrl: image7,
+  // },
+  // {
+  //   frontImageUrl: image9,
+  //   backImageUrl: image8,
+  // },
 ];
 
 const Hero = () => {

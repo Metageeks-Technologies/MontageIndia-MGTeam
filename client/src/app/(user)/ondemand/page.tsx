@@ -1,7 +1,7 @@
 "use client";
 
 import Footer from "@/components/Footer";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ReCAPTCHA from "react-google-recaptcha";
 import instance from "@/utils/axios";
 import { useRouter } from "next/navigation";
@@ -20,6 +20,15 @@ const onDemandPage = () => {
     mediaType: "image",
     message: "",
   });
+  useEffect(() => {
+    setFormData({
+      name: user?.name || "",
+      phone: user?.phone || "",
+      email: user?.email || "",
+      mediaType: "image",
+      message: "",
+    });
+  }, [user]);
   const [errors, setErrors] = useState({
     name: "",
     phone: "",
