@@ -248,11 +248,12 @@ const Home = () => {
                             <img
                               src={
                                 index === 0
-                                  ? "/asset/full-hd.svg"
-                                  : index == 1 ? "/asset/full-hd.svg"
+                                  ? "/asset/4k.svg"
+                                  : index == 1 ? "/asset/full HD.svg"
                                   : "/asset/hd.svg"
                               }
-                              className={index === 1 ? "w-20" : "w-10 h-5"}
+                              // className={index === 1 || index === 0 ? "w-20" : "w-10 h-5"}
+                              className={index === 0 ? "w-24" : index ==1 ? "w-20" : "w-10 h-5"}
                               alt={index === 0 ? "Full HD" : "HD"}
                             />
                             <div className="text-sm py-2">
