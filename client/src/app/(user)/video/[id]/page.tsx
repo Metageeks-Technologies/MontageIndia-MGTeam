@@ -51,7 +51,7 @@ const Home = () => {
   useEffect(() => {
     getVideo(dispatch, !!user, { mediaType: ["video"] });
 
-    if (id) getSingleProduct(dispatch, !!user, id,router);
+    if (id) getSingleProduct(dispatch, !!user, id, router);
     return () => {
       clearSingleProductData(dispatch);
     };
@@ -175,7 +175,6 @@ const Home = () => {
                             : "Save Video"
                         }
                         className="flex gap-2 border py-1 items-center rounded bg-white px-3 text-sm"
-
                       >
                         {wishlistLoading ? (
                           <span className="h-4 w-4 border-t-2 border-b-2 border-gray-900 rounded-full animate-spin"></span>
@@ -249,11 +248,18 @@ const Home = () => {
                               src={
                                 index === 0
                                   ? "/asset/4k.svg"
-                                  : index == 1 ? "/asset/full HD.svg"
+                                  : index == 1
+                                  ? "/asset/fhd.svg"
                                   : "/asset/hd.svg"
                               }
                               // className={index === 1 || index === 0 ? "w-20" : "w-10 h-5"}
-                              className={index === 0 ? "w-24" : index ==1 ? "w-20" : "w-10 h-5"}
+                              className={
+                                index === 0
+                                  ? "w-24"
+                                  : index == 1
+                                  ? "w-20"
+                                  : "w-10 h-5"
+                              }
                               alt={index === 0 ? "Full HD" : "HD"}
                             />
                             <div className="text-sm py-2">
@@ -284,12 +290,12 @@ const Home = () => {
                                 className="p-2 flex items-center gap-1 text-black rounded-full"
                               >
                                 <LuIndianRupee />
-                                  {license.price}
-                                  <span className="text-sm text-neutral-600 gap-1 flex items-center justify-center">
-                                    {" /"}
-                                    <FaCoins />
-                                    {license?.credit}
-                                  </span>
+                                {license.price}
+                                <span className="text-sm text-neutral-600 gap-1 flex items-center justify-center">
+                                  {" /"}
+                                  <FaCoins />
+                                  {license?.credit}
+                                </span>
                                 <span
                                   className={`p-2 ${
                                     isVariantInCart(license._id)
@@ -455,7 +461,6 @@ const Home = () => {
                   ))}
                 </div>
               </div>
-
             </div>
           )}
         </div>
