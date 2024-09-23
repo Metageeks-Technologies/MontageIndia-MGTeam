@@ -359,7 +359,7 @@ const page = () => {
                         <span className="font-medium w-1/3">Track Length:</span>
                         <span className="text-neutral-600 whitespace-nowrap">
                           {formatSecToMin(
-                            product.variants[0].metadata?.length || 0
+                            product.variants?.[0]?.metadata?.length || 0
                           )}{" "}
                           Minutes
                         </span>
@@ -367,13 +367,13 @@ const page = () => {
                       <div className="flex justify-between">
                         <span className="font-medium w-1/3">Bit Rate:</span>
                         <span className="text-neutral-600 whitespace-nowrap">
-                          {product.variants[0].metadata?.bitrate} Kbps{" "}
+                          {product.variants?.[0]?.metadata?.bitrate} Kbps{" "}
                         </span>
                       </div>
                       <div className="flex justify-between">
                         <span className="font-medium w-1/3">Max Size:</span>
                         <span className="capitalize text-neutral-600">
-                          {product.variants[0].metadata?.size} Mb
+                          {product.variants?.[0]?.metadata?.size} Mb
                         </span>
                       </div>
 

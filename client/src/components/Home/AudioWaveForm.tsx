@@ -305,8 +305,12 @@ const Waveform = ({
 
       <div className="sm:w-4/12 w-full  lg:gap-9 md:gap-5 flex gap-3 items-center sm:justify-end justify-start text-right text-gray-400">
         <div className="flex items-center gap-2 text-right text-white">
-          <p>{formatSecToMin(product.variants[0].metadata?.length || 0)} min</p>
-          <p className="capitalize">{product.variants[0].metadata?.format}</p>
+          <p>
+            {formatSecToMin(product.variants?.[0]?.metadata?.length || 0)} min
+          </p>
+          <p className="capitalize">
+            {product.variants?.[0]?.metadata?.format}
+          </p>
         </div>
         <div className="flex items-center gap-4 text-white">
           {!product.isPurchased ? (
