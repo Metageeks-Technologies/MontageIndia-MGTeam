@@ -130,13 +130,13 @@ export const updateProduct = catchAsyncError(async (req: any, res, next) => {
   console.log(uuid);
   console.log(req.body);
   const product = await Product.findOneAndUpdate({ uuid }, req.body);
-  console.log("updatedbody",req.body);
+  console.log("updatedbody", req.body);
   const activity = {
     adminId: req.user._id,
     name: req.user.name,
     email: req.user.email,
     username: req.user.username,
-    action: req.body.status==="archived"?"delete":"update",
+    action: req.body.status === "archived" ? "delete" : "update",
     category: req.body.category ? req.body.category : "unknown",
     productId: product?._id,
     timestamp: Date.now(),
@@ -1702,6 +1702,7 @@ export const getSimilarProduct = async (user: any, product: any) => {
     },
     mediaType: product.mediaType,
     _id: { $ne: product._id }, // Exclude the current product
+    status: "published",
   })
     .limit(16)
     .exec();
