@@ -3,7 +3,7 @@ import React, { useState, useEffect, useRef } from "react";
 import CartPopup from "../cart/cartPage";
 import { AiOutlineHeart, AiOutlineMenu, AiOutlineClose } from "react-icons/ai";
 import { IoIosArrowDropdown } from "react-icons/io";
-import { useRouter} from "next/navigation";
+import { useRouter } from "next/navigation";
 import { FaUserCircle } from "react-icons/fa";
 import { BiLogInCircle, BiLogOutCircle } from "react-icons/bi";
 import { useAppSelector } from "@/app/redux/hooks";
@@ -109,14 +109,14 @@ const Navbar: React.FC = () => {
     router.push("/user-profile");
   };
 
-  const handleModalClick = (route:string) => {
+  const handleModalClick = (route: string) => {
     setMenuOpen(false);
     router.push(route);
-  }
+  };
 
   const handleEditorClick = () => {
     setIsDropdownOpen(!isEditorChosePopupOpen);
-  }
+  };
 
   const NavItem: React.FC<NavItemProps> = ({ href, onClick, children }) => (
     <li
@@ -130,12 +130,10 @@ const Navbar: React.FC = () => {
   const DropdownItem: React.FC<{ href: string; children: React.ReactNode }> = ({
     href,
     children,
-
   }) => (
     <Link
       href={href}
       className="text-gray-600 rounded-md py-2 px-8 hover:bg-gray-100 transition duration-200 justify-center items-center flex gap-2"
-
     >
       {children}
     </Link>
@@ -192,35 +190,46 @@ const Navbar: React.FC = () => {
                         } transition-transform duration-200`}
                       />
                     </button>
-                   {isEditorChosePopupOpen && (
+                    {isEditorChosePopupOpen && (
                       <div
-                        onClick={() => setIsDropdownOpen( false )}
+                        onClick={() => setIsDropdownOpen(false)}
                         ref={editorChoiceRef}
                         className="absolute mt-2 bg-white border rounded-lg shadow-xl z-50 flex flex-col items-start justify-center top-full"
                       >
-                        <DropdownItem
-                          href="/search/video?category=editor choice&mediaType=video"
-                        >
-                          <img src="/asset/video_logo.svg" alt="Video Logo" className="w-5 h-5 mr-2" />
+                        <DropdownItem href="/search/video?category=editor choice&mediaType=video">
+                          <img
+                            src="/asset/video_logo.svg"
+                            alt="Video Logo"
+                            className="w-5 h-5 mr-2"
+                          />
                           <span>Video</span>
                         </DropdownItem>
-                        <DropdownItem
-                          href="/search/image?category=editor choice&mediaType=image"
-                        >
-                          <img src="/asset/image_logo.svg" alt="Image Logo" className="w-5 h-5 mr-2" />
+                        <DropdownItem href="/search/image?category=editor choice&mediaType=image">
+                          <img
+                            src="/asset/image_logo.svg"
+                            alt="Image Logo"
+                            className="w-5 h-5 mr-2"
+                          />
                           <span>Image</span>
                         </DropdownItem>
-                        <DropdownItem
-                          href="/search/audio?category=editor choice&mediaType=audio"
-                        >
-                          <img src="/asset/Vector.svg" alt="Icon" className="w-5 h-5 mr-2" />
+                        <DropdownItem href="/search/audio?category=editor choice&mediaType=audio">
+                          <img
+                            src="/asset/Vector.svg"
+                            alt="Icon"
+                            className="w-5 h-5 mr-2"
+                          />
                           <span>Audio</span>
                         </DropdownItem>
                       </div>
                     )}
-
                   </li>
-                  <NavItem href="/ondemand">On Demand</NavItem>
+                  {!!user ? (
+                    <NavItem href="/ondemand">On Demand</NavItem>
+                  ) : (
+                    <NavItem href="/auth/user/login?redirect=/ondemand">
+                      On Demand
+                    </NavItem>
+                  )}
                 </ul>
               </nav>
             )}
@@ -263,7 +272,7 @@ const Navbar: React.FC = () => {
                         <FaUserCircle className="w-5 h-5 mr-3" />
                         User Profile
                       </button>
-                       <button
+                      <button
                         onClick={handleLogout}
                         className="flex items-center w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100"
                       >
@@ -319,44 +328,50 @@ const Navbar: React.FC = () => {
                 <span>Image</span>
               </div>
             </Link>
-           <div className="relative group">
-           <div className="flex justify-start gap-2 items-center">
-           <IoMdStarOutline className="w-6 h-6" />
-                    <button
-                      // disabled={isEditorChosePopupOpen}
-                      onClick={toggleDropdown}
-                      className="flex items-center text-gray-700 hover:text-black"
-                    >
-                      Editor Choice
-                      <IoIosArrowDropdown
-                        className={`ml-1 transform ${
-                          isEditorChosePopupOpen ? "rotate-180" : ""
-                        } transition-transform duration-200`}
-                      />
-                    </button>
-           </div>
+            <div className="relative group">
+              <div className="flex justify-start gap-2 items-center">
+                <IoMdStarOutline className="w-6 h-6" />
+                <button
+                  // disabled={isEditorChosePopupOpen}
+                  onClick={toggleDropdown}
+                  className="flex items-center text-gray-700 hover:text-black"
+                >
+                  Editor Choice
+                  <IoIosArrowDropdown
+                    className={`ml-1 transform ${
+                      isEditorChosePopupOpen ? "rotate-180" : ""
+                    } transition-transform duration-200`}
+                  />
+                </button>
+              </div>
               {isEditorChosePopupOpen && (
                 <div
-                  onClick={() => setIsDropdownOpen( false )}
+                  onClick={() => setIsDropdownOpen(false)}
                   ref={editorChoiceRef}
                   className="absolute mt-2 bg-white border rounded-lg shadow-xl z-50 flex flex-col items-start justify-center top-full"
                 >
-                  <DropdownItem
-                    href="/search/video?category=editor choice&mediaType=video"
-                  >
-                    <img src="/asset/video_logo.svg" alt="Video Logo" className="w-5 h-5 mr-2" />
+                  <DropdownItem href="/search/video?category=editor choice&mediaType=video">
+                    <img
+                      src="/asset/video_logo.svg"
+                      alt="Video Logo"
+                      className="w-5 h-5 mr-2"
+                    />
                     <span>Video</span>
                   </DropdownItem>
-                  <DropdownItem
-                    href="/search/image?category=editor choice&mediaType=image"
-                  >
-                    <img src="/asset/image_logo.svg" alt="Image Logo" className="w-5 h-5 mr-2" />
+                  <DropdownItem href="/search/image?category=editor choice&mediaType=image">
+                    <img
+                      src="/asset/image_logo.svg"
+                      alt="Image Logo"
+                      className="w-5 h-5 mr-2"
+                    />
                     <span>Image</span>
                   </DropdownItem>
-                  <DropdownItem
-                    href="/search/audio?category=editor choice&mediaType=audio"
-                  >
-                    <img src="/asset/Vector.svg" alt="Icon" className="w-5 h-5 mr-2" />
+                  <DropdownItem href="/search/audio?category=editor choice&mediaType=audio">
+                    <img
+                      src="/asset/Vector.svg"
+                      alt="Icon"
+                      className="w-5 h-5 mr-2"
+                    />
                     <span>Audio</span>
                   </DropdownItem>
                 </div>
