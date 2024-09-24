@@ -130,7 +130,10 @@ const Page = () => {
                   ) : product.length > 0 ? (
                     <>
                       <h1 className="text-2xl font-bold text-start">
-                        Today's Trending Images
+                        {" "}
+                        {searchTerm
+                          ? "Trending Images"
+                          : "Today's Trending Images"}
                       </h1>
                       <h4 className="text-lg text-neutral-700">
                         {totalImageData} Product stock Photos and High-res

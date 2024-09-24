@@ -152,8 +152,8 @@ const Page = () => {
                 >
                   {product.length > 0 ? ( 
                     <>
-                    <h1 className="text-2xl font-bold  text-start">
-                    Today's Trending Video
+                      <h1 className="text-2xl font-bold  text-start">
+                        {searchTerm ? "Trending Videos" : "Today's Trending Video"} 
                   </h1>
                   <h4 className="text-lg text-neutral-700">
                     {totalVideoData} Product stock Photos and High-res Pictures

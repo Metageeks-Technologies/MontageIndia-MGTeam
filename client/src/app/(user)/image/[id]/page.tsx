@@ -149,7 +149,7 @@ const Home = () => {
                     <h1 className="text-xl sm:text-2xl font-semibold mb-2 sm:mb-0">
                       {product.title}
                     </h1>
-                    <div className="flex flex-wrap gap-2">
+                    <div className="flex whitespace-nowrap gap-2">
                       <button
                         onClick={handleeWishlist}
                         disabled={wishlistLoading}
@@ -191,12 +191,15 @@ const Home = () => {
                       className="mx-auto object-contain h-full w-full rounded-lg"
                     />
                   </div>
-                  <div className="mt-2 w-full lg:w-[50rem]">
+                  <div className="mt-2 w-full ">
                     <h2 className="font-bold">Description</h2>
                     <p className="text-sm text-neutral-700">
                       Stock Photo ID: {product._id}
                     </p>
-                    <p className="text-sm">{product.description}</p>
+
+                    <p className="text-sm text-justify">
+                      {product.description}
+                    </p>
                   </div>
                 </div>
               )}
@@ -317,23 +320,23 @@ const Home = () => {
                     <div className="space-y-3 text-sm">
                       <div className="flex justify-between">
                         <span className="font-medium w-1/3">Title:</span>
-                        <p className="text-blue-600 hover:underline">
+                        <p className="text-blue-600 hover:underline w-2/3">
                           {product?.title}
                         </p>
                       </div>
                       <div className="flex justify-between">
                         <span className="font-medium w-1/3">Format:</span>
-                        <span className="text-neutral-600">
+                        <span className="text-neutral-600 w-2/3">
                           {product.variants[0].metadata?.format}
                         </span>
                       </div>
                       <div className="flex justify-between">
                         <span className="font-medium w-1/3">Dimensions:</span>
-                        <span className="flex flex-col">
+                        <span className="flex flex-wrap w-2/3">
                           {product.variants.map((variant, index) => (
                             <span
                               key={index}
-                              className="text-neutral-600 whitespace-nowrap"
+                              className="text-neutral-600 whitespace-nowrap w-2/3"
                             >
                               {variant.metadata?.dimension} px
                               {index !== product.variants.length - 1 && ", "}
@@ -343,20 +346,20 @@ const Home = () => {
                       </div>
                       <div className="flex justify-between">
                         <span className="font-medium w-1/3">Densities:</span>
-                        <span className="text-neutral-600 whitespace-nowrap">
+                        <span className="text-neutral-600 whitespace-nowrap w-2/3">
                           {product.variants[0].metadata?.dpi} Dpi
                         </span>
                       </div>
                       <div className="flex justify-between">
                         <span className="font-medium w-1/3">Max Size:</span>
-                        <span className="capitalize text-neutral-600">
+                        <span className="capitalize text-neutral-600 w-2/3">
                           {product.variants[0].metadata?.size} Mb
                         </span>
                       </div>
 
                       <div className="flex justify-between">
                         <span className="font-medium w-1/3">Categories:</span>
-                        <div className="flex flex-wrap ">
+                        <div className="flex flex-wrap w-2/3">
                           {product.category.map((category, index) => (
                             <p
                               key={index}
