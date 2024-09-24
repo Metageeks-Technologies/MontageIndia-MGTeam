@@ -31,7 +31,7 @@ const Searchbar = () => {
 
   useEffect(() => {
     console.log("selectedOption", selectedOption);
-    console.log("pathname", pathname);  
+    console.log("pathname", pathname);
     console.log("category", category);
     if (pathname.includes("/search/video")) {
       setSelectedOption(
@@ -77,7 +77,7 @@ const Searchbar = () => {
       searchTerm,
       mediaType: "image",
     };
-    
+
     if (selectedOption.includes("video")) {
       pathname = "/search/video";
       query.mediaType = "video";
@@ -85,17 +85,17 @@ const Searchbar = () => {
       pathname = "/search/audio";
       query.mediaType = "audio";
     }
-    if(selectedOption.includes("editorialVideo")){
+    if (selectedOption.includes("editorialVideo")) {
       pathname = "/search/video";
       query.mediaType = "video";
       query.category = "editor choice";
     }
-    if(selectedOption.includes("editorialAudio")){
+    if (selectedOption.includes("editorialAudio")) {
       pathname = "/search/audio";
       query.mediaType = "audio";
       query.category = "editor choice";
     }
-    if(selectedOption.includes("editorialImage")){
+    if (selectedOption.includes("editorialImage")) {
       pathname = "/search/image";
       query.mediaType = "image";
       query.category = "editor choice";
@@ -120,7 +120,6 @@ const Searchbar = () => {
     setSearchTerm(category);
 
     const currentCategories = searchParams.get("searchTerm");
-
 
     const categoriesArray = currentCategories
       ? currentCategories.split(",").map((cat) => cat.trim())
@@ -154,7 +153,7 @@ const Searchbar = () => {
   return (
     <div className="sticky top-0 z-40">
       <div className="transition-all duration-300 bg-white shadow-md py-4 border-t-1">
-        <div className="flex relative justify-between items-center gap-4 bg-gray-100 border border-gray-300 rounded-md mx-4 px-4 lg:mx-4 xl:mx-16 md:mx-4">
+        <div className="flex relative justify-between items-center gap-4 bg-gray-100 border border-gray-300 rounded-md mx-4 px-2 sm:px-4 lg:mx-4 xl:mx-16 md:mx-4">
           <div className="flex flex-row w-full gap-2">
             {/* Desktop view */}
             <div className="hidden md:flex w-full items-center ">
@@ -163,78 +162,69 @@ const Searchbar = () => {
                 value={selectedOption}
                 onChange={(e) => setSelectedOption(e.target.value)}
               >
-                {selectedOption==="image" && (
-                  <option className="cursor-pointer bg-gray-500" value="image">
+                {selectedOption === "image" && (
+                  <option className="cursor-pointer bg-gray-200" value="image">
                     Image
                   </option>
                 )}
-                {selectedOption==="video" && (
-                  <option className="cursor-pointer bg-gray-500" value="video">
+                {selectedOption === "video" && (
+                  <option className="cursor-pointer bg-gray-200" value="video">
                     Video
                   </option>
                 )}
-                {selectedOption==="audio" && (
-                  <option className="cursor-pointer bg-gray-500" value="audio">
+                {selectedOption === "audio" && (
+                  <option className="cursor-pointer bg-gray-200" value="audio">
                     Audio
                   </option>
                 )}
-                {
-                  selectedOption==="editorialImage" && (
-                    <option className="cursor-pointer bg-gray-500" value="editorialImage">
-                      Editorial Image
-                    </option>
-                  )
-                }
-                {
-
-                  selectedOption==="editorialVideo" && (
-                  <option className="cursor bg-gray-500" value="editorialVideo">
+                {selectedOption === "editorialImage" && (
+                  <option
+                    className="cursor-pointer bg-gray-200"
+                    value="editorialImage"
+                  >
+                    Editorial Image
+                  </option>
+                )}
+                {selectedOption === "editorialVideo" && (
+                  <option className="cursor bg-gray-200" value="editorialVideo">
                     Editorial Video
                   </option>
                 )}
-                 {
-                  selectedOption==="editorialAudio" && (
-                  <option className="cursor bg-gray-500" value="editorialAudio">
+                {selectedOption === "editorialAudio" && (
+                  <option className="cursor bg-gray-200" value="editorialAudio">
                     Editorial Audio
                   </option>
-                )
-                 }
-                {selectedOption!="image" && (
+                )}
+                {selectedOption != "image" && (
                   <option className="cursor-pointer" value="image">
                     Image
                   </option>
                 )}
-                {selectedOption!="video" && (
+                {selectedOption != "video" && (
                   <option className="cursor-pointer" value="video">
                     Video
                   </option>
                 )}
-                {selectedOption!="audio" && (
+                {selectedOption != "audio" && (
                   <option className="cursor-pointer" value="audio">
                     Audio
                   </option>
                 )}
-                {
-                  selectedOption!="editorialImage" && (
+                {selectedOption != "editorialImage" && (
                   <option className="cursor-pointer" value="editorialImage">
                     Editorial Image
                   </option>
-                )
-                }
-                {
-                  selectedOption!="editorialVideo" && (
+                )}
+                {selectedOption != "editorialVideo" && (
                   <option className="cursor-pointer" value="editorialVideo">
                     Editorial Video
                   </option>
-                )
-                }
-                {
-                  selectedOption!="editorialAudio" && (
+                )}
+                {selectedOption != "editorialAudio" && (
                   <option className="cursor-pointer" value="editorialAudio">
                     Editorial Audio
                   </option>
-                )
-                }
+                )}
               </select>
 
               <img src="/asset/Rectangle 15.png" className="mx-2" alt="" />
@@ -262,60 +252,74 @@ const Searchbar = () => {
             {/* Mobile view */}
             <div className="md:hidden flex items-center w-full">
               <select
-                className="bg-gray-100 w-24 outline-none cursor-pointer text-gray-600 text-xs rounded-l-md"
+                className="bg-gray-100 sm:w-24 outline-none cursor-pointer text-gray-600 text-xs rounded-l-md"
                 value={selectedOption}
                 onChange={(e) => setSelectedOption(e.target.value)}
               >
-                {
-                  selectedOption==="image" && (
-                    <option value="Image">
-                      Image
-                      <CiCamera />
-                    </option>
-                  )
-                }
-                {
-                  selectedOption==="video" && (
-                    <option value="Video">
-                      Video
-                      <FaVideo />
-                    </option>
-                  )
-                }
-                {
-                  selectedOption==="audio" && (
-                    <option value="Audio">
-                      Audio
-                      <CiMusicNote1 />
-                    </option>
-                  )
-                }
-               {
-                selectedOption!="image" && (
-                  <option value="Image">
+                {selectedOption === "image" && (
+                  <option className="cursor-pointer bg-gray-200" value="image">
                     Image
-                    <CiCamera />
                   </option>
-                )
-               } 
-               {
-                selectedOption!="video" && (
-                  <option value="Video">
+                )}
+                {selectedOption === "video" && (
+                  <option className="cursor-pointer bg-gray-200" value="video">
                     Video
-                    <FaVideo />
                   </option>
-                )
-               }
-               {
-                selectedOption!="audio" && (
-                  <option value="Audio">
+                )}
+                {selectedOption === "audio" && (
+                  <option className="cursor-pointer bg-gray-200" value="audio">
                     Audio
-                    <CiMusicNote1 />
                   </option>
-                )
-               }
+                )}
+                {selectedOption === "editorialImage" && (
+                  <option
+                    className="cursor-pointer bg-gray-200"
+                    value="editorialImage"
+                  >
+                    Editorial Image
+                  </option>
+                )}
+                {selectedOption === "editorialVideo" && (
+                  <option className="cursor bg-gray-200" value="editorialVideo">
+                    Editorial Video
+                  </option>
+                )}
+                {selectedOption === "editorialAudio" && (
+                  <option className="cursor bg-gray-200" value="editorialAudio">
+                    Editorial Audio
+                  </option>
+                )}
+                {selectedOption != "image" && (
+                  <option className="cursor-pointer" value="image">
+                    Image
+                  </option>
+                )}
+                {selectedOption != "video" && (
+                  <option className="cursor-pointer" value="video">
+                    Video
+                  </option>
+                )}
+                {selectedOption != "audio" && (
+                  <option className="cursor-pointer" value="audio">
+                    Audio
+                  </option>
+                )}
+                {selectedOption != "editorialImage" && (
+                  <option className="cursor-pointer" value="editorialImage">
+                    Editorial Image
+                  </option>
+                )}
+                {selectedOption != "editorialVideo" && (
+                  <option className="cursor-pointer" value="editorialVideo">
+                    Editorial Video
+                  </option>
+                )}
+                {selectedOption != "editorialAudio" && (
+                  <option className="cursor-pointer" value="editorialAudio">
+                    Editorial Audio
+                  </option>
+                )}
               </select>
-
               <input
                 type="text"
                 placeholder="Search for Image"
@@ -350,30 +354,30 @@ const Searchbar = () => {
             <div className="flex flex-row gap-3 justify-between md:w-fit">
               {/* <Filter /> */}
               <div className="sm:block hidden">
-              <div className="md:hidden">
-                <button
-                  onClick={handleClear}
-                  disabled={!searchRenderTerm}
-                  className={`${
-                    searchRenderTerm
-                      ? "bg-red-500 cursor-pointer"
-                      : "bg-red-500 cursor-not-allowed bg-opacity-50"
-                  } py-[6px] text-sm text-white border flex flex-row ml-4 items-center gap-2 border-gray-300 px-3 rounded-md`}
-                >
-                  Clear <MdClear />
-                </button>
+                <div className="md:hidden">
+                  <button
+                    onClick={handleClear}
+                    disabled={!searchRenderTerm}
+                    className={`${
+                      searchRenderTerm
+                        ? "bg-red-500 cursor-pointer"
+                        : "bg-red-500 cursor-not-allowed bg-opacity-50"
+                    } py-[6px] text-sm text-white border flex flex-row ml-4 items-center gap-2 border-gray-300 px-3 rounded-md`}
+                  >
+                    Clear <MdClear />
+                  </button>
+                </div>
               </div>
-            </div>
-            {terms && terms.length > 0 && (
-              <div  className="font-bold w-44 sm:block hidden whitespace-nowrap text-md text-start">
-                Related Searches :
-              </div>
-            )}
+              {terms && terms.length > 0 && (
+                <div className="font-bold w-44 sm:block hidden whitespace-nowrap text-md text-start">
+                  Related Searches :
+                </div>
+              )}
             </div>
             <div className="rounded-md flex lg:w-full sm:w-full w-full flex-row scrollbar-hide overflow-x-scroll items-center text-center justify-start">
               {terms.map((category) => {
                 return (
-                  <button 
+                  <button
                     key={category}
                     onClick={() => handleCategoryClick(category)}
                     className={`flex text-sm items-center whitespace-nowrap m-2  hover:bg-slate-400 px-3 py-[6px] sm:px-4 sm:py-2 border border-gray-300 rounded-md capitalize backdrop-blur-sm hover:bg-opacity-30 transition duration-300 ${

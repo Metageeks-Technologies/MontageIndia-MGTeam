@@ -97,10 +97,7 @@ const Page = () =>
       <IoCloseOutline size={20} />
     </div>
   )}
-
         </div>
-
-
         <div>
           <select className="border rounded px-4 py-2" onChange={ handleDataPerPageChange } value={ dataPerPage }>
             <option value={ 6 }>6 Data per page</option>
@@ -114,9 +111,9 @@ const Page = () =>
         <table className=" w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
           <thead>
             <tr>
-              <th className="px-5 py-3 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+              {/* <th className="px-5 py-3 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                 Username
-              </th>
+              </th> */}
 
               <th className="px-5 py-3 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                 Name
@@ -150,11 +147,11 @@ const Page = () =>
                 data.map( ( item ) => (
                   <tr key={ item._id } className="hover:bg-gray-50">
 
-                    <td className="px-4 py-4 border-b border-gray-200 bg-white">
+                    {/* <td className="px-4 py-4 border-b border-gray-200 bg-white">
                       <div className="text-sm font-medium text-gray-900">
                         { item.username }
                       </div>
-                    </td>
+                    </td> */}
                     <td className="px-4 py-4 border-b border-gray-200 bg-white">
                       <div className="text-sm text-gray-900">{ item.name }</div>
                     </td>

@@ -278,8 +278,6 @@ const SubscriptionPage = () =>
                           plan.period === "monthly" && <SubscriptionCard plan={ plan } key={ plan._id } handleOpen={ handleOpen } />
                         ) ) }
                       </div>
-
-
                     </Tab>
                     <Tab key="Yearly" title="Yearly Plans">
                       <div className="flex flex-wrap justify-center items-center gap-4">
@@ -308,7 +306,7 @@ const SubscriptionCard: React.FC<CardProps> = ( { plan, handleOpen } ) =>
       <div className="flex justify-center items-center  mb-4 text-center text-[#7828c8]">
         <span className="text-3xl font-bold mr-2"><FaRupeeSign /></span><span className='font-bold text-3xl'> { plan.item.amount / 100 } { plan.item.currency }</span>
       </div>
-      <ScrollShadow hideScrollBar size={ 0 } className="h-[20vh] text-center mb-4">
+      <ScrollShadow hideScrollBar size={ 0 } className="h-[30vh] text-md text-center mb-4">
         { plan.item.description }
       </ScrollShadow>
 

@@ -156,7 +156,7 @@ const SubscriptionCard: React.FC<Props> = ({ plan }) => {
       <ScrollShadow
         hideScrollBar
         size={0}
-        className="md:h-[20vh] text-sm md:text-md px-2 text-start mb-4"
+        className="md:h-[20vh] text-sm md:text-md px-2 text-center mb-4"
       >
         {plan.item.description}
       </ScrollShadow>
