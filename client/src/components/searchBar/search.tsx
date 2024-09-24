@@ -30,9 +30,9 @@ const Searchbar = () => {
   console.log("path", pathname);
 
   useEffect(() => {
-    console.log("selectedOption", selectedOption);
-    console.log("pathname", pathname);  
-    console.log("category", category);
+    if ( searchRenderTerm ) {
+      setSearchTerm( searchRenderTerm );
+    }
     if (pathname.includes("/search/video")) {
       setSelectedOption(
         category && category.includes("editor choice")
@@ -60,7 +60,9 @@ const Searchbar = () => {
     }
 
     console.log("selectedOption", selectedOption);
-  }, [pathname, category, searchRenderTerm]);
+  }, [pathname, category, searchRenderTerm] );
+  
+ 
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
@@ -107,6 +109,7 @@ const Searchbar = () => {
     dispatch(setAudioPage(1));
     dispatch(setImagePage(1));
   };
+
   const handleClear = () => {
     setSearchTerm("");
     const params = new URLSearchParams(window.location.search);

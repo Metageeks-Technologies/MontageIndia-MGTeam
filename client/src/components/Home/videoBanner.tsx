@@ -28,8 +28,8 @@ const VideoBanner = ({
 
   return (
     <div
-      className={`relative w-full ${
-        isSearch ? "h-[600px] sm:h-[400px]" : "h-[24rem] sm:h-[20rem]"
+      className={`relative w-full min-h-[35rem] ${
+        isSearch ? "h-[600px] sm:h-[400px]" : "h-[30rem] sm:h-[20rem]"
       } overflow-hidden`}
     >
       <video
@@ -64,7 +64,7 @@ const VideoBanner = ({
                       }
                     }}
                     placeholder="Find your perfect stock"
-                    className="w-full my-auto text-stone-700 focus:outline-1 p-1"
+                    className="w-full my-auto text-stone-700 focus:outline-none p-1"
                   />
                 </div>
                 <div className="flex gap-5">
