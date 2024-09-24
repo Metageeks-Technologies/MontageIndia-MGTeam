@@ -184,8 +184,8 @@ const Page = () => {
                     ) : (
                       <Masonry
                         breakpointCols={{ default: 4, 1100: 3, 700: 2, 500: 1 }} // Define breakpoints
-                        className="my-masonry-grid" // Custom class for styling
-                        columnClassName="my-masonry-grid_column" // Custom column class
+                        className="my-masonry-grid-img" // Custom class for styling
+                        columnClassName="my-masonry-grid_column-img" // Custom column class
                       >
                         {displayData.length > 0 ? (
                           displayData.map((data: any) => (

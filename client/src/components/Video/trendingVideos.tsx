@@ -159,8 +159,8 @@ const Trending = ({
         <span>FHD</span>
         <span>{formatSecToMin(Math.floor(data?.length || 0) || 0)}</span>
         <span className="pt-[2px] opacity-5 group-hover:opacity-100 ">|</span>
-        <span className="opacity-5 group-hover:opacity-100 items-center capitalize text-start flex ">
-          {data.title.substring(0, 23)}...
+        <span className="opacity-5 overflow-hidden  whitespace-nowrap group-hover:opacity-100 items-center capitalize text-start flex ">
+          {data.title}
         </span>
       </div>
       <div className="absolute bottom-1 right-9 m-2 opacity-5 group-hover:opacity-100 transition-opacity duration-300">

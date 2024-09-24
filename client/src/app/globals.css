@@ -16,13 +16,13 @@
   }
 }
 
-.my-masonry-grid {
+.my-masonry-grid-img {
   display: flex;
   margin-left: -30px; /* Adjust based on your gap */
   width: auto;
 }
 
-.my-masonry-grid_column {
+.my-masonry-grid_column-img {
   padding-left: 30px; /* Adjust based on your gap */
   background-clip: padding-box;
   display: flex;

@@ -385,8 +385,8 @@ const Home = () => {
                 <Masonry
                   key={index}
                   breakpointCols={{ default: 4, 1100: 3, 700: 2, 500: 1 }} // Define breakpoints
-                  className="my-masonry-grid" // Custom class for styling
-                  columnClassName="my-masonry-grid_column" // Custom column class
+                  className="my-masonry-grid-img" // Custom class for styling
+                  columnClassName="my-masonry-grid_column-img" // Custom column class
                 >
                   <div
                     className="flex flex-col justify-between "
