@@ -16,6 +16,20 @@
   }
 }
 
+.my-masonry-grid {
+  display: flex;
+  margin-left: -30px; /* Adjust based on your gap */
+  width: auto;
+}
+
+.my-masonry-grid_column {
+  padding-left: 30px; /* Adjust based on your gap */
+  background-clip: padding-box;
+  display: flex;
+  flex-direction: column; /* Stack items vertically */
+  justify-content: space-between; /* Distribute space evenly between items */
+}
+
 /* body {
   color: rgb(var(--foreground-rgb));
   background: linear-gradient(
@@ -422,7 +436,6 @@ body {
 
 .slick-slide > div {
   margin: 0 10px;
-  
 }
 
 /* .slick-slide {
@@ -441,5 +454,5 @@ background-color: black;
 
 .slick-prev:before,
 .slick-next:before {
-  color: #FA00FF;
+  color: #fa00ff;
 }

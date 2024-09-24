@@ -12,6 +12,7 @@ import { clearKeywords } from "@/app/redux/feature/product/api";
 import Searchbar from "@/components/searchBar/search";
 import { getImage } from "@/app/redux/feature/product/image/api";
 import Hero from "@/components/Home/gallary/Hero";
+import Masonry from "react-masonry-css";
 
 const filterOptions = {
   sortBy: ["Most Popular", "Newest", "Oldest"],
@@ -181,15 +182,24 @@ const Page = () => {
                     {loading ? (
                       <SpinnerLoader />
                     ) : (
-                      <div className="columns-1 min-h-screen sm:columns-2 md:columns-2 lg:columns-4 gap-2 mt-2 relative">
+                      <Masonry
+                        breakpointCols={{ default: 4, 1100: 3, 700: 2, 500: 1 }} // Define breakpoints
+                        className="my-masonry-grid" // Custom class for styling
+                        columnClassName="my-masonry-grid_column" // Custom column class
+                      >
                         {displayData.length > 0 ? (
                           displayData.map((data: any) => (
-                            <ImageGallery key={data._id} data={data} />
+                            <div
+                              className="flex flex-col justify-between "
+                              key={data._id}
+                            >
+                              <ImageGallery data={data} />
+                            </div>
                           ))
                         ) : (
                           <p>No Images found.</p>
                         )}
-                      </div>
+                      </Masonry>
                     )}
                   </div>
                 </div>

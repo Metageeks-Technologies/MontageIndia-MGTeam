@@ -28,6 +28,7 @@ import { LuIndianRupee } from "react-icons/lu";
 import { redirectToLogin } from "@/utils/redirectToLogin";
 import { SiBasicattentiontoken } from "react-icons/si";
 import { FaCoins } from "react-icons/fa";
+import Masonry from "react-masonry-css";
 
 const Home = () => {
   const [selectedVariantId, setSelectedVariantId] = useState("");
@@ -378,11 +379,19 @@ const Home = () => {
             <h1 className="font-semibold text-lg sm:text-xl">Similar Images</h1>
             <div className="columns-1 sm:columns-2 md:columns-3 lg:columns-4 gap-2 mt-2 relative">
               {similarProducts?.map((data, index) => (
-                <ImageGallery
+                <Masonry
                   key={index}
-                  data={data}
-                  productType="similarProducts"
-                />
+                  breakpointCols={{ default: 4, 1100: 3, 700: 2, 500: 1 }} // Define breakpoints
+                  className="my-masonry-grid" // Custom class for styling
+                  columnClassName="my-masonry-grid_column" // Custom column class
+                >
+                  <div
+                    className="flex flex-col justify-between "
+                    key={data._id}
+                  >
+                    <ImageGallery data={data} productType="similarProducts" />
+                  </div>
+                </Masonry>
               ))}
             </div>
           </div>
