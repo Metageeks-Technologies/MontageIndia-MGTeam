@@ -3,7 +3,6 @@ import instance from "@/utils/axios";
 import React, { useEffect, useState } from "react";
 import { SpinnerLoader } from "@/components/loader/loaders";
 import { IoCloseOutline } from "react-icons/io5";
-import * as XLSX from "xlsx";
 interface CustomerList {
   _id: string;
   name: string;
@@ -21,7 +20,6 @@ const Page = () => {
   const [dataPerPage, setDataPerPage] = useState<number>(6);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [totalPages, setTotalPages] = useState<number>(1);
-  const [isExporting, setIsExporting] = useState<boolean>(false);
 
   const fetchUsers = async () => {
     setLoading(true);
@@ -61,33 +59,10 @@ const Page = () => {
     setCurrentPage(1);
   };
 
-  const ExportCustomers = async () => {
-    setIsExporting(true);
-    // get all data from the database
-    const response = await instance.get("/user/getAll", {
-      params: { searchTerm: "", currentPage: 1, dataPerPage: 1000 },
-      withCredentials: true,
-    });
-    const ws = XLSX.utils.json_to_sheet(response.data.customers);
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, "Customers");
-    XLSX.writeFile(wb, "Customers.xlsx");
-    setIsExporting(false);
-  };
-
   return (
     <div className="container p-4 min-h-screen bg-pureWhite-light rounded-md">
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-2xl font-bold">Customer Activity</h1>
-        <button
-          className={`px-4 py-2 bg-red-500 text-white rounded ${
-            isExporting ? "opacity-50 cursor-not-allowed" : "hover:bg-red-600"
-          }`}
-          onClick={ExportCustomers}
-          disabled={isExporting}
-        >
-          {isExporting ? "Exporting customer list..." : "Export Customer List"}
-        </button>
       </div>
 
       {/* one horixonal line */}
@@ -130,9 +105,9 @@ const Page = () => {
         <table className=" w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
           <thead>
             <tr>
-              <th className="px-5 py-3 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+              {/* <th className="px-5 py-3 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                 Username
-              </th>
+              </th> */}
 
               <th className="px-5 py-3 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                 Name
@@ -164,11 +139,11 @@ const Page = () => {
             ) : data && data.length > 0 ? (
               data.map((item) => (
                 <tr key={item._id} className="hover:bg-gray-50">
-                  <td className="px-4 py-4 border-b border-gray-200 bg-white">
+                  {/* <td className="px-4 py-4 border-b border-gray-200 bg-white">
                     <div className="text-sm font-medium text-gray-900">
                       {item.username}
                     </div>
-                  </td>
+                  </td> */}
                   <td className="px-4 py-4 border-b border-gray-200 bg-white">
                     <div className="text-sm text-gray-900">{item.name}</div>
                   </td>
