@@ -60,7 +60,7 @@ const Page = () => {
       mediaType: ["image"],
       searchTerm,
       category: categoryParam,
-      productsPerPage: "10",
+      productsPerPage: "20",
       sortBy: filters.sortBy || "newest",
       imageOrientation: filters.imageOrientation,
       imageFileType: filters.imageFileType,
@@ -140,28 +140,25 @@ const Page = () => {
                         Pictures
                       </h4>
                       <div className="mx-auto mt-4">
-                        <div className="columns-1 sm:columns-2 md:columns-2 lg:columns-4 gap-2 mt-2 relative">
+                        <Masonry
+                          breakpointCols={{
+                            default: 4,
+                            1100: 3,
+                            700: 2,
+                            500: 1,
+                          }} // Define breakpoints
+                          className="my-masonry-grid-img" // Custom class for styling
+                          columnClassName="my-masonry-grid_column-img" // Custom column class
+                        >
                           {product.map((data: any, index) => (
-                            <Masonry
+                            <div
+                              className="flex flex-col justify-between "
                               key={index}
-                              breakpointCols={{
-                                default: 4,
-                                1100: 3,
-                                700: 2,
-                                500: 1,
-                              }} // Define breakpoints
-                              className="my-masonry-grid-img" // Custom class for styling
-                              columnClassName="my-masonry-grid_column-img" // Custom column class
                             >
-                              <div
-                                className="flex flex-col justify-between "
-                                key={data._id}
-                              >
-                                <ImageGallery data={data} />
-                              </div>
-                            </Masonry>
+                              <ImageGallery data={data} />
+                            </div>
                           ))}
-                        </div>
+                        </Masonry>
                       </div>
                     </>
                   ) : (

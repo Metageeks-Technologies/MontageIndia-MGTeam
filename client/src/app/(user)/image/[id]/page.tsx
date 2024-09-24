@@ -379,24 +379,20 @@ const Home = () => {
           </div>
 
           <div className="pt-8 sm:pt-12 bg-pureWhite-light w-full px-4 sm:px-6 lg:px-4 xl:px-16 md:px-4 py-8">
-            <h1 className="font-semibold text-lg sm:text-xl">Similar Images</h1>
-            <div className="columns-1 sm:columns-2 md:columns-3 lg:columns-4 gap-2 mt-2 relative">
-              {similarProducts?.map((data, index) => (
-                <Masonry
-                  key={index}
-                  breakpointCols={{ default: 4, 1100: 3, 700: 2, 500: 1 }} // Define breakpoints
-                  className="my-masonry-grid-img" // Custom class for styling
-                  columnClassName="my-masonry-grid_column-img" // Custom column class
-                >
-                  <div
-                    className="flex flex-col justify-between "
-                    key={data._id}
-                  >
-                    <ImageGallery data={data} productType="similarProducts" />
-                  </div>
-                </Masonry>
+            <h1 className="font-semibold text-lg mb-4 sm:text-xl">
+              Similar Images
+            </h1>
+            <Masonry
+              breakpointCols={{ default: 4, 1100: 3, 700: 2, 500: 1 }} // Define breakpoints
+              className="my-masonry-grid-img" // Custom class for styling
+              columnClassName="my-masonry-grid_column-img" // Custom column class
+            >
+              {similarProducts.map((data, index) => (
+                <div className="flex flex-col justify-between " key={data._id}>
+                  <ImageGallery data={data} productType="similarProducts" />
+                </div>
               ))}
-            </div>
+            </Masonry>
           </div>
 
           {product && (
