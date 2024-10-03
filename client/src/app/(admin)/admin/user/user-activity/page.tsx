@@ -297,10 +297,10 @@ const UserActivityPage = () => {
                           : ""}
                       </td>
                       <td className="px-4 py-4 sm:px-6">
-                        {item.productId.title}
+                        {item?.productId?.title}
                       </td>
                       <td className="px-4 py-4 sm:px-6">
-                        {formatDate(item.timestamp)}
+                        {formatDate(item?.timestamp)}
                       </td>
                       <td
                         className={`px-4 py-4 sm:px-6 text-center ${
