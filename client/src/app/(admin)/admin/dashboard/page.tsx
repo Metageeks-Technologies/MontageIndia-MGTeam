@@ -8,8 +8,16 @@ import { MdArrowOutward, MdOutlineKeyboardArrowDown } from "react-icons/md";
 import { FaRupeeSign } from "react-icons/fa";
 import { IoArrowForward } from "react-icons/io5";
 import instance from "@/utils/axios";
+import OrderChart from "@/components/admin/dashboard/OrderChart";
+import RevenueChart from "@/components/admin/dashboard/RevenueChart";
+import ProductChart from "@/components/admin/dashboard/ProductChart";
 
-interface SiteData {
+export interface SiteData {
+  media: {
+    totalImage: number;
+    totalAudio: number;
+    totalVideo: number;
+  };
   totalRevenue: number;
   totalPublished: number;
   totalDeleted: number;
@@ -27,6 +35,7 @@ const page = () => {
   const [currentUser, setCurrentUser] = useState<any>("");
   const [recentActivities, setRecentActivities] = useState([]);
   const [revenuePeriod, setRevenuePeriod] = useState<string>("lastYear");
+  const [orderPeriod, setOrderPeriod] = useState<string>("daily");
   const [siteData, setSiteData] = useState<SiteData | null>(null);
 
   const recentActivity = async () => {
@@ -112,9 +121,6 @@ const page = () => {
           <h2 className="text-xl font-semibold mb-2">
             Welcome to Montage India 👋
           </h2>
-          <p className="text-gray-600 mb-4">
-            A quick guide to getting your first sale
-          </p>
 
           {/* <div className="bg-purple-50  rounded-md border border-purple-500">
             <div className=" p-4 rounded-lg flex justify-between items-center ">
@@ -150,7 +156,7 @@ const page = () => {
         <div className="flex justify-between gap-6">
           <div className="mb-6 basis-[65%]">
             <div className="flex flex-col">
-              <div className="flex justify-between ">
+              {/* <div className="flex justify-between ">
                 <h2 className="text-xl font-semibold mb-2">
                   Overview performance
                 </h2>
@@ -168,9 +174,9 @@ const page = () => {
                     Year
                   </button>
                 </div>
-              </div>
+              </div> */}
 
-              <div className="grid grid-cols-2  border rounded-md">
+              {/* <div className="grid grid-cols-2  border rounded-md">
                 <div className="p-4 flex flex-col gap-3">
                   <h3 className="font-semibold">Total Views</h3>
                   <p className="text-2xl font-semibold">0</p>
@@ -191,6 +197,26 @@ const page = () => {
                   <p className="text-2xl font-semibold">0</p>
                   <p className="text-gray-600">From last 732 (last 7 days)</p>
                 </div>
+              </div> */}
+              <div className="flex justify-between items-center">
+                <h1 className="text-xl font-semibold">Order Trends</h1>
+                <select
+                  id="orderPeriod"
+                  value={orderPeriod}
+                  onChange={(e) => {
+                    setOrderPeriod(e.target.value);
+                  }}
+                >
+                  <option value="daily">Daily</option>
+                  <option value="weekly">Weekly</option>
+                  <option value="monthly">Monthly</option>
+                  <option value="yearly">Yearly</option>
+                </select>
+              </div>
+              <OrderChart period={orderPeriod} />
+
+              <div className="mt-6">
+                <RevenueChart type="userRegistrationTrends" />
               </div>
 
               <div className="mt-6">
@@ -255,7 +281,9 @@ const page = () => {
                 </div> */}
               </div>
             </div>
-
+            <div>
+              {siteData && <ProductChart siteData={siteData} />}
+            </div>
             <div className=" mt-6">
               <div className="flex justify-between">
                 <h1 className="text-lg font-semibold">Recent Activities</h1>

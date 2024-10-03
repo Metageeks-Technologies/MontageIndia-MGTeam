@@ -1,3 +1,4 @@
+import SubscriptionPlan from "@src/model/subscriptions/subscriptionPlan";
 import catchAsyncError from "../../middleware/catchAsyncError.js";
 import ErrorHandler from "../../utils/errorHandler.js";
 import config from "@src/utils/config.js";
@@ -7,6 +8,9 @@ import Transaction from "../../model/transaction/transaction.js";
 import { sendEmail } from "@src/utils/nodemailer/mailer/mailer.js";
 import crypto from "crypto";
 import Product from "@src/model/product/product.js";
+import User from "@src/model/user/customer.js";
+import SubscriptionHistory from "@src/model/subscriptions/subscriptionHistory.js";
+import Order from "@src/model/product/order.js";
 
 /* 
 index 
@@ -425,12 +429,218 @@ export const getSiteData = catchAsyncError(async (req, res, next) => {
   const totalRevenue =
     revenueResult.length > 0 ? revenueResult[0].totalRevenue : 0;
 
+  const media = await getProductCountsByMediaType();
+
   return res.status(200).json({
     success: true,
     siteData: {
+      media,
       totalRevenue,
       totalPublished: activeProductResult,
       totalDeleted: deletedProductResult,
     },
+  });
+});
+
+export const getProductCountsByMediaType = async () => {
+  const result = await Product.aggregate([
+    { $match: { status: "published" } },
+    {
+      $group: {
+        _id: "$mediaType",
+        count: { $sum: 1 },
+      },
+    },
+    {
+      $project: {
+        _id: 0,
+        mediaType: "$_id",
+        count: 1,
+      },
+    },
+  ]);
+
+  // Format the result to include totalImage, totalAudio, totalVideo
+  const counts = {
+    totalImage: 0,
+    totalAudio: 0,
+    totalVideo: 0,
+  };
+
+  result.forEach((item) => {
+    if (item.mediaType === "image") counts.totalImage = item.count;
+    if (item.mediaType === "audio") counts.totalAudio = item.count;
+    if (item.mediaType === "video") counts.totalVideo = item.count;
+  });
+
+  return counts;
+};
+export const getUserRegistrationTrends = catchAsyncError(
+  async (req, res, next) => {
+    const { period } = req.query;
+    const matchCondition: any = {};
+
+    if (period === "daily") {
+      matchCondition.createdAt = {
+        $gte: new Date(new Date().setDate(new Date().getDate() - 30)), // last 30 days
+      };
+    } else if (period === "weekly") {
+      matchCondition.createdAt = {
+        $gte: new Date(new Date().setDate(new Date().getDate() - 90)), // last 90 days
+      };
+    } else if (period === "monthly") {
+      matchCondition.createdAt = {
+        $gte: new Date(new Date().setMonth(new Date().getMonth() - 12)), // last 12 months
+      };
+    } else if (period === "yearly") {
+      // Added yearly condition
+      matchCondition.createdAt = {
+        $gte: new Date(new Date().setFullYear(new Date().getFullYear() - 1)), // last 1 year
+      };
+    }
+
+    const registrations = await User.aggregate([
+      { $match: matchCondition },
+      {
+        $group: {
+          _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
+          count: { $sum: 1 },
+        },
+      },
+      { $sort: { _id: 1 } },
+    ]);
+
+    res.status(200).json({
+      success: true,
+      data: registrations,
+    });
+  }
+);
+
+export const getTotalRevenueTrends = catchAsyncError(async (req, res, next) => {
+  const { period } = req.query;
+  const matchCondition: any = {};
+
+  if (period === "daily") {
+    matchCondition.createdAt = {
+      $gte: new Date(new Date().setDate(new Date().getDate() - 30)), // last 30 days
+    };
+  } else if (period === "weekly") {
+    matchCondition.createdAt = {
+      $gte: new Date(new Date().setDate(new Date().getDate() - 90)), // last 90 days
+    };
+  } else if (period === "monthly") {
+    matchCondition.createdAt = {
+      $gte: new Date(new Date().setMonth(new Date().getMonth() - 12)), // last 12 months
+    };
+  }
+
+  const revenue = await Transaction.aggregate([
+    { $match: matchCondition },
+    {
+      $group: {
+        _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
+        count: { $sum: "$amount" },
+      },
+    },
+    { $sort: { _id: 1 } },
+  ]);
+
+  res.status(200).json({
+    success: true,
+    data: revenue,
+  });
+});
+
+export const getSubscriptionPlanTrends = catchAsyncError(
+  async (req, res, next) => {
+    const { period } = req.query;
+    const matchCondition: any = {};
+
+    if (period === "daily") {
+      matchCondition.createdAt = {
+        $gte: new Date(new Date().setDate(new Date().getDate() - 30)), // last 30 days
+      };
+    } else if (period === "weekly") {
+      matchCondition.createdAt = {
+        $gte: new Date(new Date().setDate(new Date().getDate() - 90)), // last 90 days
+      };
+    } else if (period === "monthly") {
+      matchCondition.createdAt = {
+        $gte: new Date(new Date().setMonth(new Date().getMonth() - 12)), // last 12 months
+      };
+    }
+
+    const subscriptionTrends = await SubscriptionHistory.aggregate([
+      { $match: matchCondition },
+      {
+        $lookup: {
+          from: "subscriptionplans", // Ensure this matches the collection name for SubscriptionPlan
+          localField: "planId",
+          foreignField: "_id",
+          as: "planDetails",
+        },
+      },
+
+      { $unwind: "$planDetails" },
+      {
+        $group: {
+          _id: { $dateToString: { format: "%Y-%m-%d", date: "$startDate" } },
+          totalPurchased: { $sum: 1 },
+          totalAmount: { $sum: "$planDetails.amount" }, // Assuming 'amount' is a field in SubscriptionPlan
+        },
+      },
+      { $sort: { _id: 1 } },
+    ]);
+
+    res.status(200).json({
+      success: true,
+      data: subscriptionTrends,
+    });
+  }
+);
+
+export const getOrderTrends = catchAsyncError(async (req, res, next) => {
+  const { period = "weekly" } = req.query;
+  const matchCondition: any = { status: "paid" };
+
+  let groupBy;
+  switch (period) {
+    case "daily":
+      groupBy = { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } };
+      break;
+    case "weekly":
+      groupBy = { $week: "$createdAt" };
+      break;
+    case "monthly":
+      groupBy = { $month: "$createdAt" };
+      break;
+    case "yearly":
+      groupBy = { $year: "$createdAt" };
+      break;
+    default:
+      return next(new ErrorHandler("Invalid period specified", 400));
+  }
+
+  const trends = await Order.aggregate([
+    { $match: matchCondition },
+    {
+      $group: {
+        _id: groupBy,
+        count: { $sum: 1 }, // Change to 'count' for the desired output
+      },
+    },
+    { $sort: { _id: 1 } },
+  ]);
+
+  // Format the response data
+  const formattedData = trends.map((item) => ({
+    _id: item._id,
+    count: item.count,
+  }));
+
+  res.status(200).json({
+    success: true,
+    data: formattedData, // Return the formatted data
   });
 });
